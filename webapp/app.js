@@ -1,4 +1,4 @@
-let user = {
+let user = JSON.parse(localStorage.getItem("nxn_user")) || {
   balance: 0,
   energy: 100,
   maxEnergy: 100,
@@ -8,54 +8,53 @@ let user = {
 const balanceEl = document.getElementById("balance");
 const energyEl = document.getElementById("energy");
 const coinEl = document.getElementById("coin");
-const effectsEl = document.getElementById("tap-effects");
+
+/* SAVE */
+function saveUser() {
+  localStorage.setItem("nxn_user", JSON.stringify(user));
+}
 
 function updateUI() {
   balanceEl.innerText = `Balance: ${user.balance}`;
   energyEl.innerText = `Energy: ${user.energy} / ${user.maxEnergy}`;
+  saveUser();
 }
 
 /* TAP */
-coinEl.addEventListener("click", (e) => {
+coinEl.addEventListener("click", () => {
   if (user.energy <= 0) return;
-  user.energy -= 1;
+  user.energy--;
   user.balance += user.tapPower;
-  spawnPlus(e.clientX, e.clientY, user.tapPower);
   updateUI();
 });
 
 /* ENERGY REGEN */
 setInterval(() => {
   if (user.energy < user.maxEnergy) {
-    user.energy += 1;
+    user.energy++;
     updateUI();
   }
 }, 3000);
 
-/* TAP EFFECT */
-function spawnPlus(x, y, value) {
-  const el = document.createElement("div");
-  el.className = "tap-plus";
-  el.innerText = `+${value}`;
-  el.style.left = x + "px";
-  el.style.top = y + "px";
-  document.body.appendChild(el);
-  setTimeout(() => el.remove(), 900);
+/* LEADERBOARD DEMO */
+const leaderboard = document.getElementById("leaderboard-list");
+if (leaderboard) {
+  for (let i = 4; i <= 10; i++) {
+    const row = document.createElement("div");
+    row.className = "lb-row";
+    row.innerHTML = `<span>#${i}</span><span>Player ${i}</span><span>${Math.floor(Math.random()*50000)} NXN</span>`;
+    leaderboard.appendChild(row);
+  }
 }
 
 /* MENU */
 document.querySelectorAll(".menu-item").forEach(item => {
   item.addEventListener("click", () => {
     const screen = item.dataset.screen;
-
-    document.querySelectorAll(".screen").forEach(s =>
-      s.classList.add("hidden")
-    );
+    document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
     document.getElementById(`screen-${screen}`).classList.remove("hidden");
 
-    document.querySelectorAll(".menu-item").forEach(i =>
-      i.classList.remove("active")
-    );
+    document.querySelectorAll(".menu-item").forEach(i => i.classList.remove("active"));
     item.classList.add("active");
   });
 });

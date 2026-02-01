@@ -2,7 +2,7 @@
 
 body {
   margin: 0;
-  font-family: Inter, Arial, sans-serif;
+  font-family: Arial, sans-serif;
   color: #fff;
   background: #02040a;
   overflow: hidden;
@@ -13,8 +13,8 @@ body {
   position: fixed;
   inset: 0;
   background:
-    radial-gradient(circle at 70% 20%, #2b0f5a55, transparent 40%),
-    radial-gradient(circle at 20% 80%, #0a5a3a55, transparent 45%),
+    radial-gradient(circle at 70% 20%, #2b0f5a88, transparent 40%),
+    radial-gradient(circle at 20% 80%, #0a5a3a88, transparent 45%),
     linear-gradient(180deg, #050814, #02040a);
   z-index: -3;
 }
@@ -27,12 +27,10 @@ body {
     radial-gradient(1px 1px at 70% 80%, #ffffff66, transparent);
   animation: starsMove 60s linear infinite;
   z-index: -2;
-  pointer-events: none;
 }
 
 @keyframes starsMove {
-  from { background-position: 0 0; }
-  to { background-position: 300px 600px; }
+  to { background-position: 400px 800px; }
 }
 
 /* SCREENS */
@@ -46,44 +44,50 @@ body {
 
 /* GLASS */
 .glass {
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.18);
   backdrop-filter: blur(14px);
-  border-radius: 16px;
+  border-radius: 18px;
 }
 
-/* LOGO */
-.logo-main {
-  font-size: 44px;
+/* TITLES */
+.title-3d {
+  font-size: 42px;
   font-weight: 900;
-  background: linear-gradient(180deg, #6cf0ff, #1a6aff);
+  letter-spacing: 3px;
+  text-shadow:
+    0 2px 0 #000,
+    0 6px 20px rgba(0,0,0,0.6);
+}
+
+.title-3d.blue {
+  background: linear-gradient(180deg, #7cf3ff, #1a6aff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-.logo-sub {
-  font-size: 26px;
-  color: #ffcc55;
-  letter-spacing: 4px;
+.subtitle {
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 14px;
 }
 
-/* TAP */
-.balance-box, .energy-box {
-  margin: 12px auto;
-  padding: 10px 20px;
+.subtitle.gold {
+  color: #ffcc55;
+  text-shadow: 0 0 12px #ffcc55aa;
+}
+
+/* INFO */
+.info-box {
+  margin: 10px auto;
+  padding: 10px 18px;
   width: fit-content;
 }
 
-.coin-wrapper {
-  position: relative;
-  margin: 18px auto;
-}
-
+/* TAP */
 .coin {
   width: 260px;
   cursor: pointer;
-  position: relative;
-  z-index: 2;
 }
 
 .coin-glow {
@@ -91,45 +95,26 @@ body {
   inset: -40px;
   background: radial-gradient(circle, #ffcc5577, transparent 60%);
   filter: blur(30px);
-  pointer-events: none;
-}
-
-/* TAP EFFECT */
-.tap-plus {
-  position: absolute;
-  font-size: 22px;
-  color: #ffcc55;
-  animation: floatUp 0.9s ease-out forwards;
-}
-
-@keyframes floatUp {
-  to { opacity: 0; transform: translateY(-70px); }
 }
 
 /* LEADERBOARD */
-.lb-title {
-  font-size: 34px;
-  font-weight: 900;
-  color: #6cf0ff;
-}
-
 .top3 {
   display: flex;
   justify-content: center;
   gap: 14px;
-  margin: 20px 0;
+  margin: 18px 0;
 }
 
 .top-card {
   width: 110px;
   padding: 14px;
   border-radius: 18px;
-  background: rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.1);
 }
 
 .top-card.gold { box-shadow: 0 0 25px #ffcc55aa; }
-.top-card.silver { box-shadow: 0 0 18px #cccccc66; }
-.top-card.bronze { box-shadow: 0 0 18px #cc884466; }
+.top-card.silver { box-shadow: 0 0 20px #cccccc88; }
+.top-card.bronze { box-shadow: 0 0 20px #cc884488; }
 
 .leaderboard-list {
   width: 90%;
@@ -137,23 +122,11 @@ body {
   padding: 10px;
 }
 
-/* TRANSFER */
-.transfer-title, .shop-title {
-  font-size: 32px;
-  font-weight: 800;
-  margin-bottom: 20px;
-}
-
-.transfer-box input, .transfer-box button {
-  width: 80%;
-  padding: 12px;
-  margin: 8px auto;
-  border-radius: 14px;
-  border: none;
-}
-
-.transfer-box button {
-  background: linear-gradient(135deg, #00ffa2, #1eff8b);
+.lb-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 
 /* SHOP */
@@ -161,6 +134,17 @@ body {
   width: 80%;
   margin: 14px auto;
   padding: 16px;
+}
+
+/* BUTTON */
+.btn-green {
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: 14px;
+  border: none;
+  background: linear-gradient(135deg, #00ffa2, #1eff8b);
+  font-weight: 800;
+  cursor: pointer;
 }
 
 /* MENU */
@@ -172,7 +156,6 @@ body {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  z-index: 999;
 }
 
 .menu-item {
