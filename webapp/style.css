@@ -1,81 +1,95 @@
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  color: #00ffa2;
+  font-family: Inter, Arial, sans-serif;
+  color: #eafff5;
   overflow: hidden;
 }
 
-/* CRYPTO BACKGROUND */
+/* BACKGROUND */
 .bg {
   position: fixed;
   inset: 0;
   background:
-    radial-gradient(circle at top, #1bff7a33, transparent 40%),
-    linear-gradient(180deg, #05080f, #0b1224);
+    radial-gradient(circle at top, #00ffa233, transparent 40%),
+    linear-gradient(180deg, #04070f, #0a1024);
   z-index: -1;
 }
 
+/* SCREENS */
 .screen {
-  height: calc(100vh - 70px);
+  height: calc(100vh - 80px);
   padding: 20px;
   text-align: center;
 }
 
-.hidden {
-  display: none;
-}
+.hidden { display: none; }
 
-.logo {
-  font-size: 42px;
-  letter-spacing: 6px;
+/* HEADER */
+.header {
+  font-size: 22px;
+  letter-spacing: 4px;
   margin-bottom: 10px;
+  opacity: 0.8;
 }
 
-/* COIN TAP */
-.coin-wrapper {
-  margin: 30px auto;
+/* COIN */
+.coin-zone {
+  margin-top: 30px;
 }
 
 .coin {
-  width: 220px;
-  height: 220px;
+  width: 240px;
+  height: 240px;
   cursor: pointer;
-  transition: transform 0.1s ease, filter 0.1s ease;
-  filter: drop-shadow(0 0 25px #00ff8844);
+  transition: transform 0.1s;
+  filter: drop-shadow(0 0 40px #00ffa255);
 }
 
 .coin:active {
-  transform: scale(0.95);
-  filter: drop-shadow(0 0 40px #00ff88);
+  transform: scale(0.93);
+}
+
+/* FLOATING +1 */
+#floaters {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.floater {
+  position: absolute;
+  color: #00ffa2;
+  font-size: 20px;
+  animation: floatUp 0.8s ease-out forwards;
+}
+
+@keyframes floatUp {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-60px); }
 }
 
 /* STATS */
 #stats {
-  font-size: 16px;
-  margin-top: 10px;
+  font-size: 15px;
+  opacity: 0.9;
 }
 
 /* TRANSFER */
-.transfer-box {
-  margin-top: 20px;
-}
-
-input {
+.transfer-box input {
   display: block;
   margin: 8px auto;
   padding: 10px;
   width: 80%;
-  background: #0f172a;
+  background: #0d1428;
   border: 1px solid #00ffa244;
   color: #00ffa2;
 }
 
-button {
-  padding: 12px 20px;
-  margin-top: 8px;
-  background: #00ffa2;
+.transfer-box button {
+  padding: 10px 20px;
+  margin-top: 6px;
+  background: linear-gradient(135deg, #00ffa2, #2affc9);
   border: none;
-  cursor: pointer;
   font-weight: bold;
 }
 
@@ -83,21 +97,21 @@ button {
 .bottom-menu {
   position: fixed;
   bottom: 0;
+  height: 80px;
   width: 100%;
-  height: 70px;
-  background: #0a1020;
+  background: rgba(10,16,36,0.9);
   display: flex;
   justify-content: space-around;
   align-items: center;
-  font-size: 26px;
+  backdrop-filter: blur(10px);
 }
 
-.bottom-menu div {
-  opacity: 0.5;
-  cursor: pointer;
+.bottom-menu img {
+  width: 28px;
+  opacity: 0.4;
 }
 
-.bottom-menu .active {
+.bottom-menu .active img {
   opacity: 1;
   transform: scale(1.2);
 }

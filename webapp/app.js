@@ -12,18 +12,17 @@ function showScreen(name) {
 
 function update(user) {
   document.getElementById("stats").innerText =
-    `Balance: ${user.balance} | Energy: ${user.energy}/${user.max_energy} | Tap: ${user.tap_power}`;
+    `Balance ${user.balance} · Energy ${user.energy}/${user.max_energy} · Tap +${user.tap_power}`;
 }
 
-function loadLeaderboard() {
-  fetch("/leaderboard")
-    .then(r => r.json())
-    .then(data => {
-      document.getElementById("leaderboard").innerHTML =
-        data.map((u, i) =>
-          `<div>#${i + 1} — ID ${u.id} — ${u.balance}</div>`
-        ).join("");
-    });
+function spawnFloater(x, y, value) {
+  const f = document.createElement("div");
+  f.className = "floater";
+  f.style.left = x + "px";
+  f.style.top = y + "px";
+  f.innerText = `+${value}`;
+  document.getElementById("floaters").appendChild(f);
+  setTimeout(() => f.remove(), 800);
 }
 
 fetch("/init", {
@@ -32,12 +31,11 @@ fetch("/init", {
   body: JSON.stringify({ id: userId })
 })
 .then(r => r.json())
-.then(user => {
-  update(user);
-  loadLeaderboard();
-});
+.then(update);
 
-function tap() {
+function tap(e) {
+  spawnFloater(e.clientX, e.clientY, "+");
+
   fetch("/tap", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -45,8 +43,8 @@ function tap() {
   })
   .then(r => r.json())
   .then(user => {
+    spawnFloater(e.clientX, e.clientY, user.tap_power);
     update(user);
-    loadLeaderboard();
   });
 }
 
@@ -55,7 +53,7 @@ function buy(type) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ id: userId, type })
-  }).then(loadLeaderboard);
+  });
 }
 
 function transfer() {
@@ -67,5 +65,5 @@ function transfer() {
       to: document.getElementById("toId").value,
       amount: Number(document.getElementById("amount").value)
     })
-  }).then(loadLeaderboard);
+  });
 }
