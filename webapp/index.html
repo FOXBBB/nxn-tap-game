@@ -6,31 +6,36 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- BOTTOM MENU -->
-<nav class="bottom-menu glass">
-  <div class="menu-item" data-screen="leaderboard">
-    <span>🏆</span>
-  </div>
 
-  <div class="menu-item active" data-screen="tap">
-    <span>🪙</span>
-  </div>
-
-  <div class="menu-item" data-screen="transfer">
-    <span>🔁</span>
-  </div>
-
-  <div class="menu-item" data-screen="shop">
-    <span>🛒</span>
-  </div>
-</nav>
-
-
+<!-- BACKGROUND -->
 <div class="space-bg"></div>
 <div class="stars"></div>
 
-<section id="screen-tap" class="tap-screen">
-<!-- LEADERBOARD -->
+<!-- ===== TAP SCREEN ===== -->
+<section id="screen-tap" class="screen tap-screen">
+
+  <div class="logo">
+    <div class="logo-main">NEXON</div>
+    <div class="logo-sub">NXN CLICKER</div>
+  </div>
+
+  <div class="balance-box glass">
+    <span id="balance">Balance: 0</span>
+  </div>
+
+  <div class="coin-wrapper">
+    <img src="coin.png" id="coin" class="coin">
+    <div class="coin-glow"></div>
+  </div>
+
+  <div class="energy-box glass">
+    <span id="energy">Energy: 0 / 0</span>
+  </div>
+
+  <div id="tap-effects"></div>
+</section>
+
+<!-- ===== LEADERBOARD SCREEN ===== -->
 <section id="screen-leaderboard" class="screen leaderboard-screen hidden">
 
   <div class="leaderboard-header">
@@ -38,63 +43,37 @@
     <div class="lb-subtitle">TOP PLAYERS</div>
   </div>
 
-  <!-- TOP 3 -->
   <div class="top3">
     <div class="top-card second">
       <div class="rank">2</div>
       <div class="avatar"></div>
-      <div class="name">Player</div>
+      <div class="name">—</div>
       <div class="score">0 NXN</div>
     </div>
 
     <div class="top-card first">
       <div class="rank">1</div>
       <div class="avatar"></div>
-      <div class="name">Player</div>
+      <div class="name">—</div>
       <div class="score">0 NXN</div>
     </div>
 
     <div class="top-card third">
       <div class="rank">3</div>
       <div class="avatar"></div>
-      <div class="name">Player</div>
+      <div class="name">—</div>
       <div class="score">0 NXN</div>
     </div>
   </div>
 
-  <!-- LIST -->
-  <div id="leaderboard" class="leaderboard-list glass">
-    <!-- rows injected by JS -->
-  </div>
-
+  <div id="leaderboard" class="leaderboard-list glass"></div>
 </section>
 
-  <!-- LOGO -->
-  <div class="logo">
-    <div class="logo-main">NEXON</div>
-    <div class="logo-sub">NXN CLICKER</div>
-  </div>
-
-  <!-- BALANCE (ABOVE COIN) -->
-  <div class="balance-box glass">
-    <span id="balance">Balance: 0</span>
-  </div>
-
-  <!-- COIN -->
-  <div class="coin-wrapper">
-    <img src="coin.png" id="coin" class="coin">
-    <div class="coin-glow"></div>
-  </div>
-
-  <!-- ENERGY (BELOW COIN) -->
-  <div class="energy-box glass">
-    <span id="energy">Energy: 0 / 0</span>
-  </div>
-
-  <!-- TAP EFFECTS -->
-  <div id="tap-effects"></div>
-
-</section>
+<!-- ===== BOTTOM MENU ===== -->
+<nav class="bottom-menu glass">
+  <div class="menu-item active" data-screen="tap">🪙</div>
+  <div class="menu-item" data-screen="leaderboard">🏆</div>
+</nav>
 
 <script src="app.js"></script>
 </body>

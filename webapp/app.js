@@ -1,9 +1,3 @@
-let userId = localStorage.getItem("nxn_user_id");
-if (!userId) {
-  userId = Date.now().toString();
-  localStorage.setItem("nxn_user_id", userId);
-}
-
 let user = {
   balance: 0,
   energy: 100,
@@ -21,7 +15,16 @@ function updateUI() {
   energyEl.innerText = `Energy: ${user.energy} / ${user.maxEnergy}`;
 }
 
-/* ENERGY REGEN — каждые 3 сек */
+/* TAP */
+coinEl.addEventListener("click", (e) => {
+  if (user.energy <= 0) return;
+  user.energy -= 1;
+  user.balance += user.tapPower;
+  spawnPlus(e.clientX, e.clientY, user.tapPower);
+  updateUI();
+});
+
+/* ENERGY REGEN */
 setInterval(() => {
   if (user.energy < user.maxEnergy) {
     user.energy += 1;
@@ -29,17 +32,7 @@ setInterval(() => {
   }
 }, 3000);
 
-/* TAP */
-coinEl.addEventListener("click", (e) => {
-  if (user.energy <= 0) return;
-
-  user.energy -= 1;
-  user.balance += user.tapPower;
-
-  spawnPlus(e.clientX, e.clientY, user.tapPower);
-  updateUI();
-});
-
+/* EFFECT */
 function spawnPlus(x, y, value) {
   const el = document.createElement("div");
   el.className = "tap-plus";
@@ -50,41 +43,7 @@ function spawnPlus(x, y, value) {
   setTimeout(() => el.remove(), 900);
 }
 
-updateUI();
-async function loadLeaderboard() {
-  const res = await fetch("/leaderboard");
-  const data = await res.json();
-
-  // ===== TOP 3 =====
-  const cards = document.querySelectorAll(".top-card");
-
-  // порядок: [2-е, 1-е, 3-е] — как в дизайне
-  const map = [1, 0, 2];
-
-  map.forEach((cardIndex, i) => {
-    const user = data[i];
-    const card = cards[cardIndex];
-    if (!user || !card) return;
-
-    card.querySelector(".name").innerText = `ID ${user.id}`;
-    card.querySelector(".score").innerText = `${user.balance} NXN`;
-  });
-
-  // ===== TOP 4–10 =====
-  const list = document.getElementById("leaderboard");
-  list.innerHTML = "";
-
-  data.slice(3, 10).forEach((user, i) => {
-    const row = document.createElement("div");
-    row.className = "row";
-    row.innerHTML = `
-      <span>#${i + 4}</span>
-      <span>ID ${user.id}</span>
-      <span>${user.balance} NXN</span>
-    `;
-    list.appendChild(row);
-  });
-}
+/* MENU */
 document.querySelectorAll(".menu-item").forEach(item => {
   item.addEventListener("click", () => {
     const screen = item.dataset.screen;
@@ -98,8 +57,7 @@ document.querySelectorAll(".menu-item").forEach(item => {
       i.classList.remove("active")
     );
     item.classList.add("active");
-
-    if (screen === "leaderboard") loadLeaderboard();
   });
 });
 
+updateUI();
