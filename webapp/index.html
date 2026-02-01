@@ -86,26 +86,27 @@
 </section>
 
 <!-- TRANSFER (НЕ ТРОГАЕМ) -->
- <section id="transfer" class="screen hidden">
-  <div class="title blue">TRANSFER COINS</div>
-  <div class="subtitle yellow">BY ID</div>
-
-  <div class="glass transfer-box">
-    <label>Recipient ID</label>
-    <input id="toId" value="12345">
-
-    <label>Amount</label>
-    <div class="row">
-      <input id="amount" value="67 NXN">
-      <button id="max">MAX</button>
+<section id="transfer-screen" class="screen">
+    <div class="transfer-title">
+      TRANSFER COINS<br><span>BY ID</span>
     </div>
 
-    <button id="send">SEND</button>
-    <p>Enter ID and amount to send coins</p>
-  </div>
+    <div class="transfer-card">
+      <label>Recipient ID</label>
+      <input type="text" placeholder="12345" />
 
-  <img src="transfer.png" class="transfer-img">
-</section>
+      <label>Amount</label>
+      <div class="amount-row">
+        <input type="text" placeholder="67 NXN" />
+        <button class="max-btn">MAX</button>
+      </div>
+
+      <button class="send-btn">SEND</button>
+      <p class="hint">Enter ID and amount to send coins</p>
+    </div>
+
+    <img src="transfer.png" class="transfer-image" />
+  </section>
 
 <!-- SHOP (ПОКА НЕ ТРОГАЕМ) -->
 <section id="shop" class="screen hidden">
