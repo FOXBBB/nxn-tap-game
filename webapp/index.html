@@ -1,82 +1,41 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>NXN Game</title>
+  <title>NEXON NXN CLICKER</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="bg"></div>
+<!-- BACKGROUND -->
+<div class="space-bg"></div>
+<div class="stars"></div>
 
-<!-- LEADERBOARD -->
-<section id="screen-leaderboard" class="screen hidden">
-  <h2 class="title">Leaderboard</h2>
-  <div id="leaderboard" class="list glass"></div>
-</section>
+<!-- TAP SCREEN -->
+<section id="screen-tap" class="tap-screen">
 
-<!-- TAP (ВСЁ ТОЛЬКО ЗДЕСЬ) -->
-<section id="screen-tap" class="screen tap-screen">
-
-  <!-- BRAND -->
-  <div class="brand-banner">
-    <span>NXN Game</span>
+  <!-- TOP BAR -->
+  <div class="top-bar glass">
+    <div id="balance">Balance: 0</div>
+    <div id="energy">Energy: 0 / 0</div>
   </div>
 
-  <!-- STATS -->
-  <div class="stats-block glass">
-    <div id="balance" class="balance">Balance: 0</div>
-    <div id="energy" class="energy">Energy: 0 / 0</div>
+  <!-- LOGO -->
+  <div class="logo">
+    <div class="logo-main">NEXON</div>
+    <div class="logo-sub">NXN CLICKER</div>
   </div>
 
   <!-- COIN -->
-  <div class="coin-zone">
-    <img src="coin.png" class="coin" id="coin">
+  <div class="coin-wrapper">
+    <img src="coin.png" id="coin" class="coin">
+    <div class="coin-glow"></div>
   </div>
 
   <!-- TAP EFFECTS -->
   <div id="tap-effects"></div>
 
-  <!-- TRANSFER (ТОЛЬКО В TAP) -->
-  <div class="transfer-box glass">
-    <input id="toId" placeholder="Recipient ID">
-    <input id="amount" placeholder="Amount">
-    <button id="sendBtn">Transfer</button>
-  </div>
-
 </section>
-
-<!-- SHOP (ТОЛЬКО МАГАЗИН) -->
-<section id="screen-shop" class="screen hidden">
-  <h2 class="title">Shop</h2>
-
-  <div class="card glass">
-    <div class="card-title">Tap Power</div>
-    <div class="card-desc">Increase tap reward permanently</div>
-    <button onclick="buy('tap1')">+1 Tap · 10 000 NXN</button>
-  </div>
-
-  <div class="card glass">
-    <div class="card-title">Energy Capacity</div>
-    <div class="card-desc">Increase max energy permanently</div>
-    <button onclick="buy('energy100')">+100 Energy · 20 000 NXN</button>
-  </div>
-</section>
-
-<!-- BOTTOM MENU -->
-<nav class="bottom-menu glass">
-  <div class="menu-item" data-screen="leaderboard">
-    <svg viewBox="0 0 24 24"><path d="M4 21h4V10H4v11zm6 0h4V3h-4v18zm6 0h4V14h-4v7z"/></svg>
-  </div>
-
-  <div class="menu-item active" data-screen="tap">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/></svg>
-  </div>
-
-  <div class="menu-item" data-screen="shop">
-    <svg viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-13z"/></svg>
-  </div>
-</nav>
 
 <script src="app.js"></script>
 </body>
