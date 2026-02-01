@@ -28,7 +28,12 @@ body {
   overflow-y: auto;
 }
 
-.hidden { display: none; }
+.hidden {
+  display: none !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
+
 
 /* GLASS */
 .glass {
@@ -204,4 +209,8 @@ body {
 .menu-item.active {
   opacity: 1;
   transform: scale(1.15);
+}
+#screen-shop,
+#screen-leaderboard {
+  background: transparent;
 }
