@@ -13,30 +13,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ===== SCREEN SWITCH =====
   function showScreen(name) {
-    document.querySelectorAll(".screen").forEach(s => {
-      s.classList.add("hidden");
-    });
+    document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
+    document.getElementById(`screen-${name}`).classList.remove("hidden");
 
-    const target = document.getElementById(`screen-${name}`);
-    if (target) target.classList.remove("hidden");
+    document.querySelectorAll(".menu-item").forEach(i => i.classList.remove("active"));
+    document.querySelector(`.menu-item[data-screen="${name}"]`).classList.add("active");
 
-    document.querySelectorAll(".menu-item").forEach(i => {
-      i.classList.remove("active");
-    });
-
-    const activeBtn = document.querySelector(`.menu-item[data-screen="${name}"]`);
-    if (activeBtn) activeBtn.classList.add("active");
+    if (name === "leaderboard") loadLeaderboard();
   }
-
-  // ===== MENU EVENTS =====
-  document.querySelectorAll(".menu-item").forEach(item => {
-    item.addEventListener("click", () => {
-      const screen = item.dataset.screen;
-      showScreen(screen);
-
-      if (screen === "leaderboard") loadLeaderboard();
-    });
-  });
 
   // ===== UPDATE UI =====
   function updateUI(user) {
@@ -69,9 +53,23 @@ document.addEventListener("DOMContentLoaded", () => {
       ).join("");
   }
 
+  // ===== +X ANIMATION =====
+  function spawnPlus(x, y, value) {
+    const plus = document.createElement("div");
+    plus.className = "tap-plus";
+    plus.innerText = `+${value}`;
+    plus.style.left = `${x}px`;
+    plus.style.top = `${y}px`;
+
+    document.getElementById("tap-effects").appendChild(plus);
+    setTimeout(() => plus.remove(), 900);
+  }
+
   // ===== TAP =====
-  document.getElementById("coin").addEventListener("click", async () => {
+  document.getElementById("coin").addEventListener("click", async (e) => {
     if (!currentUser || currentUser.energy <= 0) return;
+
+    spawnPlus(e.clientX, e.clientY, currentUser.tap_power);
 
     const res = await fetch("/tap", {
       method: "POST",
@@ -94,6 +92,13 @@ document.addEventListener("DOMContentLoaded", () => {
         to: document.getElementById("toId").value,
         amount: Number(document.getElementById("amount").value)
       })
+    });
+  });
+
+  // ===== MENU EVENTS =====
+  document.querySelectorAll(".menu-item").forEach(item => {
+    item.addEventListener("click", () => {
+      showScreen(item.dataset.screen);
     });
   });
 

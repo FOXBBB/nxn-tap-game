@@ -160,3 +160,29 @@ button {
   opacity: 1;
   transform: scale(1.15);
 }
+/* TAP +X ANIMATION */
+#tap-effects {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.tap-plus {
+  position: absolute;
+  font-size: 20px;
+  font-weight: 600;
+  color: #00ffa2;
+  text-shadow: 0 0 12px #00ffa2;
+  animation: floatUp 0.9s ease-out forwards;
+}
+
+@keyframes floatUp {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-60px);
+  }
+}
