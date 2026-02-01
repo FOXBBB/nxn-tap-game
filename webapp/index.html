@@ -7,12 +7,45 @@
 </head>
 <body>
 
-<!-- BACKGROUND -->
 <div class="space-bg"></div>
 <div class="stars"></div>
 
-<!-- ===== TAP SCREEN ===== -->
-<section id="screen-tap" class="screen tap-screen">
+<!-- ===== LEADERBOARD ===== -->
+<section id="screen-leaderboard" class="screen hidden">
+
+  <div class="leaderboard-header">
+    <div class="lb-title">LEADERBOARD</div>
+    <div class="lb-subtitle">TOP 10 PLAYERS</div>
+  </div>
+
+  <div class="top3">
+    <div class="top-card silver">
+      <div class="rank">2</div>
+      <div class="avatar"></div>
+      <div class="name">Player</div>
+      <div class="score">0 NXN</div>
+    </div>
+
+    <div class="top-card gold">
+      <div class="rank">1</div>
+      <div class="avatar"></div>
+      <div class="name">Player</div>
+      <div class="score">0 NXN</div>
+    </div>
+
+    <div class="top-card bronze">
+      <div class="rank">3</div>
+      <div class="avatar"></div>
+      <div class="name">Player</div>
+      <div class="score">0 NXN</div>
+    </div>
+  </div>
+
+  <div id="leaderboard" class="leaderboard-list glass"></div>
+</section>
+
+<!-- ===== TAP ===== -->
+<section id="screen-tap" class="screen">
 
   <div class="logo">
     <div class="logo-main">NEXON</div>
@@ -35,44 +68,43 @@
   <div id="tap-effects"></div>
 </section>
 
-<!-- ===== LEADERBOARD SCREEN ===== -->
-<section id="screen-leaderboard" class="screen leaderboard-screen hidden">
+<!-- ===== TRANSFER ===== -->
+<section id="screen-transfer" class="screen hidden">
+  <div class="transfer-title">TRANSFER COINS BY ID</div>
 
-  <div class="leaderboard-header">
-    <div class="lb-title">LEADERBOARD</div>
-    <div class="lb-subtitle">TOP PLAYERS</div>
+  <div class="transfer-box glass">
+    <input placeholder="Recipient ID">
+    <input placeholder="Amount NXN">
+    <button>SEND</button>
   </div>
-
-  <div class="top3">
-    <div class="top-card second">
-      <div class="rank">2</div>
-      <div class="avatar"></div>
-      <div class="name">—</div>
-      <div class="score">0 NXN</div>
-    </div>
-
-    <div class="top-card first">
-      <div class="rank">1</div>
-      <div class="avatar"></div>
-      <div class="name">—</div>
-      <div class="score">0 NXN</div>
-    </div>
-
-    <div class="top-card third">
-      <div class="rank">3</div>
-      <div class="avatar"></div>
-      <div class="name">—</div>
-      <div class="score">0 NXN</div>
-    </div>
-  </div>
-
-  <div id="leaderboard" class="leaderboard-list glass"></div>
 </section>
 
-<!-- ===== BOTTOM MENU ===== -->
+<!-- ===== SHOP ===== -->
+<section id="screen-shop" class="screen hidden">
+  <div class="shop-title">SHOP</div>
+
+  <div class="shop-card glass">
+    <div class="shop-name">Upgrade Tap +1</div>
+    <div class="shop-price">10 000 NXN</div>
+  </div>
+
+  <div class="shop-card glass">
+    <div class="shop-name">Energy +100</div>
+    <div class="shop-price">20 000 NXN</div>
+  </div>
+
+  <div class="shop-card glass">
+    <div class="shop-name">Autoclicker 24/7</div>
+    <div class="shop-price">1 TON / month</div>
+  </div>
+</section>
+
+<!-- ===== MENU ===== -->
 <nav class="bottom-menu glass">
-  <div class="menu-item active" data-screen="tap">🪙</div>
   <div class="menu-item" data-screen="leaderboard">🏆</div>
+  <div class="menu-item active" data-screen="tap">🪙</div>
+  <div class="menu-item" data-screen="transfer">🔁</div>
+  <div class="menu-item" data-screen="shop">🛒</div>
 </nav>
 
 <script src="app.js"></script>

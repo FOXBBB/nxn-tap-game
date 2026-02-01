@@ -42,9 +42,7 @@ body {
   text-align: center;
 }
 
-.hidden {
-  display: none !important;
-}
+.hidden { display: none !important; }
 
 /* GLASS */
 .glass {
@@ -55,14 +53,9 @@ body {
 }
 
 /* LOGO */
-.logo {
-  margin-bottom: 14px;
-}
-
 .logo-main {
   font-size: 44px;
   font-weight: 900;
-  letter-spacing: 3px;
   background: linear-gradient(180deg, #6cf0ff, #1a6aff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -70,20 +63,13 @@ body {
 
 .logo-sub {
   font-size: 26px;
-  font-weight: 800;
-  letter-spacing: 4px;
   color: #ffcc55;
+  letter-spacing: 4px;
 }
 
 /* TAP */
-.balance-box {
+.balance-box, .energy-box {
   margin: 12px auto;
-  padding: 10px 20px;
-  width: fit-content;
-}
-
-.energy-box {
-  margin: 14px auto;
   padding: 10px 20px;
   width: fit-content;
 }
@@ -109,42 +95,22 @@ body {
 }
 
 /* TAP EFFECT */
-#tap-effects {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-}
-
 .tap-plus {
   position: absolute;
   font-size: 22px;
-  font-weight: 700;
   color: #ffcc55;
   animation: floatUp 0.9s ease-out forwards;
 }
 
 @keyframes floatUp {
-  to {
-    opacity: 0;
-    transform: translateY(-70px);
-  }
+  to { opacity: 0; transform: translateY(-70px); }
 }
 
 /* LEADERBOARD */
-.leaderboard-header {
-  margin-bottom: 18px;
-}
-
 .lb-title {
   font-size: 34px;
   font-weight: 900;
-  letter-spacing: 3px;
   color: #6cf0ff;
-}
-
-.lb-subtitle {
-  font-size: 14px;
-  color: #ffcc55;
 }
 
 .top3 {
@@ -155,15 +121,46 @@ body {
 }
 
 .top-card {
-  width: 100px;
-  padding: 12px;
-  border-radius: 16px;
-  background: rgba(255,255,255,0.06);
+  width: 110px;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.08);
 }
+
+.top-card.gold { box-shadow: 0 0 25px #ffcc55aa; }
+.top-card.silver { box-shadow: 0 0 18px #cccccc66; }
+.top-card.bronze { box-shadow: 0 0 18px #cc884466; }
 
 .leaderboard-list {
   width: 90%;
   margin: 0 auto;
+  padding: 10px;
+}
+
+/* TRANSFER */
+.transfer-title, .shop-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 20px;
+}
+
+.transfer-box input, .transfer-box button {
+  width: 80%;
+  padding: 12px;
+  margin: 8px auto;
+  border-radius: 14px;
+  border: none;
+}
+
+.transfer-box button {
+  background: linear-gradient(135deg, #00ffa2, #1eff8b);
+}
+
+/* SHOP */
+.shop-card {
+  width: 80%;
+  margin: 14px auto;
+  padding: 16px;
 }
 
 /* MENU */

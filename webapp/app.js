@@ -32,14 +32,14 @@ setInterval(() => {
   }
 }, 3000);
 
-/* EFFECT */
+/* TAP EFFECT */
 function spawnPlus(x, y, value) {
   const el = document.createElement("div");
   el.className = "tap-plus";
   el.innerText = `+${value}`;
   el.style.left = x + "px";
   el.style.top = y + "px";
-  effectsEl.appendChild(el);
+  document.body.appendChild(el);
   setTimeout(() => el.remove(), 900);
 }
 
