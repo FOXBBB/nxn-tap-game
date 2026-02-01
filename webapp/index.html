@@ -3,82 +3,123 @@
 <head>
   <meta charset="UTF-8" />
   <title>NXN Game</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- TAP SCREEN (НЕ ТРОГАЕМ) -->
-  <section id="tap-screen" class="screen active">
-    <div class="title">NEXON<br><span>NXN CLICKER</span></div>
+<div class="bg"></div>
 
-    <div class="balance-box">
-      Balance: <span id="balance">0</span>
+<!-- LEADERBOARD -->
+<section id="leaderboard" class="screen hidden">
+  <div class="lb-header">
+    <div class="lb-title">
+      <span class="trophy">🏆</span>
+      LEADERBOARD
+    </div>
+    <div class="lb-sub">TOP 10 PLAYERS</div>
+  </div>
+
+  <!-- TOP 1 -->
+  <div class="lb-top1">
+    <img class="avatar" src="https://i.pravatar.cc/120?img=12">
+    <div class="info">
+      <div class="rank gold">#1</div>
+      <div class="name">NextMoon</div>
+    </div>
+    <div class="score">79.9M</div>
+  </div>
+
+  <!-- TOP 2 / 3 -->
+  <div class="lb-top23">
+    <div class="lb-card silver">
+      <img class="avatar" src="https://i.pravatar.cc/100?img=24">
+      <div class="rank">#2</div>
+      <div class="name">DogeKing</div>
+      <div class="score">68.7M</div>
+    </div>
+    <div class="lb-card bronze">
+      <img class="avatar" src="https://i.pravatar.cc/100?img=36">
+      <div class="rank">#3</div>
+      <div class="name">AlienColonel</div>
+      <div class="score">54.3M</div>
+    </div>
+  </div>
+
+  <!-- TOP 4–10 -->
+  <div class="lb-list glass">
+    <div class="row">
+      <span>#4</span><img src="https://i.pravatar.cc/50?img=1"><b>CryptoNerd</b><i>31.4M</i>
+    </div>
+    <div class="row">
+      <span>#5</span><img src="https://i.pravatar.cc/50?img=2"><b>MemeMaster</b><i>29.1M</i>
+    </div>
+    <div class="row green">
+      <span>#6</span><img src="https://i.pravatar.cc/50?img=3"><b>NFTWhale</b><i>25.7M</i>
+    </div>
+    <div class="row">
+      <span>#7</span><img src="https://i.pravatar.cc/50?img=4"><b>LamboChad</b><i>24.3M</i>
+    </div>
+    <div class="row">
+      <span>#8</span><img src="https://i.pravatar.cc/50?img=5"><b>MoonWolf</b><i>22.7M</i>
+    </div>
+    <div class="row">
+      <span>#9</span><img src="https://i.pravatar.cc/50?img=6"><b>CryptoHodler</b><i>20.8M</i>
+    </div>
+    <div class="row">
+      <span>#10</span><img src="https://i.pravatar.cc/50?img=7"><b>ElonDoge</b><i>18.5M</i>
+    </div>
+  </div>
+</section>
+
+<!-- TAP (НЕ ТРОГАЕМ) -->
+<section id="tap" class="screen">
+  <div class="title blue">NEXON</div>
+  <div class="subtitle yellow">NXN CLICKER</div>
+
+  <div class="glass stat" id="balance">Balance: 0</div>
+
+  <div class="coin-box">
+    <img src="coin.png" id="coin">
+  </div>
+
+  <div class="glass stat" id="energy">Energy: 100 / 100</div>
+</section>
+
+<!-- TRANSFER (НЕ ТРОГАЕМ) -->
+<section id="transfer" class="screen hidden">
+  <div class="title blue">TRANSFER COINS</div>
+  <div class="subtitle yellow">BY ID</div>
+
+  <div class="glass transfer-box">
+    <label>Recipient ID</label>
+    <input value="12345">
+
+    <label>Amount</label>
+    <div class="row">
+      <input value="67 NXN">
+      <button id="max">MAX</button>
     </div>
 
-    <div class="coin-container">
-      <img src="coin.png" id="coin" />
-      <div id="plus-one" class="plus-one">+1</div>
-    </div>
-  </section>
+    <button id="send">SEND</button>
+    <p>Enter ID and amount to send coins</p>
+  </div>
 
-  <!-- LEADERBOARD (НЕ ТРОГАЕМ) -->
-  <section id="leaderboard-screen" class="screen">
-    <div class="lb-title">LEADERBOARD<br><span>TOP 10 PLAYERS</span></div>
+  <img src="transfer.png" class="transfer-img">
+</section>
 
-    <div class="top3">
-      <div class="card silver">#2<br>Player68<br>54 NXN</div>
-      <div class="card gold">#1<br>Player79<br>79 NXN</div>
-      <div class="card bronze">#3<br>Player54<br>31 NXN</div>
-    </div>
+<!-- SHOP (ПОКА НЕ ТРОГАЕМ) -->
+<section id="shop" class="screen hidden">
+  <div class="title blue">SHOP</div>
+</section>
 
-    <div class="lb-list">
-      <div>#4 Player — 44 NXN</div>
-      <div>#5 Player — 33 NXN</div>
-      <div>#6 Player — 22 NXN</div>
-      <div>#7 Player — 18 NXN</div>
-      <div>#8 Player — 14 NXN</div>
-      <div>#9 Player — 9 NXN</div>
-      <div>#10 Player — 5 NXN</div>
-    </div>
-  </section>
+<!-- MENU -->
+<nav class="menu glass">
+  <div data-go="leaderboard">🏆</div>
+  <div data-go="tap" class="active">🪙</div>
+  <div data-go="transfer">🔁</div>
+  <div data-go="shop">🛒</div>
+</nav>
 
-  <!-- TRANSFER (ВОЗВРАЩЕНО КАК БЫЛО) -->
-  <section id="transfer-screen" class="screen">
-    <div class="transfer-title">
-      TRANSFER COINS<br><span>BY ID</span>
-    </div>
-
-    <div class="transfer-card">
-      <label>Recipient ID</label>
-      <input type="text" placeholder="12345" />
-
-      <label>Amount</label>
-      <div class="amount-row">
-        <input type="text" placeholder="67 NXN" />
-        <button class="max-btn">MAX</button>
-      </div>
-
-      <button class="send-btn">SEND</button>
-      <p class="hint">Enter ID and amount to send coins</p>
-    </div>
-
-    <img src="transfer.png" class="transfer-image" />
-  </section>
-
-  <!-- SHOP (ПОКА НЕ ТРОГАЕМ) -->
-  <section id="shop-screen" class="screen">
-    <div class="shop-title">SHOP</div>
-  </section>
-
-  <!-- BOTTOM MENU -->
-  <nav class="bottom-menu">
-    <button onclick="showScreen('leaderboard-screen')">🏆</button>
-    <button onclick="showScreen('tap-screen')">●</button>
-    <button onclick="showScreen('transfer-screen')">🔄</button>
-    <button onclick="showScreen('shop-screen')">🛒</button>
-  </nav>
-
-  <script src="app.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
