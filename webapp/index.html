@@ -41,28 +41,59 @@
 
 <!-- TRANSFER -->
 <section id="screen-transfer" class="screen hidden">
-  <div class="title-gradient">TRANSFER</div>
-  <div class="subtitle">BY ID</div>
+
+  <div class="transfer-header">
+    <div class="transfer-title">TRANSFER COINS</div>
+    <div class="transfer-subtitle">BY ID</div>
+  </div>
 
   <div class="transfer-card glass">
-    <input placeholder="Recipient ID">
-    <input placeholder="Amount NXN">
-    <button class="btn">SEND</button>
+
+    <label>Recipient ID</label>
+    <input value="123456">
+
+    <label>Amount</label>
+    <div class="amount-row">
+      <input value="67 NXN">
+      <button class="max-btn">MAX</button>
+    </div>
+
+    <button class="send-btn">SEND</button>
+
+    <div class="transfer-hint">
+      Enter ID and amount to send coins to another player.
+    </div>
+
   </div>
+
 </section>
 
 <!-- SHOP -->
 <section id="screen-shop" class="screen hidden">
   <div class="title-gradient">SHOP</div>
 
-  <div class="shop-card glass">
-    <div>Upgrade Tap +1</div>
-    <button class="btn">BUY</button>
+  <div class="shop-item glass">
+    <div>
+      <div class="shop-title">Upgrade Tap +2</div>
+      <div class="shop-price">0.2 TON</div>
+    </div>
+    <img src="coin.png" class="shop-img">
   </div>
 
-  <div class="shop-card glass">
-    <div>Energy +100</div>
-    <button class="btn">BUY</button>
+  <div class="shop-item glass green">
+    <div>
+      <div class="shop-title">Energy 200</div>
+      <div class="shop-price">0.2 TON</div>
+    </div>
+    <img src="coin.png" class="shop-img">
+  </div>
+
+  <div class="shop-item glass orange">
+    <div>
+      <div class="shop-title">Autoclicker 24/7</div>
+      <div class="shop-price">2 TON</div>
+    </div>
+    <img src="coin.png" class="shop-img">
   </div>
 </section>
 
