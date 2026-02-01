@@ -9,15 +9,14 @@ const balanceEl = document.getElementById("balance");
 const energyEl = document.getElementById("energy");
 const coinEl = document.getElementById("coin");
 
-/* SAVE */
-function saveUser() {
+function save() {
   localStorage.setItem("nxn_user", JSON.stringify(user));
 }
 
 function updateUI() {
   balanceEl.innerText = `Balance: ${user.balance}`;
   energyEl.innerText = `Energy: ${user.energy} / ${user.maxEnergy}`;
-  saveUser();
+  save();
 }
 
 /* TAP */
@@ -37,26 +36,25 @@ setInterval(() => {
 }, 3000);
 
 /* LEADERBOARD DEMO */
-const leaderboard = document.getElementById("leaderboard-list");
-if (leaderboard) {
+const list = document.getElementById("leaderboard-list");
+if (list) {
   for (let i = 4; i <= 10; i++) {
     const row = document.createElement("div");
     row.className = "lb-row";
-    row.innerHTML = `<span>#${i}</span><span>Player ${i}</span><span>${Math.floor(Math.random()*50000)} NXN</span>`;
-    leaderboard.appendChild(row);
+    row.innerHTML = `<span>#${i}</span><span>Player ${i}</span><span>${i*10} NXN</span>`;
+    list.appendChild(row);
   }
 }
 
 /* MENU */
 document.querySelectorAll(".menu-item").forEach(item => {
-  item.addEventListener("click", () => {
-    const screen = item.dataset.screen;
+  item.onclick = () => {
     document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
-    document.getElementById(`screen-${screen}`).classList.remove("hidden");
+    document.getElementById(`screen-${item.dataset.screen}`).classList.remove("hidden");
 
     document.querySelectorAll(".menu-item").forEach(i => i.classList.remove("active"));
     item.classList.add("active");
-  });
+  };
 });
 
 updateUI();

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>NEXON NXN CLICKER</title>
+  <title>NXN Game</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -10,89 +10,63 @@
 <div class="space-bg"></div>
 <div class="stars"></div>
 
-<!-- ===== LEADERBOARD ===== -->
+<!-- LEADERBOARD -->
 <section id="screen-leaderboard" class="screen hidden">
-
-  <div class="title-3d blue">LEADERBOARD</div>
-  <div class="subtitle gold">TOP 10 PLAYERS</div>
+  <div class="title-gradient">LEADERBOARD</div>
+  <div class="subtitle">TOP 10 PLAYERS</div>
 
   <div class="top3">
-    <div class="top-card silver">
-      <div class="rank">2</div>
-      <div class="name">Player #2</div>
-      <div class="score">54 000 NXN</div>
-    </div>
-
-    <div class="top-card gold">
-      <div class="rank">1</div>
-      <div class="name">Player #1</div>
-      <div class="score">79 000 NXN</div>
-    </div>
-
-    <div class="top-card bronze">
-      <div class="rank">3</div>
-      <div class="name">Player #3</div>
-      <div class="score">31 000 NXN</div>
-    </div>
+    <div class="top-card silver">#2<br>Player<br>54 NXN</div>
+    <div class="top-card gold">#1<br>Player<br>79 NXN</div>
+    <div class="top-card bronze">#3<br>Player<br>31 NXN</div>
   </div>
 
-  <div class="leaderboard-list glass" id="leaderboard-list">
-    <!-- rows injected -->
-  </div>
+  <div class="leaderboard-list glass" id="leaderboard-list"></div>
 </section>
 
-<!-- ===== TAP ===== -->
+<!-- TAP -->
 <section id="screen-tap" class="screen">
+  <div class="title-gradient">NXN GAME</div>
+  <div class="subtitle">NXN CLICKER</div>
 
-  <div class="title-3d blue">NEXON</div>
-  <div class="subtitle gold">NXN CLICKER</div>
-
-  <div class="glass info-box" id="balance">Balance: 0</div>
+  <div class="glass info" id="balance">Balance: 0</div>
 
   <div class="coin-wrapper">
     <img src="coin.png" id="coin" class="coin">
     <div class="coin-glow"></div>
   </div>
 
-  <div class="glass info-box" id="energy">Energy: 0 / 0</div>
+  <div class="glass info" id="energy">Energy: 100 / 100</div>
 </section>
 
-<!-- ===== TRANSFER ===== -->
+<!-- TRANSFER -->
 <section id="screen-transfer" class="screen hidden">
-  <div class="title-3d blue">TRANSFER</div>
-  <div class="subtitle gold">BY ID</div>
+  <div class="title-gradient">TRANSFER</div>
+  <div class="subtitle">BY ID</div>
 
-  <div class="glass form-box">
+  <div class="transfer-card glass">
     <input placeholder="Recipient ID">
     <input placeholder="Amount NXN">
-    <button class="btn-green">SEND</button>
+    <button class="btn">SEND</button>
   </div>
 </section>
 
-<!-- ===== SHOP ===== -->
+<!-- SHOP -->
 <section id="screen-shop" class="screen hidden">
-  <div class="title-3d blue">SHOP</div>
+  <div class="title-gradient">SHOP</div>
 
   <div class="shop-card glass">
-    <div class="shop-name">Upgrade Tap +1</div>
-    <div class="shop-price">10 000 NXN</div>
-    <button class="btn-green">BUY</button>
+    <div>Upgrade Tap +1</div>
+    <button class="btn">BUY</button>
   </div>
 
   <div class="shop-card glass">
-    <div class="shop-name">Energy +100</div>
-    <div class="shop-price">20 000 NXN</div>
-    <button class="btn-green">BUY</button>
-  </div>
-
-  <div class="shop-card glass">
-    <div class="shop-name">Autoclicker 24/7</div>
-    <div class="shop-price">1 TON / month</div>
-    <button class="btn-green">BUY</button>
+    <div>Energy +100</div>
+    <button class="btn">BUY</button>
   </div>
 </section>
 
-<!-- ===== MENU ===== -->
+<!-- MENU -->
 <nav class="bottom-menu glass">
   <div class="menu-item" data-screen="leaderboard">🏆</div>
   <div class="menu-item active" data-screen="tap">🪙</div>
