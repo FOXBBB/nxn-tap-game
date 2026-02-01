@@ -248,3 +248,62 @@ body {
     0 2px 0 #009944,
     0 6px 12px rgba(0, 255, 136, 0.3);
 }
+/* ===== SHOP (STYLE LIKE TRANSFER) ===== */
+
+.shop-card {
+  width: 85%;
+  margin: 14px auto;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 18px;
+}
+
+.shop-info {
+  text-align: left;
+}
+
+.shop-name {
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.shop-desc {
+  font-size: 14px;
+  opacity: 0.7;
+  margin-top: 4px;
+}
+
+.shop-buy {
+  min-width: 120px;
+  padding: 12px 16px;
+  border-radius: 999px;
+  border: none;
+  font-size: 14px;
+  font-weight: 900;
+  cursor: pointer;
+  color: #0b2e1a;
+}
+
+.shop-buy.green {
+  background: linear-gradient(180deg, #3dff8e, #00c853);
+  box-shadow: 0 4px 0 #009944;
+}
+
+.shop-buy.blue {
+  background: linear-gradient(180deg, #6cf0ff, #1a6aff);
+  box-shadow: 0 4px 0 #0d47a1;
+  color: #041b2d;
+}
+
+.shop-buy.purple {
+  background: linear-gradient(180deg, #c77dff, #7b2cff);
+  box-shadow: 0 4px 0 #4a148c;
+  color: #1b0033;
+}
+
+.shop-buy:active {
+  transform: translateY(3px);
+  box-shadow: none;
+}
