@@ -9,21 +9,62 @@
 
 <div class="bg"></div>
 
-<div id="screen-tap" class="screen">
-  <div class="header">NXN TOKEN</div>
+<!-- LEADERBOARD -->
+<section id="screen-leaderboard" class="screen hidden">
+  <h2 class="title">Leaderboard</h2>
+  <div id="leaderboard" class="list"></div>
+</section>
 
-  <div id="stats">Loading...</div>
+<!-- TAP -->
+<section id="screen-tap" class="screen">
+  <div class="header">
+    <span class="brand">NXN TOKEN</span>
+  </div>
+
+  <div id="stats" class="stats">Loading...</div>
 
   <div class="coin-zone">
     <img src="coin.png" class="coin" id="coin">
   </div>
 
-  <div class="transfer-box">
-    <input id="toId" placeholder="User ID">
+  <div class="transfer-box glass">
+    <input id="toId" placeholder="Recipient ID">
     <input id="amount" placeholder="Amount">
-    <button id="sendBtn">Send</button>
+    <button id="sendBtn">Transfer</button>
   </div>
-</div>
+</section>
+
+<!-- SHOP -->
+<section id="screen-shop" class="screen hidden">
+  <h2 class="title">Shop</h2>
+
+  <div class="card glass">
+    <div class="card-title">Tap Power</div>
+    <div class="card-desc">Increase tap reward permanently</div>
+    <button onclick="buy('tap1')">+1 Tap · 10 000 NXN</button>
+  </div>
+
+  <div class="card glass">
+    <div class="card-title">Energy Capacity</div>
+    <div class="card-desc">Increase max energy permanently</div>
+    <button onclick="buy('energy100')">+100 Energy · 20 000 NXN</button>
+  </div>
+</section>
+
+<!-- BOTTOM MENU -->
+<nav class="bottom-menu glass">
+  <div class="menu-item" onclick="showScreen('leaderboard')">
+    <svg viewBox="0 0 24 24"><path d="M4 21h4V10H4v11zm6 0h4V3h-4v18zm6 0h4V14h-4v7z"/></svg>
+  </div>
+
+  <div class="menu-item active" onclick="showScreen('tap')">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/></svg>
+  </div>
+
+  <div class="menu-item" onclick="showScreen('shop')">
+    <svg viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-13z"/></svg>
+  </div>
+</nav>
 
 <script src="app.js"></script>
 </body>

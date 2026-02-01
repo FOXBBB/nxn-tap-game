@@ -1,7 +1,12 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   font-family: Inter, Arial, sans-serif;
   color: #eafff5;
+  background: #050810;
   overflow: hidden;
 }
 
@@ -10,31 +15,50 @@ body {
   position: fixed;
   inset: 0;
   background:
-    radial-gradient(circle at top, #00ffa233, transparent 40%),
+    radial-gradient(circle at top, #00ffa220, transparent 40%),
     linear-gradient(180deg, #04070f, #0a1024);
   z-index: -1;
 }
 
 /* SCREENS */
 .screen {
-  height: calc(100vh - 80px);
-  padding: 20px;
+  height: calc(100vh - 90px);
+  padding: 24px;
   text-align: center;
+  overflow-y: auto;
 }
 
 .hidden { display: none; }
 
+/* GLASS */
+.glass {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(10px);
+  border-radius: 14px;
+}
+
 /* HEADER */
 .header {
-  font-size: 22px;
+  margin-bottom: 12px;
+}
+
+.brand {
+  font-size: 18px;
   letter-spacing: 4px;
+  opacity: 0.85;
+}
+
+/* STATS */
+.stats {
+  font-size: 14px;
+  opacity: 0.85;
   margin-bottom: 10px;
-  opacity: 0.8;
 }
 
 /* COIN */
 .coin-zone {
-  margin-top: 30px;
+  margin: 28px 0;
 }
 
 .coin {
@@ -42,76 +66,97 @@ body {
   height: 240px;
   cursor: pointer;
   transition: transform 0.1s;
-  filter: drop-shadow(0 0 40px #00ffa255);
+  filter: drop-shadow(0 0 40px #00ffa233);
 }
 
 .coin:active {
-  transform: scale(0.93);
-}
-
-/* FLOATING +1 */
-#floaters {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-.floater {
-  position: absolute;
-  color: #00ffa2;
-  font-size: 20px;
-  animation: floatUp 0.8s ease-out forwards;
-}
-
-@keyframes floatUp {
-  from { opacity: 1; transform: translateY(0); }
-  to { opacity: 0; transform: translateY(-60px); }
-}
-
-/* STATS */
-#stats {
-  font-size: 15px;
-  opacity: 0.9;
+  transform: scale(0.94);
 }
 
 /* TRANSFER */
-.transfer-box input {
-  display: block;
-  margin: 8px auto;
-  padding: 10px;
-  width: 80%;
-  background: #0d1428;
-  border: 1px solid #00ffa244;
-  color: #00ffa2;
+.transfer-box {
+  padding: 16px;
+  margin-top: 20px;
 }
 
-.transfer-box button {
-  padding: 10px 20px;
-  margin-top: 6px;
+input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 10px;
+  background: transparent;
+  border: 1px solid rgba(0,255,162,0.25);
+  color: #00ffa2;
+  border-radius: 10px;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
   background: linear-gradient(135deg, #00ffa2, #2affc9);
   border: none;
-  font-weight: bold;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* TITLES */
+.title {
+  font-size: 22px;
+  margin-bottom: 16px;
+}
+
+/* SHOP */
+.card {
+  padding: 18px;
+  margin-bottom: 16px;
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.card-desc {
+  font-size: 13px;
+  opacity: 0.7;
+  margin: 6px 0 12px;
+}
+
+/* LEADERBOARD */
+.list div {
+  padding: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  font-size: 14px;
 }
 
 /* BOTTOM MENU */
 .bottom-menu {
   position: fixed;
   bottom: 0;
-  height: 80px;
   width: 100%;
-  background: rgba(10,16,36,0.9);
+  height: 90px;
   display: flex;
   justify-content: space-around;
   align-items: center;
-  backdrop-filter: blur(10px);
 }
 
-.bottom-menu img {
-  width: 28px;
+.menu-item {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   opacity: 0.4;
+  cursor: pointer;
 }
 
-.bottom-menu .active img {
+.menu-item svg {
+  width: 26px;
+  height: 26px;
+  fill: #00ffa2;
+}
+
+.menu-item.active {
   opacity: 1;
-  transform: scale(1.2);
+  transform: scale(1.15);
 }
