@@ -31,8 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id: userId })
     });
-    const user = await res.json();
-    updateUI(user);
+    updateUI(await res.json());
   }
 
   async function loadLeaderboard() {
@@ -65,8 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
       body: JSON.stringify({ id: userId })
     });
 
-    const user = await res.json();
-    updateUI(user);
+    updateUI(await res.json());
     loadLeaderboard();
   });
 

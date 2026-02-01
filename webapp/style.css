@@ -4,7 +4,7 @@ body {
   margin: 0;
   font-family: Inter, Arial, sans-serif;
   color: #eafff5;
-  background: #050810;
+  background: #020407;
   overflow: hidden;
 }
 
@@ -13,13 +13,16 @@ body {
   position: fixed;
   inset: 0;
   background:
-    radial-gradient(circle at top, #00ffa220, transparent 40%),
-    linear-gradient(180deg, #04070f, #0a1024);
-  z-index: -1;
+    radial-gradient(circle at 20% 10%, #00ff9930, transparent 45%),
+    radial-gradient(circle at 80% 80%, #00cc7740, transparent 50%),
+    linear-gradient(180deg, #020407, #07130d);
+  z-index: 0;
 }
 
 /* SCREENS */
 .screen {
+  position: relative;
+  z-index: 1;
   height: calc(100vh - 90px);
   padding: 20px;
   overflow-y: auto;
@@ -29,9 +32,9 @@ body {
 
 /* GLASS */
 .glass {
-  background: rgba(255,255,255,0.05);
+  background: rgba(255,255,255,0.04);
   border: 1px solid rgba(255,255,255,0.08);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px);
   border-radius: 18px;
 }
 
@@ -44,25 +47,39 @@ body {
 
 /* BRAND */
 .brand-banner {
-  margin-top: 10px;
-  padding: 10px 28px;
+  margin-top: 8px;
+  padding: 10px 30px;
   border-radius: 30px;
-  background: linear-gradient(135deg, #00ffa2, #2affc9);
-  color: #04110b;
-  font-weight: 700;
+  background: linear-gradient(135deg, #00ffa2, #1eff8b);
+  color: #02150d;
+  font-weight: 800;
   letter-spacing: 3px;
+  z-index: 2;
 }
 
-/* BALANCE */
+/* STATS */
+.stats-block {
+  margin-top: 18px;
+  padding: 12px 22px;
+  text-align: center;
+  z-index: 2;
+}
+
 .balance {
-  margin-top: 22px;
-  padding: 10px 20px;
   font-size: 15px;
+  font-weight: 600;
+}
+
+.energy {
+  font-size: 13px;
+  opacity: 0.85;
+  margin-top: 4px;
 }
 
 /* COIN */
 .coin-zone {
-  margin: 28px 0;
+  margin: 30px 0 20px;
+  z-index: 3;
 }
 
 .coin {
@@ -70,24 +87,20 @@ body {
   height: 240px;
   cursor: pointer;
   transition: transform 0.1s;
-  filter: drop-shadow(0 0 40px #00ffa233);
+  filter: drop-shadow(0 0 45px #00ff9955);
+  pointer-events: auto;
 }
 
-.coin:active { transform: scale(0.94); }
-
-/* ENERGY */
-.energy {
-  margin-top: 10px;
-  padding: 8px 18px;
-  font-size: 14px;
-  opacity: 0.85;
+.coin:active {
+  transform: scale(0.94);
 }
 
 /* TAP EFFECT */
 #tap-effects {
-  position: absolute;
+  position: fixed;
   inset: 0;
   pointer-events: none;
+  z-index: 4;
 }
 
 .tap-plus {
@@ -95,7 +108,7 @@ body {
   font-size: 20px;
   font-weight: 600;
   color: #00ffa2;
-  text-shadow: 0 0 12px #00ffa2;
+  text-shadow: 0 0 14px #00ffa2;
   animation: floatUp 0.9s ease-out forwards;
 }
 
@@ -107,28 +120,37 @@ body {
 /* TRANSFER */
 .transfer-box {
   position: fixed;
-  bottom: 110px;
-  width: calc(100% - 40px);
-  padding: 14px;
+  bottom: 104px;
+  left: 20px;
+  right: 20px;
+  padding: 12px;
+  z-index: 2;
+}
+
+.transfer-box input,
+.transfer-box button {
+  pointer-events: auto;
 }
 
 .transfer-box input {
   width: 100%;
-  padding: 10px;
-  margin-bottom: 8px;
+  padding: 9px;
+  margin-bottom: 6px;
   background: transparent;
   border: 1px solid rgba(0,255,162,0.25);
   color: #00ffa2;
   border-radius: 12px;
+  font-size: 13px;
 }
 
 .transfer-box button {
   width: 100%;
-  padding: 10px;
-  background: linear-gradient(135deg, #00ffa2, #2affc9);
+  padding: 9px;
+  background: linear-gradient(135deg, #00ffa2, #1eff8b);
   border: none;
   border-radius: 14px;
   font-weight: 600;
+  font-size: 13px;
 }
 
 /* TITLES */
@@ -143,17 +165,6 @@ body {
   margin-bottom: 16px;
 }
 
-.card-title {
-  font-size: 16px;
-  font-weight: 600;
-}
-
-.card-desc {
-  font-size: 13px;
-  opacity: 0.7;
-  margin: 6px 0 12px;
-}
-
 /* LEADERBOARD */
 .list div {
   padding: 12px;
@@ -161,7 +172,7 @@ body {
   font-size: 14px;
 }
 
-/* BOTTOM MENU */
+/* BOTTOM MENU — ВСЕГДА СВЕРХУ */
 .bottom-menu {
   position: fixed;
   bottom: 0;
@@ -170,6 +181,7 @@ body {
   display: flex;
   justify-content: space-around;
   align-items: center;
+  z-index: 999;
 }
 
 .menu-item {
