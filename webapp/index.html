@@ -7,18 +7,10 @@
 </head>
 <body>
 
-<!-- BACKGROUND -->
 <div class="space-bg"></div>
 <div class="stars"></div>
 
-<!-- TAP SCREEN -->
 <section id="screen-tap" class="tap-screen">
-
-  <!-- TOP BAR -->
-  <div class="top-bar glass">
-    <div id="balance">Balance: 0</div>
-    <div id="energy">Energy: 0 / 0</div>
-  </div>
 
   <!-- LOGO -->
   <div class="logo">
@@ -26,10 +18,20 @@
     <div class="logo-sub">NXN CLICKER</div>
   </div>
 
+  <!-- BALANCE (ABOVE COIN) -->
+  <div class="balance-box glass">
+    <span id="balance">Balance: 0</span>
+  </div>
+
   <!-- COIN -->
   <div class="coin-wrapper">
     <img src="coin.png" id="coin" class="coin">
     <div class="coin-glow"></div>
+  </div>
+
+  <!-- ENERGY (BELOW COIN) -->
+  <div class="energy-box glass">
+    <span id="energy">Energy: 0 / 0</span>
   </div>
 
   <!-- TAP EFFECTS -->

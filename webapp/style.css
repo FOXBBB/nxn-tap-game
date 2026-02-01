@@ -154,3 +154,17 @@ body {
     transform: translateY(-70px);
   }
 }
+.balance-box {
+  margin-bottom: 14px;
+  padding: 10px 22px;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.energy-box {
+  margin-top: 16px;
+  padding: 10px 22px;
+  font-weight: 600;
+  font-size: 14px;
+  opacity: 0.9;
+}
