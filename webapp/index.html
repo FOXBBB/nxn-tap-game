@@ -7,18 +7,31 @@
 </head>
 <body>
 
-<h1>NXN TAP</h1>
-<div id="stats">Loading...</div>
-<button onclick="tap()">TAP</button>
+<div class="container">
 
-<h3>Shop</h3>
-<button onclick="buy('tap1')">+1 Tap (10000 NXN)</button>
-<button onclick="buy('energy100')">+100 Energy (20000 NXN)</button>
+  <div class="panel left">
+    <h3>🏆 Leaderboard</h3>
+    <div id="leaderboard"></div>
+  </div>
 
-<h3>Transfer</h3>
-<input id="toId" placeholder="User ID">
-<input id="amount" placeholder="Amount">
-<button onclick="transfer()">Send</button>
+  <div class="panel center">
+    <h1>NXN TAP</h1>
+    <div id="stats">Loading...</div>
+    <button class="tap" onclick="tap()">TAP</button>
+
+    <h4>Transfer</h4>
+    <input id="toId" placeholder="User ID">
+    <input id="amount" placeholder="Amount">
+    <button onclick="transfer()">Send</button>
+  </div>
+
+  <div class="panel right">
+    <h3>🛒 Shop</h3>
+    <button onclick="buy('tap1')">+1 Tap (10000 NXN)</button>
+    <button onclick="buy('energy100')">+100 Energy (20000 NXN)</button>
+  </div>
+
+</div>
 
 <script src="app.js"></script>
 </body>

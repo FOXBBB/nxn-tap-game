@@ -6,6 +6,8 @@ db.serialize(() => {
   db.run(`
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY,
+      nickname TEXT DEFAULT 'Player',
+      avatar TEXT DEFAULT '',
       balance INTEGER DEFAULT 0,
       energy INTEGER DEFAULT 100,
       max_energy INTEGER DEFAULT 100,

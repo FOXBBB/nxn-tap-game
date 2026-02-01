@@ -55,6 +55,14 @@ export function routes(app) {
     });
   });
 
+  app.get("/leaderboard", (_, res) => {
+    db.all(
+      "SELECT id, nickname, avatar, balance FROM users ORDER BY balance DESC LIMIT 10",
+      [],
+      (_, rows) => res.json(rows)
+    );
+  });
+
   app.post("/upgrade", (req, res) => {
     const { id, type } = req.body;
 
@@ -71,9 +79,7 @@ export function routes(app) {
         return res.status(400).json({ error: "no balance" });
 
       db.run(
-        `UPDATE users 
-         SET balance=balance-?, ${up.field}=${up.field}+?
-         WHERE id=?`,
+        `UPDATE users SET balance=balance-?, ${up.field}=${up.field}+? WHERE id=?`,
         [up.cost, up.value, id],
         () => res.json({ ok: true })
       );
