@@ -1,60 +1,45 @@
-let user = JSON.parse(localStorage.getItem("nxn_user")) || {
-  balance: 0,
-  energy: 100,
-  maxEnergy: 100,
-  tapPower: 1
-};
+let balance = 0;
+let energy = 100;
+const maxEnergy = 100;
 
-const balanceEl = document.getElementById("balance");
-const energyEl = document.getElementById("energy");
-const coinEl = document.getElementById("coin");
+const screens = ["leaderboard", "tap", "transfer", "shop"];
 
-function save() {
-  localStorage.setItem("nxn_user", JSON.stringify(user));
-}
-
-function updateUI() {
-  balanceEl.innerText = `Balance: ${user.balance}`;
-  energyEl.innerText = `Energy: ${user.energy} / ${user.maxEnergy}`;
-  save();
-}
-
-/* TAP */
-coinEl.addEventListener("click", () => {
-  if (user.energy <= 0) return;
-  user.energy--;
-  user.balance += user.tapPower;
-  updateUI();
-});
-
-/* ENERGY REGEN */
-setInterval(() => {
-  if (user.energy < user.maxEnergy) {
-    user.energy++;
-    updateUI();
-  }
-}, 3000);
-
-/* LEADERBOARD DEMO */
-const list = document.getElementById("leaderboard-list");
-if (list) {
-  for (let i = 4; i <= 10; i++) {
-    const row = document.createElement("div");
-    row.className = "lb-row";
-    row.innerHTML = `<span>#${i}</span><span>Player ${i}</span><span>${i*10} NXN</span>`;
-    list.appendChild(row);
-  }
-}
-
-/* MENU */
-document.querySelectorAll(".menu-item").forEach(item => {
-  item.onclick = () => {
-    document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
-    document.getElementById(`screen-${item.dataset.screen}`).classList.remove("hidden");
-
-    document.querySelectorAll(".menu-item").forEach(i => i.classList.remove("active"));
-    item.classList.add("active");
+document.querySelectorAll(".menu div").forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll(".menu div").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    screens.forEach(s => document.getElementById(s).classList.add("hidden"));
+    document.getElementById(btn.dataset.go).classList.remove("hidden");
   };
 });
 
-updateUI();
+const coin = document.getElementById("coin");
+const bal = document.getElementById("balance");
+const eng = document.getElementById("energy");
+
+coin.onclick = () => {
+  if (energy <= 0) return;
+  balance += 1;
+  energy -= 1;
+  bal.innerText = "Balance: " + balance;
+  eng.innerText = `Energy: ${energy} / ${maxEnergy}`;
+};
+
+setInterval(() => {
+  if (energy < maxEnergy) {
+    energy++;
+    eng.innerText = `Energy: ${energy} / ${maxEnergy}`;
+  }
+}, 3000);
+
+document.getElementById("max").onclick = () => {
+  document.getElementById("amount").value = balance + " NXN";
+};
+
+document.getElementById("send").onclick = () => {
+  alert("Transfer sent (UI demo)");
+};
+
+document.querySelectorAll(".shop-item").forEach(i => {
+  i.onclick = () => alert("Purchase (UI demo)");
+});

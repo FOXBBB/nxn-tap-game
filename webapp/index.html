@@ -7,102 +7,101 @@
 </head>
 <body>
 
-<div class="space-bg"></div>
-<div class="stars"></div>
+<div class="bg"></div>
 
 <!-- LEADERBOARD -->
-<section id="screen-leaderboard" class="screen hidden">
-  <div class="title-gradient">LEADERBOARD</div>
+<section id="leaderboard" class="screen hidden">
+  <div class="title blue">LEADERBOARD</div>
   <div class="subtitle">TOP 10 PLAYERS</div>
 
   <div class="top3">
-    <div class="top-card silver">#2<br>Player<br>54 NXN</div>
-    <div class="top-card gold">#1<br>Player<br>79 NXN</div>
-    <div class="top-card bronze">#3<br>Player<br>31 NXN</div>
+    <div class="top-card silver">2<br><span>Player</span><b>68 NXN</b></div>
+    <div class="top-card gold">1<br><span>Player</span><b>79 NXN</b></div>
+    <div class="top-card bronze">3<br><span>Player</span><b>54 NXN</b></div>
   </div>
 
-  <div class="leaderboard-list glass" id="leaderboard-list"></div>
+  <div class="list glass">
+    <div>#4 Player — 44 NXN</div>
+    <div>#5 Player — 33 NXN</div>
+    <div>#6 Player — 22 NXN</div>
+    <div>#7 Player — 18 NXN</div>
+    <div>#8 Player — 14 NXN</div>
+    <div>#9 Player — 9 NXN</div>
+    <div>#10 Player — 5 NXN</div>
+  </div>
 </section>
 
 <!-- TAP -->
-<section id="screen-tap" class="screen">
-  <div class="title-gradient">NXN GAME</div>
-  <div class="subtitle">NXN CLICKER</div>
+<section id="tap" class="screen">
+  <div class="title blue">NEXON</div>
+  <div class="subtitle yellow">NXN CLICKER</div>
 
-  <div class="glass info" id="balance">Balance: 0</div>
+  <div class="glass stat" id="balance">Balance: 0</div>
 
-  <div class="coin-wrapper">
-    <img src="coin.png" id="coin" class="coin">
-    <div class="coin-glow"></div>
+  <div class="coin-box">
+    <img src="coin.png" id="coin">
   </div>
 
-  <div class="glass info" id="energy">Energy: 100 / 100</div>
+  <div class="glass stat" id="energy">Energy: 100 / 100</div>
 </section>
 
 <!-- TRANSFER -->
-<section id="screen-transfer" class="screen hidden">
+<section id="transfer" class="screen hidden">
+  <div class="title blue">TRANSFER COINS</div>
+  <div class="subtitle yellow">BY ID</div>
 
-  <div class="transfer-header">
-    <div class="transfer-title">TRANSFER COINS</div>
-    <div class="transfer-subtitle">BY ID</div>
-  </div>
-
-  <div class="transfer-card glass">
-
+  <div class="glass transfer-box">
     <label>Recipient ID</label>
-    <input value="123456">
+    <input id="toId" value="12345">
 
     <label>Amount</label>
-    <div class="amount-row">
-      <input value="67 NXN">
-      <button class="max-btn">MAX</button>
+    <div class="row">
+      <input id="amount" value="67 NXN">
+      <button id="max">MAX</button>
     </div>
 
-    <button class="send-btn">SEND</button>
-
-    <div class="transfer-hint">
-      Enter ID and amount to send coins to another player.
-    </div>
-
+    <button id="send">SEND</button>
+    <p>Enter ID and amount to send coins</p>
   </div>
 
+  <img src="transfer.png" class="transfer-img">
 </section>
 
 <!-- SHOP -->
-<section id="screen-shop" class="screen hidden">
-  <div class="title-gradient">SHOP</div>
+<section id="shop" class="screen hidden">
+  <div class="title blue">SHOP</div>
 
-  <div class="shop-item glass">
+  <div class="shop-item glass clickable">
     <div>
-      <div class="shop-title">Upgrade Tap +2</div>
-      <div class="shop-price">0.2 TON</div>
+      <b>Upgrade Tap +2</b>
+      <span>0.2 TON</span>
     </div>
-    <img src="coin.png" class="shop-img">
+    <img src="coin.png">
   </div>
 
-  <div class="shop-item glass green">
+  <div class="shop-item glass clickable green">
     <div>
-      <div class="shop-title">Energy 200</div>
-      <div class="shop-price">0.2 TON</div>
+      <b>Energy 200</b>
+      <span>0.2 TON</span>
     </div>
-    <img src="coin.png" class="shop-img">
+    <img src="coin.png">
   </div>
 
-  <div class="shop-item glass orange">
+  <div class="shop-item glass clickable orange">
     <div>
-      <div class="shop-title">Autoclicker 24/7</div>
-      <div class="shop-price">2 TON</div>
+      <b>Autoclicker 24/7</b>
+      <span>2 TON</span>
     </div>
-    <img src="coin.png" class="shop-img">
+    <img src="coin.png">
   </div>
 </section>
 
 <!-- MENU -->
-<nav class="bottom-menu glass">
-  <div class="menu-item" data-screen="leaderboard">🏆</div>
-  <div class="menu-item active" data-screen="tap">🪙</div>
-  <div class="menu-item" data-screen="transfer">🔁</div>
-  <div class="menu-item" data-screen="shop">🛒</div>
+<nav class="menu glass">
+  <div data-go="leaderboard">🏆</div>
+  <div data-go="tap" class="active">🪙</div>
+  <div data-go="transfer">🔁</div>
+  <div data-go="shop">🛒</div>
 </nav>
 
 <script src="app.js"></script>
