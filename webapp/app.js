@@ -1,6 +1,5 @@
 // ===== USER ID (PERSISTENT) =====
 let userId = localStorage.getItem("nxn_user_id");
-
 if (!userId) {
   userId = Date.now().toString();
   localStorage.setItem("nxn_user_id", userId);
@@ -9,30 +8,72 @@ if (!userId) {
 // ===== STATE =====
 let currentUser = null;
 
-// ===== DOM =====
-const statsEl = document.getElementById("stats");
-const coinEl = document.getElementById("coin");
-const sendBtn = document.getElementById("sendBtn");
+// ===== DOM READY =====
+document.addEventListener("DOMContentLoaded", () => {
 
-// ===== UPDATE UI (SAFE) =====
-function updateUI(user) {
-  if (!user) return;
+  // ===== SCREEN SWITCH =====
+  function showScreen(name) {
+    document.querySelectorAll(".screen").forEach(s => {
+      s.classList.add("hidden");
+    });
 
-  currentUser = user;
+    const target = document.getElementById(`screen-${name}`);
+    if (target) target.classList.remove("hidden");
 
-  const balance = user.balance ?? 0;
-  const energy = user.energy ?? 0;
-  const maxEnergy = user.max_energy ?? 0;
-  const tapPower = user.tap_power ?? 1;
+    document.querySelectorAll(".menu-item").forEach(i => {
+      i.classList.remove("active");
+    });
 
-  statsEl.innerText =
-    `Balance: ${balance} | Energy: ${energy}/${maxEnergy} | Tap +${tapPower}`;
-}
+    const activeBtn = document.querySelector(`.menu-item[data-screen="${name}"]`);
+    if (activeBtn) activeBtn.classList.add("active");
+  }
 
-// ===== INIT USER =====
-async function initUser() {
-  try {
+  // ===== MENU EVENTS =====
+  document.querySelectorAll(".menu-item").forEach(item => {
+    item.addEventListener("click", () => {
+      const screen = item.dataset.screen;
+      showScreen(screen);
+
+      if (screen === "leaderboard") loadLeaderboard();
+    });
+  });
+
+  // ===== UPDATE UI =====
+  function updateUI(user) {
+    if (!user) return;
+    currentUser = user;
+
+    document.getElementById("stats").innerText =
+      `Balance: ${user.balance ?? 0} | Energy: ${user.energy ?? 0}/${user.max_energy ?? 0} | Tap +${user.tap_power ?? 1}`;
+  }
+
+  // ===== INIT USER =====
+  async function initUser() {
     const res = await fetch("/init", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: userId })
+    });
+    const user = await res.json();
+    updateUI(user);
+  }
+
+  // ===== LEADERBOARD =====
+  async function loadLeaderboard() {
+    const res = await fetch("/leaderboard");
+    const data = await res.json();
+
+    document.getElementById("leaderboard").innerHTML =
+      data.map((u, i) =>
+        `<div>#${i + 1} — ID ${u.id} — ${u.balance}</div>`
+      ).join("");
+  }
+
+  // ===== TAP =====
+  document.getElementById("coin").addEventListener("click", async () => {
+    if (!currentUser || currentUser.energy <= 0) return;
+
+    const res = await fetch("/tap", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id: userId })
@@ -40,53 +81,26 @@ async function initUser() {
 
     const user = await res.json();
     updateUI(user);
-  } catch (e) {
-    statsEl.innerText = "Connection error";
-    console.error(e);
-  }
-}
-
-// ===== TAP =====
-async function tap() {
-  if (!currentUser) return;
-
-  if (currentUser.energy <= 0) {
-    // энергия 0 — просто ждём реген
-    return;
-  }
-
-  const res = await fetch("/tap", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id: userId })
+    loadLeaderboard();
   });
 
-  const user = await res.json();
-  updateUI(user);
-}
-
-// ===== TRANSFER =====
-async function transfer() {
-  const to = document.getElementById("toId").value;
-  const amount = Number(document.getElementById("amount").value);
-
-  await fetch("/transfer", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      from: userId,
-      to,
-      amount
-    })
+  // ===== TRANSFER =====
+  document.getElementById("sendBtn").addEventListener("click", async () => {
+    await fetch("/transfer", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        from: userId,
+        to: document.getElementById("toId").value,
+        amount: Number(document.getElementById("amount").value)
+      })
+    });
   });
-}
 
-// ===== EVENTS =====
-coinEl.addEventListener("click", tap);
-sendBtn.addEventListener("click", transfer);
+  // ===== AUTO ENERGY REFRESH =====
+  setInterval(initUser, 3000);
 
-// ===== AUTO ENERGY REFRESH =====
-setInterval(initUser, 3000);
-
-// ===== START =====
-initUser();
+  // ===== START =====
+  initUser();
+  showScreen("tap");
+});

@@ -53,18 +53,19 @@
 
 <!-- BOTTOM MENU -->
 <nav class="bottom-menu glass">
-  <div class="menu-item" onclick="showScreen('leaderboard')">
+  <div class="menu-item" data-screen="leaderboard">
     <svg viewBox="0 0 24 24"><path d="M4 21h4V10H4v11zm6 0h4V3h-4v18zm6 0h4V14h-4v7z"/></svg>
   </div>
 
-  <div class="menu-item active" onclick="showScreen('tap')">
+  <div class="menu-item active" data-screen="tap">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/></svg>
   </div>
 
-  <div class="menu-item" onclick="showScreen('shop')">
+  <div class="menu-item" data-screen="shop">
     <svg viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-13z"/></svg>
   </div>
 </nav>
+
 
 <script src="app.js"></script>
 </body>
