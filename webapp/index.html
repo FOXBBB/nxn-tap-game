@@ -7,30 +7,35 @@
 </head>
 <body>
 
-<div class="container">
+<!-- SCREENS -->
+<div id="screen-leaderboard" class="screen hidden">
+  <h2>🏆 Leaderboard</h2>
+  <div id="leaderboard"></div>
+</div>
 
-  <div class="panel left">
-    <h3>🏆 Leaderboard</h3>
-    <div id="leaderboard"></div>
-  </div>
+<div id="screen-tap" class="screen">
+  <h1>NXN TAP</h1>
+  <div id="stats">Loading...</div>
 
-  <div class="panel center">
-    <h1>NXN TAP</h1>
-    <div id="stats">Loading...</div>
-    <button class="tap" onclick="tap()">TAP</button>
+  <button class="tap-btn" onclick="tap()">TAP</button>
 
-    <h4>Transfer</h4>
-    <input id="toId" placeholder="User ID">
-    <input id="amount" placeholder="Amount">
-    <button onclick="transfer()">Send</button>
-  </div>
+  <h4>Transfer</h4>
+  <input id="toId" placeholder="User ID">
+  <input id="amount" placeholder="Amount">
+  <button onclick="transfer()">Send</button>
+</div>
 
-  <div class="panel right">
-    <h3>🛒 Shop</h3>
-    <button onclick="buy('tap1')">+1 Tap (10000 NXN)</button>
-    <button onclick="buy('energy100')">+100 Energy (20000 NXN)</button>
-  </div>
+<div id="screen-shop" class="screen hidden">
+  <h2>🛒 Shop</h2>
+  <button onclick="buy('tap1')">+1 Tap (10000 NXN)</button>
+  <button onclick="buy('energy100')">+100 Energy (20000 NXN)</button>
+</div>
 
+<!-- BOTTOM MENU -->
+<div class="bottom-menu">
+  <div onclick="showScreen('leaderboard')">🏆</div>
+  <div class="active" onclick="showScreen('tap')">⏺</div>
+  <div onclick="showScreen('shop')">🛒</div>
 </div>
 
 <script src="app.js"></script>
