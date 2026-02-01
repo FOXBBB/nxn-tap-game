@@ -17,12 +17,24 @@ const coin = document.getElementById("coin");
 const bal = document.getElementById("balance");
 const eng = document.getElementById("energy");
 
-coin.onclick = () => {
+coin.onclick = (e) => {
   if (energy <= 0) return;
+
   balance += 1;
   energy -= 1;
+
   bal.innerText = "Balance: " + balance;
   eng.innerText = `Energy: ${energy} / ${maxEnergy}`;
+
+  // +1 animation
+  const plus = document.createElement("div");
+  plus.innerText = "+1";
+  plus.className = "plus-one";
+  plus.style.left = e.clientX + "px";
+  plus.style.top = e.clientY + "px";
+  document.body.appendChild(plus);
+
+  setTimeout(() => plus.remove(), 900);
 };
 
 setInterval(() => {
@@ -39,7 +51,3 @@ document.getElementById("max").onclick = () => {
 document.getElementById("send").onclick = () => {
   alert("Transfer sent (UI demo)");
 };
-
-document.querySelectorAll(".shop-item").forEach(i => {
-  i.onclick = () => alert("Purchase (UI demo)");
-});

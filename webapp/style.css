@@ -154,3 +154,23 @@ body {
   opacity: 1;
   transform: scale(1.2);
 }
+.plus-one {
+  position: fixed;
+  color: #00ff88;
+  font-size: 26px;
+  font-weight: 900;
+  pointer-events: none;
+  animation: floatUp 0.9s ease-out forwards;
+  text-shadow: 0 0 10px #00ff88;
+}
+
+@keyframes floatUp {
+  from {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -80px) scale(1.4);
+  }
+}
