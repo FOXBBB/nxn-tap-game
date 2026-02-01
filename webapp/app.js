@@ -8,15 +8,22 @@ let currentUser = null;
 
 document.addEventListener("DOMContentLoaded", () => {
 
-  function showScreen(name) {
-    document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
-    document.getElementById(`screen-${name}`).classList.remove("hidden");
+ function showScreen(name) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
+  document.getElementById(`screen-${name}`).classList.remove("hidden");
 
-    document.querySelectorAll(".menu-item").forEach(i => i.classList.remove("active"));
-    document.querySelector(`.menu-item[data-screen="${name}"]`).classList.add("active");
+  document.querySelectorAll(".menu-item").forEach(i => i.classList.remove("active"));
+  document.querySelector(`.menu-item[data-screen="${name}"]`).classList.add("active");
 
-    if (name === "leaderboard") loadLeaderboard();
+  // 🔥 ВАЖНО: показываем transfer ТОЛЬКО на tap
+  const transferBox = document.querySelector(".transfer-box");
+  if (transferBox) {
+    transferBox.style.display = name === "tap" ? "block" : "none";
   }
+
+  if (name === "leaderboard") loadLeaderboard();
+}
+
 
   function updateUI(user) {
     currentUser = user;

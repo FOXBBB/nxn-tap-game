@@ -125,6 +125,7 @@ body {
   right: 20px;
   padding: 12px;
   z-index: 2;
+   display: block; /* управляется JS */
 }
 
 .transfer-box input,
