@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: nxn-tap-game
+    env: node
+    plan: free
+    buildCommand: npm install --prefix backend
+    startCommand: node backend/index.js
