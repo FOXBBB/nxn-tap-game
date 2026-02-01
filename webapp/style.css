@@ -110,6 +110,8 @@ body {
   height: 260px;
   cursor: pointer;
   z-index: 2;
+  pointer-events: auto;
+  position: relative;
   transition: transform 0.08s ease;
   filter: drop-shadow(0 0 40px #ffcc55aa);
 }
@@ -124,6 +126,7 @@ body {
   background: radial-gradient(circle, #ffcc5577, transparent 60%);
   filter: blur(30px);
   z-index: 1;
+  pointer-events: none; /* 🔥 ВАЖНО */
 }
 
 /* ===== TAP EFFECT ===== */
@@ -167,4 +170,8 @@ body {
   font-weight: 600;
   font-size: 14px;
   opacity: 0.9;
+}
+.space-bg,
+.stars {
+  pointer-events: none;
 }
