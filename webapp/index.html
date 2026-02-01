@@ -7,6 +7,9 @@
 </head>
 <body>
 
+<!-- BACKGROUND -->
+<div class="bg"></div>
+
 <!-- SCREENS -->
 <div id="screen-leaderboard" class="screen hidden">
   <h2>🏆 Leaderboard</h2>
@@ -14,15 +17,20 @@
 </div>
 
 <div id="screen-tap" class="screen">
-  <h1>NXN TAP</h1>
+  <h1 class="logo">NXN</h1>
+
   <div id="stats">Loading...</div>
 
-  <button class="tap-btn" onclick="tap()">TAP</button>
+  <div class="coin-wrapper">
+    <img src="coin.png" class="coin" onclick="tap()" />
+  </div>
 
-  <h4>Transfer</h4>
-  <input id="toId" placeholder="User ID">
-  <input id="amount" placeholder="Amount">
-  <button onclick="transfer()">Send</button>
+  <div class="transfer-box">
+    <h4>Transfer</h4>
+    <input id="toId" placeholder="User ID">
+    <input id="amount" placeholder="Amount">
+    <button onclick="transfer()">Send</button>
+  </div>
 </div>
 
 <div id="screen-shop" class="screen hidden">
@@ -34,7 +42,7 @@
 <!-- BOTTOM MENU -->
 <div class="bottom-menu">
   <div onclick="showScreen('leaderboard')">🏆</div>
-  <div class="active" onclick="showScreen('tap')">⏺</div>
+  <div class="active" onclick="showScreen('tap')">🪙</div>
   <div onclick="showScreen('shop')">🛒</div>
 </div>
 
