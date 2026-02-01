@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>NXN Game</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
@@ -11,27 +11,67 @@
 
 <!-- LEADERBOARD -->
 <section id="leaderboard" class="screen hidden">
-  <div class="title blue">LEADERBOARD</div>
-  <div class="subtitle">TOP 10 PLAYERS</div>
-
-  <div class="top3">
-    <div class="top-card silver">2<br><span>Player</span><b>68 NXN</b></div>
-    <div class="top-card gold">1<br><span>Player</span><b>79 NXN</b></div>
-    <div class="top-card bronze">3<br><span>Player</span><b>54 NXN</b></div>
+  <div class="lb-header">
+    <div class="lb-title">
+      <span class="trophy">🏆</span>
+      LEADERBOARD
+    </div>
+    <div class="lb-sub">TOP 10 PLAYERS</div>
   </div>
 
-  <div class="list glass">
-    <div>#4 Player — 44 NXN</div>
-    <div>#5 Player — 33 NXN</div>
-    <div>#6 Player — 22 NXN</div>
-    <div>#7 Player — 18 NXN</div>
-    <div>#8 Player — 14 NXN</div>
-    <div>#9 Player — 9 NXN</div>
-    <div>#10 Player — 5 NXN</div>
+  <!-- TOP 1 -->
+  <div class="lb-top1">
+    <img class="avatar" src="https://i.pravatar.cc/120?img=12">
+    <div class="info">
+      <div class="rank gold">#1</div>
+      <div class="name">NextMoon</div>
+    </div>
+    <div class="score">79.9M</div>
+  </div>
+
+  <!-- TOP 2 / 3 -->
+  <div class="lb-top23">
+    <div class="lb-card silver">
+      <img class="avatar" src="https://i.pravatar.cc/100?img=24">
+      <div class="rank">#2</div>
+      <div class="name">DogeKing</div>
+      <div class="score">68.7M</div>
+    </div>
+    <div class="lb-card bronze">
+      <img class="avatar" src="https://i.pravatar.cc/100?img=36">
+      <div class="rank">#3</div>
+      <div class="name">AlienColonel</div>
+      <div class="score">54.3M</div>
+    </div>
+  </div>
+
+  <!-- TOP 4–10 -->
+  <div class="lb-list glass">
+    <div class="row">
+      <span>#4</span><img src="https://i.pravatar.cc/50?img=1"><b>CryptoNerd</b><i>31.4M</i>
+    </div>
+    <div class="row">
+      <span>#5</span><img src="https://i.pravatar.cc/50?img=2"><b>MemeMaster</b><i>29.1M</i>
+    </div>
+    <div class="row green">
+      <span>#6</span><img src="https://i.pravatar.cc/50?img=3"><b>NFTWhale</b><i>25.7M</i>
+    </div>
+    <div class="row">
+      <span>#7</span><img src="https://i.pravatar.cc/50?img=4"><b>LamboChad</b><i>24.3M</i>
+    </div>
+    <div class="row">
+      <span>#8</span><img src="https://i.pravatar.cc/50?img=5"><b>MoonWolf</b><i>22.7M</i>
+    </div>
+    <div class="row">
+      <span>#9</span><img src="https://i.pravatar.cc/50?img=6"><b>CryptoHodler</b><i>20.8M</i>
+    </div>
+    <div class="row">
+      <span>#10</span><img src="https://i.pravatar.cc/50?img=7"><b>ElonDoge</b><i>18.5M</i>
+    </div>
   </div>
 </section>
 
-<!-- TAP -->
+<!-- TAP (НЕ ТРОГАЕМ) -->
 <section id="tap" class="screen">
   <div class="title blue">NEXON</div>
   <div class="subtitle yellow">NXN CLICKER</div>
@@ -45,18 +85,18 @@
   <div class="glass stat" id="energy">Energy: 100 / 100</div>
 </section>
 
-<!-- TRANSFER -->
+<!-- TRANSFER (НЕ ТРОГАЕМ) -->
 <section id="transfer" class="screen hidden">
   <div class="title blue">TRANSFER COINS</div>
   <div class="subtitle yellow">BY ID</div>
 
   <div class="glass transfer-box">
     <label>Recipient ID</label>
-    <input id="toId" value="12345">
+    <input value="12345">
 
     <label>Amount</label>
     <div class="row">
-      <input id="amount" value="67 NXN">
+      <input value="67 NXN">
       <button id="max">MAX</button>
     </div>
 
@@ -67,33 +107,9 @@
   <img src="transfer.png" class="transfer-img">
 </section>
 
-<!-- SHOP -->
+<!-- SHOP (ПОКА НЕ ТРОГАЕМ) -->
 <section id="shop" class="screen hidden">
   <div class="title blue">SHOP</div>
-
-  <div class="shop-item glass clickable">
-    <div>
-      <b>Upgrade Tap +2</b>
-      <span>0.2 TON</span>
-    </div>
-    <img src="coin.png">
-  </div>
-
-  <div class="shop-item glass clickable green">
-    <div>
-      <b>Energy 200</b>
-      <span>0.2 TON</span>
-    </div>
-    <img src="coin.png">
-  </div>
-
-  <div class="shop-item glass clickable orange">
-    <div>
-      <b>Autoclicker 24/7</b>
-      <span>2 TON</span>
-    </div>
-    <img src="coin.png">
-  </div>
 </section>
 
 <!-- MENU -->
