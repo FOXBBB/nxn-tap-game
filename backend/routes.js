@@ -21,9 +21,10 @@ export function routes(app) {
 
     db.get("SELECT * FROM users WHERE id=?", [id], (_, user) => {
       if (!user) {
+        const now = Math.floor(Date.now() / 1000);
         db.run(
-          "INSERT INTO users (id, last_energy_update) VALUES (?, ?)",
-          [id, Math.floor(Date.now() / 1000)],
+          "INSERT INTO users (id, energy, max_energy, tap_power, last_energy_update) VALUES (?, 100, 100, 1, ?)",
+          [id, now],
           () => {
             db.get("SELECT * FROM users WHERE id=?", [id], (_, u) => res.json(u));
           }
@@ -32,9 +33,9 @@ export function routes(app) {
         user = regenEnergy(user);
         db.run(
           "UPDATE users SET energy=?, last_energy_update=? WHERE id=?",
-          [user.energy, user.last_energy_update, id]
+          [user.energy, user.last_energy_update, id],
+          () => res.json(user)
         );
-        res.json(user);
       }
     });
   });
@@ -43,9 +44,16 @@ export function routes(app) {
     const { id } = req.body;
 
     db.get("SELECT * FROM users WHERE id=?", [id], (_, user) => {
+      if (!user) return res.status(400).json({ error: "no user" });
+
       user = regenEnergy(user);
+
+      if (user.energy <= 0) {
+        // ❗ ЭНЕРГИЯ 0 — НИЧЕГО НЕ ЛОМАЕМ
+        return res.json(user);
+      }
+
       const updated = tap(user);
-      if (!updated) return res.status(400).json({ error: "no energy" });
 
       db.run(
         "UPDATE users SET balance=?, energy=?, last_energy_update=? WHERE id=?",
@@ -57,7 +65,7 @@ export function routes(app) {
 
   app.get("/leaderboard", (_, res) => {
     db.all(
-      "SELECT id, nickname, avatar, balance FROM users ORDER BY balance DESC LIMIT 10",
+      "SELECT id, balance FROM users ORDER BY balance DESC LIMIT 10",
       [],
       (_, rows) => res.json(rows)
     );
@@ -75,13 +83,17 @@ export function routes(app) {
     if (!up) return res.status(400).json({ error: "invalid upgrade" });
 
     db.get("SELECT * FROM users WHERE id=?", [id], (_, user) => {
-      if (user.balance < up.cost)
+      if (!user || user.balance < up.cost)
         return res.status(400).json({ error: "no balance" });
 
       db.run(
-        `UPDATE users SET balance=balance-?, ${up.field}=${up.field}+? WHERE id=?`,
+        `UPDATE users 
+         SET balance=balance-?, ${up.field}=${up.field}+?
+         WHERE id=?`,
         [up.cost, up.value, id],
-        () => res.json({ ok: true })
+        () => {
+          db.get("SELECT * FROM users WHERE id=?", [id], (_, u) => res.json(u));
+        }
       );
     });
   });
@@ -97,11 +109,6 @@ export function routes(app) {
 
       db.run("UPDATE users SET balance=balance-? WHERE id=?", [total, from]);
       db.run("UPDATE users SET balance=balance+? WHERE id=?", [amount, to]);
-      db.run(
-        "INSERT INTO transfers (from_id,to_id,amount,fee) VALUES (?,?,?,?)",
-        [from, to, amount, fee]
-      );
-
       res.json({ ok: true });
     });
   });

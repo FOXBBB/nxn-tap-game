@@ -1,5 +1,7 @@
 const userId = Math.floor(Math.random() * 1e9);
 
+let currentUser = null;
+
 function showScreen(name) {
   document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
   document.getElementById("screen-" + name).classList.remove("hidden");
@@ -10,31 +12,48 @@ function showScreen(name) {
   if (name === "shop") document.querySelector(".bottom-menu div:nth-child(3)").classList.add("active");
 }
 
-function update(user) {
+function updateUI(user) {
+  if (!user) return;
+
+  currentUser = user;
+
+  const balance = user.balance ?? 0;
+  const energy = user.energy ?? 0;
+  const maxEnergy = user.max_energy ?? 0;
+  const tapPower = user.tap_power ?? 1;
+
   document.getElementById("stats").innerText =
-    `Balance ${user.balance} · Energy ${user.energy}/${user.max_energy} · Tap +${user.tap_power}`;
+    `Balance: ${balance} | Energy: ${energy}/${maxEnergy} | Tap +${tapPower}`;
 }
 
-function spawnFloater(x, y, value) {
-  const f = document.createElement("div");
-  f.className = "floater";
-  f.style.left = x + "px";
-  f.style.top = y + "px";
-  f.innerText = `+${value}`;
-  document.getElementById("floaters").appendChild(f);
-  setTimeout(() => f.remove(), 800);
+function loadLeaderboard() {
+  fetch("/leaderboard")
+    .then(r => r.json())
+    .then(data => {
+      document.getElementById("leaderboard").innerHTML =
+        data.map((u, i) =>
+          `<div>#${i + 1} — ID ${u.id} — ${u.balance}</div>`
+        ).join("");
+    });
 }
 
+// INIT
 fetch("/init", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({ id: userId })
 })
 .then(r => r.json())
-.then(update);
+.then(user => {
+  updateUI(user);
+  loadLeaderboard();
+});
 
+// TAP
 function tap(e) {
-  spawnFloater(e.clientX, e.clientY, "+");
+  if (!currentUser || currentUser.energy <= 0) {
+    return;
+  }
 
   fetch("/tap", {
     method: "POST",
@@ -43,17 +62,30 @@ function tap(e) {
   })
   .then(r => r.json())
   .then(user => {
-    spawnFloater(e.clientX, e.clientY, user.tap_power);
-    update(user);
+    updateUI(user);
+    loadLeaderboard();
   });
 }
+
+// AUTO ENERGY UPDATE (каждые 3 сек)
+setInterval(() => {
+  fetch("/init", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id: userId })
+  })
+  .then(r => r.json())
+  .then(updateUI);
+}, 3000);
 
 function buy(type) {
   fetch("/upgrade", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ id: userId, type })
-  });
+  })
+  .then(r => r.json())
+  .then(updateUI);
 }
 
 function transfer() {
