@@ -1,17 +1,20 @@
-const userId = Math.floor(Math.random() * 1e9);
+// ===== USER ID (PERSISTENT) =====
+let userId = localStorage.getItem("nxn_user_id");
 
-let currentUser = null;
-
-function showScreen(name) {
-  document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
-  document.getElementById("screen-" + name).classList.remove("hidden");
-
-  document.querySelectorAll(".bottom-menu div").forEach(i => i.classList.remove("active"));
-  if (name === "leaderboard") document.querySelector(".bottom-menu div:nth-child(1)").classList.add("active");
-  if (name === "tap") document.querySelector(".bottom-menu div:nth-child(2)").classList.add("active");
-  if (name === "shop") document.querySelector(".bottom-menu div:nth-child(3)").classList.add("active");
+if (!userId) {
+  userId = Date.now().toString();
+  localStorage.setItem("nxn_user_id", userId);
 }
 
+// ===== STATE =====
+let currentUser = null;
+
+// ===== DOM =====
+const statsEl = document.getElementById("stats");
+const coinEl = document.getElementById("coin");
+const sendBtn = document.getElementById("sendBtn");
+
+// ===== UPDATE UI (SAFE) =====
 function updateUI(user) {
   if (!user) return;
 
@@ -22,80 +25,68 @@ function updateUI(user) {
   const maxEnergy = user.max_energy ?? 0;
   const tapPower = user.tap_power ?? 1;
 
-  document.getElementById("stats").innerText =
+  statsEl.innerText =
     `Balance: ${balance} | Energy: ${energy}/${maxEnergy} | Tap +${tapPower}`;
 }
 
-function loadLeaderboard() {
-  fetch("/leaderboard")
-    .then(r => r.json())
-    .then(data => {
-      document.getElementById("leaderboard").innerHTML =
-        data.map((u, i) =>
-          `<div>#${i + 1} — ID ${u.id} — ${u.balance}</div>`
-        ).join("");
+// ===== INIT USER =====
+async function initUser() {
+  try {
+    const res = await fetch("/init", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: userId })
     });
+
+    const user = await res.json();
+    updateUI(user);
+  } catch (e) {
+    statsEl.innerText = "Connection error";
+    console.error(e);
+  }
 }
 
-// INIT
-fetch("/init", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ id: userId })
-})
-.then(r => r.json())
-.then(user => {
-  updateUI(user);
-  loadLeaderboard();
-});
+// ===== TAP =====
+async function tap() {
+  if (!currentUser) return;
 
-// TAP
-function tap(e) {
-  if (!currentUser || currentUser.energy <= 0) {
+  if (currentUser.energy <= 0) {
+    // энергия 0 — просто ждём реген
     return;
   }
 
-  fetch("/tap", {
+  const res = await fetch("/tap", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ id: userId })
-  })
-  .then(r => r.json())
-  .then(user => {
-    updateUI(user);
-    loadLeaderboard();
   });
+
+  const user = await res.json();
+  updateUI(user);
 }
 
-// AUTO ENERGY UPDATE (каждые 3 сек)
-setInterval(() => {
-  fetch("/init", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id: userId })
-  })
-  .then(r => r.json())
-  .then(updateUI);
-}, 3000);
+// ===== TRANSFER =====
+async function transfer() {
+  const to = document.getElementById("toId").value;
+  const amount = Number(document.getElementById("amount").value);
 
-function buy(type) {
-  fetch("/upgrade", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id: userId, type })
-  })
-  .then(r => r.json())
-  .then(updateUI);
-}
-
-function transfer() {
-  fetch("/transfer", {
+  await fetch("/transfer", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       from: userId,
-      to: document.getElementById("toId").value,
-      amount: Number(document.getElementById("amount").value)
+      to,
+      amount
     })
   });
 }
+
+// ===== EVENTS =====
+coinEl.addEventListener("click", tap);
+sendBtn.addEventListener("click", transfer);
+
+// ===== AUTO ENERGY REFRESH =====
+setInterval(initUser, 3000);
+
+// ===== START =====
+initUser();
