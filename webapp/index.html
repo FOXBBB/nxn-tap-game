@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>NXN</title>
+  <title>NXN Game</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -12,29 +12,42 @@
 <!-- LEADERBOARD -->
 <section id="screen-leaderboard" class="screen hidden">
   <h2 class="title">Leaderboard</h2>
-  <div id="leaderboard" class="list"></div>
+  <div id="leaderboard" class="list glass"></div>
 </section>
 
 <!-- TAP -->
-<section id="screen-tap" class="screen">
-  <div class="header">
-    <span class="brand">NXN TOKEN</span>
+<section id="screen-tap" class="screen tap-screen">
+
+  <!-- BRAND -->
+  <div class="brand-banner">
+    <span>NXN Game</span>
   </div>
 
-  <div id="stats" class="stats">Loading...</div>
+  <!-- BALANCE -->
+  <div id="balance" class="balance glass">
+    Balance: 0
+  </div>
 
+  <!-- COIN -->
   <div class="coin-zone">
-  <img src="coin.png" class="coin" id="coin">
-</div>
+    <img src="coin.png" class="coin" id="coin">
+  </div>
 
-<div id="tap-effects"></div>
+  <!-- ENERGY -->
+  <div id="energy" class="energy glass">
+    Energy: 0 / 0
+  </div>
 
+  <!-- TAP EFFECTS -->
+  <div id="tap-effects"></div>
 
+  <!-- TRANSFER -->
   <div class="transfer-box glass">
     <input id="toId" placeholder="Recipient ID">
     <input id="amount" placeholder="Amount">
     <button id="sendBtn">Transfer</button>
   </div>
+
 </section>
 
 <!-- SHOP -->
@@ -68,7 +81,6 @@
     <svg viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9h-13z"/></svg>
   </div>
 </nav>
-
 
 <script src="app.js"></script>
 </body>

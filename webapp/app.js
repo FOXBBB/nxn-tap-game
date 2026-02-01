@@ -1,17 +1,13 @@
-// ===== USER ID (PERSISTENT) =====
 let userId = localStorage.getItem("nxn_user_id");
 if (!userId) {
   userId = Date.now().toString();
   localStorage.setItem("nxn_user_id", userId);
 }
 
-// ===== STATE =====
 let currentUser = null;
 
-// ===== DOM READY =====
 document.addEventListener("DOMContentLoaded", () => {
 
-  // ===== SCREEN SWITCH =====
   function showScreen(name) {
     document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
     document.getElementById(`screen-${name}`).classList.remove("hidden");
@@ -22,16 +18,13 @@ document.addEventListener("DOMContentLoaded", () => {
     if (name === "leaderboard") loadLeaderboard();
   }
 
-  // ===== UPDATE UI =====
   function updateUI(user) {
-    if (!user) return;
     currentUser = user;
-
-    document.getElementById("stats").innerText =
-      `Balance: ${user.balance ?? 0} | Energy: ${user.energy ?? 0}/${user.max_energy ?? 0} | Tap +${user.tap_power ?? 1}`;
+    document.getElementById("balance").innerText = `Balance: ${user.balance ?? 0}`;
+    document.getElementById("energy").innerText =
+      `Energy: ${user.energy ?? 0} / ${user.max_energy ?? 0}`;
   }
 
-  // ===== INIT USER =====
   async function initUser() {
     const res = await fetch("/init", {
       method: "POST",
@@ -42,30 +35,25 @@ document.addEventListener("DOMContentLoaded", () => {
     updateUI(user);
   }
 
-  // ===== LEADERBOARD =====
   async function loadLeaderboard() {
     const res = await fetch("/leaderboard");
     const data = await res.json();
-
     document.getElementById("leaderboard").innerHTML =
       data.map((u, i) =>
         `<div>#${i + 1} — ID ${u.id} — ${u.balance}</div>`
       ).join("");
   }
 
-  // ===== +X ANIMATION =====
   function spawnPlus(x, y, value) {
-    const plus = document.createElement("div");
-    plus.className = "tap-plus";
-    plus.innerText = `+${value}`;
-    plus.style.left = `${x}px`;
-    plus.style.top = `${y}px`;
-
-    document.getElementById("tap-effects").appendChild(plus);
-    setTimeout(() => plus.remove(), 900);
+    const el = document.createElement("div");
+    el.className = "tap-plus";
+    el.innerText = `+${value}`;
+    el.style.left = `${x}px`;
+    el.style.top = `${y}px`;
+    document.getElementById("tap-effects").appendChild(el);
+    setTimeout(() => el.remove(), 900);
   }
 
-  // ===== TAP =====
   document.getElementById("coin").addEventListener("click", async (e) => {
     if (!currentUser || currentUser.energy <= 0) return;
 
@@ -82,7 +70,6 @@ document.addEventListener("DOMContentLoaded", () => {
     loadLeaderboard();
   });
 
-  // ===== TRANSFER =====
   document.getElementById("sendBtn").addEventListener("click", async () => {
     await fetch("/transfer", {
       method: "POST",
@@ -95,17 +82,12 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // ===== MENU EVENTS =====
   document.querySelectorAll(".menu-item").forEach(item => {
-    item.addEventListener("click", () => {
-      showScreen(item.dataset.screen);
-    });
+    item.addEventListener("click", () => showScreen(item.dataset.screen));
   });
 
-  // ===== AUTO ENERGY REFRESH =====
   setInterval(initUser, 3000);
 
-  // ===== START =====
   initUser();
   showScreen("tap");
 });
