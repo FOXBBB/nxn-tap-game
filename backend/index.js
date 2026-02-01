@@ -9,7 +9,6 @@ app.use(cors());
 app.use(bodyParser.json());
 
 routes(app);
-
 app.use(express.static("webapp"));
 
 const PORT = process.env.PORT || 3000;

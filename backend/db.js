@@ -8,7 +8,9 @@ db.serialize(() => {
       id INTEGER PRIMARY KEY,
       balance INTEGER DEFAULT 0,
       energy INTEGER DEFAULT 100,
-      tap_power INTEGER DEFAULT 1
+      max_energy INTEGER DEFAULT 100,
+      tap_power INTEGER DEFAULT 1,
+      last_energy_update INTEGER DEFAULT 0
     )
   `);
 

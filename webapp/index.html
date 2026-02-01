@@ -1,15 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>NXN TAP</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>NXN TAP</h1>
-  <div id="balance">Balance: 0</div>
-  <button onclick="tap()">TAP</button>
 
-  <script src="app.js"></script>
+<h1>NXN TAP</h1>
+<div id="stats">Loading...</div>
+<button onclick="tap()">TAP</button>
+
+<h3>Shop</h3>
+<button onclick="buy('tap1')">+1 Tap (10000 NXN)</button>
+<button onclick="buy('energy100')">+100 Energy (20000 NXN)</button>
+
+<h3>Transfer</h3>
+<input id="toId" placeholder="User ID">
+<input id="amount" placeholder="Amount">
+<button onclick="transfer()">Send</button>
+
+<script src="app.js"></script>
 </body>
 </html>

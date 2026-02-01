@@ -6,10 +6,15 @@ body {
 }
 
 button {
-  margin-top: 20px;
-  padding: 20px 40px;
-  font-size: 28px;
+  margin: 10px;
+  padding: 15px 30px;
+  font-size: 20px;
   background: #00ffa2;
   border: none;
   cursor: pointer;
+}
+
+input {
+  padding: 10px;
+  margin: 5px;
 }
