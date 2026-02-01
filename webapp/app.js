@@ -51,3 +51,25 @@ function spawnPlus(x, y, value) {
 }
 
 updateUI();
+async function loadLeaderboard() {
+  const res = await fetch("/leaderboard");
+  const data = await res.json();
+
+  const list = document.getElementById("leaderboard");
+  list.innerHTML = "";
+
+  data.forEach((u, i) => {
+    const row = document.createElement("div");
+    row.innerHTML = `<span>#${i + 1}</span><span>${u.balance} NXN</span>`;
+    list.appendChild(row);
+  });
+
+  // TOP 3
+  const cards = document.querySelectorAll(".top-card");
+  data.slice(0, 3).forEach((u, i) => {
+    const card = cards[i === 0 ? 1 : i === 1 ? 0 : 2];
+    if (!card) return;
+    card.querySelector(".name").innerText = `ID ${u.id}`;
+    card.querySelector(".score").innerText = `${u.balance} NXN`;
+  });
+}

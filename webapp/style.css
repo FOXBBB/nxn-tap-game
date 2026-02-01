@@ -175,3 +175,99 @@ body {
 .stars {
   pointer-events: none;
 }
+/* ===== LEADERBOARD SCREEN ===== */
+
+.leaderboard-screen {
+  padding-top: 24px;
+  text-align: center;
+}
+
+.leaderboard-header {
+  margin-bottom: 18px;
+}
+
+.lb-title {
+  font-size: 34px;
+  font-weight: 900;
+  letter-spacing: 3px;
+  background: linear-gradient(180deg, #6cf0ff, #1a6aff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 18px #1a6aff88;
+}
+
+.lb-subtitle {
+  margin-top: 4px;
+  font-size: 14px;
+  letter-spacing: 4px;
+  color: #ffcc55;
+  text-shadow: 0 0 12px #ffcc5566;
+}
+
+/* TOP 3 */
+.top3 {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 12px;
+  margin: 24px 0 18px;
+}
+
+.top-card {
+  width: 100px;
+  padding: 12px 10px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  backdrop-filter: blur(10px);
+}
+
+.top-card.first {
+  transform: translateY(-10px) scale(1.05);
+  box-shadow: 0 0 30px #ffcc5577;
+}
+
+.top-card.second,
+.top-card.third {
+  opacity: 0.85;
+}
+
+.rank {
+  font-size: 22px;
+  font-weight: 900;
+  color: #ffcc55;
+}
+
+.avatar {
+  width: 44px;
+  height: 44px;
+  margin: 8px auto;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffffff55, #ffffff11);
+}
+
+.name {
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.score {
+  margin-top: 4px;
+  font-size: 11px;
+  color: #00ffa2;
+}
+
+/* LIST */
+.leaderboard-list {
+  margin: 14px auto 20px;
+  width: 92%;
+  padding: 8px 0;
+}
+
+.leaderboard-list div {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  font-size: 14px;
+}
