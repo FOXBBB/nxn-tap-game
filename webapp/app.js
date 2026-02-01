@@ -51,3 +51,45 @@ document.getElementById("max").onclick = () => {
 document.getElementById("send").onclick = () => {
   alert("Transfer sent (UI demo)");
 };
+// ===== TRANSFER LOGIC =====
+const sendBtn = document.getElementById("send");
+const amountInput = document.querySelector("#transfer input[value='67 NXN'], #transfer input[type='text']:nth-of-type(2)");
+const idInput = document.querySelector("#transfer input");
+
+function getBalance() {
+  return Number(localStorage.getItem("balance") || 0);
+}
+
+function setBalance(val) {
+  localStorage.setItem("balance", val);
+  const balanceEl = document.getElementById("balance");
+  if (balanceEl) balanceEl.textContent = "Balance: " + val;
+}
+
+sendBtn.addEventListener("click", () => {
+  const recipientId = idInput.value.trim();
+  const amount = parseInt(amountInput.value);
+
+  if (!recipientId || isNaN(amount) || amount <= 0) {
+    alert("Enter valid ID and amount");
+    return;
+  }
+
+  let balance = getBalance();
+
+  if (balance < amount) {
+    alert("Not enough balance");
+    return;
+  }
+
+  // списываем
+  balance -= amount;
+  setBalance(balance);
+
+  // сохраняем получателю (симуляция)
+  const key = "user_" + recipientId;
+  const received = Number(localStorage.getItem(key) || 0);
+  localStorage.setItem(key, received + amount);
+
+  alert(`Sent ${amount} NXN to ID ${recipientId}`);
+});

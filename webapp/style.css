@@ -224,3 +224,27 @@ body {
   opacity: 1;
   transform: scale(1.2);
 }
+/* ===== SEND BUTTON ===== */
+#send {
+  width: 100%;
+  margin-top: 14px;
+  padding: 16px 0;
+  font-size: 20px;
+  font-weight: 900;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+
+  background: linear-gradient(180deg, #3dff8e, #00c853);
+  color: #0b2e1a;
+  box-shadow:
+    0 6px 0 #009944,
+    0 10px 20px rgba(0, 255, 136, 0.4);
+}
+
+#send:active {
+  transform: translateY(4px);
+  box-shadow:
+    0 2px 0 #009944,
+    0 6px 12px rgba(0, 255, 136, 0.3);
+}
