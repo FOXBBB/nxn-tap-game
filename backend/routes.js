@@ -1,10 +1,10 @@
+// backend/routes.js
 import * as db from "./db.js";
 
-export default function routes(app) {
+export function routes(app) {
 
   app.get("/leaderboard", (req, res) => {
     try {
-      // поддержка любой структуры db.js
       const users =
         db.users ||
         db.default?.users ||
