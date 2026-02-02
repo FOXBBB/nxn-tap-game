@@ -1,29 +1,14 @@
-import sqlite3 from "sqlite3";
+import fs from "fs";
 
-export const db = new sqlite3.Database("./backend/data.sqlite");
+const DB_FILE = "./backend/db.json";
 
-db.serialize(() => {
-  db.run(`
-    CREATE TABLE IF NOT EXISTS users (
-      id INTEGER PRIMARY KEY,
-      nickname TEXT DEFAULT 'Player',
-      avatar TEXT DEFAULT '',
-      balance INTEGER DEFAULT 0,
-      energy INTEGER DEFAULT 100,
-      max_energy INTEGER DEFAULT 100,
-      tap_power INTEGER DEFAULT 1,
-      last_energy_update INTEGER DEFAULT 0
-    )
-  `);
+export function loadDB() {
+  if (!fs.existsSync(DB_FILE)) {
+    fs.writeFileSync(DB_FILE, JSON.stringify({ users: {} }, null, 2));
+  }
+  return JSON.parse(fs.readFileSync(DB_FILE));
+}
 
-  db.run(`
-    CREATE TABLE IF NOT EXISTS transfers (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      from_id INTEGER,
-      to_id INTEGER,
-      amount INTEGER,
-      fee INTEGER,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
-  `);
-});
+export function saveDB(db) {
+  fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2));
+}
