@@ -98,6 +98,23 @@ function updateUI() {
   document.getElementById("balance").innerText = "Balance: " + balance;
   document.getElementById("energy").innerText = `Energy: ${energy}/${maxEnergy}`;
 }
+// ===== AUTO SYNC FOR LEADERBOARD =====
+setInterval(() => {
+  if (!tgUser) return;
+
+  fetch("/sync", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      id: userId,
+      username: tgUser.username,
+      first_name: tgUser.first_name,
+      photo_url: tgUser.photo_url
+    })
+  });
+}, 5000); // каждые 5 секунд
+
+
 // ================= MENU NAVIGATION =================
 document.querySelectorAll(".menu div").forEach(btn => {
   btn.onclick = () => {
