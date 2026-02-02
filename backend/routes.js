@@ -93,31 +93,65 @@ router.post("/tap", (req, res) => {
 });
 
 
-/* ===== TRANSFER (10% BURN) ===== */
+//transfer//
 router.post("/transfer", (req, res) => {
-  const { fromId, toId, amount } = req.body;
+  let { fromId, toId, amount } = req.body;
+
+  // 🔒 нормализация
+  fromId = String(fromId);
+  toId = String(toId);
+  amount = Number(amount);
+
+  if (!fromId || !toId || !amount || amount <= 0) {
+    return res.json({ ok: false, error: "Invalid transfer data" });
+  }
+
   const db = loadDB();
+  if (!db.transfers) db.transfers = [];
 
-  // ===== LOG TRANSFER =====
-if (!db.transfers) db.transfers = [];
+  const sender = db.users.find(u => String(u.id) === fromId);
+  const receiver = db.users.find(u => String(u.id) === toId);
 
-const fee = Math.floor(amount * 0.1);
-const received = amount - fee;
+  if (!sender) {
+    return res.json({ ok: false, error: "Sender not found" });
+  }
 
-db.transfers.push({
-  fromId: String(fromId),
-  toId: String(toId),
-  amount,
-  fee,
-  received,
-  time: Date.now()
-});
+  if (!receiver) {
+    return res.json({ ok: false, error: "Receiver not found" });
+  }
 
+  if (sender.balance < amount) {
+    return res.json({ ok: false, error: "Not enough balance" });
+  }
+
+  // 💸 комиссия 10%
+  const fee = Math.floor(amount * 0.1);
+  const received = amount - fee;
+
+  // 💥 списываем и начисляем
+  sender.balance -= amount;
+  receiver.balance += received;
+
+  // 🧾 лог
+  db.transfers.push({
+    fromId,
+    toId,
+    amount,
+    fee,
+    received,
+    time: Date.now()
+  });
 
   saveDB(db);
 
-  res.json({ ok: true, received, fee });
+  // ✅ ВАЖНО: возвращаем received
+  res.json({
+    ok: true,
+    received,
+    balance: sender.balance
+  });
 });
+
 
 // ===== TRANSFER HISTORY =====
 router.get("/history/:id", (req, res) => {
