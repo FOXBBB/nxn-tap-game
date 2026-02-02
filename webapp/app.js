@@ -1,3 +1,4 @@
+// ================= TELEGRAM =================
 let tgUser = null;
 let userId = "guest";
 
@@ -7,38 +8,78 @@ if (window.Telegram?.WebApp) {
   if (tgUser) userId = String(tgUser.id);
 }
 
-// ===== GAME STATE =====
-let balance = 0;
-let tapPower = 1;
-let maxEnergy = 100;
-let energy = 100;
+// ================= STORAGE =================
+const key = (k) => `${userId}_${k}`;
 
-// ===== UI =====
-function updateUI() {
-  document.getElementById("balance").innerText = "Balance: " + balance;
-  document.getElementById("energy").innerText = `Energy: ${energy} / ${maxEnergy}`;
+// ================= GAME STATE =================
+let balance = Number(localStorage.getItem(key("balance")) || 0);
+let tapPower = Number(localStorage.getItem(key("tapPower")) || 1);
+let maxEnergy = Number(localStorage.getItem(key("maxEnergy")) || 100);
+let energy = Number(localStorage.getItem(key("energy")) || maxEnergy);
+let lastEnergyTime = Number(localStorage.getItem(key("lastEnergyTime")) || Date.now());
+
+// ================= SAVE =================
+function saveState() {
+  localStorage.setItem(key("balance"), balance);
+  localStorage.setItem(key("tapPower"), tapPower);
+  localStorage.setItem(key("maxEnergy"), maxEnergy);
+  localStorage.setItem(key("energy"), energy);
+  localStorage.setItem(key("lastEnergyTime"), Date.now());
 }
 
-// ===== TAP =====
-document.getElementById("coin").onclick = () => {
+function updateUI() {
+  const b = document.getElementById("balance");
+  const e = document.getElementById("energy");
+  if (b) b.textContent = "Balance: " + balance;
+  if (e) e.textContent = `Energy: ${energy} / ${maxEnergy}`;
+}
+
+// ================= OFFLINE ENERGY REGEN =================
+(function () {
+  const now = Date.now();
+  const diff = now - lastEnergyTime;
+  const ticks = Math.floor(diff / 3000);
+  if (ticks > 0) {
+    energy = Math.min(maxEnergy, energy + ticks);
+    saveState();
+  }
+})();
+
+updateUI();
+
+// ================= TAP (НЕ ТРОГАЕМ ЛОГИКУ) =================
+document.getElementById("coin").onclick = (e) => {
   if (energy <= 0) return;
+
   balance += tapPower;
   energy -= 1;
+
+  saveState();
   updateUI();
   syncUser();
+
+  const plus = document.createElement("div");
+  plus.className = "plus-one";
+  plus.innerText = `+${tapPower}`;
+  plus.style.left = e.clientX + "px";
+  plus.style.top = e.clientY + "px";
+  document.body.appendChild(plus);
+  setTimeout(() => plus.remove(), 900);
 };
 
-// ===== ENERGY REGEN =====
+// ================= ONLINE ENERGY =================
 setInterval(() => {
   if (energy < maxEnergy) {
-    energy += 1;
+    energy++;
+    saveState();
     updateUI();
   }
 }, 3000);
 
-// ===== SYNC USER =====
+// ================= SYNC USER =================
 async function syncUser() {
   if (!tgUser) return;
+
   await fetch("/sync", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -46,38 +87,43 @@ async function syncUser() {
       id: tgUser.id,
       username: tgUser.username,
       first_name: tgUser.first_name,
-      photo_url: tgUser.photo_url,
+      photo_url: tgUser.photo_url || "",
       balance
     })
   });
 }
 
-// ===== LEADERBOARD =====
+// ================= LEADERBOARD (ЗАМЕНЯЕМ ФЕЙКОВ) =================
 async function loadLeaderboard() {
   const res = await fetch("/leaderboard");
   const data = await res.json();
-
   if (!Array.isArray(data)) return;
+
+  const placeholder = "avatar.png"; // ОДНА заглушка
 
   // TOP 1
   if (data[0]) {
     document.querySelector(".lb-top1 .name").innerText = data[0].name;
-    document.querySelector(".lb-top1 .score").innerText = format(data[0].balance);
-    document.querySelector(".lb-top1 .avatar").src = data[0].avatar || "https://i.pravatar.cc/120";
+    document.querySelector(".lb-top1 .score").innerText = data[0].balance;
+    document.querySelector(".lb-top1 .avatar").src = data[0].avatar || placeholder;
   }
 
+  // TOP 2 / 3
   const cards = document.querySelectorAll(".lb-top23 .lb-card");
-  if (data[1]) {
+
+  if (data[1] && cards[0]) {
     cards[0].querySelector(".name").innerText = data[1].name;
-    cards[0].querySelector(".score").innerText = format(data[1].balance);
-    cards[0].querySelector(".avatar").src = data[1].avatar || "https://i.pravatar.cc/100";
-  }
-  if (data[2]) {
-    cards[1].querySelector(".name").innerText = data[2].name;
-    cards[1].querySelector(".score").innerText = format(data[2].balance);
-    cards[1].querySelector(".avatar").src = data[2].avatar || "https://i.pravatar.cc/100";
+    cards[0].querySelector(".score").innerText = data[1].balance;
+    cards[0].querySelector(".avatar").src = data[1].avatar || placeholder;
   }
 
+  if (data[2] && cards[1]) {
+    cards[1].querySelector(".name").innerText = data[2].name;
+    cards[1].querySelector(".score").innerText = data[2].balance;
+    cards[1].querySelector(".avatar").src = data[2].avatar || placeholder;
+  }
+
+  // TOP 4–10
   const list = document.querySelector(".lb-list");
   list.innerHTML = "";
 
@@ -86,21 +132,15 @@ async function loadLeaderboard() {
     row.className = "row";
     row.innerHTML = `
       <span>#${i + 4}</span>
-      <img src="${u.avatar || "https://i.pravatar.cc/50"}">
+      <img src="${u.avatar || placeholder}">
       <b>${u.name}</b>
-      <i>${format(u.balance)}</i>
+      <i>${u.balance}</i>
     `;
     list.appendChild(row);
   });
 }
 
-function format(n) {
-  if (n >= 1e6) return (n / 1e6).toFixed(1) + "M";
-  if (n >= 1e3) return (n / 1e3).toFixed(1) + "K";
-  return n;
-}
-
-// ===== MENU =====
+// ================= MENU =================
 document.querySelectorAll(".menu div").forEach(btn => {
   btn.onclick = () => {
     document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
@@ -110,5 +150,4 @@ document.querySelectorAll(".menu div").forEach(btn => {
 });
 
 // старт
-updateUI();
 syncUser();
