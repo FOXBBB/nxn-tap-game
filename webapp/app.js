@@ -140,6 +140,8 @@ document.getElementById("send").onclick = async () => {
 };
 // ===== LOAD TRANSFER HISTORY =====
 async function loadHistory() {
+  if (!userId) return;
+
   const res = await fetch(`/history/${userId}`);
   const data = await res.json();
 
@@ -148,22 +150,28 @@ async function loadHistory() {
 
   box.innerHTML = "";
 
+  if (!data.length) {
+    box.innerHTML = "<i>No transfers yet</i>";
+    return;
+  }
+
   data.forEach(t => {
-    const div = document.createElement("div");
-    div.className = "history-row";
+    const row = document.createElement("div");
+    row.className = "history-row";
 
     const dir = t.fromId === userId ? "Sent" : "Received";
     const sign = dir === "Sent" ? "-" : "+";
 
-    div.innerHTML = `
+    row.innerHTML = `
       <b>${dir}</b>
       <span>${sign}${t.received}</span>
       <i>${new Date(t.time).toLocaleString()}</i>
     `;
 
-    box.appendChild(div);
+    box.appendChild(row);
   });
 }
+
 
 
 // ================= LEADERBOARD =================
@@ -232,8 +240,14 @@ function initMenu() {
       );
       btn.classList.add("active");
 
+      if (btn.dataset.go === "transfer") {
+  loadHistory();
+}
+
+
       if (btn.dataset.go === "leaderboard") {
         loadLeaderboard();
+        
       }
     };
   });
