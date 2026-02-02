@@ -350,3 +350,14 @@ updateUI();
   } catch {}
 }, 3000);
 
+// ================= STAR FIELD =================
+const starsBox = document.getElementById("stars");
+
+for (let i = 0; i < 40; i++) {
+  const s = document.createElement("div");
+  s.className = "star";
+  s.style.left = Math.random() * 100 + "vw";
+  s.style.animationDuration = 5 + Math.random() * 10 + "s";
+  s.style.animationDelay = Math.random() * 10 + "s";
+  starsBox.appendChild(s);
+}

@@ -534,3 +534,80 @@ button:disabled {
   }
 }
 
+/* ================= LAYOUT POLISH ================= */
+
+body {
+  position: relative;
+  overflow: hidden;
+}
+
+/* центрируем тапалку */
+#coin {
+  display: block;
+  margin: 0 auto;
+}
+
+/* баланс — ниже, спокойный */
+#balance {
+  margin-top: 14px;
+  opacity: 0.7;
+  font-size: 15px;
+}
+
+/* энергия — ближе к меню */
+#energy {
+  margin-top: 24px;
+  font-size: 14px;
+  opacity: 0.85;
+}
+
+/* контейнер экрана тапа */
+#tap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 75vh;
+}
+/* ================= STAR BACKGROUND ================= */
+
+.stars {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: transparent;
+  overflow: hidden;
+}
+
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: rgba(255,255,255,0.8);
+  border-radius: 50%;
+  animation: starFall linear infinite;
+}
+
+@keyframes starFall {
+  from {
+    transform: translateY(-10vh);
+    opacity: 0;
+  }
+  10% { opacity: 1; }
+  to {
+    transform: translateY(110vh);
+    opacity: 0;
+  }
+}
+/* ================= TITLE ================= */
+
+#title {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  margin-bottom: 18px;
+  color: #eafff6;
+  text-shadow:
+    0 0 12px rgba(0,255,180,0.6),
+    0 0 30px rgba(0,255,180,0.3);
+}
