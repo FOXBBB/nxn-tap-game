@@ -64,9 +64,6 @@ async function refreshMe() {
   const res = await fetch(`/me/${userId}`);
   const data = await res.json();
 
-  energy = Number(data.energy) || energy;
-maxEnergy = Number(data.maxEnergy) || maxEnergy;
-
 canTap = energy > 0;
 updateUI();
 
@@ -96,8 +93,6 @@ const coin = document.getElementById("coin");
 coin.onclick = async (e) => {
   if (!canTap) return;
 
-  const energyBeforeTap = energy;
-
   try {
     const res = await fetch("/tap", {
       method: "POST",
@@ -107,21 +102,19 @@ coin.onclick = async (e) => {
 
     const data = await res.json();
 
+    // баланс берём из tap — это безопасно
     balance = Number(data.balance) || balance;
 
-    if (energyBeforeTap > 0) {
-      energy = Number(data.energy) || energy;
-    }
+    // ❗ энергию ИЗ TAP НЕ БЕРЁМ ВООБЩЕ
+    // energy обновляется ТОЛЬКО через /me
 
-    maxEnergy = Number(data.maxEnergy) || maxEnergy;
-    tapPower = Number(data.tapPower) || tapPower;
-
-    canTap = energy > 0;
     updateUI();
+    animatePlus(e, tapPower);
   } catch (err) {
     console.error("tap error", err);
   }
 };
+
 
 
 
