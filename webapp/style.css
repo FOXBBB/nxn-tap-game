@@ -186,9 +186,7 @@ body {
   cursor: pointer;
 }
 
-/* ===== TRANSFER ===== */
 /* ================= TRANSFER UI ================= */
-
 #transfer,
 #transfer * {
   color: #eafff6;
@@ -198,30 +196,15 @@ body {
   background: rgba(10, 25, 20, 0.6);
   border: 1px solid rgba(0, 255, 180, 0.25);
   border-radius: 10px;
-
   padding: 10px 12px;
   color: #eafff6;
-
-  outline: none;
-}
-
-#transfer input::placeholder {
-  color: rgba(200, 255, 235, 0.45);
 }
 
 #transfer button {
   background: linear-gradient(135deg, #00ffc6, #00bfa5);
   color: #002018;
-
-  border: none;
-  border-radius: 12px;
-
-  padding: 12px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-
-  box-shadow: 0 0 14px rgba(0, 255, 180, 0.45);
 }
+
 
 
 /* ===== MENU ===== */
@@ -692,4 +675,40 @@ h1,
   border-color: rgba(255, 90, 90, 0.6);
   color: #ff9a9a;
   box-shadow: 0 0 14px rgba(255, 90, 90, 0.4);
+}
+/* ================= TAP SCREEN FINAL LAYOUT ================= */
+
+/* увеличиваем заголовок ТОЛЬКО на главном экране */
+#tap .title.blue {
+  font-size: 38px;
+}
+
+#tap .subtitle.yellow {
+  font-size: 20px;
+}
+
+/* центрируем контент */
+#tap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* баланс — крупнее и выше монеты */
+#tap #balance {
+  font-size: 18px;
+  margin-bottom: 14px;
+}
+
+/* монета строго центр */
+#tap #coin {
+  margin: 0;
+}
+
+/* энергия под монетой */
+#tap #energy {
+  margin-top: 16px;
+  font-size: 15px;
+  opacity: 0.9;
 }
