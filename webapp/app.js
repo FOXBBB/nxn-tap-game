@@ -62,8 +62,15 @@ document.querySelectorAll(".menu div").forEach(btn => {
   btn.onclick = () => {
     document.querySelectorAll(".menu div").forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
+
     screens.forEach(s => document.getElementById(s).classList.add("hidden"));
-    document.getElementById(btn.dataset.go).classList.remove("hidden");
+    const screen = document.getElementById(btn.dataset.go);
+    screen.classList.remove("hidden");
+
+    // 👇 ВАЖНО: если открыли leaderboard — грузим данные
+    if (btn.dataset.go === "leaderboard") {
+      loadLeaderboard();
+    }
   };
 });
 
