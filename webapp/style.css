@@ -1004,3 +1004,61 @@ html, body {
   opacity: 1;
   transform: scale(1.25); /* чуть больше акцента */
 }
+/* ================= iOS MENU IMAGE FIX ================= */
+
+/* убиваем ios highlight полностью */
+.menu,
+.menu * {
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  -webkit-focus-ring-color: transparent;
+  outline: none;
+}
+
+/* контейнеры меню */
+.menu div {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* 🔥 ВАЖНО: img не должны быть interactive */
+.menu img {
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* iOS active / focus kill */
+.menu div:active,
+.menu div:focus,
+.menu div:focus-visible {
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+/* ================= MENU ICON SIZE ================= */
+
+.menu div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* размер самих иконок */
+.menu img {
+  width: 38px;     /* ← увеличь тут (36–44 идеально) */
+  height: auto;
+  filter: drop-shadow(0 0 8px rgba(0, 255, 180, 0.6));
+}
+
+/* активная кнопка */
+.menu .active img {
+  width: 44px;
+  filter: drop-shadow(0 0 14px rgba(0, 255, 180, 0.9));
+}
+/* menu img should not receive touch */
+.menu img {
+  pointer-events: none;
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
