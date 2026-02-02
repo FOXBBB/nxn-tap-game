@@ -89,9 +89,13 @@ function updateUI() {
 
 
 // ================= TAP =================
-const coin = document.getElementById("coin");
 coin.onclick = async (e) => {
-  if (!canTap) return;
+  if (energy <= 0) return;
+
+  // optimistic UI
+  energy -= 1;
+  balance += tapPower;
+  updateUI();
 
   try {
     const res = await fetch("/tap", {
@@ -102,17 +106,17 @@ coin.onclick = async (e) => {
 
     const data = await res.json();
 
-    // баланс берём из tap — это безопасно
     balance = Number(data.balance) || balance;
-
-    // ❗ энергию ИЗ TAP НЕ БЕРЁМ ВООБЩЕ
-    // energy обновляется ТОЛЬКО через /me
+    energy = Number(data.energy) || energy;
+    maxEnergy = Number(data.maxEnergy) || maxEnergy;
+    tapPower = Number(data.tapPower) || tapPower;
 
     updateUI();
-    animatePlus(e, tapPower);
   } catch (err) {
     console.error("tap error", err);
   }
+
+  animatePlus(e, tapPower);
 };
 
 
