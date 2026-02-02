@@ -91,6 +91,7 @@ document.getElementById("coin").onclick = (e) => {
   energy -= 1;
   saveState();
   updateUI();
+syncUser();
 
   const plus = document.createElement("div");
   plus.className = "plus-one";
@@ -145,6 +146,7 @@ setInterval(() => {
   balance += tapPower;
   saveState();
   updateUI();
+  syncUser();
 }, AUTOCLICK_INTERVAL);
 
 window.addEventListener("beforeunload", () => {
@@ -227,6 +229,22 @@ document.querySelectorAll(".shop-buy").forEach(btn => {
     updateUI();
   });
 });
+async function syncUser() {
+  if (!tgUser) return;
+
+  await fetch("/sync", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      id: tgUser.id,
+      username: tgUser.username,
+      first_name: tgUser.first_name,
+      photo_url: tgUser.photo_url,
+      balance
+    })
+  });
+}
+
 
 // ===== LEADERBOARD (UI ONLY FOR NOW) =====
 async function loadLeaderboard() {
@@ -235,17 +253,19 @@ async function loadLeaderboard() {
 
   const list = document.querySelector(".lb-list");
   if (!list) return;
+
   list.innerHTML = "";
 
-  data.forEach((u, i) => {
+  data.slice(3).forEach((u, i) => {
     const row = document.createElement("div");
     row.className = "row";
     row.innerHTML = `
-      <span>#${i + 1}</span>
-      <img src="${u.avatar || 'https://i.pravatar.cc/50'}">
-      <b>${u.name}</b>
+      <span>#${i + 4}</span>
+      <img src="${u.photo_url || "https://i.pravatar.cc/50"}">
+      <b>${u.username || u.first_name || "Player"}</b>
       <i>${u.balance}</i>
     `;
     list.appendChild(row);
   });
 }
+
