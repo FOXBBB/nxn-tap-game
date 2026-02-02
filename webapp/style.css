@@ -959,3 +959,48 @@ html, body {
     -webkit-text-size-adjust: 100%;
   }
 }
+/* ================= REMOVE MENU TAP HIGHLIGHT (iOS FIX) ================= */
+
+.menu,
+.menu * {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-focus-ring-color: transparent;
+  outline: none;
+}
+
+/* конкретно пункты меню */
+.menu div,
+.menu div:active,
+.menu div:focus,
+.menu div:focus-visible {
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* если внутри img */
+.menu img {
+  pointer-events: none;
+}
+/* ===== BOTTOM MENU SIZE TUNE ===== */
+
+.menu {
+  height: 104px; /* было 90px */
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.menu div {
+  font-size: 28px;        /* было ~24px */
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.55;
+}
+
+/* активный пункт */
+.menu .active {
+  opacity: 1;
+  transform: scale(1.25); /* чуть больше акцента */
+}
