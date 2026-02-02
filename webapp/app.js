@@ -3,11 +3,13 @@ let tgUser = null;
 let userId = null;
 
 // ================= GAME STATE (ONLY FROM SERVER) =================
+let displayedEnergy = 0;
 let balance = 0;
 let energy = 0;
 let maxEnergy = 100;
 let tapPower = 1;
-let displayedEnergy = energy;
+
+
 // ================= INIT =================
 document.addEventListener("DOMContentLoaded", async () => {
   if (!window.Telegram || !Telegram.WebApp) {
@@ -37,7 +39,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // get actual state
   await refreshMe();
-
+displayedEnergy = energy;
   updateUI();
   initMenu();
 });
@@ -75,50 +77,26 @@ function updateUI() {
   const e = document.getElementById("energy");
 
   if (b) b.innerText = "Balance: " + balance;
-
-  if (e) {
-    if (displayedEnergy === undefined) displayedEnergy = energy;
-
-function updateUI() {
-  const b = document.getElementById("balance");
-  const e = document.getElementById("energy");
-
-  if (b) b.innerText = "Balance: " + balance;
-  if (e) e.innerText = `Energy: ${energy} / ${maxEnergy}`;
+  if (e) e.innerText = `Energy: ${Math.round(displayedEnergy)} / ${maxEnergy}`;
 }
 
 
-    e.innerText = `Energy: ${displayedEnergy} / ${maxEnergy}`;
+setInterval(() => {
+  if (displayedEnergy < energy) {
+    displayedEnergy += Math.min(0.5, energy - displayedEnergy);
+  } else if (displayedEnergy > energy) {
+    displayedEnergy -= Math.min(0.5, displayedEnergy - energy);
   }
-}
+}, 50);
 
 
 // ================= TAP =================
 const coin = document.getElementById("coin");
 coin.classList.add("tap");
 setTimeout(() => coin.classList.remove("tap"), 80);
-document.getElementById("coin").onclick = (e) => {
-  if (energy <= 0) return; // ❗ важно
-
-  balance += tapPower;
-  energy -= 1;
-
-  saveState();
-  updateUI();
-  syncUser();
-
-  const plus = document.createElement("div");
-  plus.className = "plus-one";
-  plus.innerText = `+${tapPower}`;
-  plus.style.left = e.clientX + "px";
-  plus.style.top = e.clientY + "px";
-  document.body.appendChild(plus);
-
-  setTimeout(() => plus.remove(), 900);
-};
 
 
-  const data = await res.json();
+
   if (!data.ok) return;
 
   balance = data.balance;
