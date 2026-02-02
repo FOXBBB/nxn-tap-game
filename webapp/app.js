@@ -18,7 +18,7 @@ let maxEnergy = Number(localStorage.getItem(key("maxEnergy")) || 100);
 let energy = Number(localStorage.getItem(key("energy")) || maxEnergy);
 let lastEnergyTime = Number(localStorage.getItem(key("lastEnergyTime")) || Date.now());
 
-// ================= SAVE =================
+// ================= SAVE / UI =================
 function saveState() {
   localStorage.setItem(key("balance"), balance);
   localStorage.setItem(key("tapPower"), tapPower);
@@ -47,7 +47,7 @@ function updateUI() {
 
 updateUI();
 
-// ================= TAP (НЕ ТРОГАЕМ ЛОГИКУ) =================
+// ================= TAP (КАК БЫЛО) =================
 document.getElementById("coin").onclick = (e) => {
   if (energy <= 0) return;
 
@@ -79,7 +79,6 @@ setInterval(() => {
 // ================= SYNC USER =================
 async function syncUser() {
   if (!tgUser) return;
-
   await fetch("/sync", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -93,13 +92,13 @@ async function syncUser() {
   });
 }
 
-// ================= LEADERBOARD (ЗАМЕНЯЕМ ФЕЙКОВ) =================
+// ================= LEADERBOARD (ПЕРЕЗАПИСЫВАЕМ ФЕЙКОВ) =================
 async function loadLeaderboard() {
   const res = await fetch("/leaderboard");
   const data = await res.json();
   if (!Array.isArray(data)) return;
 
-  const placeholder = "avatar.png"; // ОДНА заглушка
+  const placeholder = "avatar.png"; // ОДНА фиксированная картинка
 
   // TOP 1
   if (data[0]) {
@@ -140,14 +139,18 @@ async function loadLeaderboard() {
   });
 }
 
-// ================= MENU =================
-document.querySelectorAll(".menu div").forEach(btn => {
+// ================= MENU (КАК БЫЛО) =================
+document.querySelectorAll(".menu div").forEach(btn => 
   btn.onclick = () => {
     document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
     document.getElementById(btn.dataset.go).classList.remove("hidden");
-    if (btn.dataset.go === "leaderboard") loadLeaderboard();
-  };
+   if (btn.dataset.go === "leaderboard") {
+  syncUser().then(loadLeaderboard);
+};
 });
 
 // старт
 syncUser();
+window.addEventListener("load", () => {
+  syncUser();
+});
