@@ -599,15 +599,28 @@ body {
     opacity: 0;
   }
 }
-/* ================= TITLE ================= */
+/* ================= PROJECT TITLE POLISH ================= */
 
-#title {
-  font-size: 28px;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  margin-bottom: 18px;
-  color: #eafff6;
+.title.blue {
+  font-size: 34px;              /* было меньше — делаем заметно крупнее */
+  font-weight: 800;
+  letter-spacing: 2px;
+  margin-bottom: 4px;
+  color: #7fdcff;               /* неоново-синий */
+
   text-shadow:
-    0 0 12px rgba(0,255,180,0.6),
-    0 0 30px rgba(0,255,180,0.3);
+    0 0 6px rgba(127, 220, 255, 0.8),
+    0 0 14px rgba(127, 220, 255, 0.6),
+    0 0 28px rgba(127, 220, 255, 0.4);
+}
+
+.subtitle.yellow {
+  font-size: 18px;              /* оставляем компактным */
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  color: #ffd56a;               /* твой золотистый */
+
+  text-shadow:
+    0 0 6px rgba(255, 213, 106, 0.6),
+    0 0 14px rgba(255, 213, 106, 0.35);
 }
