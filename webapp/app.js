@@ -79,8 +79,14 @@ function updateUI() {
   if (e) {
     if (displayedEnergy === undefined) displayedEnergy = energy;
 
-    displayedEnergy += (energy - displayedEnergy) * 0.3;
-    displayedEnergy = Math.round(displayedEnergy);
+function updateUI() {
+  const b = document.getElementById("balance");
+  const e = document.getElementById("energy");
+
+  if (b) b.innerText = "Balance: " + balance;
+  if (e) e.innerText = `Energy: ${energy} / ${maxEnergy}`;
+}
+
 
     e.innerText = `Energy: ${displayedEnergy} / ${maxEnergy}`;
   }
@@ -91,12 +97,26 @@ function updateUI() {
 const coin = document.getElementById("coin");
 coin.classList.add("tap");
 setTimeout(() => coin.classList.remove("tap"), 80);
-document.getElementById("coin").onclick = async (e) => {
-  const res = await fetch("/tap", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id: userId })
-  });
+document.getElementById("coin").onclick = (e) => {
+  if (energy <= 0) return; // ❗ важно
+
+  balance += tapPower;
+  energy -= 1;
+
+  saveState();
+  updateUI();
+  syncUser();
+
+  const plus = document.createElement("div");
+  plus.className = "plus-one";
+  plus.innerText = `+${tapPower}`;
+  plus.style.left = e.clientX + "px";
+  plus.style.top = e.clientY + "px";
+  document.body.appendChild(plus);
+
+  setTimeout(() => plus.remove(), 900);
+};
+
 
   const data = await res.json();
   if (!data.ok) return;
@@ -107,7 +127,7 @@ document.getElementById("coin").onclick = async (e) => {
 
   updateUI();
   animatePlus(e, data.tapPower || 1);
-};
+
 
 function animatePlus(e, value) {
   const plus = document.createElement("div");
