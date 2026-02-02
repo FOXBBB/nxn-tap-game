@@ -459,20 +459,47 @@ button:disabled {
   opacity: 0.4;
   pointer-events: none;
 }
-/* ================= COIN ================= */
+/* ================= HARD FIX: REMOVE TAP SQUARE ================= */
 
+/* disable any tap highlight / focus */
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-focus-ring-color: transparent;
+  outline: none;
+}
+
+/* coin container hard reset */
 #coin {
-  animation: coinIdle 3s ease-in-out infinite;
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
 }
 
-@keyframes coinIdle {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.03); }
-  100% { transform: scale(1); }
+/* parent tap areas (Telegram WebView issue) */
+#coin:active,
+#coin:focus,
+#coin:focus-visible {
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
 }
 
-/* tap overrides idle */
-#coin.tap-anim {
-  animation: none;
-  transform: scale(0.92);
+/* VERY IMPORTANT: parent of coin */
+#coin-wrapper,
+.coin-wrapper,
+.tap-area,
+.tap,
+.coin-container {
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+/* kill pseudo-elements that cause square */
+#coin-wrapper::before,
+#coin-wrapper::after,
+.tap-area::before,
+.tap-area::after {
+  display: none !important;
+  content: none !important;
 }
