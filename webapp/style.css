@@ -889,3 +889,43 @@ input {
     font-size: 18px;
   }
 }
+/* ================= TAP SCREEN VERTICAL OFFSET ================= */
+
+/* опускаем весь контент главного экрана */
+#tap {
+  padding-top: 40px;   /* было 0 / мало */
+}
+
+/* дополнительно чуть воздуха между элементами */
+#tap #balance {
+  margin-top: 10px;
+}
+
+#tap #coin {
+  margin-top: 16px;
+}
+
+#tap #energy {
+  margin-top: 18px;
+}
+/* ================= TAP SCREEN FINAL VERTICAL SHIFT ================= */
+
+/* общий контейнер тапа — опускаем всё сразу */
+#tap {
+  padding-top: 80px;   /* БЫЛО ~40 → ДЕЛАЕМ ЗАМЕТНО НИЖЕ */
+}
+
+/* баланс */
+#tap #balance {
+  margin-top: 20px;
+}
+
+/* монета */
+#tap #coin {
+  margin-top: 24px;
+}
+
+/* энергия */
+#tap #energy {
+  margin-top: 26px;
+}
