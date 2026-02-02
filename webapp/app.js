@@ -39,7 +39,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // get actual state
   await refreshMe();
-  displayedEnergy = energy;
   updateUI();
   initMenu();
 });
@@ -81,15 +80,12 @@ function updateUI() {
 
   if (b) b.innerText = "Balance: " + balance;
   if (e) e.innerText = `Energy: ${energy} / ${maxEnergy}`;
-
-
-    // NEW: low energy visual
-    if (displayedEnergy <= 5) {
-      e.classList.add("energy-low");
-    } else {
-      e.classList.remove("energy-low");
-    }
-  }
+  if (energy <= 5) {
+  e.classList.add("energy-low");
+} else {
+  e.classList.remove("energy-low");
+}
+}
 
 
 
@@ -99,9 +95,6 @@ function updateUI() {
 const coin = document.getElementById("coin");
 coin.onclick = async (e) => {
   if (!canTap) return;
-
-  balance += tapPower;
-  updateUI();
 
   try {
     const res = await fetch("/tap", {
@@ -117,14 +110,15 @@ coin.onclick = async (e) => {
     maxEnergy = Number(data.maxEnergy) || maxEnergy;
     tapPower = Number(data.tapPower) || tapPower;
 
-    canTap = energy > 0; // 🔒 обновляем ТОЛЬКО от сервера
+    canTap = energy > 0;
     updateUI();
+
+    animatePlus(e, tapPower);
   } catch (err) {
     console.error("tap error", err);
   }
-
-  animatePlus(e, tapPower);
 };
+
 
 
 
@@ -328,8 +322,10 @@ setInterval(async () => {
     const data = await res.json();
 
     energy = Number(data.energy) || energy;
-    maxEnergy = Number(data.maxEnergy) || maxEnergy;
-    updateUI();
+maxEnergy = Number(data.maxEnergy) || maxEnergy;
+canTap = energy > 0;
+updateUI();
+
   } catch {}
 }, 3000);
 
