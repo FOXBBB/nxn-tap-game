@@ -205,14 +205,14 @@ router.post("/buy-nxn", (req, res) => {
   // SHOP ITEMS (NXN)
   const items = {
     tap_plus_1: {
-      price: 100,
+      price: 30000,
       once: true,
       apply: () => {
         user.tapPower += 1;
       }
     },
     energy_plus_100: {
-      price: 200,
+      price: 50000,
       once: true,
       apply: () => {
         user.maxEnergy += 100;
