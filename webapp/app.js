@@ -1,7 +1,8 @@
+// ================= TELEGRAM =================
 let tgUser = null;
 let userId = null;
 
-// UI state
+// ================= GAME STATE (ONLY FROM SERVER) =================
 let balance = 0;
 let energy = 0;
 let maxEnergy = 100;
@@ -10,7 +11,7 @@ let tapPower = 1;
 // ================= INIT =================
 document.addEventListener("DOMContentLoaded", async () => {
   if (!window.Telegram || !Telegram.WebApp) {
-    alert("Open from Telegram");
+    alert("Open app from Telegram");
     return;
   }
 
@@ -18,26 +19,64 @@ document.addEventListener("DOMContentLoaded", async () => {
   tgUser = Telegram.WebApp.initDataUnsafe.user;
   userId = String(tgUser.id);
 
-  // show my ID
-  const myId = document.getElementById("my-id");
-  if (myId) myId.innerText = "Your ID: " + userId;
+  // show my id
+  const myIdEl = document.getElementById("my-id");
+  if (myIdEl) {
+    myIdEl.textContent = "Your ID: " + userId;
+    myIdEl.onclick = () => {
+      navigator.clipboard.writeText(userId);
+      Telegram.WebApp.showPopup({
+        title: "Copied",
+        message: "Your ID copied"
+      });
+    };
+  }
 
-  // register user
+  // register / update user
+  await syncUser();
+
+  // get actual state
+  await refreshMe();
+
+  updateUI();
+  initMenu();
+});
+
+// ================= SERVER SYNC =================
+async function syncUser() {
+  if (!tgUser) return;
+
   await fetch("/sync", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       id: userId,
-      username: tgUser.username,
-      first_name: tgUser.first_name,
-      photo_url: tgUser.photo_url
+      username: tgUser.username || "",
+      first_name: tgUser.first_name || "",
+      photo_url: tgUser.photo_url || ""
     })
   });
+}
 
-  await refreshMe();
-  updateUI();
-  initMenu();
-});
+// ================= LOAD MY STATE =================
+async function refreshMe() {
+  const res = await fetch(`/me/${userId}`);
+  const data = await res.json();
+
+  balance = Number(data.balance) || 0;
+  energy = Number(data.energy) || 0;
+  maxEnergy = Number(data.maxEnergy) || 100;
+  tapPower = Number(data.tapPower) || 1;
+}
+
+// ================= UI =================
+function updateUI() {
+  const b = document.getElementById("balance");
+  const e = document.getElementById("energy");
+
+  if (b) b.textContent = "Balance: " + balance;
+  if (e) e.textContent = `Energy: ${energy} / ${maxEnergy}`;
+}
 
 // ================= TAP =================
 document.getElementById("coin").onclick = async (e) => {
@@ -55,29 +94,48 @@ document.getElementById("coin").onclick = async (e) => {
   maxEnergy = data.maxEnergy;
 
   updateUI();
-  animatePlus(e);
+  animatePlus(e, data.tapPower || 1);
 };
+
+function animatePlus(e, value) {
+  const plus = document.createElement("div");
+  plus.className = "plus-one";
+  plus.innerText = `+${value}`;
+  plus.style.left = e.clientX + "px";
+  plus.style.top = e.clientY + "px";
+  document.body.appendChild(plus);
+  setTimeout(() => plus.remove(), 800);
+}
 
 // ================= TRANSFER =================
 document.getElementById("send").onclick = async () => {
-  const toId = document.getElementById("to-id").value.trim();
-  const amount = Number(document.getElementById("amount").value);
+  const toId = document.getElementById("to-id")?.value.trim();
+  const amount = Number(document.getElementById("amount")?.value);
 
   if (!toId || amount <= 0) {
-    alert("Invalid data");
+    alert("Enter valid ID and amount");
     return;
   }
 
   const res = await fetch("/transfer", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ fromId: userId, toId, amount })
+    body: JSON.stringify({
+      fromId: userId,
+      toId,
+      amount
+    })
   });
 
   const data = await res.json();
-  if (!data.ok) return alert(data.error);
+  if (!data.ok) {
+    alert(data.error || "Transfer failed");
+    return;
+  }
 
   await refreshMe();
+  updateUI();
+
   alert(`Sent ${data.sent} NXN (10% burned)`);
 };
 
@@ -87,36 +145,48 @@ async function loadLeaderboard() {
   const data = await res.json();
   if (!Array.isArray(data)) return;
 
-  // ТВОЙ UI уже есть — просто данные
-  console.log("LEADERBOARD:", data);
-}
+  const placeholder = "avatar.png";
 
-// ================= HELPERS =================
-async function refreshMe() {
-  const res = await fetch(`/me/${userId}`);
-  const data = await res.json();
+  // TOP 1
+  if (data[0]) {
+    document.querySelector(".lb-top1 .name").innerText = data[0].name;
+    document.querySelector(".lb-top1 .score").innerText = data[0].balance;
+    document.querySelector(".lb-top1 .avatar").src =
+      data[0].avatar || placeholder;
+  }
 
-  balance = data.balance;
-  energy = data.energy;
-  maxEnergy = data.maxEnergy;
-  tapPower = data.tapPower;
+  // TOP 2 / 3
+  const cards = document.querySelectorAll(".lb-top23 .lb-card");
 
-  updateUI();
-}
+  if (data[1] && cards[0]) {
+    cards[0].querySelector(".name").innerText = data[1].name;
+    cards[0].querySelector(".score").innerText = data[1].balance;
+    cards[0].querySelector(".avatar").src =
+      data[1].avatar || placeholder;
+  }
 
-function updateUI() {
-  document.getElementById("balance").innerText = "Balance: " + balance;
-  document.getElementById("energy").innerText = `Energy: ${energy}/${maxEnergy}`;
-}
+  if (data[2] && cards[1]) {
+    cards[1].querySelector(".name").innerText = data[2].name;
+    cards[1].querySelector(".score").innerText = data[2].balance;
+    cards[1].querySelector(".avatar").src =
+      data[2].avatar || placeholder;
+  }
 
-function animatePlus(e) {
-  const plus = document.createElement("div");
-  plus.className = "plus-one";
-  plus.innerText = `+${tapPower}`;
-  plus.style.left = e.clientX + "px";
-  plus.style.top = e.clientY + "px";
-  document.body.appendChild(plus);
-  setTimeout(() => plus.remove(), 800);
+  // TOP 4–10
+  const list = document.querySelector(".lb-list");
+  list.innerHTML = "";
+
+  data.slice(3).forEach((u, i) => {
+    const row = document.createElement("div");
+    row.className = "row";
+    row.innerHTML = `
+      <span>#${i + 4}</span>
+      <img src="${u.avatar || placeholder}">
+      <b>${u.name}</b>
+      <i>${u.balance}</i>
+    `;
+    list.appendChild(row);
+  });
 }
 
 // ================= MENU =================
@@ -142,18 +212,7 @@ function initMenu() {
   });
 }
 
-// ================= KEEP ONLINE =================
+// ================= KEEP USER ONLINE =================
 setInterval(() => {
-  if (!tgUser) return;
-
-  fetch("/sync", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      id: userId,
-      username: tgUser.username,
-      first_name: tgUser.first_name,
-      photo_url: tgUser.photo_url
-    })
-  });
+  syncUser();
 }, 5000);
