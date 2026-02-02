@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   Telegram.WebApp.ready();
   Telegram.WebApp.expand();
+  Telegram.WebApp.enableClosingConfirmation();
   Telegram.WebApp.setHeaderColor("#02040a");
   Telegram.WebApp.setBackgroundColor("#02040a");
 

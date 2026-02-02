@@ -929,3 +929,21 @@ input {
 #tap #energy {
   margin-top: 26px;
 }
+/* ===== iOS SAFE AREA FIX ===== */
+body {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Telegram iOS header compensation */
+.screen {
+  padding-top: 24px;
+}
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+.screen {
+  min-height: calc(100dvh - 90px);
+}
