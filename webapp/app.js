@@ -96,6 +96,8 @@ const coin = document.getElementById("coin");
 coin.onclick = async (e) => {
   if (!canTap) return;
 
+  const energyBeforeTap = energy;
+
   try {
     const res = await fetch("/tap", {
       method: "POST",
@@ -106,18 +108,21 @@ coin.onclick = async (e) => {
     const data = await res.json();
 
     balance = Number(data.balance) || balance;
-    energy = Number(data.energy) || energy;
+
+    if (energyBeforeTap > 0) {
+      energy = Number(data.energy) || energy;
+    }
+
     maxEnergy = Number(data.maxEnergy) || maxEnergy;
     tapPower = Number(data.tapPower) || tapPower;
 
     canTap = energy > 0;
     updateUI();
-
-    animatePlus(e, tapPower);
   } catch (err) {
     console.error("tap error", err);
   }
 };
+
 
 
 
