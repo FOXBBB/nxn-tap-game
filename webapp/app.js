@@ -1,30 +1,27 @@
-// ===== TELEGRAM WEBAPP =====
+// ================= TELEGRAM =================
 let tgUser = null;
 let userId = "guest";
 
-if (window.Telegram && Telegram.WebApp) {
+if (window.Telegram?.WebApp) {
   Telegram.WebApp.ready();
   tgUser = Telegram.WebApp.initDataUnsafe?.user;
   if (tgUser) userId = String(tgUser.id);
 }
 
-// ===== KEYS =====
+// ================= STORAGE =================
 const key = (k) => `${userId}_${k}`;
 
-// ===== BASE GAME STATE =====
+// ================= GAME STATE =================
 let balance = Number(localStorage.getItem(key("balance")) || 0);
 let tapPower = Number(localStorage.getItem(key("tapPower")) || 1);
 
-// БАЗОВАЯ энергия (меняется ТОЛЬКО покупками за NXN)
 let baseMaxEnergy = Number(localStorage.getItem(key("baseMaxEnergy")) || 100);
-
-// текущая энергия
+let maxEnergy = baseMaxEnergy;
 let energy = Number(localStorage.getItem(key("energy")) || baseMaxEnergy);
 
-// итоговый maxEnergy (пересчитывается)
-let maxEnergy = baseMaxEnergy;
+let lastEnergyTime = Number(localStorage.getItem(key("lastEnergyTime")) || Date.now());
 
-// ===== SAVE =====
+// ================= SAVE =================
 function saveState() {
   localStorage.setItem(key("balance"), balance);
   localStorage.setItem(key("tapPower"), tapPower);
@@ -33,42 +30,54 @@ function saveState() {
 }
 
 function updateUI() {
-  document.getElementById("balance").textContent = "Balance: " + balance;
-  document.getElementById("energy").textContent = `Energy: ${energy} / ${maxEnergy}`;
+  const b = document.getElementById("balance");
+  const e = document.getElementById("energy");
+  if (b) b.textContent = "Balance: " + balance;
+  if (e) e.textContent = `Energy: ${energy} / ${maxEnergy}`;
 }
 
-// ===== TON UPGRADES (30 DAYS) =====
+// ================= TON UPGRADES =================
 const TON_DURATION = 30 * 24 * 60 * 60 * 1000;
-let tonUpgrades = JSON.parse(localStorage.getItem(key("tonUpgrades")) || "{}");
-
-function saveTonUpgrades() {
-  localStorage.setItem(key("tonUpgrades"), JSON.stringify(tonUpgrades));
-}
+let ton = JSON.parse(localStorage.getItem(key("ton")) || "{}");
 
 function isActive(name) {
-  return tonUpgrades[name] && tonUpgrades[name] > Date.now();
+  return ton[name] && ton[name] > Date.now();
 }
 
-function activateUpgrade(name) {
-  tonUpgrades[name] = Date.now() + TON_DURATION;
-  saveTonUpgrades();
+function activate(name) {
+  ton[name] = Date.now() + TON_DURATION;
+  localStorage.setItem(key("ton"), JSON.stringify(ton));
 }
 
-// ===== RECALC ENERGY (CRITICAL FIX) =====
+// ================= RECALC ENERGY =================
 function recalcMaxEnergy() {
   maxEnergy = baseMaxEnergy;
-
   if (isActive("energy200")) maxEnergy += 200;
   if (isActive("energy500")) maxEnergy += 500;
-
   if (energy > maxEnergy) energy = maxEnergy;
 }
 
-// ===== INIT =====
+// ================= OFFLINE ENERGY REGEN =================
+function applyOfflineEnergy() {
+  const now = Date.now();
+  const diff = now - lastEnergyTime;
+  const ticks = Math.floor(diff / 3000);
+
+  if (ticks > 0) {
+    energy = Math.min(maxEnergy, energy + ticks);
+    saveState();
+  }
+
+  lastEnergyTime = now;
+  localStorage.setItem(key("lastEnergyTime"), now);
+}
+
+// ================= INIT =================
 recalcMaxEnergy();
+applyOfflineEnergy();
 updateUI();
 
-// ===== NAVIGATION =====
+// ================= NAVIGATION =================
 const screens = ["leaderboard", "tap", "transfer", "shop"];
 
 document.querySelectorAll(".menu div").forEach(btn => {
@@ -83,15 +92,16 @@ document.querySelectorAll(".menu div").forEach(btn => {
   };
 });
 
-// ===== TAP =====
+// ================= TAP =================
 document.getElementById("coin").onclick = (e) => {
   if (energy <= 0) return;
 
   balance += tapPower;
   energy -= 1;
+
   saveState();
   updateUI();
-syncUser();
+  syncUser();
 
   const plus = document.createElement("div");
   plus.className = "plus-one";
@@ -102,58 +112,16 @@ syncUser();
   setTimeout(() => plus.remove(), 900);
 };
 
-// ===== ENERGY REGEN (SAFE) =====
-let energyInterval = null;
-if (!energyInterval) {
-  energyInterval = setInterval(() => {
-    if (energy < maxEnergy) {
-      energy++;
-      saveState();
-      updateUI();
-    }
-  }, 3000);
-}
-
-// ===== AUTCLICKER (NO ENERGY USAGE) =====
-const AUTOCLICK_INTERVAL = 2000;
-let autoclickerUntil = Number(localStorage.getItem(key("autoclickerUntil")) || 0);
-let lastVisit = Number(localStorage.getItem(key("lastVisit")) || Date.now());
-
-function isAutoclickerActive() {
-  return autoclickerUntil > Date.now();
-}
-
-function applyOfflineAutoclicks() {
-  if (!isAutoclickerActive()) return;
-
-  const now = Date.now();
-  const diff = now - lastVisit;
-  const clicks = Math.floor(diff / AUTOCLICK_INTERVAL);
-
-  if (clicks > 0) {
-    balance += clicks * tapPower;
+// ================= ONLINE ENERGY =================
+setInterval(() => {
+  if (energy < maxEnergy) {
+    energy++;
     saveState();
     updateUI();
   }
+}, 3000);
 
-  localStorage.setItem(key("lastVisit"), now);
-}
-
-applyOfflineAutoclicks();
-
-setInterval(() => {
-  if (!isAutoclickerActive()) return;
-  balance += tapPower;
-  saveState();
-  updateUI();
-  syncUser();
-}, AUTOCLICK_INTERVAL);
-
-window.addEventListener("beforeunload", () => {
-  localStorage.setItem(key("lastVisit"), Date.now());
-});
-
-// ===== TRANSFER (LOCAL DEMO) =====
+// ================= TRANSFER =================
 document.getElementById("send").onclick = () => {
   const inputs = document.querySelectorAll("#transfer input");
   const id = inputs[0].value.trim();
@@ -165,10 +133,12 @@ document.getElementById("send").onclick = () => {
   balance -= amount;
   saveState();
   updateUI();
-  alert("Transfer complete");
+  syncUser();
+
+  alert("Transfer completed");
 };
 
-// ===== SHOP (NXN PERMANENT) =====
+// ================= SHOP (NXN PERMANENT) =================
 const purchased = JSON.parse(localStorage.getItem(key("purchased")) || {});
 function savePurchased() {
   localStorage.setItem(key("purchased"), JSON.stringify(purchased));
@@ -176,18 +146,16 @@ function savePurchased() {
 
 document.querySelectorAll(".shop-buy").forEach(btn => {
   btn.onclick = () => {
-    const text = btn.innerText;
+    const label = btn.innerText;
 
-    // TAP +1 (NXN)
-    if (text === "10 000 NXN" && !purchased.tap1) {
+    if (label === "10 000 NXN" && !purchased.tap1) {
       if (balance < 10000) return alert("Not enough NXN");
       balance -= 10000;
       tapPower += 1;
       purchased.tap1 = true;
     }
 
-    // ENERGY +100 (NXN)
-    if (text === "20 000 NXN" && !purchased.energy100) {
+    if (label === "20 000 NXN" && !purchased.energy100) {
       if (balance < 20000) return alert("Not enough NXN");
       balance -= 20000;
       baseMaxEnergy += 100;
@@ -199,36 +167,78 @@ document.querySelectorAll(".shop-buy").forEach(btn => {
     savePurchased();
     saveState();
     updateUI();
+    syncUser();
   };
 });
 
-// ===== SHOP (TON TEMPORARY) =====
-document.querySelectorAll(".shop-buy").forEach(btn => {
-  btn.addEventListener("click", () => {
+// ================= AUTCLICKER =================
+let autoclickerUntil = Number(localStorage.getItem(key("autoclickerUntil")) || 0);
+let lastVisit = Number(localStorage.getItem(key("lastVisit")) || Date.now());
 
-    if (btn.innerText === "0.2 TON" && btn.dataset.type === "energy200") {
-      if (isActive("energy200")) return alert("Already active");
-      activateUpgrade("energy200");
-      recalcMaxEnergy();
-    }
+function autoclickerActive() {
+  return autoclickerUntil > Date.now();
+}
 
-    if (btn.innerText === "0.5 TON" && btn.dataset.type === "energy500") {
-      if (isActive("energy500")) return alert("Already active");
-      activateUpgrade("energy500");
-      recalcMaxEnergy();
-    }
+function applyOfflineAutoclick() {
+  if (!autoclickerActive()) return;
 
-    if (btn.innerText === "1 TON") {
-      if (isAutoclickerActive()) return alert("Autoclicker already active");
-      autoclickerUntil = Date.now() + TON_DURATION;
-      localStorage.setItem(key("autoclickerUntil"), autoclickerUntil);
-      localStorage.setItem(key("lastVisit"), Date.now());
-    }
-
+  const diff = Date.now() - lastVisit;
+  const clicks = Math.floor(diff / 2000);
+  if (clicks > 0) {
+    balance += clicks * tapPower;
     saveState();
-    updateUI();
+    syncUser();
+  }
+
+  localStorage.setItem(key("lastVisit"), Date.now());
+}
+
+applyOfflineAutoclick();
+
+setInterval(() => {
+  if (!autoclickerActive()) return;
+  balance += tapPower;
+  saveState();
+  updateUI();
+  syncUser();
+}, 2000);
+
+// ================= LEADERBOARD (REAL TOP-10) =================
+async function loadLeaderboard() {
+  const res = await fetch("/leaderboard");
+  const data = await res.json();
+
+  // TOP-1 / 2 / 3
+  if (data[0]) fillTop(1, data[0]);
+  if (data[1]) fillTop(2, data[1]);
+  if (data[2]) fillTop(3, data[2]);
+
+  // 4–10
+  const list = document.querySelector(".lb-list");
+  if (!list) return;
+  list.innerHTML = "";
+
+  data.slice(3).forEach((u, i) => {
+    const row = document.createElement("div");
+    row.className = "row";
+    row.innerHTML = `
+      <span>#${i + 4}</span>
+      <img src="${u.avatar || "https://i.pravatar.cc/50"}">
+      <b>${u.name}</b>
+      <i>${u.balance}</i>
+    `;
+    list.appendChild(row);
   });
-});
+}
+
+function fillTop(pos, user) {
+  document.querySelector(`.top${pos}-name`).textContent = user.name;
+  document.querySelector(`.top${pos}-score`).textContent = user.balance;
+  document.querySelector(`.top${pos}-avatar`).src =
+    user.avatar || "https://i.pravatar.cc/100";
+}
+
+// ================= SYNC =================
 async function syncUser() {
   if (!tgUser) return;
 
@@ -245,27 +255,11 @@ async function syncUser() {
   });
 }
 
+// first sync
+syncUser();
 
-// ===== LEADERBOARD (UI ONLY FOR NOW) =====
-async function loadLeaderboard() {
-  const res = await fetch("/leaderboard");
-  const data = await res.json();
-
-  const list = document.querySelector(".lb-list");
-  if (!list) return;
-
-  list.innerHTML = "";
-
-  data.slice(3).forEach((u, i) => {
-    const row = document.createElement("div");
-    row.className = "row";
-    row.innerHTML = `
-      <span>#${i + 4}</span>
-      <img src="${u.photo_url || "https://i.pravatar.cc/50"}">
-      <b>${u.username || u.first_name || "Player"}</b>
-      <i>${u.balance}</i>
-    `;
-    list.appendChild(row);
-  });
-}
-
+// ================= EXIT =================
+window.addEventListener("beforeunload", () => {
+  localStorage.setItem(key("lastEnergyTime"), Date.now());
+  localStorage.setItem(key("lastVisit"), Date.now());
+});
