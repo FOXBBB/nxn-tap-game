@@ -1,3 +1,23 @@
+// ===== TELEGRAM WEBAPP =====
+let tgUser = null;
+let userId = "guest";
+
+if (window.Telegram && Telegram.WebApp) {
+  Telegram.WebApp.ready();
+
+  tgUser = Telegram.WebApp.initDataUnsafe?.user;
+
+  if (tgUser) {
+    userId = String(tgUser.id);
+    localStorage.setItem("tg_user", JSON.stringify({
+      id: tgUser.id,
+      username: tgUser.username || "",
+      first_name: tgUser.first_name || "",
+      photo_url: tgUser.photo_url || ""
+    }));
+  }
+}
+
 // ===== GAME STATE (PERSISTENT) =====
 let balance = Number(localStorage.getItem("balance") || 0);
 let tapPower = Number(localStorage.getItem("tapPower") || 1);
@@ -5,12 +25,24 @@ let maxEnergy = Number(localStorage.getItem("maxEnergy") || 100);
 let energy = Number(localStorage.getItem("energy") || maxEnergy);
 
 // ===== SAVE / LOAD =====
-function saveState() {
-  localStorage.setItem("balance", balance);
-  localStorage.setItem("tapPower", tapPower);
-  localStorage.setItem("maxEnergy", maxEnergy);
-  localStorage.setItem("energy", energy);
+function getKey(key) {
+  return `${userId}_${key}`;
 }
+
+function saveState() {
+  localStorage.setItem(getKey("balance"), balance);
+  localStorage.setItem(getKey("tapPower"), tapPower);
+  localStorage.setItem(getKey("maxEnergy"), maxEnergy);
+  localStorage.setItem(getKey("energy"), energy);
+}
+
+function loadState() {
+  balance = Number(localStorage.getItem(getKey("balance")) || balance);
+  tapPower = Number(localStorage.getItem(getKey("tapPower")) || tapPower);
+  maxEnergy = Number(localStorage.getItem(getKey("maxEnergy")) || maxEnergy);
+  energy = Number(localStorage.getItem(getKey("energy")) || energy);
+}
+
 
 function updateUI() {
   const balanceEl = document.getElementById("balance");
@@ -19,7 +51,9 @@ function updateUI() {
   if (energyEl) energyEl.textContent = `Energy: ${energy} / ${maxEnergy}`;
 }
 
+loadState();
 updateUI();
+
 
 // ===== NAVIGATION =====
 const screens = ["leaderboard", "tap", "transfer", "shop"];
@@ -135,4 +169,150 @@ document.querySelectorAll(".shop-buy").forEach(btn => {
       alert("Energy +100 activated");
     }
   };
+});
+// ===== TON TEMPORARY UPGRADES (30 DAYS) =====
+const TON_DURATION = 30 * 24 * 60 * 60 * 1000; // 30 дней
+
+let tonUpgrades = JSON.parse(localStorage.getItem("tonUpgrades") || "{}");
+
+function saveTonUpgrades() {
+  localStorage.setItem("tonUpgrades", JSON.stringify(tonUpgrades));
+}
+
+function isActive(upg) {
+  return tonUpgrades[upg] && tonUpgrades[upg] > Date.now();
+}
+
+function activateUpgrade(name, applyFn) {
+  tonUpgrades[name] = Date.now() + TON_DURATION;
+  saveTonUpgrades();
+  applyFn();
+  updateUI();
+}
+
+// применяем активные апгрейды при загрузке
+function applyTonUpgrades() {
+  if (isActive("tap5")) tapPower += 5;
+  if (isActive("tap10")) tapPower += 10;
+  if (isActive("energy200")) maxEnergy += 200;
+  if (isActive("energy500")) maxEnergy += 500;
+}
+applyTonUpgrades();
+updateUI();
+
+// обработка покупок TON (mock)
+document.querySelectorAll(".shop-buy").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const text = btn.innerText;
+
+    // Tap +5 (0.2 TON)
+    if (text === "0.2 TON" && btn.previousElementSibling?.querySelector(".shop-name")?.innerText.includes("Tap Power +5")) {
+      if (isActive("tap5")) return alert("Already active");
+      activateUpgrade("tap5", () => tapPower += 5);
+      alert("Tap +5 activated for 30 days");
+    }
+
+    // Tap +10 (0.5 TON)
+    if (text === "0.5 TON" && btn.previousElementSibling?.querySelector(".shop-name")?.innerText.includes("Tap Power +10")) {
+      if (isActive("tap10")) return alert("Already active");
+      activateUpgrade("tap10", () => tapPower += 10);
+      alert("Tap +10 activated for 30 days");
+    }
+
+    // Energy +200 (0.2 TON)
+    if (text === "0.2 TON" && btn.previousElementSibling?.querySelector(".shop-name")?.innerText.includes("Energy +200")) {
+      if (isActive("energy200")) return alert("Already active");
+      activateUpgrade("energy200", () => maxEnergy += 200);
+      alert("Energy +200 activated for 30 days");
+    }
+
+    // Energy +500 (0.5 TON)
+    if (text === "0.5 TON" && btn.previousElementSibling?.querySelector(".shop-name")?.innerText.includes("Energy +500")) {
+      if (isActive("energy500")) return alert("Already active");
+      activateUpgrade("energy500", () => maxEnergy += 500);
+      alert("Energy +500 activated for 30 days");
+    }
+
+    // Autoclicker (1 TON)
+    if (text === "1 TON") {
+      if (isActive("autoclicker")) return alert("Already active");
+      activateUpgrade("autoclicker", () => {
+        setInterval(() => {
+          if (energy > 0) {
+            balance += tapPower;
+            energy -= 1;
+            saveState();
+            updateUI();
+          }
+        }, 2000);
+      });
+      alert("Autoclicker activated for 30 days");
+    }
+  });
+});
+// ===== AUTCLICKER (OFFLINE SAFE) =====
+const AUTOCLICK_INTERVAL = 2000; // 1 клик / 2 секунды
+const AUTOCLICK_DURATION = 30 * 24 * 60 * 60 * 1000; // 30 дней
+
+let autoclickerUntil = Number(localStorage.getItem("autoclickerUntil") || 0);
+let lastActiveTime = Number(localStorage.getItem("lastActiveTime") || Date.now());
+
+function isAutoclickerActive() {
+  return autoclickerUntil > Date.now();
+}
+
+// начисление оффлайн-кликов
+function applyOfflineAutoclicks() {
+  if (!isAutoclickerActive()) return;
+
+  const now = Date.now();
+  const diff = now - lastActiveTime;
+  const clicks = Math.floor(diff / AUTOCLICK_INTERVAL);
+
+  if (clicks > 0) {
+    balance += clicks * tapPower;
+    energy = Math.max(0, energy - clicks);
+    saveState();
+    updateUI();
+  }
+}
+
+// вызываем при загрузке
+applyOfflineAutoclicks();
+
+// онлайн-клики (пока пользователь в игре)
+setInterval(() => {
+  if (!isAutoclickerActive()) return;
+  if (energy <= 0) return;
+
+  balance += tapPower;
+  energy -= 1;
+  saveState();
+  updateUI();
+}, AUTOCLICK_INTERVAL);
+
+// сохраняем время выхода
+window.addEventListener("beforeunload", () => {
+  localStorage.setItem("lastActiveTime", Date.now());
+});
+
+// активация автокликера (mock TON)
+function activateAutoclicker() {
+  autoclickerUntil = Date.now() + AUTOCLICK_DURATION;
+  localStorage.setItem("autoclickerUntil", autoclickerUntil);
+  localStorage.setItem("lastActiveTime", Date.now());
+  alert("Autoclicker activated for 30 days");
+}
+
+// вешаем на кнопку 1 TON
+document.querySelectorAll(".shop-buy").forEach(btn => {
+  btn.addEventListener("click", () => {
+    if (btn.innerText === "1 TON") {
+      if (isAutoclickerActive()) {
+        alert("Autoclicker already active");
+        return;
+      }
+      activateAutoclicker();
+    }
+  });
 });
