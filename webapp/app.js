@@ -3,7 +3,6 @@ let tgUser = null;
 let userId = null;
 
 // ================= GAME STATE (ONLY FROM SERVER) =================
-let displayedEnergy = 0;
 let balance = 0;
 let energy = 0;
 let maxEnergy = 100;
@@ -77,8 +76,8 @@ function updateUI() {
   const e = document.getElementById("energy");
 
   if (b) b.innerText = "Balance: " + balance;
-  if (e) {
-    e.innerText = `Energy: ${Math.round(displayedEnergy)} / ${maxEnergy}`;
+  if (e) e.innerText = `Energy: ${energy} / ${maxEnergy}`;
+
 
     // NEW: low energy visual
     if (displayedEnergy <= 5) {
@@ -87,27 +86,7 @@ function updateUI() {
       e.classList.remove("energy-low");
     }
   }
-}
 
-
-// ================= ENERGY DISPLAY SMOOTH =================
-setInterval(() => {
-  // если серверная энергия 0 — честно показываем 0
-  if (energy <= 0) {
-    displayedEnergy = 0;
-    return;
-  }
-
-  // плавно и МЕДЛЕННО догоняем сервер
-  const diff = energy - displayedEnergy;
-
-  if (Math.abs(diff) < 0.05) {
-    displayedEnergy = energy;
-  } else {
-    displayedEnergy += diff * 0.08;
-  }
-
-}, 100);
 
 
 
@@ -355,10 +334,7 @@ setInterval(async () => {
 
     energy = Number(data.energy) || energy;
     maxEnergy = Number(data.maxEnergy) || maxEnergy;
-
-    updateUI(); // 🔥 ВОТ ЭТОГО НЕ ХВАТАЛО
-  } catch (e) {
-    console.warn("energy sync skipped");
-  }
+    updateUI();
+  } catch {}
 }, 3000);
 
