@@ -79,18 +79,24 @@ setInterval(() => {
 // ================= SYNC USER =================
 async function syncUser() {
   if (!tgUser) return;
-  await fetch("/sync", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      id: tgUser.id,
-      username: tgUser.username,
-      first_name: tgUser.first_name,
-      photo_url: tgUser.photo_url || "",
-      balance
-    })
-  });
+
+  try {
+    await fetch("/sync", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: tgUser.id,
+        username: tgUser.username || "",
+        first_name: tgUser.first_name || "",
+        photo_url: tgUser.photo_url || "",
+        balance
+      })
+    });
+  } catch (e) {
+    console.error("sync failed", e);
+  }
 }
+
 
 // ================= LEADERBOARD (ПЕРЕЗАПИСЫВАЕМ ФЕЙКОВ) =================
 async function loadLeaderboard() {
@@ -144,13 +150,18 @@ document.querySelectorAll(".menu div").forEach(btn =>
   btn.onclick = () => {
     document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
     document.getElementById(btn.dataset.go).classList.remove("hidden");
-   if (btn.dataset.go === "leaderboard") {
-  syncUser().then(loadLeaderboard);
-};
+  if (btn.dataset.go === "leaderboard") {
+  syncUser();       // <-- сначала отправляем себя
+  loadLeaderboard(); // <-- потом грузим топ
+}
+;
 });
 
 // старт
-syncUser();
+loadState();
+updateUI();
+syncUser(); // <-- ВАЖНО
+
 window.addEventListener("load", () => {
   syncUser();
 });
