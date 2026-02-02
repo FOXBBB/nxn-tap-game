@@ -712,3 +712,19 @@ h1,
   font-size: 15px;
   opacity: 0.9;
 }
+/* ================= NON-TAP SCREENS RESET ================= */
+
+#transfer,
+#leaderboard,
+#shop {
+  display: block;
+  padding: 16px;
+}
+
+#transfer * ,
+#leaderboard * ,
+#shop * {
+  align-items: initial;
+  justify-content: initial;
+  text-align: initial;
+}
