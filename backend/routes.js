@@ -1,14 +1,18 @@
-import db from "./db.js";
+import * as db from "./db.js";
 
 export default function routes(app) {
 
-  // ===== LEADERBOARD =====
-  app.get("/leaderboard", async (req, res) => {
+  app.get("/leaderboard", (req, res) => {
     try {
-      if (!db.users) db.users = {};
-const users = Object.values(db.users);
+      // поддержка любой структуры db.js
+      const users =
+        db.users ||
+        db.default?.users ||
+        {};
 
-      const top = users
+      const list = Object.values(users);
+
+      const top = list
         .sort((a, b) => (b.balance || 0) - (a.balance || 0))
         .slice(0, 10)
         .map(u => ({
