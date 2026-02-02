@@ -160,6 +160,16 @@ document.querySelectorAll(".menu div").forEach(btn =>
 // старт
 loadState();
 updateUI();
+// show my telegram id in transfer
+const myIdEl = document.getElementById("my-id");
+if (myIdEl && tgUser) {
+  myIdEl.textContent = "Your ID: " + tgUser.id;
+  myIdEl.onclick = () => {
+    navigator.clipboard.writeText(String(tgUser.id));
+    alert("Your ID copied");
+  };
+}
+
 syncUser(); // <-- ВАЖНО
 
 window.addEventListener("load", () => {
