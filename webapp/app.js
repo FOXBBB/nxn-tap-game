@@ -18,6 +18,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   Telegram.WebApp.ready();
+  // hide Telegram header title
+  Telegram.WebApp.expand();
+  Telegram.WebApp.setHeaderColor("#02040a");
+  Telegram.WebApp.setBackgroundColor("#02040a");
+
   tgUser = Telegram.WebApp.initDataUnsafe.user;
   userId = String(tgUser.id);
 
@@ -64,12 +69,12 @@ async function refreshMe() {
   const res = await fetch(`/me/${userId}`);
   const data = await res.json();
 
-energy = Number(data.energy) || 0;
-maxEnergy = Number(data.maxEnergy) || 100;
-tapPower = Number(data.tapPower) || tapPower;
+  energy = Number(data.energy) || 0;
+  maxEnergy = Number(data.maxEnergy) || 100;
+  tapPower = Number(data.tapPower) || tapPower;
 
-canTap = energy > 0;
-updateUI();
+  canTap = energy > 0;
+  updateUI();
 
 
 }
@@ -83,10 +88,10 @@ function updateUI() {
   if (b) b.innerText = "Balance: " + balance;
   if (e) e.innerText = `Energy: ${energy} / ${maxEnergy}`;
   if (energy <= 5) {
-  e.classList.add("energy-low");
-} else {
-  e.classList.remove("energy-low");
-}
+    e.classList.add("energy-low");
+  } else {
+    e.classList.remove("energy-low");
+  }
 }
 
 
@@ -343,11 +348,11 @@ setInterval(async () => {
     const data = await res.json();
 
     energy = Number(data.energy) || energy;
-maxEnergy = Number(data.maxEnergy) || maxEnergy;
-canTap = energy > 0;
-updateUI();
+    maxEnergy = Number(data.maxEnergy) || maxEnergy;
+    canTap = energy > 0;
+    updateUI();
 
-  } catch {}
+  } catch { }
 }, 3000);
 
 // ================= STARFIELD (SPACE STYLE) =================
@@ -372,3 +377,15 @@ if (starsBox) {
   }
 }
 
+// ===== STAR FIELD (BACKGROUND ONLY) =====
+const stars = document.getElementById("stars");
+
+if (stars) {
+  for (let i = 0; i < 50; i++) {
+    const s = document.createElement("span");
+    s.style.left = Math.random() * 100 + "vw";
+    s.style.top = Math.random() * 100 + "vh";
+    s.style.opacity = Math.random() * 0.6 + 0.2;
+    stars.appendChild(s);
+  }
+}

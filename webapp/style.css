@@ -534,3 +534,20 @@ button:disabled {
   }
 }
 
+/* ===== STAR BACKGROUND (SAFE) ===== */
+#stars {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  overflow: hidden;
+}
+
+#stars span {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: white;
+  opacity: 0.6;
+  border-radius: 50%;
+}
