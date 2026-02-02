@@ -37,25 +37,27 @@ function updateUI() {
   if (e) e.textContent = `Energy: ${energy} / ${maxEnergy}`;
 }
 
-// ================= SYNC USER =================
-async function syncUser() {
-  if (!tgUser) return;
-  try {
-    await fetch("/sync", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        id: String(tgUser.id),
-        username: tgUser.username || "",
-        first_name: tgUser.first_name || "",
-        photo_url: tgUser.photo_url || "",
-        balance
-      })
-    });
-  } catch (e) {
-    console.error("sync failed", e);
-  }
+// ================= SYNC USER ================
+ const res = await fetch("/sync", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    id: tgUser.id,
+    username: tgUser.username || "",
+    first_name: tgUser.first_name || "",
+    photo_url: tgUser.photo_url || "",
+    balance
+  })
+});
+
+const data = await res.json();
+if (data.balance !== undefined) {
+  balance = data.balance;
+  saveState();
+  updateUI();
 }
+
+
 
 // ================= PULL BALANCE FROM SERVER =================
 async function pullBalanceFromServer() {

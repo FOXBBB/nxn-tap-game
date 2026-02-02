@@ -17,16 +17,17 @@ router.post("/sync", (req, res) => {
       id,
       name: username || first_name || "User",
       avatar: photo_url || "",
-      balance: 0
+      balance: balance || 0
     };
     db.users.push(user);
   }
 
-  // 🔒 важно: всегда принимаем баланс от клиента
-  user.balance = balance;
-
   saveDB(db);
-  res.json({ ok: true });
+
+  res.json({
+    ok: true,
+    balance: user.balance
+  });
 });
 
 /* ===== TRANSFER WITH 10% BURN ===== */
