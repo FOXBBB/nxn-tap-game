@@ -692,7 +692,7 @@ button:disabled {
 #tap .tap-logo img {
   display: block;
 
-  width: 420px;        /* ⬅️ ВОТ ГЛАВНОЕ — РЕАЛЬНО БОЛЬШЕ */
+  width: 380px;        /* ⬅️ ВОТ ГЛАВНОЕ — РЕАЛЬНО БОЛЬШЕ */
   height: auto;
 
   filter:
