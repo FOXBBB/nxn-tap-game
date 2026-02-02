@@ -18,7 +18,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   Telegram.WebApp.ready();
-  // hide Telegram header title
   Telegram.WebApp.expand();
   Telegram.WebApp.setHeaderColor("#02040a");
   Telegram.WebApp.setBackgroundColor("#02040a");
@@ -367,8 +366,9 @@ if (starsBox) {
     s.style.width = size + "px";
     s.style.height = size + "px";
 
-    s.style.left = Math.random() * 100 + "vw";
-    s.style.top = Math.random() * 100 + "vh";
+    s.style.left = Math.random() * window.innerWidth + "px";
+    s.style.top = Math.random() * window.innerHeight + "px";
+
 
     s.style.opacity = Math.random() * 0.6 + 0.3;
     s.style.animationDuration = 20 + Math.random() * 40 + "s";
