@@ -1,85 +1,18 @@
 // ================= TELEGRAM =================
-// ===== TELEGRAM WEBAPP =====
 let tgUser = null;
 let userId = "guest";
-
-document.addEventListener("DOMContentLoaded", () => {
-  if (window.Telegram && Telegram.WebApp) {
-    Telegram.WebApp.ready();
-
-    tgUser = Telegram.WebApp.initDataUnsafe?.user;
-
-    if (tgUser) {
-      userId = String(tgUser.id);
-
-      // показать ID в TRANSFER
-      const myIdEl = document.getElementById("my-id");
-      if (myIdEl) {
-        myIdEl.textContent = "Your ID: " + tgUser.id;
-        myIdEl.onclick = () => {
-          navigator.clipboard.writeText(String(tgUser.id));
-          Telegram.WebApp.showPopup({
-            title: "Copied",
-            message: "Your ID copied to clipboard"
-          });
-        };
-      }
-    }
-  }
-});
-
-const sendBtn = document.getElementById("send");
-
-sendBtn.onclick = async () => {
-  const toId = document.getElementById("to-id")?.value.trim();
-  const amount = parseInt(document.getElementById("amount")?.value);
-
-  if (!toId || isNaN(amount) || amount <= 0) {
-    alert("Enter valid recipient ID and amount");
-    return;
-  }
-
-  try {
-    const res = await fetch("/transfer", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        fromId: userId,
-        toId,
-        amount
-      })
-    });
-
-    const data = await res.json();
-
-    if (!data.ok) {
-      alert(data.error || "Transfer failed");
-      return;
-    }
-
-    balance -= amount;
-    saveState();
-    updateUI();
-
-    alert("Transfer successful");
-  } catch (e) {
-    console.error(e);
-    alert("Transfer error");
-  }
-};
-
 
 // ================= STORAGE =================
 const key = (k) => `${userId}_${k}`;
 
 // ================= GAME STATE =================
-let balance = Number(localStorage.getItem(key("balance")) || 0);
-let tapPower = Number(localStorage.getItem(key("tapPower")) || 1);
-let maxEnergy = Number(localStorage.getItem(key("maxEnergy")) || 100);
-let energy = Number(localStorage.getItem(key("energy")) || maxEnergy);
-let lastEnergyTime = Number(localStorage.getItem(key("lastEnergyTime")) || Date.now());
+let balance = 0;
+let tapPower = 1;
+let maxEnergy = 100;
+let energy = 100;
+let lastEnergyTime = Date.now();
 
-// ================= SAVE / UI =================
+// ================= SAVE / LOAD =================
 function saveState() {
   localStorage.setItem(key("balance"), balance);
   localStorage.setItem(key("tapPower"), tapPower);
@@ -88,6 +21,15 @@ function saveState() {
   localStorage.setItem(key("lastEnergyTime"), Date.now());
 }
 
+function loadState() {
+  balance = Number(localStorage.getItem(key("balance")) || 0);
+  tapPower = Number(localStorage.getItem(key("tapPower")) || 1);
+  maxEnergy = Number(localStorage.getItem(key("maxEnergy")) || 100);
+  energy = Number(localStorage.getItem(key("energy")) || maxEnergy);
+  lastEnergyTime = Number(localStorage.getItem(key("lastEnergyTime")) || Date.now());
+}
+
+// ================= UI =================
 function updateUI() {
   const b = document.getElementById("balance");
   const e = document.getElementById("energy");
@@ -95,20 +37,65 @@ function updateUI() {
   if (e) e.textContent = `Energy: ${energy} / ${maxEnergy}`;
 }
 
-// ================= OFFLINE ENERGY REGEN =================
-(function () {
-  const now = Date.now();
-  const diff = now - lastEnergyTime;
-  const ticks = Math.floor(diff / 3000);
-  if (ticks > 0) {
-    energy = Math.min(maxEnergy, energy + ticks);
-    saveState();
+// ================= SYNC USER =================
+async function syncUser() {
+  if (!tgUser) return;
+  try {
+    await fetch("/sync", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: String(tgUser.id),
+        username: tgUser.username || "",
+        first_name: tgUser.first_name || "",
+        photo_url: tgUser.photo_url || "",
+        balance
+      })
+    });
+  } catch (e) {
+    console.error("sync failed", e);
   }
-})();
+}
 
-updateUI();
+// ================= INIT TELEGRAM =================
+document.addEventListener("DOMContentLoaded", () => {
+  if (window.Telegram && Telegram.WebApp) {
+    Telegram.WebApp.ready();
+    tgUser = Telegram.WebApp.initDataUnsafe?.user;
 
-// ================= TAP (КАК БЫЛО) =================
+    if (tgUser) {
+      userId = String(tgUser.id);
+
+      // показать свой ID
+      const myIdEl = document.getElementById("my-id");
+      if (myIdEl) {
+        myIdEl.textContent = "Your ID: " + userId;
+        myIdEl.onclick = () => {
+          navigator.clipboard.writeText(userId);
+          Telegram.WebApp.showPopup({
+            title: "Copied",
+            message: "Your ID copied"
+          });
+        };
+      }
+    }
+
+    // ⬇️ ВАЖНО: только теперь работаем с данными
+    loadState();
+
+    // офлайн-реген энергии
+    const diff = Date.now() - lastEnergyTime;
+    const ticks = Math.floor(diff / 3000);
+    if (ticks > 0) {
+      energy = Math.min(maxEnergy, energy + ticks);
+    }
+
+    updateUI();
+    syncUser();
+  }
+});
+
+// ================= TAP =================
 document.getElementById("coin").onclick = (e) => {
   if (energy <= 0) return;
 
@@ -137,62 +124,67 @@ setInterval(() => {
   }
 }, 3000);
 
-// ================= SYNC USER =================
-async function syncUser() {
-  if (!tgUser) return;
+// ================= TRANSFER =================
+const sendBtn = document.getElementById("send");
+
+sendBtn.onclick = async () => {
+  const toId = document.getElementById("to-id")?.value.trim();
+  const amount = parseInt(document.getElementById("amount")?.value);
+
+  if (!toId || isNaN(amount) || amount <= 0) {
+    alert("Enter valid recipient ID and amount");
+    return;
+  }
 
   try {
-    await fetch("/sync", {
+    const res = await fetch("/transfer", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        id: tgUser.id,
-        username: tgUser.username || "",
-        first_name: tgUser.first_name || "",
-        photo_url: tgUser.photo_url || "",
-        balance
-      })
+      body: JSON.stringify({ fromId: userId, toId, amount })
     });
+
+    const data = await res.json();
+    if (!data.ok) return alert(data.error || "Transfer failed");
+
+    balance -= amount;
+    saveState();
+    updateUI();
+    syncUser();
+
+    alert("Transfer successful");
   } catch (e) {
-    console.error("sync failed", e);
+    alert("Transfer error");
   }
-}
+};
 
-
-// ================= LEADERBOARD (ПЕРЕЗАПИСЫВАЕМ ФЕЙКОВ) =================
+// ================= LEADERBOARD =================
 async function loadLeaderboard() {
   const res = await fetch("/leaderboard");
   const data = await res.json();
   if (!Array.isArray(data)) return;
 
-  const placeholder = "avatar.png"; // ОДНА фиксированная картинка
+  const placeholder = "avatar.png";
 
-  // TOP 1
   if (data[0]) {
     document.querySelector(".lb-top1 .name").innerText = data[0].name;
     document.querySelector(".lb-top1 .score").innerText = data[0].balance;
     document.querySelector(".lb-top1 .avatar").src = data[0].avatar || placeholder;
   }
 
-  // TOP 2 / 3
   const cards = document.querySelectorAll(".lb-top23 .lb-card");
-
   if (data[1] && cards[0]) {
     cards[0].querySelector(".name").innerText = data[1].name;
     cards[0].querySelector(".score").innerText = data[1].balance;
     cards[0].querySelector(".avatar").src = data[1].avatar || placeholder;
   }
-
   if (data[2] && cards[1]) {
     cards[1].querySelector(".name").innerText = data[2].name;
     cards[1].querySelector(".score").innerText = data[2].balance;
     cards[1].querySelector(".avatar").src = data[2].avatar || placeholder;
   }
 
-  // TOP 4–10
   const list = document.querySelector(".lb-list");
   list.innerHTML = "";
-
   data.slice(3).forEach((u, i) => {
     const row = document.createElement("div");
     row.className = "row";
@@ -206,33 +198,15 @@ async function loadLeaderboard() {
   });
 }
 
-// ================= MENU (КАК БЫЛО) =================
-document.querySelectorAll(".menu div").forEach(btn => 
+// ================= MENU =================
+document.querySelectorAll(".menu div").forEach(btn => {
   btn.onclick = () => {
     document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
     document.getElementById(btn.dataset.go).classList.remove("hidden");
-  if (btn.dataset.go === "leaderboard") {
-  syncUser();       // <-- сначала отправляем себя
-  loadLeaderboard(); // <-- потом грузим топ
-}
-;
-});
 
-// старт
-loadState();
-updateUI();
-// show my telegram id in transfer
-const myIdEl = document.getElementById("my-id");
-if (myIdEl && tgUser) {
-  myIdEl.textContent = "Your ID: " + tgUser.id;
-  myIdEl.onclick = () => {
-    navigator.clipboard.writeText(String(tgUser.id));
-    alert("Your ID copied");
+    if (btn.dataset.go === "leaderboard") {
+      syncUser();
+      loadLeaderboard();
+    }
   };
-}
-
-syncUser(); // <-- ВАЖНО
-
-window.addEventListener("load", () => {
-  syncUser();
 });
