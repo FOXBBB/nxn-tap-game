@@ -28,6 +28,47 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
+const sendBtn = document.getElementById("send");
+
+sendBtn.onclick = async () => {
+  const toId = document.getElementById("to-id")?.value.trim();
+  const amount = parseInt(document.getElementById("amount")?.value);
+
+  if (!toId || isNaN(amount) || amount <= 0) {
+    alert("Enter valid recipient ID and amount");
+    return;
+  }
+
+  try {
+    const res = await fetch("/transfer", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        fromId: userId,
+        toId,
+        amount
+      })
+    });
+
+    const data = await res.json();
+
+    if (!data.ok) {
+      alert(data.error || "Transfer failed");
+      return;
+    }
+
+    balance -= amount;
+    saveState();
+    updateUI();
+
+    alert("Transfer successful");
+  } catch (e) {
+    console.error(e);
+    alert("Transfer error");
+  }
+};
+
+
 // ================= STORAGE =================
 const key = (k) => `${userId}_${k}`;
 
