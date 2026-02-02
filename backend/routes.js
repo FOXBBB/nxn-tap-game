@@ -91,3 +91,16 @@ router.get("/leaderboard", (req, res) => {
 });
 
 export default router;
+router.get("/me/:id", (req, res) => {
+  try {
+    const { id } = req.params;
+    const db = loadDB();
+
+    const user = db.users.find(u => String(u.id) === String(id));
+    if (!user) return res.status(404).json({});
+
+    res.json(user);
+  } catch (e) {
+    res.status(500).json({});
+  }
+});

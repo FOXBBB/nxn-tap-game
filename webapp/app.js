@@ -82,6 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ⬇️ ВАЖНО: только теперь работаем с данными
     loadState();
+    loadFromServer(); // ⬅️ ВАЖНО
 
     // офлайн-реген энергии
     const diff = Date.now() - lastEnergyTime;
@@ -146,10 +147,9 @@ sendBtn.onclick = async () => {
     const data = await res.json();
     if (!data.ok) return alert(data.error || "Transfer failed");
 
-    balance -= amount;
-    saveState();
-    updateUI();
-    syncUser();
+   await loadFromServer(); // backend уже всё сделал
+alert("Transfer successful");
+
 
     alert("Transfer successful");
   } catch (e) {
@@ -197,6 +197,25 @@ async function loadLeaderboard() {
     list.appendChild(row);
   });
 }
+async function loadFromServer() {
+  if (!tgUser) return;
+
+  try {
+    const res = await fetch(`/me/${userId}`);
+    if (!res.ok) return;
+
+    const user = await res.json();
+
+    if (typeof user.balance === "number") {
+      balance = user.balance;
+      saveState();
+      updateUI();
+    }
+  } catch (e) {
+    console.error("loadFromServer failed", e);
+  }
+}
+
 
 // ================= MENU =================
 document.querySelectorAll(".menu div").forEach(btn => {
