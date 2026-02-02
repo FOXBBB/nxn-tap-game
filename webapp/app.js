@@ -373,3 +373,29 @@ async function syncUser() {
     })
   });
 }
+// ===== FORCE MENU FIX =====
+document.querySelectorAll(".menu div").forEach(btn => {
+  btn.addEventListener("click", () => {
+    console.log("CLICK:", btn.dataset.go);
+
+    document.querySelectorAll(".screen").forEach(s => {
+      s.classList.add("hidden");
+    });
+
+    const target = document.getElementById(btn.dataset.go);
+    if (!target) {
+      console.error("SCREEN NOT FOUND:", btn.dataset.go);
+      return;
+    }
+
+    target.classList.remove("hidden");
+
+    document.querySelectorAll(".menu div").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+
+    if (btn.dataset.go === "leaderboard") {
+      console.log("LOADING LEADERBOARD");
+      loadLeaderboard();
+    }
+  });
+});
