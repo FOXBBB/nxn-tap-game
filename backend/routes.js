@@ -187,3 +187,64 @@ router.get("/leaderboard", (req, res) => {
 });
 
 export default router;
+/* ===== BUY FOR NXN ===== */
+router.post("/buy-nxn", (req, res) => {
+  const { id, itemId } = req.body;
+  if (!id || !itemId) return res.json({ ok: false });
+
+  const db = loadDB();
+  const user = db.users.find(u => String(u.id) === String(id));
+  if (!user) return res.json({ ok: false, error: "User not found" });
+
+  // init defaults
+  user.balance = Number(user.balance) || 0;
+  user.tapPower = Number(user.tapPower) || 1;
+  user.maxEnergy = Number(user.maxEnergy) || 100;
+  user.upgrades = user.upgrades || {};
+
+  // SHOP ITEMS (NXN)
+  const items = {
+    tap_plus_1: {
+      price: 30000,
+      once: true,
+      apply: () => {
+        user.tapPower += 1;
+      }
+    },
+    energy_plus_100: {
+      price: 50000,
+      once: true,
+      apply: () => {
+        user.maxEnergy += 100;
+        user.energy = Math.min(user.energy + 100, user.maxEnergy);
+      }
+    }
+  };
+
+  const item = items[itemId];
+  if (!item) return res.json({ ok: false, error: "Unknown item" });
+
+  // already bought?
+  if (item.once && user.upgrades[itemId]) {
+    return res.json({ ok: false, error: "Already purchased" });
+  }
+
+  // balance check
+  if (user.balance < item.price) {
+    return res.json({ ok: false, error: "Not enough NXN" });
+  }
+
+  // apply purchase
+  user.balance -= item.price;
+  item.apply();
+  user.upgrades[itemId] = true;
+
+  saveDB(db);
+
+  res.json({
+    ok: true,
+    balance: user.balance,
+    tapPower: user.tapPower,
+    maxEnergy: user.maxEnergy
+  });
+});

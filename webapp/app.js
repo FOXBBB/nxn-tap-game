@@ -399,3 +399,32 @@ if (stars) {
     stars.appendChild(s);
   }
 }
+async function buyNXN(itemId) {
+  try {
+    const res = await fetch("/buy-nxn", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: userId,
+        itemId
+      })
+    });
+
+    const data = await res.json();
+    if (!data.ok) {
+      alert(data.error || "Purchase failed");
+      return;
+    }
+
+    // обновляем состояние
+    balance = data.balance;
+    tapPower = data.tapPower;
+    maxEnergy = data.maxEnergy;
+
+    updateUI();
+    alert("Purchased successfully!");
+  } catch (e) {
+    console.error(e);
+  }
+}
+
