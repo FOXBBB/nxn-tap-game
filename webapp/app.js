@@ -138,6 +138,33 @@ document.getElementById("send").onclick = async () => {
 
   alert(`Sent ${data.sent} NXN (10% burned)`);
 };
+// ===== LOAD TRANSFER HISTORY =====
+async function loadHistory() {
+  const res = await fetch(`/history/${userId}`);
+  const data = await res.json();
+
+  const box = document.getElementById("history");
+  if (!box) return;
+
+  box.innerHTML = "";
+
+  data.forEach(t => {
+    const div = document.createElement("div");
+    div.className = "history-row";
+
+    const dir = t.fromId === userId ? "Sent" : "Received";
+    const sign = dir === "Sent" ? "-" : "+";
+
+    div.innerHTML = `
+      <b>${dir}</b>
+      <span>${sign}${t.received}</span>
+      <i>${new Date(t.time).toLocaleString()}</i>
+    `;
+
+    box.appendChild(div);
+  });
+}
+
 
 // ================= LEADERBOARD =================
 async function loadLeaderboard() {

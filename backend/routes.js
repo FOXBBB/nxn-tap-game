@@ -115,6 +115,28 @@ router.post("/transfer", (req, res) => {
 
   res.json({ ok: true, received, fee });
 });
+// ===== LOG TRANSFER =====
+db.transfers.push({
+  fromId: String(fromId),
+  toId: String(toId),
+  amount: amount,
+  fee: Math.floor(amount * 0.1),
+  received: amount - Math.floor(amount * 0.1),
+  time: Date.now()
+});
+// ===== TRANSFER HISTORY =====
+router.get("/history/:id", (req, res) => {
+  const { id } = req.params;
+  const db = loadDB();
+
+  const history = db.transfers
+    .filter(t => t.fromId === id || t.toId === id)
+    .slice(-20) // последние 20
+    .reverse();
+
+  res.json(history);
+});
+
 
 /* ===== LEADERBOARD ===== */
 router.get("/leaderboard", (req, res) => {

@@ -9,7 +9,7 @@ const DB_FILE = path.join(__dirname, "db.json");
 
 export function loadDB() {
   if (!fs.existsSync(DB_FILE)) {
-    return { users: [] };
+    return { users: [], transfers: [] };
   }
 
   try {
