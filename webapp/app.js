@@ -1,18 +1,28 @@
 let tgUser = null;
 let userId = null;
+
+// UI state
 let balance = 0;
-let energy = 100;
+let energy = 0;
 let maxEnergy = 100;
 let tapPower = 1;
 
-// ===== INIT =====
+// ================= INIT =================
 document.addEventListener("DOMContentLoaded", async () => {
+  if (!window.Telegram || !Telegram.WebApp) {
+    alert("Open from Telegram");
+    return;
+  }
+
   Telegram.WebApp.ready();
   tgUser = Telegram.WebApp.initDataUnsafe.user;
   userId = String(tgUser.id);
 
-  document.getElementById("my-id").innerText = "Your ID: " + userId;
+  // show my ID
+  const myId = document.getElementById("my-id");
+  if (myId) myId.innerText = "Your ID: " + userId;
 
+  // register user
   await fetch("/sync", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -24,51 +34,39 @@ document.addEventListener("DOMContentLoaded", async () => {
     })
   });
 
-  await refreshBalance();
+  await refreshMe();
   updateUI();
+  initMenu();
 });
 
-// ===== TAP =====
+// ================= TAP =================
 document.getElementById("coin").onclick = async (e) => {
-  if (energy <= 0) return;
-
-  energy--;
-  updateUI();
-
   const res = await fetch("/tap", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id: userId, tapPower })
+    body: JSON.stringify({ id: userId })
   });
 
   const data = await res.json();
-  balance = data.balance;
-  updateUI();
+  if (!data.ok) return;
 
-  const plus = document.createElement("div");
-  plus.className = "plus-one";
-  plus.innerText = `+${tapPower}`;
-  plus.style.left = e.clientX + "px";
-  plus.style.top = e.clientY + "px";
-  document.body.appendChild(plus);
-  setTimeout(() => plus.remove(), 800);
+  balance = data.balance;
+  energy = data.energy;
+  maxEnergy = data.maxEnergy;
+
+  updateUI();
+  animatePlus(e);
 };
 
-// ===== ENERGY =====
-setInterval(() => {
-  if (energy < maxEnergy) {
-    energy++;
-    lastEnergyTime = Date.now();
-    saveState();
-    updateUI();
-  }
-}, 3000);
-
-
-// ===== TRANSFER =====
+// ================= TRANSFER =================
 document.getElementById("send").onclick = async () => {
   const toId = document.getElementById("to-id").value.trim();
-  const amount = parseInt(document.getElementById("amount").value);
+  const amount = Number(document.getElementById("amount").value);
+
+  if (!toId || amount <= 0) {
+    alert("Invalid data");
+    return;
+  }
 
   const res = await fetch("/transfer", {
     method: "POST",
@@ -79,93 +77,83 @@ document.getElementById("send").onclick = async () => {
   const data = await res.json();
   if (!data.ok) return alert(data.error);
 
-  await refreshBalance();
-  alert(`Sent ${data.received} NXN (fee burned)`);
+  await refreshMe();
+  alert(`Sent ${data.sent} NXN (10% burned)`);
 };
 
-// ===== LEADERBOARD =====
+// ================= LEADERBOARD =================
 async function loadLeaderboard() {
   const res = await fetch("/leaderboard");
   const data = await res.json();
-  console.log(data); // UI ты уже сделал — тут всё ок
+  if (!Array.isArray(data)) return;
+
+  // ТВОЙ UI уже есть — просто данные
+  console.log("LEADERBOARD:", data);
 }
 
-// ===== HELPERS =====
-async function refreshBalance() {
+// ================= HELPERS =================
+async function refreshMe() {
   const res = await fetch(`/me/${userId}`);
   const data = await res.json();
-  balance = data.balance || 0;
+
+  balance = data.balance;
+  energy = data.energy;
+  maxEnergy = data.maxEnergy;
+  tapPower = data.tapPower;
+
+  updateUI();
 }
 
 function updateUI() {
   document.getElementById("balance").innerText = "Balance: " + balance;
   document.getElementById("energy").innerText = `Energy: ${energy}/${maxEnergy}`;
 }
-// ===== AUTO SYNC FOR LEADERBOARD =====
-setInterval(() => {
-  if (!tgUser) return;
 
-  fetch("/sync", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      id: userId,
-      username: tgUser.username,
-      first_name: tgUser.first_name,
-      photo_url: tgUser.photo_url
-    })
-  });
-}, 5000); // каждые 5 секунд
-
-// ===== KEEP USER ONLINE FOR LEADERBOARD =====
-setInterval(() => {
-  if (!tgUser) return;
-
-  fetch("/sync", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      id: userId,
-      username: tgUser.username,
-      first_name: tgUser.first_name,
-      photo_url: tgUser.photo_url
-    })
-  });
-}, 4000);
-// ===== OFFLINE ENERGY REGEN =====
-const now = Date.now();
-const diff = now - lastEnergyTime;
-const ticks = Math.floor(diff / 3000);
-
-if (ticks > 0) {
-  energy = Math.min(maxEnergy, energy + ticks);
-  lastEnergyTime = now;
-  saveState();
+function animatePlus(e) {
+  const plus = document.createElement("div");
+  plus.className = "plus-one";
+  plus.innerText = `+${tapPower}`;
+  plus.style.left = e.clientX + "px";
+  plus.style.top = e.clientY + "px";
+  document.body.appendChild(plus);
+  setTimeout(() => plus.remove(), 800);
 }
 
+// ================= MENU =================
+function initMenu() {
+  document.querySelectorAll(".menu div").forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll(".screen").forEach(s =>
+        s.classList.add("hidden")
+      );
 
+      const target = document.getElementById(btn.dataset.go);
+      if (target) target.classList.remove("hidden");
 
-// ================= MENU NAVIGATION =================
-document.querySelectorAll(".menu div").forEach(btn => {
-  btn.onclick = () => {
-    // скрываем все экраны
-    document.querySelectorAll(".screen").forEach(s =>
-      s.classList.add("hidden")
-    );
+      document.querySelectorAll(".menu div").forEach(b =>
+        b.classList.remove("active")
+      );
+      btn.classList.add("active");
 
-    // показываем нужный
-    const target = document.getElementById(btn.dataset.go);
-    if (target) target.classList.remove("hidden");
+      if (btn.dataset.go === "leaderboard") {
+        loadLeaderboard();
+      }
+    };
+  });
+}
 
-    // активная кнопка
-    document.querySelectorAll(".menu div").forEach(b =>
-      b.classList.remove("active")
-    );
-    btn.classList.add("active");
+// ================= KEEP ONLINE =================
+setInterval(() => {
+  if (!tgUser) return;
 
-    // если лидерборд — грузим данные
-    if (btn.dataset.go === "leaderboard") {
-      loadLeaderboard();
-    }
-  };
-});
+  fetch("/sync", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      id: userId,
+      username: tgUser.username,
+      first_name: tgUser.first_name,
+      photo_url: tgUser.photo_url
+    })
+  });
+}, 5000);
