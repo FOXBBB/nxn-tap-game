@@ -551,3 +551,22 @@ button:disabled {
   opacity: 0.6;
   border-radius: 50%;
 }
+/* ===== STAR FALL (DIAGONAL, SPACE STYLE) ===== */
+
+#stars span {
+  animation: starMove linear infinite;
+}
+
+@keyframes starMove {
+  from {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  to {
+    transform: translate(-120px, 160px);
+    opacity: 0;
+  }
+}

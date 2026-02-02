@@ -378,14 +378,24 @@ if (starsBox) {
 }
 
 // ===== STAR FIELD (BACKGROUND ONLY) =====
+// ===== STAR FIELD (FALLING, SAFE) =====
 const stars = document.getElementById("stars");
 
 if (stars) {
-  for (let i = 0; i < 50; i++) {
+  for (let i = 0; i < 60; i++) {
     const s = document.createElement("span");
+
+    const size = Math.random() * 2 + 1;
+    s.style.width = size + "px";
+    s.style.height = size + "px";
+
     s.style.left = Math.random() * 100 + "vw";
     s.style.top = Math.random() * 100 + "vh";
+
     s.style.opacity = Math.random() * 0.6 + 0.2;
+    s.style.animationDuration = 8 + Math.random() * 12 + "s";
+    s.style.animationDelay = Math.random() * 10 + "s";
+
     stars.appendChild(s);
   }
 }
