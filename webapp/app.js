@@ -58,9 +58,12 @@ document.getElementById("coin").onclick = async (e) => {
 setInterval(() => {
   if (energy < maxEnergy) {
     energy++;
+    lastEnergyTime = Date.now();
+    saveState();
     updateUI();
   }
 }, 3000);
+
 
 // ===== TRANSFER =====
 document.getElementById("send").onclick = async () => {
@@ -113,6 +116,33 @@ setInterval(() => {
     })
   });
 }, 5000); // каждые 5 секунд
+
+// ===== KEEP USER ONLINE FOR LEADERBOARD =====
+setInterval(() => {
+  if (!tgUser) return;
+
+  fetch("/sync", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      id: userId,
+      username: tgUser.username,
+      first_name: tgUser.first_name,
+      photo_url: tgUser.photo_url
+    })
+  });
+}, 4000);
+// ===== OFFLINE ENERGY REGEN =====
+const now = Date.now();
+const diff = now - lastEnergyTime;
+const ticks = Math.floor(diff / 3000);
+
+if (ticks > 0) {
+  energy = Math.min(maxEnergy, energy + ticks);
+  lastEnergyTime = now;
+  saveState();
+}
+
 
 
 // ================= MENU NAVIGATION =================

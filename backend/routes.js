@@ -19,6 +19,7 @@ router.post("/sync", (req, res) => {
   const db = loadDB();
 
   let user = db.users.find(u => String(u.id) === String(id));
+
   if (!user) {
     user = {
       id: String(id),
@@ -27,11 +28,12 @@ router.post("/sync", (req, res) => {
       balance: 0
     };
     db.users.push(user);
-    saveDB(db);
   }
 
+  saveDB(db);
   res.json({ ok: true });
 });
+
 
 /* ===== TAP ===== */
 router.post("/tap", (req, res) => {
