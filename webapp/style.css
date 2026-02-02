@@ -940,10 +940,22 @@ body {
   padding-top: 24px;
 }
 html, body {
-  height: 100%;
-  overflow: hidden;
+  max-width: 100%;
+  overflow-x: hidden;
 }
+
 
 .screen {
   min-height: calc(100dvh - 90px);
+}
+/* ===== iOS HARD SCALE FIX ===== */
+@supports (-webkit-touch-callout: none) {
+  html {
+    font-size: 16px !important;
+  }
+
+  body {
+    zoom: 1 !important;
+    -webkit-text-size-adjust: 100%;
+  }
 }
