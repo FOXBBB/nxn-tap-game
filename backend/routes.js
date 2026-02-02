@@ -68,15 +68,16 @@ router.post("/tap", (req, res) => {
   const user = db.users.find(u => String(u.id) === String(id));
   if (!user) return res.json({ ok: false });
 
-  if (user.energy <= 0) {
-    return res.json({
-      ok: true,
-      balance: user.balance,
-      energy: user.energy,
-      maxEnergy: user.maxEnergy,
-      tapPower: user.tapPower
-    });
-  }
+ // HARD BLOCK TAP AT ZERO ENERGY
+if (user.energy <= 0) {
+  return res.json({
+    balance: user.balance,
+    energy: user.energy,
+    maxEnergy: user.maxEnergy,
+    tapPower: user.tapPower
+  });
+}
+
 
   user.balance += user.tapPower;
   user.energy -= 1;
