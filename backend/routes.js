@@ -1,14 +1,12 @@
-import { loadDB, saveDB } from "./db.js";
+import db from "./db.js";
 
 export default function routes(app) {
 
   // ===== LEADERBOARD =====
   app.get("/leaderboard", async (req, res) => {
     try {
-      const db = await loadDB();
       if (!db.users) db.users = {};
-
-      const users = Object.values(db.users);
+const users = Object.values(db.users);
 
       const top = users
         .sort((a, b) => (b.balance || 0) - (a.balance || 0))
