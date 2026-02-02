@@ -5,11 +5,36 @@ const router = express.Router();
 
 /* ===== GET ME ===== */
 router.get("/me/:id", (req, res) => {
+  const { id } = req.params;
+
   const db = loadDB();
-  const user = db.users.find(u => String(u.id) === String(req.params.id));
-  if (!user) return res.json({ balance: 0 });
-  res.json(user);
+  let user = db.users.find(u => String(u.id) === String(id));
+
+  if (!user) {
+    return res.json({
+      balance: 0,
+      energy: 100,
+      maxEnergy: 100,
+      tapPower: 1
+    });
+  }
+
+  // 🔒 гарантируем значения
+  user.balance = Number(user.balance) || 0;
+  user.energy = Number(user.energy) || 100;
+  user.maxEnergy = Number(user.maxEnergy) || 100;
+  user.tapPower = Number(user.tapPower) || 1;
+
+  saveDB(db);
+
+  res.json({
+    balance: user.balance,
+    energy: user.energy,
+    maxEnergy: user.maxEnergy,
+    tapPower: user.tapPower
+  });
 });
+
 
 /* ===== SYNC USER (CREATE ONLY) ===== */
 router.post("/sync", (req, res) => {
@@ -37,17 +62,36 @@ router.post("/sync", (req, res) => {
 
 /* ===== TAP ===== */
 router.post("/tap", (req, res) => {
-  const { id, tapPower } = req.body;
+  const { id } = req.body;
   const db = loadDB();
 
   const user = db.users.find(u => String(u.id) === String(id));
   if (!user) return res.json({ ok: false });
 
-  user.balance += tapPower;
+  if (user.energy <= 0) {
+    return res.json({
+      ok: true,
+      balance: user.balance,
+      energy: user.energy,
+      maxEnergy: user.maxEnergy,
+      tapPower: user.tapPower
+    });
+  }
+
+  user.balance += user.tapPower;
+  user.energy -= 1;
+
   saveDB(db);
 
-  res.json({ ok: true, balance: user.balance });
+  res.json({
+    ok: true,
+    balance: user.balance,
+    energy: user.energy,
+    maxEnergy: user.maxEnergy,
+    tapPower: user.tapPower
+  });
 });
+
 
 /* ===== TRANSFER (10% BURN) ===== */
 router.post("/transfer", (req, res) => {
