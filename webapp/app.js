@@ -94,17 +94,36 @@ setInterval(() => {
 const coin = document.getElementById("coin");
 coin.classList.add("tap");
 setTimeout(() => coin.classList.remove("tap"), 80);
+coin.onclick = async (e) => {
+  if (energy <= 0) return;
 
-
-
-  if (!data.ok) return;
-
-  balance = data.balance;
-  energy = data.energy;
-  maxEnergy = data.maxEnergy;
-
+  // мгновенный отклик UI
+  energy -= 1;
+  balance += tapPower;
   updateUI();
-  animatePlus(e, data.tapPower || 1);
+
+  try {
+    const res = await fetch("/tap", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: userId })
+    });
+
+    const data = await res.json();
+
+    // сервер — источник истины
+    balance = Number(data.balance) || balance;
+    energy = Number(data.energy) || energy;
+    maxEnergy = Number(data.maxEnergy) || maxEnergy;
+    tapPower = Number(data.tapPower) || tapPower;
+
+    updateUI();
+  } catch (err) {
+    console.error("tap error", err);
+  }
+
+  animatePlus(e, tapPower);
+};
 
 
 function animatePlus(e, value) {
