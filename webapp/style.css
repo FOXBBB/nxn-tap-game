@@ -387,3 +387,88 @@ body {
 .coin-box img.tap {
   transform: scale(0.92);
 }
+/* ================= TAP ANIMATION (UI ONLY) ================= */
+
+#coin {
+  transition: transform 0.12s ease, filter 0.12s ease;
+  will-change: transform;
+}
+
+#coin.tap-anim {
+  transform: scale(0.92);
+  filter: drop-shadow(0 0 12px rgba(0, 255, 180, 0.6));
+}
+
+/* floating +X */
+.plus-one {
+  position: fixed;
+  pointer-events: none;
+  font-weight: 700;
+  font-size: 18px;
+  color: #00ffb0;
+  text-shadow: 0 0 8px rgba(0, 255, 180, 0.8);
+  animation: floatUp 0.8s ease-out forwards;
+  z-index: 9999;
+}
+
+@keyframes floatUp {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 0) scale(0.8);
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -60px) scale(1.1);
+  }
+}
+/* ================= ENERGY VISUAL ================= */
+
+#energy {
+  transition: color 0.3s ease;
+}
+
+/* low energy warning */
+.energy-low {
+  color: #ff4d4d;
+  animation: energyPulse 1s infinite;
+}
+
+@keyframes energyPulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+/* ================= BUTTONS ================= */
+
+button {
+  transition: transform 0.1s ease, opacity 0.1s ease;
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+button:disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+/* ================= COIN ================= */
+
+#coin {
+  animation: coinIdle 3s ease-in-out infinite;
+}
+
+@keyframes coinIdle {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+  100% { transform: scale(1); }
+}
+
+/* tap overrides idle */
+#coin.tap-anim {
+  animation: none;
+  transform: scale(0.92);
+}

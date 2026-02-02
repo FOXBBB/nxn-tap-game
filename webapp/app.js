@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // get actual state
   await refreshMe();
-displayedEnergy = energy;
+  displayedEnergy = energy;
   updateUI();
   initMenu();
 });
@@ -77,25 +77,47 @@ function updateUI() {
   const e = document.getElementById("energy");
 
   if (b) b.innerText = "Balance: " + balance;
-  if (e) e.innerText = `Energy: ${Math.round(displayedEnergy)} / ${maxEnergy}`;
+  if (e) {
+  e.innerText = `Energy: ${Math.round(displayedEnergy)} / ${maxEnergy}`;
+
+  // NEW: low energy visual
+  if (displayedEnergy <= 5) {
+    e.classList.add("energy-low");
+  } else {
+    e.classList.remove("energy-low");
+  }
+}
 }
 
 
 setInterval(() => {
+  // если энергия 0 — показываем честно
+  if (energy === 0) {
+    displayedEnergy = 0;
+    return;
+  }
+
   if (displayedEnergy < energy) {
-    displayedEnergy += Math.min(0.5, energy - displayedEnergy);
+    displayedEnergy += Math.min(0.3, energy - displayedEnergy);
   } else if (displayedEnergy > energy) {
-    displayedEnergy -= Math.min(0.5, displayedEnergy - energy);
+    displayedEnergy -= Math.min(0.3, displayedEnergy - energy);
   }
 }, 50);
 
 
+
 // ================= TAP =================
 const coin = document.getElementById("coin");
-coin.classList.add("tap");
-setTimeout(() => coin.classList.remove("tap"), 80);
+// NEW: tap animation helper (UI only)
+function animateCoin() {
+  coin.classList.add("tap-anim");
+  setTimeout(() => coin.classList.remove("tap-anim"), 120);
+}
 coin.onclick = async (e) => {
   if (energy <= 0) return;
+
+  animateCoin(); // NEW: visual feedback only
+
 
   // мгновенный отклик UI
   energy -= 1;
@@ -131,12 +153,14 @@ function animatePlus(e, value) {
   plus.className = "plus-one";
   plus.innerText = `+${value}`;
   plus.style.left = e.clientX + "px";
-  plus.style.top = e.clientY + "px";
+  plus.style.top = e.clientY - 10 + "px";
   document.body.appendChild(plus);
   setTimeout(() => plus.remove(), 800);
 }
 
 // ================= TRANSFER =================
+const btn = document.getElementById("send");
+btn.disabled = true;
 document.getElementById("send").onclick = async () => {
   const toId = document.getElementById("to-id")?.value.trim();
   const amount = Number(document.getElementById("amount")?.value);
@@ -155,6 +179,8 @@ document.getElementById("send").onclick = async () => {
       amount
     })
   });
+  btn.disabled = false;
+
 
   const data = await res.json();
   if (!data.ok) {
@@ -306,3 +332,18 @@ function initMenu() {
 setInterval(() => {
   syncUser();
 }, 5000);
+// ================= ENERGY SYNC TICK =================
+// pulls real energy from server so regen is visible without taps
+setInterval(async () => {
+  if (!userId) return;
+
+  try {
+    const res = await fetch(`/me/${userId}`);
+    const data = await res.json();
+
+    energy = Number(data.energy) || energy;
+    maxEnergy = Number(data.maxEnergy) || maxEnergy;
+  } catch (e) {
+    console.warn("energy sync skipped");
+  }
+}, 3000);
