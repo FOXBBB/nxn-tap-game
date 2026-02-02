@@ -1,10 +1,9 @@
 * { box-sizing: border-box; font-family: Arial, sans-serif; }
 
 body {
-  margin: 0;
-  color: #fff;
-  background: #02040a;
+  background: radial-gradient(circle at top, #051a16, #020b09);
 }
+
 
 .bg {
   position: fixed;
@@ -574,10 +573,10 @@ body {
 .stars {
   position: fixed;
   inset: 0;
-  z-index: -1;
-  background: transparent;
-  overflow: hidden;
+  z-index: 0;
+  pointer-events: none; /* 🔥 ВАЖНО */
 }
+
 
 .star {
   position: absolute;
@@ -623,4 +622,17 @@ body {
   text-shadow:
     0 0 6px rgba(255, 213, 106, 0.6),
     0 0 14px rgba(255, 213, 106, 0.35);
+}
+/* hide old top title if exists */
+h1,
+#title {
+  display: none !important;
+}
+.screen,
+.menu,
+#tap,
+#transfer,
+#leaderboard {
+  position: relative;
+  z-index: 2;
 }
