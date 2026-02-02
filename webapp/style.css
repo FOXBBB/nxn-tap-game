@@ -13,7 +13,7 @@ body {
     radial-gradient(circle at 70% 20%, #1a6aff55, transparent 40%),
     radial-gradient(circle at 20% 80%, #00ffa255, transparent 45%),
     linear-gradient(180deg, #050814, #02040a);
-  z-index: -1;
+  z-index: -2;
 }
 
 .screen {
