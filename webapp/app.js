@@ -42,7 +42,7 @@ async function syncUser() {
   if (!tgUser) return;
 
   try {
-    const res = await fetch("/sync", {
+    await fetch("/sync", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -53,17 +53,11 @@ async function syncUser() {
         balance
       })
     });
-
-    const data = await res.json();
-    if (typeof data.balance === "number") {
-      balance = data.balance;
-      saveState();
-      updateUI();
-    }
   } catch (e) {
     console.error("sync failed", e);
   }
 }
+
 
 // ================= TELEGRAM INIT =================
 document.addEventListener("DOMContentLoaded", async () => {
