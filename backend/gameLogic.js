@@ -9,3 +9,8 @@ function tap(user) {
 }
 
 export { tap };
+export function saveUser(user) {
+  if (!db.users) db.users = {};
+  db.users[user.id] = user;
+  saveDB(db);
+}

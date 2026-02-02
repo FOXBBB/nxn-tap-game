@@ -320,3 +320,49 @@ if (tgUser) {
 } else {
   alert("Opened NOT from Telegram");
 }
+// ===== LOAD LEADERBOARD =====
+async function loadLeaderboard() {
+  try {
+    const res = await fetch("/leaderboard");
+    const data = await res.json();
+
+    const list = document.querySelector(".lb-list");
+    if (!list) return;
+
+    list.innerHTML = "";
+
+    data.slice(3).forEach((u, i) => {
+      const row = document.createElement("div");
+      row.className = "row";
+      row.innerHTML = `
+        <span>#${i + 4}</span>
+        <img src="${u.avatar || 'https://i.pravatar.cc/50'}">
+        <b>${u.name}</b>
+        <i>${(u.balance / 1000).toFixed(1)}K</i>
+      `;
+      list.appendChild(row);
+    });
+  } catch (e) {
+    console.error("Leaderboard error", e);
+  }
+}
+
+// обновляем при открытии экрана
+document.querySelector('[data-go="leaderboard"]').onclick = () => {
+  loadLeaderboard();
+};
+async function syncUser() {
+  if (!tgUser) return;
+
+  await fetch("/sync", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      id: tgUser.id,
+      username: tgUser.username,
+      first_name: tgUser.first_name,
+      photo_url: tgUser.photo_url,
+      balance
+    })
+  });
+}

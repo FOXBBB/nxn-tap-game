@@ -113,3 +113,20 @@ export function routes(app) {
     });
   });
 }
+// ===== LEADERBOARD =====
+app.get("/leaderboard", async (req, res) => {
+  const db = await loadDB(); // твоя текущая функция загрузки
+  const users = Object.values(db.users || {});
+
+  const top = users
+    .sort((a, b) => b.balance - a.balance)
+    .slice(0, 10)
+    .map(u => ({
+      id: u.id,
+      name: u.username || u.first_name || "Player",
+      avatar: u.photo_url || "",
+      balance: u.balance || 0
+    }));
+
+  res.json(top);
+});
