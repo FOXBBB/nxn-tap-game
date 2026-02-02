@@ -78,15 +78,15 @@ function updateUI() {
 
   if (b) b.innerText = "Balance: " + balance;
   if (e) {
-  e.innerText = `Energy: ${Math.round(displayedEnergy)} / ${maxEnergy}`;
+    e.innerText = `Energy: ${Math.round(displayedEnergy)} / ${maxEnergy}`;
 
-  // NEW: low energy visual
-  if (displayedEnergy <= 5) {
-    e.classList.add("energy-low");
-  } else {
-    e.classList.remove("energy-low");
+    // NEW: low energy visual
+    if (displayedEnergy <= 5) {
+      e.classList.add("energy-low");
+    } else {
+      e.classList.remove("energy-low");
+    }
   }
-}
 }
 
 
@@ -120,10 +120,10 @@ coin.onclick = async (e) => {
   animateCoin(); // NEW: visual feedback only
 
 
-  // мгновенный отклик UI
-  energy -= 1;
+  // optimistic UI: ТОЛЬКО баланс
   balance += tapPower;
   updateUI();
+
 
   try {
     const res = await fetch("/tap", {

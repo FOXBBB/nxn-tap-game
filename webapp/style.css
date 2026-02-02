@@ -176,7 +176,11 @@ body {
 
 .coin-box {
   text-align: center;
+  background: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
 }
+
 
 .coin-box img {
   width: 260px;
