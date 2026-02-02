@@ -1,12 +1,32 @@
 // ================= TELEGRAM =================
+// ===== TELEGRAM WEBAPP =====
 let tgUser = null;
 let userId = "guest";
 
-if (window.Telegram?.WebApp) {
-  Telegram.WebApp.ready();
-  tgUser = Telegram.WebApp.initDataUnsafe?.user;
-  if (tgUser) userId = String(tgUser.id);
-}
+document.addEventListener("DOMContentLoaded", () => {
+  if (window.Telegram && Telegram.WebApp) {
+    Telegram.WebApp.ready();
+
+    tgUser = Telegram.WebApp.initDataUnsafe?.user;
+
+    if (tgUser) {
+      userId = String(tgUser.id);
+
+      // показать ID в TRANSFER
+      const myIdEl = document.getElementById("my-id");
+      if (myIdEl) {
+        myIdEl.textContent = "Your ID: " + tgUser.id;
+        myIdEl.onclick = () => {
+          navigator.clipboard.writeText(String(tgUser.id));
+          Telegram.WebApp.showPopup({
+            title: "Copied",
+            message: "Your ID copied to clipboard"
+          });
+        };
+      }
+    }
+  }
+});
 
 // ================= STORAGE =================
 const key = (k) => `${userId}_${k}`;
