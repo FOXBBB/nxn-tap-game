@@ -712,3 +712,55 @@ button:disabled {
   50%  { transform: translateY(-6px); }
   100% { transform: translateY(0); }
 }
+/* ================= MENU ICONS (PNG) ================= */
+
+.menu {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 90px;
+
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+
+  background: rgba(6, 25, 22, 0.65);
+  backdrop-filter: blur(16px);
+
+  border-top: 1px solid rgba(0, 255, 180, 0.25);
+}
+
+.menu div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-icon {
+  width: 32px;
+  height: auto;
+  opacity: 0.55;
+  transition: all 0.2s ease;
+  filter: drop-shadow(0 0 6px rgba(0, 255, 180, 0.35));
+}
+
+/* активная иконка */
+.menu .active .menu-icon {
+  opacity: 1;
+  filter: drop-shadow(0 0 14px rgba(0, 255, 180, 0.9));
+  transform: scale(1.1);
+}
+
+/* центральная кнопка */
+.menu-center {
+  transform: translateY(-22px);
+}
+
+.menu-icon.center {
+  width: 58px;
+  opacity: 1;
+
+  filter:
+    drop-shadow(0 0 20px rgba(0, 255, 180, 1))
+    drop-shadow(0 0 40px rgba(0, 255, 180, 0.6));
+}
