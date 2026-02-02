@@ -159,17 +159,37 @@ async function loadHistory() {
     const row = document.createElement("div");
     row.className = "history-row";
 
-    const dir = t.fromId === userId ? "Sent" : "Received";
-    const sign = dir === "Sent" ? "-" : "+";
+    const dir = t.fromId === userId ? "Sent to" : "Received from";
+    const arrow = t.fromId === userId ? "→" : "←";
+    const otherId = t.fromId === userId ? t.toId : t.fromId;
+    const sign = t.fromId === userId ? "-" : "+";
 
     row.innerHTML = `
-      <b>${dir}</b>
-      <span>${sign}${t.received}</span>
-      <i>${new Date(t.time).toLocaleString()}</i>
-    `;
+  <b>${arrow} ${dir} ID ${otherId}</b>
+  <span>${sign}${t.received} NXN</span>
+  <i>${new Date(t.time).toLocaleDateString()}</i>
+`;
+
 
     box.appendChild(row);
   });
+}
+
+// ===== HISTORY TOGGLE =====
+const toggle = document.getElementById("history-toggle");
+const historyBox = document.getElementById("history");
+
+if (toggle && historyBox) {
+  toggle.onclick = () => {
+    historyBox.classList.toggle("hidden");
+    toggle.innerText = historyBox.classList.contains("hidden")
+      ? "Transfer history ⬇️"
+      : "Transfer history ⬆️";
+
+    if (!historyBox.classList.contains("hidden")) {
+      loadHistory();
+    }
+  };
 }
 
 
@@ -241,13 +261,13 @@ function initMenu() {
       btn.classList.add("active");
 
       if (btn.dataset.go === "transfer") {
-  loadHistory();
-}
+        loadHistory();
+      }
 
 
       if (btn.dataset.go === "leaderboard") {
         loadLeaderboard();
-        
+
       }
     };
   });
