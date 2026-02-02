@@ -98,3 +98,27 @@ function updateUI() {
   document.getElementById("balance").innerText = "Balance: " + balance;
   document.getElementById("energy").innerText = `Energy: ${energy}/${maxEnergy}`;
 }
+// ================= MENU NAVIGATION =================
+document.querySelectorAll(".menu div").forEach(btn => {
+  btn.onclick = () => {
+    // скрываем все экраны
+    document.querySelectorAll(".screen").forEach(s =>
+      s.classList.add("hidden")
+    );
+
+    // показываем нужный
+    const target = document.getElementById(btn.dataset.go);
+    if (target) target.classList.remove("hidden");
+
+    // активная кнопка
+    document.querySelectorAll(".menu div").forEach(b =>
+      b.classList.remove("active")
+    );
+    btn.classList.add("active");
+
+    // если лидерборд — грузим данные
+    if (btn.dataset.go === "leaderboard") {
+      loadLeaderboard();
+    }
+  };
+});
