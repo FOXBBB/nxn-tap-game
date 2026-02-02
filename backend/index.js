@@ -1,18 +1,21 @@
 import express from "express";
 import cors from "cors";
-import bodyParser from "body-parser";
-import { routes } from "./routes.js";
-import "./db.js";
+import routes from "./routes.js";
 
 const app = express();
-app.use(cors());
-app.use(bodyParser.json());
 
-routes(app);
-app.use(express.static("webapp"));
+app.use(cors());
+app.use(express.json());
+
+// API routes
+app.use(routes);
+
+// health check
+app.get("/", (req, res) => {
+  res.send("NXN backend is running");
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log("NXN Tap Game started on port", PORT);
+  console.log("Server started on port", PORT);
 });
-routes(app);
