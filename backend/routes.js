@@ -28,5 +28,31 @@ export function routes(app) {
       res.status(500).json([]);
     }
   });
+  // ===== SYNC USER =====
+app.post("/sync", (req, res) => {
+  try {
+    const { id, username, first_name, photo_url, balance } = req.body;
+
+    if (!id) {
+      return res.status(400).json({ ok: false });
+    }
+
+    if (!db.users) db.users = {};
+
+    db.users[id] = {
+      id,
+      username,
+      first_name,
+      photo_url,
+      balance: balance || 0
+    };
+
+    res.json({ ok: true });
+  } catch (e) {
+    console.error("Sync error", e);
+    res.status(500).json({ ok: false });
+  }
+});
+
 
 }

@@ -354,6 +354,27 @@ async function loadLeaderboard() {
   }
 }
 
+async function syncUser() {
+  if (!tgUser) return;
+
+  try {
+    await fetch("/sync", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: tgUser.id,
+        username: tgUser.username,
+        first_name: tgUser.first_name,
+        photo_url: tgUser.photo_url,
+        balance
+      })
+    });
+  } catch (e) {
+    console.error("sync failed", e);
+  }
+}
+
+
 // обновляем при открытии экрана
 document.querySelector('[data-go="leaderboard"]').onclick = () => {
   loadLeaderboard();
