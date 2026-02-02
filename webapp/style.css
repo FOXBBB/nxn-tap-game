@@ -680,3 +680,29 @@ button:disabled {
   box-shadow:
     0 0 30px rgba(0, 255, 170, 1);
 }
+/* ================= TAP LOGO (PNG ONLY ON MAIN SCREEN) ================= */
+
+#tap .tap-logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 18px;
+}
+
+#tap .tap-logo img {
+  width: 280px;
+  max-width: 85%;
+  height: auto;
+
+  filter:
+    drop-shadow(0 0 12px rgba(0, 200, 255, 0.45))
+    drop-shadow(0 0 26px rgba(255, 215, 100, 0.35));
+
+  animation: logoFloat 6s ease-in-out infinite;
+}
+
+/* лёгкое "парение", премиум эффект */
+@keyframes logoFloat {
+  0%   { transform: translateY(0); }
+  50%  { transform: translateY(-6px); }
+  100% { transform: translateY(0); }
+}
