@@ -91,11 +91,25 @@ function updateUI() {
 
 
 
+function animateCoinHit() {
+  coin.classList.add("hit");
+  coin.classList.add("glow");
+
+  setTimeout(() => {
+    coin.classList.remove("hit");
+    coin.classList.remove("glow");
+  }, 120);
+}
 
 
 // ================= TAP =================
 coin.onclick = async (e) => {
   if (energy <= 0) return;
+
+  animateCoinHit();
+
+  // дальше логика тапа (как у тебя сейчас)
+
 
   // optimistic UI
   energy -= 1;
