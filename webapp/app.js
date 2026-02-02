@@ -1,4 +1,3 @@
-// ================= TELEGRAM =================
 let tgUser = null;
 let userId = "guest";
 
@@ -8,240 +7,38 @@ if (window.Telegram?.WebApp) {
   if (tgUser) userId = String(tgUser.id);
 }
 
-// ================= STORAGE =================
-const key = (k) => `${userId}_${k}`;
+// ===== GAME STATE =====
+let balance = 0;
+let tapPower = 1;
+let maxEnergy = 100;
+let energy = 100;
 
-// ================= GAME STATE =================
-let balance = Number(localStorage.getItem(key("balance")) || 0);
-let tapPower = Number(localStorage.getItem(key("tapPower")) || 1);
-
-let baseMaxEnergy = Number(localStorage.getItem(key("baseMaxEnergy")) || 100);
-let maxEnergy = baseMaxEnergy;
-let energy = Number(localStorage.getItem(key("energy")) || baseMaxEnergy);
-
-let lastEnergyTime = Number(localStorage.getItem(key("lastEnergyTime")) || Date.now());
-
-// ================= SAVE =================
-function saveState() {
-  localStorage.setItem(key("balance"), balance);
-  localStorage.setItem(key("tapPower"), tapPower);
-  localStorage.setItem(key("baseMaxEnergy"), baseMaxEnergy);
-  localStorage.setItem(key("energy"), energy);
-}
-
+// ===== UI =====
 function updateUI() {
-  const b = document.getElementById("balance");
-  const e = document.getElementById("energy");
-  if (b) b.textContent = "Balance: " + balance;
-  if (e) e.textContent = `Energy: ${energy} / ${maxEnergy}`;
+  document.getElementById("balance").innerText = "Balance: " + balance;
+  document.getElementById("energy").innerText = `Energy: ${energy} / ${maxEnergy}`;
 }
 
-// ================= TON UPGRADES =================
-const TON_DURATION = 30 * 24 * 60 * 60 * 1000;
-let ton = JSON.parse(localStorage.getItem(key("ton")) || "{}");
-
-function isActive(name) {
-  return ton[name] && ton[name] > Date.now();
-}
-
-function activate(name) {
-  ton[name] = Date.now() + TON_DURATION;
-  localStorage.setItem(key("ton"), JSON.stringify(ton));
-}
-
-// ================= RECALC ENERGY =================
-function recalcMaxEnergy() {
-  maxEnergy = baseMaxEnergy;
-  if (isActive("energy200")) maxEnergy += 200;
-  if (isActive("energy500")) maxEnergy += 500;
-  if (energy > maxEnergy) energy = maxEnergy;
-}
-
-// ================= OFFLINE ENERGY REGEN =================
-function applyOfflineEnergy() {
-  const now = Date.now();
-  const diff = now - lastEnergyTime;
-  const ticks = Math.floor(diff / 3000);
-
-  if (ticks > 0) {
-    energy = Math.min(maxEnergy, energy + ticks);
-    saveState();
-  }
-
-  lastEnergyTime = now;
-  localStorage.setItem(key("lastEnergyTime"), now);
-}
-
-// ================= INIT =================
-recalcMaxEnergy();
-applyOfflineEnergy();
-updateUI();
-
-// ================= NAVIGATION =================
-const screens = ["leaderboard", "tap", "transfer", "shop"];
-
-document.querySelectorAll(".menu div").forEach(btn => {
-  btn.onclick = () => {
-    document.querySelectorAll(".menu div").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-
-    screens.forEach(s => document.getElementById(s).classList.add("hidden"));
-    document.getElementById(btn.dataset.go).classList.remove("hidden");
-
-    if (btn.dataset.go === "leaderboard") loadLeaderboard();
-  };
-});
-
-// ================= TAP =================
-document.getElementById("coin").onclick = (e) => {
+// ===== TAP =====
+document.getElementById("coin").onclick = () => {
   if (energy <= 0) return;
-
   balance += tapPower;
   energy -= 1;
-
-  saveState();
   updateUI();
   syncUser();
-
-  const plus = document.createElement("div");
-  plus.className = "plus-one";
-  plus.innerText = `+${tapPower}`;
-  plus.style.left = e.clientX + "px";
-  plus.style.top = e.clientY + "px";
-  document.body.appendChild(plus);
-  setTimeout(() => plus.remove(), 900);
 };
 
-// ================= ONLINE ENERGY =================
+// ===== ENERGY REGEN =====
 setInterval(() => {
   if (energy < maxEnergy) {
-    energy++;
-    saveState();
+    energy += 1;
     updateUI();
   }
 }, 3000);
 
-// ================= TRANSFER =================
-document.getElementById("send").onclick = () => {
-  const inputs = document.querySelectorAll("#transfer input");
-  const id = inputs[0].value.trim();
-  const amount = parseInt(inputs[1].value);
-
-  if (!id || isNaN(amount) || amount <= 0) return alert("Invalid data");
-  if (balance < amount) return alert("Not enough balance");
-
-  balance -= amount;
-  saveState();
-  updateUI();
-  syncUser();
-
-  alert("Transfer completed");
-};
-
-// ================= SHOP (NXN PERMANENT) =================
-const purchased = JSON.parse(localStorage.getItem(key("purchased")) || {});
-function savePurchased() {
-  localStorage.setItem(key("purchased"), JSON.stringify(purchased));
-}
-
-document.querySelectorAll(".shop-buy").forEach(btn => {
-  btn.onclick = () => {
-    const label = btn.innerText;
-
-    if (label === "10 000 NXN" && !purchased.tap1) {
-      if (balance < 10000) return alert("Not enough NXN");
-      balance -= 10000;
-      tapPower += 1;
-      purchased.tap1 = true;
-    }
-
-    if (label === "20 000 NXN" && !purchased.energy100) {
-      if (balance < 20000) return alert("Not enough NXN");
-      balance -= 20000;
-      baseMaxEnergy += 100;
-      energy += 100;
-      purchased.energy100 = true;
-      recalcMaxEnergy();
-    }
-
-    savePurchased();
-    saveState();
-    updateUI();
-    syncUser();
-  };
-});
-
-// ================= AUTCLICKER =================
-let autoclickerUntil = Number(localStorage.getItem(key("autoclickerUntil")) || 0);
-let lastVisit = Number(localStorage.getItem(key("lastVisit")) || Date.now());
-
-function autoclickerActive() {
-  return autoclickerUntil > Date.now();
-}
-
-function applyOfflineAutoclick() {
-  if (!autoclickerActive()) return;
-
-  const diff = Date.now() - lastVisit;
-  const clicks = Math.floor(diff / 2000);
-  if (clicks > 0) {
-    balance += clicks * tapPower;
-    saveState();
-    syncUser();
-  }
-
-  localStorage.setItem(key("lastVisit"), Date.now());
-}
-
-applyOfflineAutoclick();
-
-setInterval(() => {
-  if (!autoclickerActive()) return;
-  balance += tapPower;
-  saveState();
-  updateUI();
-  syncUser();
-}, 2000);
-
-// ================= LEADERBOARD (REAL TOP-10) =================
-async function loadLeaderboard() {
-  const res = await fetch("/leaderboard");
-  const data = await res.json();
-
-  // TOP-1 / 2 / 3
-  if (data[0]) fillTop(1, data[0]);
-  if (data[1]) fillTop(2, data[1]);
-  if (data[2]) fillTop(3, data[2]);
-
-  // 4–10
-  const list = document.querySelector(".lb-list");
-  if (!list) return;
-  list.innerHTML = "";
-
-  data.slice(3).forEach((u, i) => {
-    const row = document.createElement("div");
-    row.className = "row";
-    row.innerHTML = `
-      <span>#${i + 4}</span>
-      <img src="${u.avatar || "https://i.pravatar.cc/50"}">
-      <b>${u.name}</b>
-      <i>${u.balance}</i>
-    `;
-    list.appendChild(row);
-  });
-}
-
-function fillTop(pos, user) {
-  document.querySelector(`.top${pos}-name`).textContent = user.name;
-  document.querySelector(`.top${pos}-score`).textContent = user.balance;
-  document.querySelector(`.top${pos}-avatar`).src =
-    user.avatar || "https://i.pravatar.cc/100";
-}
-
-// ================= SYNC =================
+// ===== SYNC USER =====
 async function syncUser() {
   if (!tgUser) return;
-
   await fetch("/sync", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -255,11 +52,63 @@ async function syncUser() {
   });
 }
 
-// first sync
-syncUser();
+// ===== LEADERBOARD =====
+async function loadLeaderboard() {
+  const res = await fetch("/leaderboard");
+  const data = await res.json();
 
-// ================= EXIT =================
-window.addEventListener("beforeunload", () => {
-  localStorage.setItem(key("lastEnergyTime"), Date.now());
-  localStorage.setItem(key("lastVisit"), Date.now());
+  if (!Array.isArray(data)) return;
+
+  // TOP 1
+  if (data[0]) {
+    document.querySelector(".lb-top1 .name").innerText = data[0].name;
+    document.querySelector(".lb-top1 .score").innerText = format(data[0].balance);
+    document.querySelector(".lb-top1 .avatar").src = data[0].avatar || "https://i.pravatar.cc/120";
+  }
+
+  const cards = document.querySelectorAll(".lb-top23 .lb-card");
+  if (data[1]) {
+    cards[0].querySelector(".name").innerText = data[1].name;
+    cards[0].querySelector(".score").innerText = format(data[1].balance);
+    cards[0].querySelector(".avatar").src = data[1].avatar || "https://i.pravatar.cc/100";
+  }
+  if (data[2]) {
+    cards[1].querySelector(".name").innerText = data[2].name;
+    cards[1].querySelector(".score").innerText = format(data[2].balance);
+    cards[1].querySelector(".avatar").src = data[2].avatar || "https://i.pravatar.cc/100";
+  }
+
+  const list = document.querySelector(".lb-list");
+  list.innerHTML = "";
+
+  data.slice(3).forEach((u, i) => {
+    const row = document.createElement("div");
+    row.className = "row";
+    row.innerHTML = `
+      <span>#${i + 4}</span>
+      <img src="${u.avatar || "https://i.pravatar.cc/50"}">
+      <b>${u.name}</b>
+      <i>${format(u.balance)}</i>
+    `;
+    list.appendChild(row);
+  });
+}
+
+function format(n) {
+  if (n >= 1e6) return (n / 1e6).toFixed(1) + "M";
+  if (n >= 1e3) return (n / 1e3).toFixed(1) + "K";
+  return n;
+}
+
+// ===== MENU =====
+document.querySelectorAll(".menu div").forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
+    document.getElementById(btn.dataset.go).classList.remove("hidden");
+    if (btn.dataset.go === "leaderboard") loadLeaderboard();
+  };
 });
+
+// старт
+updateUI();
+syncUser();

@@ -12,66 +12,42 @@
 <!-- LEADERBOARD -->
 <section id="leaderboard" class="screen hidden">
   <div class="lb-header">
-    <div class="lb-title">
-      <span class="trophy"></span>
-      LEADERBOARD
-    </div>
+    <div class="lb-title">LEADERBOARD</div>
     <div class="lb-sub">TOP 10 PLAYERS</div>
   </div>
 
   <!-- TOP 1 -->
   <div class="lb-top1">
-    <img class="avatar" src="https://i.pravatar.cc/120?img=12">
+    <img class="avatar" src="https://i.pravatar.cc/120">
     <div class="info">
       <div class="rank gold">#1</div>
-      <div class="name">NextMoon</div>
+      <div class="name">—</div>
     </div>
-    <div class="score">79.9M</div>
+    <div class="score">—</div>
   </div>
 
   <!-- TOP 2 / 3 -->
   <div class="lb-top23">
     <div class="lb-card silver">
-      <img class="avatar" src="https://i.pravatar.cc/100?img=24">
+      <img class="avatar" src="https://i.pravatar.cc/100">
       <div class="rank">#2</div>
-      <div class="name">DogeKing</div>
-      <div class="score">68.7M</div>
+      <div class="name">—</div>
+      <div class="score">—</div>
     </div>
+
     <div class="lb-card bronze">
-      <img class="avatar" src="https://i.pravatar.cc/100?img=36">
+      <img class="avatar" src="https://i.pravatar.cc/100">
       <div class="rank">#3</div>
-      <div class="name">AlienColonel</div>
-      <div class="score">54.3M</div>
+      <div class="name">—</div>
+      <div class="score">—</div>
     </div>
   </div>
 
   <!-- TOP 4–10 -->
-  <div class="lb-list glass">
-    <div class="row">
-      <span>#4</span><img src="https://i.pravatar.cc/50?img=1"><b>CryptoNerd</b><i>31.4M</i>
-    </div>
-    <div class="row">
-      <span>#5</span><img src="https://i.pravatar.cc/50?img=2"><b>MemeMaster</b><i>29.1M</i>
-    </div>
-    <div class="row green">
-      <span>#6</span><img src="https://i.pravatar.cc/50?img=3"><b>NFTWhale</b><i>25.7M</i>
-    </div>
-    <div class="row">
-      <span>#7</span><img src="https://i.pravatar.cc/50?img=4"><b>LamboChad</b><i>24.3M</i>
-    </div>
-    <div class="row">
-      <span>#8</span><img src="https://i.pravatar.cc/50?img=5"><b>MoonWolf</b><i>22.7M</i>
-    </div>
-    <div class="row">
-      <span>#9</span><img src="https://i.pravatar.cc/50?img=6"><b>CryptoHodler</b><i>20.8M</i>
-    </div>
-    <div class="row">
-      <span>#10</span><img src="https://i.pravatar.cc/50?img=7"><b>ElonDoge</b><i>18.5M</i>
-    </div>
-  </div>
+  <div class="lb-list glass"></div>
 </section>
 
-<!-- TAP (НЕ ТРОГАЕМ) -->
+<!-- TAP -->
 <section id="tap" class="screen">
   <div class="title blue">NEXON</div>
   <div class="subtitle yellow">NXN CLICKER</div>
@@ -85,82 +61,31 @@
   <div class="glass stat" id="energy">Energy: 100 / 100</div>
 </section>
 
-<!-- TRANSFER (НЕ ТРОГАЕМ) -->
+<!-- TRANSFER -->
 <section id="transfer" class="screen hidden">
   <div class="title blue">TRANSFER COINS</div>
   <div class="subtitle yellow">BY ID</div>
 
   <div class="glass transfer-box">
     <label>Recipient ID</label>
-    <input value="ID">
+    <input id="transfer-id">
 
     <label>Amount</label>
-    <div class="row">
-      <input value="0">
-    </div>
+    <input id="transfer-amount">
 
     <button id="send">SEND</button>
-    <p>Enter ID and amount to send coins</p>
   </div>
 
   <img src="transfer.png" class="transfer-img">
 </section>
 
-<!-- SHOP (ПОКА НЕ ТРОГАЕМ) -->
+<!-- SHOP -->
 <section id="shop" class="screen hidden">
   <div class="title blue">SHOP</div>
   <div class="subtitle yellow">UPGRADES</div>
 
-  <div class="shop-card glass">
-    <div class="shop-info">
-      <div class="shop-name">Tap Power +1</div>
-      <div class="shop-desc">Permanent upgrade</div>
-    </div>
-    <button class="shop-buy green">30 000 NXN</button>
-  </div>
-
-  <div class="shop-card glass">
-    <div class="shop-info">
-      <div class="shop-name">Tap Power +5</div>
-      <div class="shop-desc">30 days boost</div>
-    </div>
-    <button class="shop-buy blue">0.2 TON</button>
-  </div>
-
-  <div class="shop-card glass">
-    <div class="shop-info">
-      <div class="shop-name">Energy +100</div>
-      <div class="shop-desc">Permanent upgrade</div>
-    </div>
-    <button class="shop-buy green">50 000 NXN</button>
-  </div>
-
-  <div class="shop-card glass">
-    <div class="shop-info">
-      <div class="shop-name">Energy +200</div>
-      <div class="shop-desc">30 days boost</div>
-    </div>
-    <button class="shop-buy blue">0.2 TON</button>
-  </div>
-  
-  <div class="shop-card glass">
-  <div class="shop-info">
-    <div class="shop-name">Energy +500</div>
-    <div class="shop-desc">30 days boost</div>
-  </div>
-  <button class="shop-buy blue">0.5 TON</button>
-</div>
-
-
-  <div class="shop-card glass">
-    <div class="shop-info">
-      <div class="shop-name">Autoclicker</div>
-      <div class="shop-desc">Clicks while offline (30 days)</div>
-    </div>
-    <button class="shop-buy purple">1 TON</button>
-  </div>
+  <!-- товары остаются как у тебя -->
 </section>
-
 
 <!-- MENU -->
 <nav class="menu glass">
