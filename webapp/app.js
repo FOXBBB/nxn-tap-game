@@ -90,19 +90,25 @@ function updateUI() {
 }
 
 
+// ================= ENERGY DISPLAY SMOOTH =================
 setInterval(() => {
-  // если энергия 0 — показываем честно
-  if (energy === 0) {
+  // если серверная энергия 0 — честно показываем 0
+  if (energy <= 0) {
     displayedEnergy = 0;
     return;
   }
 
-  if (displayedEnergy < energy) {
-    displayedEnergy += Math.min(0.3, energy - displayedEnergy);
-  } else if (displayedEnergy > energy) {
-    displayedEnergy -= Math.min(0.3, displayedEnergy - energy);
+  // плавно и МЕДЛЕННО догоняем сервер
+  const diff = energy - displayedEnergy;
+
+  if (Math.abs(diff) < 0.05) {
+    displayedEnergy = energy;
+  } else {
+    displayedEnergy += diff * 0.08;
   }
-}, 50);
+
+}, 100);
+
 
 
 
