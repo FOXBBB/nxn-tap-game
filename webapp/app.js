@@ -114,7 +114,8 @@ function animateCoin() {
   setTimeout(() => coin.classList.remove("tap-anim"), 120);
 }
 coin.onclick = async (e) => {
-  if (energy <= 0) return;
+  if (Math.floor(displayedEnergy) <= 0) return;
+
 
   animateCoin(); // NEW: visual feedback only
 
@@ -159,40 +160,45 @@ function animatePlus(e, value) {
 }
 
 // ================= TRANSFER =================
-const btn = document.getElementById("send");
-btn.disabled = true;
 document.getElementById("send").onclick = async () => {
-  const toId = document.getElementById("to-id")?.value.trim();
-  const amount = Number(document.getElementById("amount")?.value);
+  const btn = document.getElementById("send");
+  btn.disabled = true;
 
-  if (!toId || amount <= 0) {
-    alert("Enter valid ID and amount");
-    return;
+  try {
+    const toId = document.getElementById("to-id")?.value.trim();
+    const amount = Number(document.getElementById("amount")?.value);
+
+    if (!toId || amount <= 0) {
+      alert("Enter valid ID and amount");
+      return;
+    }
+
+    const res = await fetch("/transfer", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        fromId: userId,
+        toId,
+        amount
+      })
+    });
+
+    const data = await res.json();
+    if (!data.ok) {
+      alert(data.error || "Transfer failed");
+      return;
+    }
+
+    await refreshMe();
+    updateUI();
+
+    alert(`Sent ${data.sent} NXN (10% burned)`);
+  } finally {
+    // 🔒 ВСЕГДА возвращаем кнопку
+    btn.disabled = false;
   }
-
-  const res = await fetch("/transfer", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      fromId: userId,
-      toId,
-      amount
-    })
-  });
-  btn.disabled = false;
-
-
-  const data = await res.json();
-  if (!data.ok) {
-    alert(data.error || "Transfer failed");
-    return;
-  }
-
-  await refreshMe();
-  updateUI();
-
-  alert(`Sent ${data.sent} NXN (10% burned)`);
 };
+
 // ===== LOAD TRANSFER HISTORY =====
 async function loadHistory() {
   if (!userId) return;
@@ -343,7 +349,10 @@ setInterval(async () => {
 
     energy = Number(data.energy) || energy;
     maxEnergy = Number(data.maxEnergy) || maxEnergy;
+
+    updateUI(); // 🔥 ВОТ ЭТОГО НЕ ХВАТАЛО
   } catch (e) {
     console.warn("energy sync skipped");
   }
 }, 3000);
+
