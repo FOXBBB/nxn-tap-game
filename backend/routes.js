@@ -3,40 +3,46 @@ import { loadDB, saveDB } from "./db.js";
 
 const router = express.Router();
 
-/* ===== SYNC USER ===== */
 router.post("/sync", (req, res) => {
-  const { id, username, first_name, photo_url, balance } = req.body;
+  try {
+    const { id, username, first_name, photo_url, balance } = req.body;
+    if (!id) return res.json({ ok: false });
 
-  if (!id) return res.json({ ok: false });
+    const db = loadDB();
 
-  const db = loadDB();
-  let user = db.users.find(u => u.id === id);
+    let user = db.users.find(u => u.id === id);
+    if (!user) {
+      user = {
+        id,
+        name: username || first_name || "User",
+        avatar: photo_url || "",
+        balance: 0
+      };
+      db.users.push(user);
+    }
 
-  if (!user) {
-    user = {
-      id,
-      name: username || first_name || "User",
-      avatar: photo_url || "",
-      balance: 0
-    };
-    db.users.push(user);
+    user.balance = balance;
+    saveDB(db);
+
+    res.json({ ok: true });
+  } catch (e) {
+    console.error("SYNC ERROR", e);
+    res.status(500).json({ ok: false });
   }
-
-  user.balance = balance;
-  saveDB(db);
-
-  res.json({ ok: true });
 });
 
-/* ===== LEADERBOARD ===== */
 router.get("/leaderboard", (req, res) => {
-  const db = loadDB();
+  try {
+    const db = loadDB();
+    const top = db.users
+      .sort((a, b) => b.balance - a.balance)
+      .slice(0, 10);
 
-  const top = db.users
-    .sort((a, b) => b.balance - a.balance)
-    .slice(0, 10);
-
-  res.json(top);
+    res.json(top);
+  } catch (e) {
+    console.error("LEADERBOARD ERROR", e);
+    res.status(500).json([]);
+  }
 });
 
 export default router;
