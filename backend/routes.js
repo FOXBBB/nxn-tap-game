@@ -9,8 +9,9 @@ router.post("/sync", (req, res) => {
   if (!id) return res.json({ ok: false });
 
   const db = loadDB();
+  
+let user = db.users.find(u => String(u.id) === String(id));
 
-  let user = db.users.find(u => u.id === id);
 
   if (!user) {
     user = {
@@ -40,8 +41,9 @@ router.post("/transfer", (req, res) => {
 
   const db = loadDB();
 
-  const from = db.users.find(u => u.id === fromId);
-  const to = db.users.find(u => u.id === toId);
+const from = db.users.find(u => String(u.id) === String(fromId));
+const to = db.users.find(u => String(u.id) === String(toId));
+
 
   if (!from) return res.json({ ok: false, error: "Sender not found" });
   if (!to) return res.json({ ok: false, error: "Recipient not found" });
