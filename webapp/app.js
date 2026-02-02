@@ -7,6 +7,7 @@ let balance = 0;
 let energy = 0;
 let maxEnergy = 100;
 let tapPower = 1;
+let canTap = false;
 
 
 // ================= INIT =================
@@ -64,11 +65,14 @@ async function refreshMe() {
   const res = await fetch(`/me/${userId}`);
   const data = await res.json();
 
-  balance = Number(data.balance) || 0;
-  energy = Number(data.energy) || 0;
-  maxEnergy = Number(data.maxEnergy) || 100;
-  tapPower = Number(data.tapPower) || 1;
+  energy = Number(data.energy) || energy;
+maxEnergy = Number(data.maxEnergy) || maxEnergy;
+
+canTap = energy > 0;
+updateUI();
+
 }
+
 
 // ================= UI =================
 function updateUI() {
@@ -93,22 +97,11 @@ function updateUI() {
 
 // ================= TAP =================
 const coin = document.getElementById("coin");
-// NEW: tap animation helper (UI only)
-function animateCoin() {
-  coin.classList.add("tap-anim");
-  setTimeout(() => coin.classList.remove("tap-anim"), 120);
-}
 coin.onclick = async (e) => {
-  if (Math.floor(displayedEnergy) <= 0) return;
+  if (!canTap) return;
 
-
-  animateCoin(); // NEW: visual feedback only
-
-
-  // optimistic UI: ТОЛЬКО баланс
   balance += tapPower;
   updateUI();
-
 
   try {
     const res = await fetch("/tap", {
@@ -119,12 +112,12 @@ coin.onclick = async (e) => {
 
     const data = await res.json();
 
-    // сервер — источник истины
     balance = Number(data.balance) || balance;
     energy = Number(data.energy) || energy;
     maxEnergy = Number(data.maxEnergy) || maxEnergy;
     tapPower = Number(data.tapPower) || tapPower;
 
+    canTap = energy > 0; // 🔒 обновляем ТОЛЬКО от сервера
     updateUI();
   } catch (err) {
     console.error("tap error", err);
@@ -132,6 +125,8 @@ coin.onclick = async (e) => {
 
   animatePlus(e, tapPower);
 };
+
+
 
 
 function animatePlus(e, value) {
