@@ -350,14 +350,25 @@ updateUI();
   } catch {}
 }, 3000);
 
-// ================= STAR FIELD =================
+// ================= STARFIELD (SPACE STYLE) =================
 const starsBox = document.getElementById("stars");
 
-for (let i = 0; i < 40; i++) {
-  const s = document.createElement("div");
-  s.className = "star";
-  s.style.left = Math.random() * 100 + "vw";
-  s.style.animationDuration = 5 + Math.random() * 10 + "s";
-  s.style.animationDelay = Math.random() * 10 + "s";
-  starsBox.appendChild(s);
+if (starsBox) {
+  for (let i = 0; i < 60; i++) {
+    const s = document.createElement("div");
+    s.className = "star";
+
+    const size = Math.random() * 2 + 1;
+    s.style.width = size + "px";
+    s.style.height = size + "px";
+
+    s.style.left = Math.random() * 100 + "vw";
+    s.style.top = Math.random() * 100 + "vh";
+
+    s.style.opacity = Math.random() * 0.6 + 0.3;
+    s.style.animationDuration = 20 + Math.random() * 40 + "s";
+
+    starsBox.appendChild(s);
+  }
 }
+
