@@ -3,96 +3,80 @@ import { loadDB, saveDB } from "./db.js";
 
 const router = express.Router();
 
-/* ===== SYNC USER ===== */
+/* ===== GET ME ===== */
+router.get("/me/:id", (req, res) => {
+  const db = loadDB();
+  const user = db.users.find(u => String(u.id) === String(req.params.id));
+  if (!user) return res.json({ balance: 0 });
+  res.json(user);
+});
+
+/* ===== SYNC USER (CREATE ONLY) ===== */
 router.post("/sync", (req, res) => {
-  const { id, username, first_name, photo_url, balance } = req.body;
+  const { id, username, first_name, photo_url } = req.body;
   if (!id) return res.json({ ok: false });
 
   const db = loadDB();
-  
-let user = db.users.find(u => String(u.id) === String(id));
 
-
+  let user = db.users.find(u => String(u.id) === String(id));
   if (!user) {
     user = {
-      id,
+      id: String(id),
       name: username || first_name || "User",
       avatar: photo_url || "",
-      balance: balance || 0
+      balance: 0
     };
     db.users.push(user);
+    saveDB(db);
   }
 
-  saveDB(db);
-
-  res.json({
-    ok: true,
-    balance: user.balance
-  });
+  res.json({ ok: true });
 });
 
-/* ===== TRANSFER WITH 10% BURN ===== */
-router.post("/transfer", (req, res) => {
-  const { fromId, toId, amount } = req.body;
-
-  if (!fromId || !toId || !amount || amount <= 0) {
-    return res.json({ ok: false, error: "Invalid data" });
-  }
-
+/* ===== TAP ===== */
+router.post("/tap", (req, res) => {
+  const { id, tapPower } = req.body;
   const db = loadDB();
 
-const from = db.users.find(u => String(u.id) === String(fromId));
-const to = db.users.find(u => String(u.id) === String(toId));
+  const user = db.users.find(u => String(u.id) === String(id));
+  if (!user) return res.json({ ok: false });
 
+  user.balance += tapPower;
+  saveDB(db);
+
+  res.json({ ok: true, balance: user.balance });
+});
+
+/* ===== TRANSFER (10% BURN) ===== */
+router.post("/transfer", (req, res) => {
+  const { fromId, toId, amount } = req.body;
+  const db = loadDB();
+
+  const from = db.users.find(u => String(u.id) === String(fromId));
+  const to = db.users.find(u => String(u.id) === String(toId));
 
   if (!from) return res.json({ ok: false, error: "Sender not found" });
   if (!to) return res.json({ ok: false, error: "Recipient not found" });
-
-  if (from.balance < amount) {
-    return res.json({ ok: false, error: "Not enough balance" });
-  }
+  if (from.balance < amount) return res.json({ ok: false, error: "Not enough balance" });
 
   const fee = Math.floor(amount * 0.1);
   const received = amount - fee;
 
-  // списываем полностью
   from.balance -= amount;
-
-  // зачисляем с учётом комиссии
   to.balance += received;
-
-  // 🔥 fee просто исчезает
-
-  // история переводов (если ещё нет — создаём)
-  if (!db.transfers) db.transfers = [];
-
-  db.transfers.push({
-    from: fromId,
-    to: toId,
-    amount,
-    fee,
-    received,
-    time: Date.now()
-  });
 
   saveDB(db);
 
-  res.json({
-    ok: true,
-    fee,
-    received
-  });
+  res.json({ ok: true, received, fee });
 });
 
 /* ===== LEADERBOARD ===== */
 router.get("/leaderboard", (req, res) => {
   const db = loadDB();
-
   const top = db.users
     .slice()
     .sort((a, b) => b.balance - a.balance)
     .slice(0, 10);
-
   res.json(top);
 });
 
