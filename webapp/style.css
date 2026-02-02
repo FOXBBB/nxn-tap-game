@@ -187,24 +187,42 @@ body {
 }
 
 /* ===== TRANSFER ===== */
-.transfer-box {
-  width: 85%;
-  margin: 0 auto;
-  padding: 18px;
+/* ================= TRANSFER UI ================= */
+
+#transfer,
+#transfer * {
+  color: #eafff6;
 }
 
-.transfer-box input {
-  width: 100%;
-  padding: 14px;
-  border-radius: 14px;
+#transfer input {
+  background: rgba(10, 25, 20, 0.6);
+  border: 1px solid rgba(0, 255, 180, 0.25);
+  border-radius: 10px;
+
+  padding: 10px 12px;
+  color: #eafff6;
+
+  outline: none;
+}
+
+#transfer input::placeholder {
+  color: rgba(200, 255, 235, 0.45);
+}
+
+#transfer button {
+  background: linear-gradient(135deg, #00ffc6, #00bfa5);
+  color: #002018;
+
   border: none;
+  border-radius: 12px;
+
+  padding: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+
+  box-shadow: 0 0 14px rgba(0, 255, 180, 0.45);
 }
 
-.transfer-img {
-  width: 260px;
-  display: block;
-  margin: 18px auto 0;
-}
 
 /* ===== MENU ===== */
 .menu {
@@ -318,11 +336,12 @@ body {
 }
 
 .history-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 14px;
-  padding: 6px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  background: rgba(10, 25, 20, 0.5);
+  border-radius: 12px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  color: #eafff6;
+  border: 1px solid rgba(0, 255, 180, 0.15);
 }
 
 .history-row b {
@@ -334,8 +353,7 @@ body {
 }
 
 .history-row i {
-  font-style: normal;
-  opacity: 0.7;
+  opacity: 0.6;
   font-size: 12px;
 }
 .history-toggle {
@@ -633,4 +651,45 @@ h1,
 #leaderboard {
   position: relative;
   z-index: 2;
+}
+/* ================= CRYPTO HUD ================= */
+
+#balance,
+#energy {
+  background: rgba(10, 30, 25, 0.55);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 255, 180, 0.25);
+  border-radius: 14px;
+
+  padding: 10px 16px;
+  margin: 8px auto;
+
+  width: fit-content;
+  min-width: 180px;
+
+  text-align: center;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+
+  color: #eafff6;
+  box-shadow:
+    0 0 12px rgba(0, 255, 180, 0.15),
+    inset 0 0 8px rgba(255, 255, 255, 0.03);
+}
+
+/* баланс — чуть спокойнее */
+#balance {
+  opacity: 0.85;
+}
+
+/* энергия — акцент */
+#energy {
+  color: #7fffe5;
+}
+
+/* low energy warning */
+#energy.energy-low {
+  border-color: rgba(255, 90, 90, 0.6);
+  color: #ff9a9a;
+  box-shadow: 0 0 14px rgba(255, 90, 90, 0.4);
 }
