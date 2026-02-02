@@ -271,9 +271,9 @@ function applyOfflineAutoclicks() {
 
   if (clicks > 0) {
     balance += clicks * tapPower;
-    energy = Math.max(0, energy - clicks);
-    saveState();
-    updateUI();
+saveState();
+updateUI();
+
   }
 }
 
@@ -286,7 +286,6 @@ setInterval(() => {
   if (energy <= 0) return;
 
   balance += tapPower;
-  energy -= 1;
   saveState();
   updateUI();
 }, AUTOCLICK_INTERVAL);
@@ -316,3 +315,8 @@ document.querySelectorAll(".shop-buy").forEach(btn => {
     }
   });
 });
+if (tgUser) {
+  alert("Telegram user: " + tgUser.id);
+} else {
+  alert("Opened NOT from Telegram");
+}
