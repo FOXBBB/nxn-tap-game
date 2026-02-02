@@ -7,7 +7,7 @@ let balance = 0;
 let energy = 0;
 let maxEnergy = 100;
 let tapPower = 1;
-
+let displayedEnergy = energy;
 // ================= INIT =================
 document.addEventListener("DOMContentLoaded", async () => {
   if (!window.Telegram || !Telegram.WebApp) {
@@ -74,11 +74,23 @@ function updateUI() {
   const b = document.getElementById("balance");
   const e = document.getElementById("energy");
 
-  if (b) b.textContent = "Balance: " + balance;
-  if (e) e.textContent = `Energy: ${energy} / ${maxEnergy}`;
+  if (b) b.innerText = "Balance: " + balance;
+
+  if (e) {
+    if (displayedEnergy === undefined) displayedEnergy = energy;
+
+    displayedEnergy += (energy - displayedEnergy) * 0.3;
+    displayedEnergy = Math.round(displayedEnergy);
+
+    e.innerText = `Energy: ${displayedEnergy} / ${maxEnergy}`;
+  }
 }
 
+
 // ================= TAP =================
+const coin = document.getElementById("coin");
+coin.classList.add("tap");
+setTimeout(() => coin.classList.remove("tap"), 80);
 document.getElementById("coin").onclick = async (e) => {
   const res = await fetch("/tap", {
     method: "POST",

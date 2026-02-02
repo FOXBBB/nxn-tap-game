@@ -357,3 +357,33 @@ body {
 .hidden {
   display: none;
 }
+.plus-one {
+  position: fixed;
+  color: #6cf0ff;
+  font-weight: 800;
+  font-size: 18px;
+  pointer-events: none;
+  animation: floatUp 0.9s ease-out forwards;
+  text-shadow: 0 0 10px rgba(108,240,255,0.8);
+}
+
+@keyframes floatUp {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 0) scale(0.8);
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -60px) scale(1.1);
+  }
+}
+.coin-box img {
+  transition: transform 0.08s ease;
+}
+
+.coin-box img.tap {
+  transform: scale(0.92);
+}
