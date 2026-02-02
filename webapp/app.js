@@ -37,46 +37,35 @@ function updateUI() {
   if (e) e.textContent = `Energy: ${energy} / ${maxEnergy}`;
 }
 
-// ================= SYNC USER ================
- const res = await fetch("/sync", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    id: tgUser.id,
-    username: tgUser.username || "",
-    first_name: tgUser.first_name || "",
-    photo_url: tgUser.photo_url || "",
-    balance
-  })
-});
-
-const data = await res.json();
-if (data.balance !== undefined) {
-  balance = data.balance;
-  saveState();
-  updateUI();
-}
-
-
-
-// ================= PULL BALANCE FROM SERVER =================
-async function pullBalanceFromServer() {
+// ================= SYNC USER =================
+async function syncUser() {
   if (!tgUser) return;
+
   try {
-    const res = await fetch(`/me/${userId}`);
-    if (!res.ok) return;
-    const user = await res.json();
-    if (typeof user.balance === "number") {
-      balance = user.balance;
+    const res = await fetch("/sync", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: tgUser.id,
+        username: tgUser.username || "",
+        first_name: tgUser.first_name || "",
+        photo_url: tgUser.photo_url || "",
+        balance
+      })
+    });
+
+    const data = await res.json();
+    if (typeof data.balance === "number") {
+      balance = data.balance;
       saveState();
       updateUI();
     }
   } catch (e) {
-    console.error("pull balance failed", e);
+    console.error("sync failed", e);
   }
 }
 
-// ================= INIT TELEGRAM =================
+// ================= TELEGRAM INIT =================
 document.addEventListener("DOMContentLoaded", async () => {
   if (window.Telegram && Telegram.WebApp) {
     Telegram.WebApp.ready();
@@ -85,7 +74,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (tgUser) {
       userId = String(tgUser.id);
 
-      // показать свой ID
       const myIdEl = document.getElementById("my-id");
       if (myIdEl) {
         myIdEl.textContent = "Your ID: " + userId;
@@ -98,23 +86,20 @@ document.addEventListener("DOMContentLoaded", async () => {
         };
       }
     }
-
-    // загружаем локальное
-    loadState();
-
-    // офлайн реген энергии
-    const diff = Date.now() - lastEnergyTime;
-    const ticks = Math.floor(diff / 3000);
-    if (ticks > 0) {
-      energy = Math.min(maxEnergy, energy + ticks);
-    }
-
-    // ⬅️ КРИТИЧНО: сначала получаем баланс с сервера
-    await pullBalanceFromServer();
-
-    updateUI();
-    syncUser();
   }
+
+  loadState();
+
+  // офлайн реген энергии
+  const diff = Date.now() - lastEnergyTime;
+  const ticks = Math.floor(diff / 3000);
+  if (ticks > 0) {
+    energy = Math.min(maxEnergy, energy + ticks);
+    saveState();
+  }
+
+  updateUI();
+  await syncUser();
 });
 
 // ================= TAP =================
@@ -147,9 +132,7 @@ setInterval(() => {
 }, 3000);
 
 // ================= TRANSFER =================
-const sendBtn = document.getElementById("send");
-
-sendBtn.onclick = async () => {
+document.getElementById("send").onclick = async () => {
   const toId = document.getElementById("to-id")?.value.trim();
   const amount = parseInt(document.getElementById("amount")?.value);
 
@@ -168,8 +151,7 @@ sendBtn.onclick = async () => {
     const data = await res.json();
     if (!data.ok) return alert(data.error || "Transfer failed");
 
-    // ⬅️ НЕ трогаем balance вручную — берём с сервера
-    await pullBalanceFromServer();
+    await syncUser();
     alert("Transfer successful");
   } catch (e) {
     alert("Transfer error");
@@ -191,11 +173,13 @@ async function loadLeaderboard() {
   }
 
   const cards = document.querySelectorAll(".lb-top23 .lb-card");
+
   if (data[1] && cards[0]) {
     cards[0].querySelector(".name").innerText = data[1].name;
     cards[0].querySelector(".score").innerText = data[1].balance;
     cards[0].querySelector(".avatar").src = data[1].avatar || placeholder;
   }
+
   if (data[2] && cards[1]) {
     cards[1].querySelector(".name").innerText = data[2].name;
     cards[1].querySelector(".score").innerText = data[2].balance;
