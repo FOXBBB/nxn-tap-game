@@ -98,32 +98,27 @@ router.post("/transfer", (req, res) => {
   const { fromId, toId, amount } = req.body;
   const db = loadDB();
 
-  const from = db.users.find(u => String(u.id) === String(fromId));
-  const to = db.users.find(u => String(u.id) === String(toId));
+  // ===== LOG TRANSFER =====
+if (!db.transfers) db.transfers = [];
 
-  if (!from) return res.json({ ok: false, error: "Sender not found" });
-  if (!to) return res.json({ ok: false, error: "Recipient not found" });
-  if (from.balance < amount) return res.json({ ok: false, error: "Not enough balance" });
+const fee = Math.floor(amount * 0.1);
+const received = amount - fee;
 
-  const fee = Math.floor(amount * 0.1);
-  const received = amount - fee;
+db.transfers.push({
+  fromId: String(fromId),
+  toId: String(toId),
+  amount,
+  fee,
+  received,
+  time: Date.now()
+});
 
-  from.balance -= amount;
-  to.balance += received;
 
   saveDB(db);
 
   res.json({ ok: true, received, fee });
 });
-// ===== LOG TRANSFER =====
-db.transfers.push({
-  fromId: String(fromId),
-  toId: String(toId),
-  amount: amount,
-  fee: Math.floor(amount * 0.1),
-  received: amount - Math.floor(amount * 0.1),
-  time: Date.now()
-});
+
 // ===== TRANSFER HISTORY =====
 router.get("/history/:id", (req, res) => {
   const { id } = req.params;
