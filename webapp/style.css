@@ -831,3 +831,61 @@ button:disabled {
     0 0 18px rgba(255, 80, 80, 0.45),
     inset 0 0 14px rgba(255, 80, 80, 0.2);
 }
+/* hide top logo completely */
+.tap-logo {
+  display: none !important;
+}
+/* ================= SAFE LAYOUT FIX (ALL DEVICES) ================= */
+
+/* защита от вылезания текста */
+* {
+  box-sizing: border-box;
+}
+
+/* leaderboard rows */
+.lb-list .row,
+.lb-top1,
+.lb-card {
+  overflow: hidden;
+}
+
+/* имена и цифры */
+.lb-list .row b,
+.lb-list .row i,
+.lb-top1 .name,
+.lb-top1 .score,
+.lb-card .name,
+.lb-card .score {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* transfer + history */
+.history-row,
+.transfer-box,
+.shop-card {
+  overflow: hidden;
+}
+
+/* inputs */
+input {
+  max-width: 100%;
+}
+
+/* маленькие экраны */
+@media (max-width: 380px) {
+  .lb-top1 {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .lb-top1 .avatar {
+    margin-bottom: 10px;
+  }
+
+  .lb-top1 .score {
+    font-size: 18px;
+  }
+}
