@@ -21,7 +21,11 @@ router.get("/me/:id", (req, res) => {
 
   // 🔒 гарантируем значения
   user.balance = Number(user.balance) || 0;
-  user.energy = Number(user.energy) || 100;
+ if (user.energy === undefined || user.energy === null) {
+  user.energy = 100;
+} else {
+  user.energy = Number(user.energy);
+}
   user.maxEnergy = Number(user.maxEnergy) || 100;
   user.tapPower = Number(user.tapPower) || 1;
 
@@ -47,11 +51,15 @@ router.post("/sync", (req, res) => {
 
   if (!user) {
     user = {
-      id: String(id),
-      name: username || first_name || "User",
-      avatar: photo_url || "",
-      balance: 0
-    };
+  id: String(id),
+  name: username || first_name || "User",
+  avatar: photo_url || "",
+  balance: 0,
+  energy: 100,
+  maxEnergy: 100,
+  tapPower: 1
+};
+
     db.users.push(user);
   }
 
