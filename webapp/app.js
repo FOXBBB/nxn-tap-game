@@ -191,17 +191,30 @@ function animatePlus(e, value) {
 // ================= TRANSFER =================
 document.getElementById("send").onclick = async () => {
   const btn = document.getElementById("send");
+  const box = document.querySelector("#transfer .transfer-box");
+
+  const toId = document.getElementById("to-id").value.trim();
+  const amount = Number(document.getElementById("amount").value);
+
   btn.disabled = true;
+  box.classList.remove("transfer-error", "transfer-success");
+
+  // ❌ client validation
+  if (!toId || amount < 100) {
+    showToast("Minimum transfer is 100 NXN", "err");
+    box.classList.add("transfer-error");
+    btn.disabled = false;
+    return;
+  }
+
+  if (balance < amount) {
+    showToast("Not enough balance", "err");
+    box.classList.add("transfer-error");
+    btn.disabled = false;
+    return;
+  }
 
   try {
-    const toId = document.getElementById("to-id")?.value.trim();
-    const amount = Number(document.getElementById("amount")?.value);
-
-    if (!toId || amount <= 0) {
-      alert("Enter valid ID and amount");
-      return;
-    }
-
     const res = await fetch("/transfer", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -213,58 +226,31 @@ document.getElementById("send").onclick = async () => {
     });
 
     const data = await res.json();
+
     if (!data.ok) {
-      const box = document.querySelector(".transfer-box");
-      if (box) {
-        box.classList.add("transfer-error");
-        setTimeout(() => box.classList.remove("transfer-error"), 450);
-      }
-
-      const toast = document.createElement("div");
-      toast.className = "transfer-toast error";
-      toast.innerText = data.error || "TRANSFER FAILED";
-      document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 1600);
-
+      showToast(data.error || "Transfer failed", "err");
+      box.classList.add("transfer-error");
+      btn.disabled = false;
       return;
     }
 
-
-    await refreshMe();
+    // ✅ SUCCESS
+    balance = data.balance;
     updateUI();
 
-    // ===== TRANSFER SUCCESS UI =====
-    const box = document.querySelector(".transfer-box");
-    if (box) {
-      box.classList.add("transfer-success");
-      setTimeout(() => box.classList.remove("transfer-success"), 600);
-    }
-    // burn animation
-    const burn = document.createElement("div");
-    burn.className = "plus-one";
-    burn.innerText = "-10% BURNED";
-    burn.style.color = "#ff6b6b";
-    burn.style.textShadow = "0 0 10px rgba(255,80,80,0.8)";
-    burn.style.left = "50%";
-    burn.style.top = "60%";
-    burn.style.transform = "translateX(-50%)";
-    document.body.appendChild(burn);
-    setTimeout(() => burn.remove(), 900);
+    playTransferAnimation(amount);
+    box.classList.add("transfer-success");
+    showToast("Transfer successful", "ok");
 
-
-    // toast message
-    const toast = document.createElement("div");
-    toast.className = "transfer-toast";
-    toast.innerText = "TRANSFER SUCCESS ✓";
-    document.body.appendChild(toast);
-
-    setTimeout(() => toast.remove(), 1600);
-
-  } finally {
-    // 🔒 ВСЕГДА возвращаем кнопку
-    btn.disabled = false;
+  } catch (e) {
+    showToast("Server error", "err");
+    box.classList.add("transfer-error");
   }
+
+  btn.disabled = false;
 };
+
+
 
 // ===== LOAD TRANSFER HISTORY =====
 async function loadHistory() {
@@ -531,5 +517,35 @@ async function payTON(amountTon, itemId) {
     alert("Payment cancelled or failed");
   }
 }
+function playTransferAnimation(amount) {
+  const icon = document.querySelector("#balance .balance-icon img");
+  if (!icon) return;
+
+  for (let i = 0; i < 8; i++) {
+    const coin = document.createElement("div");
+    coin.className = "transfer-coin";
+    coin.innerText = "💎";
+
+    const rect = icon.getBoundingClientRect();
+    coin.style.left = rect.left + rect.width / 2 + "px";
+    coin.style.top = rect.top + rect.height / 2 + "px";
+
+    document.body.appendChild(coin);
+
+    setTimeout(() => coin.remove(), 900);
+  }
+
+  const minus = document.createElement("div");
+  minus.className = "plus-one";
+  minus.style.color = "#ff6b6b";
+  minus.innerText = `-${amount}`;
+  minus.style.left = "50%";
+  minus.style.top = "45%";
+  minus.style.transform = "translateX(-50%)";
+
+  document.body.appendChild(minus);
+  setTimeout(() => minus.remove(), 900);
+}
+
 
 

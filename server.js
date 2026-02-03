@@ -94,8 +94,12 @@ app.post("/transfer", (req, res) => {
   users[toId] = toUser;
   saveUsers(users);
 
-  res.json({ ok: true });
+  res.json({
+    ok: true,
+    balance: fromUser.balance
+  });
 });
+
 
 /* ================== START SERVER ================== */
 app.listen(PORT, () => {
