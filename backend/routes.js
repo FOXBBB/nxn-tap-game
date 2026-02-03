@@ -192,6 +192,48 @@ router.get("/leaderboard", (req, res) => {
   res.json(top);
 });
 
+router.post("/ton-confirm", (req, res) => {
+  const { userId, itemId, txHash } = req.body;
+
+  if (!userId || !itemId || !txHash) {
+    return res.json({ ok: false, error: "Invalid data" });
+  }
+
+  const db = loadDB();
+  const user = db.users.find(u => String(u.id) === String(userId));
+  if (!user) return res.json({ ok: false });
+
+  if (!user.tonPurchases) user.tonPurchases = {};
+
+  // защита от повторного применения
+  if (user.tonPurchases[itemId] && user.tonPurchases[itemId] > Date.now()) {
+    return res.json({ ok: false, error: "Already active" });
+  }
+
+  const DAYS_30 = 30 * 24 * 60 * 60 * 1000;
+  const now = Date.now();
+
+  // 🎯 АКТИВАЦИЯ
+  if (itemId === "tap_plus_3") {
+    user.tapPower += 3;
+    user.tonPurchases[itemId] = now + DAYS_30;
+  }
+
+  if (itemId === "energy_300") {
+    user.maxEnergy += 300;
+    user.tonPurchases[itemId] = now + DAYS_30;
+  }
+
+  if (itemId === "autoclicker") {
+    user.autoclickerUntil = now + DAYS_30;
+    user.tonPurchases[itemId] = now + DAYS_30;
+  }
+
+  saveDB(db);
+  res.json({ ok: true });
+});
+
+
 export default router;
 /* ===== BUY FOR NXN ===== */
 router.post("/buy-nxn", (req, res) => {

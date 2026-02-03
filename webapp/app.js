@@ -26,8 +26,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   Telegram.WebApp.setBackgroundColor("#02040a");
 
   tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-  manifestUrl: "https://nxn-tap-game.onrender.com/tonconnect-manifest.json"
-});
+    manifestUrl: "https://nxn-tap-game.onrender.com/tonconnect-manifest.json"
+  });
 
 
   tgUser = Telegram.WebApp.initDataUnsafe.user;
@@ -191,52 +191,52 @@ document.getElementById("send").onclick = async () => {
     });
 
     const data = await res.json();
-   if (!data.ok) {
-  const box = document.querySelector(".transfer-box");
-  if (box) {
-    box.classList.add("transfer-error");
-    setTimeout(() => box.classList.remove("transfer-error"), 450);
-  }
+    if (!data.ok) {
+      const box = document.querySelector(".transfer-box");
+      if (box) {
+        box.classList.add("transfer-error");
+        setTimeout(() => box.classList.remove("transfer-error"), 450);
+      }
 
-  const toast = document.createElement("div");
-  toast.className = "transfer-toast error";
-  toast.innerText = data.error || "TRANSFER FAILED";
-  document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 1600);
+      const toast = document.createElement("div");
+      toast.className = "transfer-toast error";
+      toast.innerText = data.error || "TRANSFER FAILED";
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 1600);
 
-  return;
-}
+      return;
+    }
 
 
     await refreshMe();
     updateUI();
 
     // ===== TRANSFER SUCCESS UI =====
-const box = document.querySelector(".transfer-box");
-if (box) {
-  box.classList.add("transfer-success");
-  setTimeout(() => box.classList.remove("transfer-success"), 600);
-}
-// burn animation
-const burn = document.createElement("div");
-burn.className = "plus-one";
-burn.innerText = "-10% BURNED";
-burn.style.color = "#ff6b6b";
-burn.style.textShadow = "0 0 10px rgba(255,80,80,0.8)";
-burn.style.left = "50%";
-burn.style.top = "60%";
-burn.style.transform = "translateX(-50%)";
-document.body.appendChild(burn);
-setTimeout(() => burn.remove(), 900);
+    const box = document.querySelector(".transfer-box");
+    if (box) {
+      box.classList.add("transfer-success");
+      setTimeout(() => box.classList.remove("transfer-success"), 600);
+    }
+    // burn animation
+    const burn = document.createElement("div");
+    burn.className = "plus-one";
+    burn.innerText = "-10% BURNED";
+    burn.style.color = "#ff6b6b";
+    burn.style.textShadow = "0 0 10px rgba(255,80,80,0.8)";
+    burn.style.left = "50%";
+    burn.style.top = "60%";
+    burn.style.transform = "translateX(-50%)";
+    document.body.appendChild(burn);
+    setTimeout(() => burn.remove(), 900);
 
 
-// toast message
-const toast = document.createElement("div");
-toast.className = "transfer-toast";
-toast.innerText = "TRANSFER SUCCESS ✓";
-document.body.appendChild(toast);
+    // toast message
+    const toast = document.createElement("div");
+    toast.className = "transfer-toast";
+    toast.innerText = "TRANSFER SUCCESS ✓";
+    document.body.appendChild(toast);
 
-setTimeout(() => toast.remove(), 1600);
+    setTimeout(() => toast.remove(), 1600);
 
   } finally {
     // 🔒 ВСЕГДА возвращаем кнопку
@@ -263,12 +263,12 @@ async function loadHistory() {
 
   data.forEach(t => {
     const row = document.createElement("div");
-row.className = "history-row";
+    row.className = "history-row";
 
-// подсветка свежих (меньше 5 сек)
-if (Date.now() - t.time < 5000) {
-  row.classList.add("new");
-}
+    // подсветка свежих (меньше 5 сек)
+    if (Date.now() - t.time < 5000) {
+      row.classList.add("new");
+    }
 
 
     const dir = t.fromId === userId ? "Sent to" : "Received from";
@@ -485,6 +485,7 @@ async function payTON(amountTon, itemId) {
     return;
   }
 
+  // 1️⃣ подключаем кошелёк
   if (!tonConnectUI.connected) {
     await tonConnectUI.openModal();
     return;
@@ -493,26 +494,41 @@ async function payTON(amountTon, itemId) {
   const amountNano = Math.floor(amountTon * 1e9).toString();
 
   try {
+    // 2️⃣ отправляем TON
     const tx = await tonConnectUI.sendTransaction({
       validUntil: Math.floor(Date.now() / 1000) + 600,
-      returnUrl: window.location.href,
-      messages: [
-        {
-          address: "UQDg0qiBTFbmCc6OIaeCSF0tL6eSX8cC56PYTF44Ob8hDqWf",
-          amount: amountNano
-        }
-      ]
+      messages: [{
+        address: "UQDg0qiBTFbmCc6OIaeCSF0tL6eSX8cC56PYTF44Ob8hDqWf",
+        amount: amountNano
+      }]
     });
 
-    console.log("TX OK", tx);
-
-    // ⛔️ ВОТ СЮДА СМОТРИ
+    // 3️⃣ UI receipt
     const receipt = document.createElement("div");
-receipt.className = "transfer-toast";
-receipt.innerText = "TON PAYMENT SENT ✓";
-document.body.appendChild(receipt);
-setTimeout(() => receipt.remove(), 1600);
+    receipt.className = "transfer-toast";
+    receipt.innerText = "TON PAYMENT SENT ✓";
+    document.body.appendChild(receipt);
+    setTimeout(() => receipt.remove(), 1600);
 
+    // 4️⃣ подтверждаем на сервере
+    const res = await fetch("/ton-confirm", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId,
+        itemId,
+        txHash: tx.boc
+      })
+    });
+
+    const data = await res.json();
+    if (!data.ok) {
+      alert(data.error || "Activation failed");
+      return;
+    }
+
+    // 5️⃣ обновляем состояние
+    await refreshMe();
 
   } catch (e) {
     console.error("TON ERROR", e);
@@ -520,6 +536,26 @@ setTimeout(() => receipt.remove(), 1600);
   }
 }
 
+  
+
+
+// 1. визуальный receipt (UI)
+const receipt = document.createElement("div");
+receipt.className = "transfer-toast";
+receipt.innerText = "TON PAYMENT SENT ✓";
+document.body.appendChild(receipt);
+setTimeout(() => receipt.remove(), 1600);
+
+// 2. отправляем TX на сервер
+await fetch("/ton-confirm", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    userId,
+    itemId,
+    txHash: tx.boc
+  })
+});
 
 
 
@@ -532,5 +568,3 @@ function formatNumber(n) {
   if (n >= 1e3) return (n / 1e3).toFixed(1).replace(".0", "") + "K";
   return n.toString();
 }
-
-
