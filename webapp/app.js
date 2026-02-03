@@ -525,49 +525,29 @@ async function payTON(amountTon, itemId) {
 
 
 
-// ================= FORMAT LARGE NUMBERS =================
-function formatNumber(n) {
-  n = Number(n) || 0;
-
-  if (n >= 1e9) return (n / 1e9).toFixed(1).replace(".0", "") + "B";
-  if (n >= 1e6) return (n / 1e6).toFixed(1).replace(".0", "") + "M";
-  if (n >= 1e3) return (n / 1e3).toFixed(1).replace(".0", "") + "K";
-  return n.toString();
-}
-document.getElementById("send").onclick = async () => {
-  const box = document.querySelector(".transfer-box");
+document.getElementById("send").onclick = () => {
   const toId = document.getElementById("to-id").value.trim();
   const amount = Number(document.getElementById("amount").value);
 
-  const res = await fetch("/transfer", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      fromId: userId,
-      toId,
-      amount
-    })
-  });
+  const box = document.querySelector("#transfer .transfer-box");
 
-  const data = await res.json();
-
-  if (!data.ok) {
+  if (!toId || amount < 100) {
+    showToast("Minimum transfer is 100 NXN", "err");
     box.classList.add("transfer-error");
-    setTimeout(() => box.classList.remove("transfer-error"), 400);
-    showToast(data.error, false);
     return;
   }
 
-  box.classList.add("transfer-success");
-  setTimeout(() => box.classList.remove("transfer-success"), 600);
+  if (balance < amount) {
+    showToast("Not enough balance", "err");
+    box.classList.add("transfer-error");
+    return;
+  }
 
-  showToast("TRANSFER SUCCESS", true);
-  refreshMe();
+  // SUCCESS
+  balance -= amount;
+  updateBalanceUI(balance);
+
+  box.classList.add("transfer-success");
+  showToast("Transfer successful", "ok");
 };
-function showToast(text, ok) {
-  const t = document.createElement("div");
-  t.className = "transfer-toast " + (ok ? "ok" : "err");
-  t.innerText = text;
-  document.body.appendChild(t);
-  setTimeout(() => t.remove(), 1500);
-}
+
