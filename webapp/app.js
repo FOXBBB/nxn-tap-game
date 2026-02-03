@@ -534,3 +534,40 @@ function formatNumber(n) {
   if (n >= 1e3) return (n / 1e3).toFixed(1).replace(".0", "") + "K";
   return n.toString();
 }
+document.getElementById("send").onclick = async () => {
+  const box = document.querySelector(".transfer-box");
+  const toId = document.getElementById("to-id").value.trim();
+  const amount = Number(document.getElementById("amount").value);
+
+  const res = await fetch("/transfer", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      fromId: userId,
+      toId,
+      amount
+    })
+  });
+
+  const data = await res.json();
+
+  if (!data.ok) {
+    box.classList.add("transfer-error");
+    setTimeout(() => box.classList.remove("transfer-error"), 400);
+    showToast(data.error, false);
+    return;
+  }
+
+  box.classList.add("transfer-success");
+  setTimeout(() => box.classList.remove("transfer-success"), 600);
+
+  showToast("TRANSFER SUCCESS", true);
+  refreshMe();
+};
+function showToast(text, ok) {
+  const t = document.createElement("div");
+  t.className = "transfer-toast " + (ok ? "ok" : "err");
+  t.innerText = text;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 1500);
+}
