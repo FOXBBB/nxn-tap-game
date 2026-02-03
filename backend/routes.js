@@ -1,23 +1,39 @@
 import express from "express";
-import { loadDB, saveDB } from "./db.js";
+import { query } from "./db.js";
 
 const router = express.Router();
-const TON_RECEIVER = "UQDg0qiBTFbmCc6OIaeCSF0tL6eSX8cC56PYTF44Ob8hDqWf";
-const TON_PRICES = {
-  tap_plus_3: 0.2,
-  energy_plus_300: 0.5,
-  autoclicker_30d: 1
-};
 
+/* ===== SYNC USER ===== */
+router.post("/sync", async (req, res) => {
+  const { id } = req.body;
+  if (!id) return res.json({ ok: false });
+
+  await query(
+    `
+    INSERT INTO users (telegram_id)
+    VALUES ($1)
+    ON CONFLICT (telegram_id) DO NOTHING
+    `,
+    [String(id)]
+  );
+
+  res.json({ ok: true });
+});
 
 /* ===== GET ME ===== */
-router.get("/me/:id", (req, res) => {
+router.get("/me/:id", async (req, res) => {
   const { id } = req.params;
 
-  const db = loadDB();
-  let user = db.users.find(u => String(u.id) === String(id));
+  const result = await query(
+    `
+    SELECT balance, energy, max_energy, tap_power
+    FROM users
+    WHERE telegram_id = $1
+    `,
+    [String(id)]
+  );
 
-  if (!user) {
+  if (result.rowCount === 0) {
     return res.json({
       balance: 0,
       energy: 100,
@@ -26,332 +42,118 @@ router.get("/me/:id", (req, res) => {
     });
   }
 
-  // 🔒 гарантируем значения
-  user.balance = Number(user.balance) || 0;
- if (user.energy === undefined || user.energy === null) {
-  user.energy = 100;
-} else {
-  user.energy = Number(user.energy);
-}
-  user.maxEnergy = Number(user.maxEnergy) || 100;
-  user.tapPower = Number(user.tapPower) || 1;
-
-  saveDB(db);
+  const u = result.rows[0];
 
   res.json({
-    balance: user.balance,
-    energy: user.energy,
-    maxEnergy: user.maxEnergy,
-    tapPower: user.tapPower
+    balance: Number(u.balance),
+    energy: Number(u.energy),
+    maxEnergy: Number(u.max_energy),
+    tapPower: Number(u.tap_power)
   });
 });
-
-
-/* ===== SYNC USER (CREATE ONLY) ===== */
-router.post("/sync", (req, res) => {
-  const { id, username, first_name, photo_url } = req.body;
-  if (!id) return res.json({ ok: false });
-
-  const db = loadDB();
-
-  let user = db.users.find(u => String(u.id) === String(id));
-
-  if (!user) {
-    user = {
-  id: String(id),
-  name: username || first_name || "User",
-  avatar: photo_url || "",
-  balance: 0,
-  energy: 100,
-  maxEnergy: 100,
-  tapPower: 1
-};
-
-    db.users.push(user);
-  }
-
-  saveDB(db);
-  res.json({ ok: true });
-});
-
 
 /* ===== TAP ===== */
-router.post("/tap", (req, res) => {
+router.post("/tap", async (req, res) => {
   const { id } = req.body;
-  const db = loadDB();
+  if (!id) return res.json({ ok: false });
 
-  const user = db.users.find(u => String(u.id) === String(id));
-  if (!user) return res.json({ ok: false });
+  const result = await query(
+    `
+    UPDATE users
+    SET
+      balance = balance + tap_power,
+      energy = GREATEST(energy - 1, 0)
+    WHERE telegram_id = $1
+    RETURNING balance, energy, max_energy, tap_power
+    `,
+    [String(id)]
+  );
 
- // HARD BLOCK TAP AT ZERO ENERGY
-if (user.energy <= 0) {
-  return res.json({
-    balance: user.balance,
-    energy: user.energy,
-    maxEnergy: user.maxEnergy,
-    tapPower: user.tapPower
-  });
-}
+  if (result.rowCount === 0) {
+    return res.json({ ok: false });
+  }
 
-
-  user.balance += user.tapPower;
-  user.energy -= 1;
-
-  saveDB(db);
+  const u = result.rows[0];
 
   res.json({
     ok: true,
-    balance: user.balance,
-    energy: user.energy,
-    maxEnergy: user.maxEnergy,
-    tapPower: user.tapPower
+    balance: Number(u.balance),
+    energy: Number(u.energy),
+    maxEnergy: Number(u.max_energy),
+    tapPower: Number(u.tap_power)
   });
 });
 
-
-//transfer//
-router.post("/transfer", (req, res) => {
-  console.log("TRANSFER HIT", req.body);
-
+/* ===== TRANSFER ===== */
+router.post("/transfer", async (req, res) => {
   let { fromId, toId, amount } = req.body;
 
-
-  // 🔒 нормализация
   fromId = String(fromId);
   toId = String(toId);
   amount = Number(amount);
 
   const MIN_TRANSFER = 100;
 
-if (!fromId || !toId) {
-  return res.json({ ok: false, error: "Invalid user ID" });
-}
-
-if (!Number.isFinite(amount)) {
-  return res.json({ ok: false, error: "Invalid amount" });
-}
-
-if (amount < MIN_TRANSFER) {
-  return res.json({
-    ok: false,
-    error: `Minimum transfer is ${MIN_TRANSFER} NXN`
-  });
-}
-
-
-  const db = loadDB();
-  if (!db.transfers) db.transfers = [];
-
-  const sender = db.users.find(u => String(u.id) === fromId);
-  const receiver = db.users.find(u => String(u.id) === toId);
-
-  if (!sender) {
-    return res.json({ ok: false, error: "Sender not found" });
+  if (!fromId || !toId) {
+    return res.json({ ok: false, error: "Invalid user ID" });
   }
 
-  if (!receiver) {
-    return res.json({ ok: false, error: "Receiver not found" });
+  if (!Number.isFinite(amount) || amount < MIN_TRANSFER) {
+    return res.json({
+      ok: false,
+      error: `Minimum transfer is ${MIN_TRANSFER} NXN`
+    });
   }
 
-  if (sender.balance < amount) {
+  if (fromId === toId) {
+    return res.json({ ok: false, error: "Cannot transfer to yourself" });
+  }
+
+  const sender = await query(
+    `SELECT balance FROM users WHERE telegram_id = $1`,
+    [fromId]
+  );
+
+  if (sender.rowCount === 0 || sender.rows[0].balance < amount) {
     return res.json({ ok: false, error: "Not enough balance" });
   }
 
-  // 💸 комиссия 10%
   const fee = Math.floor(amount * 0.1);
   const received = amount - fee;
 
-  // 💥 списываем и начисляем
-  sender.balance -= amount;
-  receiver.balance += received;
+  await query(
+    `UPDATE users SET balance = balance - $1 WHERE telegram_id = $2`,
+    [amount, fromId]
+  );
 
-  // 🧾 лог
-  db.transfers.push({
-    fromId,
-    toId,
-    amount,
-    fee,
-    received,
-    time: Date.now()
-  });
+  await query(
+    `UPDATE users SET balance = balance + $1 WHERE telegram_id = $2`,
+    [received, toId]
+  );
 
-  saveDB(db);
+  await query(
+    `
+    INSERT INTO transfers (from_id, to_id, amount, fee, received)
+    VALUES ($1, $2, $3, $4, $5)
+    `,
+    [fromId, toId, amount, fee, received]
+  );
 
-  // ✅ ВАЖНО: возвращаем received
-  res.json({
-    ok: true,
-    received,
-    balance: sender.balance
-  });
+  res.json({ ok: true, received });
 });
-
-
-// ===== TRANSFER HISTORY =====
-router.get("/history/:id", (req, res) => {
-  const { id } = req.params;
-  const db = loadDB();
-
-  const history = db.transfers
-    .filter(t => t.fromId === id || t.toId === id)
-    .slice(-20) // последние 20
-    .reverse();
-
-  res.json(history);
-});
-
 
 /* ===== LEADERBOARD ===== */
-router.get("/leaderboard", (req, res) => {
-  const db = loadDB();
-  const top = db.users
-    .slice()
-    .sort((a, b) => b.balance - a.balance)
-    .slice(0, 10);
-  res.json(top);
+router.get("/leaderboard", async (req, res) => {
+  const result = await query(
+    `
+    SELECT telegram_id, balance
+    FROM users
+    ORDER BY balance DESC
+    LIMIT 10
+    `
+  );
+
+  res.json(result.rows);
 });
-
-router.post("/ton-confirm", (req, res) => {
-  const { userId, itemId, txHash } = req.body;
-
-  if (!userId || !itemId || !txHash) {
-    return res.json({ ok: false, error: "Invalid data" });
-  }
-
-  const db = loadDB();
-  const user = db.users.find(u => String(u.id) === String(userId));
-  if (!user) return res.json({ ok: false });
-
-  if (!user.tonPurchases) user.tonPurchases = {};
-
-  // защита от повторного применения
-  if (user.tonPurchases[itemId] && user.tonPurchases[itemId] > Date.now()) {
-    return res.json({ ok: false, error: "Already active" });
-  }
-
-  const DAYS_30 = 30 * 24 * 60 * 60 * 1000;
-  const now = Date.now();
-
-  // 🎯 АКТИВАЦИЯ
-  if (itemId === "tap_plus_3") {
-    user.tapPower += 3;
-    user.tonPurchases[itemId] = now + DAYS_30;
-  }
-
-  if (itemId === "energy_300") {
-    user.maxEnergy += 300;
-    user.tonPurchases[itemId] = now + DAYS_30;
-  }
-
-  if (itemId === "autoclicker") {
-    user.autoclickerUntil = now + DAYS_30;
-    user.tonPurchases[itemId] = now + DAYS_30;
-  }
-
-  saveDB(db);
-  res.json({ ok: true });
-});
-
 
 export default router;
-/* ===== BUY FOR NXN ===== */
-router.post("/buy-nxn", (req, res) => {
-  const { id, itemId } = req.body;
-  if (!id || !itemId) return res.json({ ok: false });
-
-  const db = loadDB();
-  const user = db.users.find(u => String(u.id) === String(id));
-  if (!user) return res.json({ ok: false, error: "User not found" });
-
-  // init defaults
-  user.balance = Number(user.balance) || 0;
-  user.tapPower = Number(user.tapPower) || 1;
-  user.maxEnergy = Number(user.maxEnergy) || 100;
-  user.upgrades = user.upgrades || {};
-
-  // SHOP ITEMS (NXN)
-  const items = {
-    tap_plus_1: {
-      price: 30000,
-      once: true,
-      apply: () => {
-        user.tapPower += 1;
-      }
-    },
-    energy_plus_100: {
-      price: 50000,
-      once: true,
-      apply: () => {
-        user.maxEnergy += 100;
-        user.energy = Math.min(user.energy + 100, user.maxEnergy);
-      }
-    }
-  };
-
-  const item = items[itemId];
-  if (!item) return res.json({ ok: false, error: "Unknown item" });
-
-  // already bought?
-  if (item.once && user.upgrades[itemId]) {
-    return res.json({ ok: false, error: "Already purchased" });
-  }
-
-  // balance check
-  if (user.balance < item.price) {
-    return res.json({ ok: false, error: "Not enough NXN" });
-  }
-
-  // apply purchase
-  user.balance -= item.price;
-  item.apply();
-  user.upgrades[itemId] = true;
-
-  saveDB(db);
-
-  res.json({
-    ok: true,
-    balance: user.balance,
-    tapPower: user.tapPower,
-    maxEnergy: user.maxEnergy
-  });
-});
-/* ===== BUY FOR TON (30 DAYS) ===== */
-router.post("/buy-ton", async (req, res) => {
-  const { id, itemId, txHash } = req.body;
-  if (!id || !itemId || !txHash) {
-    return res.json({ ok: false, error: "Invalid request" });
-  }
-
-  const db = loadDB();
-  const user = db.users.find(u => String(u.id) === String(id));
-  if (!user) return res.json({ ok: false, error: "User not found" });
-
-  user.tonUpgrades = user.tonUpgrades || {};
-
-  const now = Date.now();
-  const duration = 30 * 24 * 60 * 60 * 1000; // 30 days
-
-  // init or extend
-  if (!user.tonUpgrades[itemId] || user.tonUpgrades[itemId] < now) {
-    user.tonUpgrades[itemId] = now + duration;
-  } else {
-    user.tonUpgrades[itemId] += duration;
-  }
-
-  // APPLY EFFECTS (SERVER SOURCE OF TRUTH)
-  if (itemId === "tap_plus_3") {
-    user.tapPower = Math.max(user.tapPower || 1, 4);
-  }
-
-  if (itemId === "energy_plus_300") {
-    user.maxEnergy = Math.max(user.maxEnergy || 100, 400);
-    user.energy = user.maxEnergy;
-  }
-
-  if (itemId === "autoclicker_30d") {
-    user.autoclickerUntil = user.tonUpgrades[itemId];
-  }
-
-  saveDB(db);
-
-  res.json({ ok: true, expiresAt: user.tonUpgrades[itemId] });
-});
