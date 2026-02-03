@@ -3,7 +3,7 @@ const fs = require("fs");
 const path = require("path");
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 /* ================== MIDDLEWARE ================== */
 app.use(express.json());
@@ -41,39 +41,29 @@ function getUser(userId) {
 
 /* ================== GET USER ================== */
 app.get("/me/:id", (req, res) => {
-  const userId = req.params.id;
-  const user = getUser(userId);
+  const user = getUser(req.params.id);
   res.json(user);
 });
 
-/* ================== SAVE TAP ================== */
+/* ================== TAP ================== */
 app.post("/tap", (req, res) => {
   const { id } = req.body;
-  const db = loadDB();
+  if (!id) return res.json({ ok: false });
 
-  const user = db.users.find(u => String(u.id) === String(id));
-  if (!user) return res.json({ ok: false });
+  const users = loadUsers();
+  const user = getUser(id);
 
   if (user.energy <= 0) {
-    return res.json({
-      balance: user.balance,
-      energy: user.energy,
-      maxEnergy: user.maxEnergy,
-      tapPower: user.tapPower
-    });
+    return res.json(user);
   }
 
   user.energy -= 1;
   user.balance += user.tapPower;
 
-  saveDB(db);
+  users[id] = user;
+  saveUsers(users);
 
-  res.json({
-    balance: user.balance,
-    energy: user.energy,
-    maxEnergy: user.maxEnergy,
-    tapPower: user.tapPower
-  });
+  res.json(user);
 });
 
 /* ================== TRANSFER ================== */
@@ -109,5 +99,5 @@ app.post("/transfer", (req, res) => {
 
 /* ================== START SERVER ================== */
 app.listen(PORT, () => {
-  console.log(`NXN server running on http://localhost:${PORT}`);
+  console.log("NXN server running on port", PORT);
 });
