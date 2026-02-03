@@ -199,7 +199,21 @@ document.getElementById("send").onclick = async () => {
     await refreshMe();
     updateUI();
 
-    alert(`Sent ${data.sent} NXN (10% burned)`);
+    // ===== TRANSFER SUCCESS UI =====
+const box = document.querySelector(".transfer-box");
+if (box) {
+  box.classList.add("transfer-success");
+  setTimeout(() => box.classList.remove("transfer-success"), 600);
+}
+
+// toast message
+const toast = document.createElement("div");
+toast.className = "transfer-toast";
+toast.innerText = "TRANSFER SUCCESS ✓";
+document.body.appendChild(toast);
+
+setTimeout(() => toast.remove(), 1600);
+
   } finally {
     // 🔒 ВСЕГДА возвращаем кнопку
     btn.disabled = false;
