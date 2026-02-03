@@ -350,6 +350,12 @@ body {
   transform: translateY(3px);
   box-shadow: none;
 }
+.shop-buy:disabled {
+  background: linear-gradient(180deg, #444, #222);
+  color: #9affea;
+  box-shadow: none;
+}
+
 
 .history-box {
   margin-top: 16px;

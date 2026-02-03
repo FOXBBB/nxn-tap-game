@@ -3,6 +3,26 @@ import { query } from "./db.js";
 
 const router = express.Router();
 
+async function applyBoosts(user) {
+  const now = new Date();
+
+  let tapPower = user.tap_power;
+  let maxEnergy = user.max_energy;
+
+  // TON tap +3 (30 days)
+  if (user.tap_boost_until && now < user.tap_boost_until) {
+    tapPower += 3;
+  }
+
+  // TON energy +300 (30 days)
+  if (user.energy_boost_until && now < user.energy_boost_until) {
+    maxEnergy += 300;
+  }
+
+  return { tapPower, maxEnergy };
+}
+
+
 async function applyEnergyRegen(userId) {
   const result = await query(
     `
@@ -91,17 +111,15 @@ router.post("/tap", async (req, res) => {
 
   await applyEnergyRegen(id);
 
-
   const result = await query(
-
-
     `
     UPDATE users
     SET
       balance = balance + tap_power,
       energy = GREATEST(energy - 1, 0)
     WHERE telegram_id = $1
-    RETURNING balance, energy, max_energy, tap_power
+    RETURNING balance, energy, max_energy, tap_power,
+              tap_boost_until, energy_boost_until, autoclicker_until
     `,
     [String(id)]
   );
@@ -110,16 +128,24 @@ router.post("/tap", async (req, res) => {
     return res.json({ ok: false });
   }
 
-  const u = result.rows[0];
+  const u = result.rows[0]; // ✅ ВОТ ЭТОГО НЕ ХВАТАЛО
+
+  const boosted = await applyBoosts(u);
 
   res.json({
     ok: true,
     balance: Number(u.balance),
     energy: Number(u.energy),
-    maxEnergy: Number(u.max_energy),
-    tapPower: Number(u.tap_power)
+    maxEnergy: boosted.maxEnergy,
+    tapPower: boosted.tapPower,
+    boosts: {
+      tap: u.tap_boost_until,
+      energy: u.energy_boost_until,
+      autoclicker: u.autoclicker_until
+    }
   });
-});
+}); // ✅ ВАЖНО — ЭТА СКОБКА ЗАКРЫВАЕТ РОУТ
+
 
 /* ===== TRANSFER ===== */
 router.post("/transfer", async (req, res) => {

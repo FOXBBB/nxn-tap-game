@@ -3,6 +3,11 @@ let tgUser = null;
 let userId = null;
 
 // ================= GAME STATE (ONLY FROM SERVER) =================
+let boosts = {
+  tap: null,
+  energy: null,
+  autoclicker: null
+};
 let balance = 0;
 let energy = 0;
 let maxEnergy = 100;
@@ -80,6 +85,11 @@ async function refreshMe() {
   energy = Number(data.energy) || 0;
   maxEnergy = Number(data.maxEnergy) || 100;
   tapPower = Number(data.tapPower) || tapPower;
+
+ if (data.boosts) {
+    boosts = data.boosts;
+    updateBoostTimers();
+  }
 
   canTap = energy > 0;
   updateUI();
@@ -592,3 +602,63 @@ function formatNumber(n) {
   if (n >= 1e3) return (n / 1e3).toFixed(1).replace(".0", "") + "K";
   return n.toString();
 }
+function formatRemaining(ms) {
+  if (ms <= 0) return "Expired";
+
+  const totalSec = Math.floor(ms / 1000);
+  const days = Math.floor(totalSec / 86400);
+  const hours = Math.floor((totalSec % 86400) / 3600);
+  const minutes = Math.floor((totalSec % 3600) / 60);
+  const seconds = totalSec % 60;
+
+  if (days > 0) return `${days}d ${hours}h`;
+  if (hours > 0) return `${hours}h ${minutes}m`;
+  return `${minutes}m ${seconds}s`;
+}
+function updateBoostTimers() {
+  const now = Date.now();
+
+  updateOneBoost(
+    boosts.tap,
+    "tap_plus_3",
+    "Tap Power +3"
+  );
+
+  updateOneBoost(
+    boosts.energy,
+    "energy_plus_300",
+    "Energy +300"
+  );
+
+  updateOneBoost(
+    boosts.autoclicker,
+    "autoclicker_30d",
+    "Autoclicker"
+  );
+}
+
+function updateOneBoost(until, itemId, label) {
+  const btn = document.querySelector(`[data-item="${itemId}"]`);
+  if (!btn) return;
+
+  if (!until) {
+    btn.disabled = false;
+    btn.innerText = btn.dataset.price;
+    return;
+  }
+
+  const end = new Date(until).getTime();
+  const remaining = end - Date.now();
+
+  if (remaining <= 0) {
+    btn.disabled = false;
+    btn.innerText = btn.dataset.price;
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerText = `ACTIVE · ${formatRemaining(remaining)}`;
+}
+setInterval(() => {
+  updateBoostTimers();
+}, 1000);
