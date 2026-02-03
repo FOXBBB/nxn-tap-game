@@ -658,42 +658,7 @@ button:disabled {
   letter-spacing: 1px;
 }
 
-/* текст BALANCE */
-#balance::before {
-  content: "BALANCE";
-  position: absolute;
-  top: 6px;
-  left: 72px;
-  font-size: 11px;
-  opacity: 0.8;
-  letter-spacing: 2px;
-}
 
-/* иконка N */
-#balance::after {
-  content: "N";
-  position: absolute;
-  left: 18px;
-  top: 50%;
-  transform: translateY(-50%);
-
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-
-  background: radial-gradient(circle, #7affc6, #00c853);
-  color: #003b22;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  font-weight: 900;
-  font-size: 20px;
-
-  box-shadow:
-    0 0 14px rgba(0, 255, 170, 0.9);
-}
 
 /* цифры баланса */
 #balance {
@@ -905,10 +870,7 @@ align-items: center;
     inset 0 0 14px rgba(255, 80, 80, 0.2);
 }
 
-/* hide top logo completely */
-.tap-logo {
-  display: none !important;
-}
+
 
 /* ================= SAFE LAYOUT FIX (ALL DEVICES) ================= */
 
@@ -1524,4 +1486,34 @@ body {
   opacity: 0.7;
   margin-bottom: 4px;
   color: #9affea;
+}
+/* ================= CLEAN NXN BALANCE ================= */
+
+#balance {
+  margin: 0 auto 18px;
+  padding: 0;
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+
+  text-align: center;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+/* надпись */
+#balance .label {
+  font-size: 13px;
+  color: #7affc6;
+  opacity: 0.85;
+  margin-bottom: 6px;
+}
+
+/* цифры */
+#balance .value {
+  font-size: 36px;
+  color: #eafff6;
+  text-shadow:
+    0 0 12px rgba(0, 255, 180, 0.6),
+    0 0 28px rgba(0, 255, 180, 0.4);
 }
