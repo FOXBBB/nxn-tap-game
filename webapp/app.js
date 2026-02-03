@@ -26,8 +26,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   Telegram.WebApp.setBackgroundColor("#02040a");
 
   tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-  manifestUrl: "https://https://nxn-tap-game.onrender.com/tonconnect-manifest.json"
+  manifestUrl: "https://nxn-tap-game.onrender.com/tonconnect-manifest.json"
 });
+
 
   tgUser = Telegram.WebApp.initDataUnsafe.user;
   userId = String(tgUser.id);
@@ -434,21 +435,22 @@ async function buyNXN(itemId) {
     console.error(e);
   }
 }
-
-async function payTON(amountTon, itemId) {
-  if (!tonConnectUI) return;
+function payTON(amountTon, itemId) {
+  if (!tonConnectUI) {
+    alert("TON not ready");
+    return;
+  }
 
   if (!tonConnectUI.connected) {
-    await tonConnectUI.openModal();
+    tonConnectUI.openModal();
     return;
   }
 
   const amountNano = Math.floor(amountTon * 1e9).toString();
 
   try {
-    const tx = await tonConnectUI.sendTransaction({
-      validUntil: Math.floor(Date.now() / 1000) + 600,
-      returnUrl: window.location.href,
+    tonConnectUI.sendTransaction({
+      validUntil: Math.floor(Date.now() / 1000) + 300,
       messages: [
         {
           address: "UQDg0qiBTFbmCc6OIaeCSF0tL6eSX8cC56PYTF44Ob8hDqWf",
@@ -457,14 +459,17 @@ async function payTON(amountTon, itemId) {
       ]
     });
 
-    console.log("TX OK", tx);
-    alert("Payment sent, returning to app…");
+    Telegram.WebApp.showPopup({
+      title: "Payment sent",
+      message: "Confirm transaction in wallet"
+    });
 
   } catch (e) {
     console.error("TON ERROR", e);
-    alert("Payment cancelled or failed");
   }
 }
+
+
 
 // ================= FORMAT LARGE NUMBERS =================
 function formatNumber(n) {
