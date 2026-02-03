@@ -2,6 +2,12 @@ import express from "express";
 import { loadDB, saveDB } from "./db.js";
 
 const router = express.Router();
+const TON_RECEIVER = "UQDg0qiBTFbmCc6OIaeCSF0tL6eSX8cC56PYTF44Ob8hDqWf";
+const TON_PRICES = {
+  tap_plus_3: 0.2,
+  energy_plus_300: 0.5,
+  autoclicker_30d: 1
+};
 
 /* ===== GET ME ===== */
 router.get("/me/:id", (req, res) => {
@@ -247,4 +253,45 @@ router.post("/buy-nxn", (req, res) => {
     tapPower: user.tapPower,
     maxEnergy: user.maxEnergy
   });
+});
+/* ===== BUY FOR TON (30 DAYS) ===== */
+router.post("/buy-ton", async (req, res) => {
+  const { id, itemId, txHash } = req.body;
+  if (!id || !itemId || !txHash) {
+    return res.json({ ok: false, error: "Invalid request" });
+  }
+
+  const db = loadDB();
+  const user = db.users.find(u => String(u.id) === String(id));
+  if (!user) return res.json({ ok: false, error: "User not found" });
+
+  user.tonUpgrades = user.tonUpgrades || {};
+
+  const now = Date.now();
+  const duration = 30 * 24 * 60 * 60 * 1000; // 30 days
+
+  // init or extend
+  if (!user.tonUpgrades[itemId] || user.tonUpgrades[itemId] < now) {
+    user.tonUpgrades[itemId] = now + duration;
+  } else {
+    user.tonUpgrades[itemId] += duration;
+  }
+
+  // APPLY EFFECTS (SERVER SOURCE OF TRUTH)
+  if (itemId === "tap_plus_3") {
+    user.tapPower = Math.max(user.tapPower || 1, 4);
+  }
+
+  if (itemId === "energy_plus_300") {
+    user.maxEnergy = Math.max(user.maxEnergy || 100, 400);
+    user.energy = user.maxEnergy;
+  }
+
+  if (itemId === "autoclicker_30d") {
+    user.autoclickerUntil = user.tonUpgrades[itemId];
+  }
+
+  saveDB(db);
+
+  res.json({ ok: true, expiresAt: user.tonUpgrades[itemId] });
 });

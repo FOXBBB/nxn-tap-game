@@ -444,7 +444,7 @@ async function payTON(amountTon, itemId) {
   const amountNano = Math.floor(amountTon * 1e9);
 
   try {
-    await tonConnectUI.sendTransaction({
+    const tx = await tonConnectUI.sendTransaction({
       validUntil: Math.floor(Date.now() / 1000) + 300,
       messages: [
         {
@@ -455,9 +455,23 @@ async function payTON(amountTon, itemId) {
       ]
     });
 
-    alert("Payment sent. Processing...");
+    // 🔥 confirm on backend
+    await fetch("/buy-ton", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: userId,
+        itemId,
+        txHash: tx.boc || "ok"
+      })
+    });
+
+    alert("Purchase activated!");
+    await refreshMe();
+    updateUI();
   } catch (e) {
     console.error(e);
     alert("Payment cancelled");
   }
 }
+
