@@ -353,10 +353,9 @@ async function loadHistory() {
     }
 
 
-    const dir = t.fromId === userId ? "Sent to" : "Received from";
-    const arrow = t.fromId === userId ? "→" : "←";
-    const otherId = t.fromId === userId ? t.toId : t.fromId;
-    const sign = t.fromId === userId ? "-" : "+";
+   const isOut = t.from_id === userId;
+const otherId = isOut ? t.to_id : t.from_id;
+const sign = isOut ? "-" : "+";
 
     row.innerHTML = `
   <b>${arrow} ${dir} ID ${otherId}</b>
@@ -522,7 +521,7 @@ async function buyNXN(itemId) {
 
   let res;
   try {
-    res = await fetch("/api/buy-nxn", {
+    res = await fetch("/buy-nxn", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
