@@ -523,31 +523,3 @@ async function payTON(amountTon, itemId) {
 }
 
 
-
-
-document.getElementById("send").onclick = () => {
-  const toId = document.getElementById("to-id").value.trim();
-  const amount = Number(document.getElementById("amount").value);
-
-  const box = document.querySelector("#transfer .transfer-box");
-
-  if (!toId || amount < 100) {
-    showToast("Minimum transfer is 100 NXN", "err");
-    box.classList.add("transfer-error");
-    return;
-  }
-
-  if (balance < amount) {
-    showToast("Not enough balance", "err");
-    box.classList.add("transfer-error");
-    return;
-  }
-
-  // SUCCESS
-  balance -= amount;
-  updateBalanceUI(balance);
-
-  box.classList.add("transfer-success");
-  showToast("Transfer successful", "ok");
-};
-

@@ -986,10 +986,7 @@ body {
   padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* Telegram iOS header compensation */
-.screen {
-  padding-top: 24px;
-}
+
 
 html,
 body {
@@ -997,10 +994,6 @@ body {
   overflow-x: hidden;
 }
 
-
-.screen {
-  min-height: calc(100dvh - 90px);
-}
 
 /* ===== iOS HARD SCALE FIX ===== */
 @supports (-webkit-touch-callout: none) {
@@ -1037,9 +1030,7 @@ body {
   pointer-events: auto;
 }
 
-.menu img {
-  pointer-events: auto;
-}
+
 
 /* ===== BOTTOM MENU SIZE TUNE ===== */
 
@@ -1083,13 +1074,6 @@ body {
   box-shadow: none !important;
 }
 
-/* 🔥 ВАЖНО: img не должны быть interactive */
-.menu img {
-  pointer-events: none;
-  user-select: none;
-  -webkit-user-drag: none;
-}
-
 /* iOS active / focus kill */
 .menu div:active,
 .menu div:focus,
@@ -1129,6 +1113,14 @@ body {
   display: block;
 }
 
+.menu img {
+  pointer-events: auto;
+}
+
+#coin {
+  pointer-events: auto !important;
+  touch-action: manipulation;
+}
 
 /* активная кнопка */
 .menu .active img {
@@ -1136,12 +1128,7 @@ body {
   filter: drop-shadow(0 0 14px rgba(0, 255, 180, 0.9));
 }
 
-/* menu img should not receive touch */
-.menu img {
-  pointer-events: none;
-  -webkit-user-drag: none;
-  user-select: none;
-}
+
 
 /* ================= BALANCE OVERFLOW SAFE ================= */
 #balance {
