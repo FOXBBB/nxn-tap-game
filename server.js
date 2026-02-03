@@ -48,20 +48,32 @@ app.get("/me/:id", (req, res) => {
 
 /* ================== SAVE TAP ================== */
 app.post("/tap", (req, res) => {
-  const { userId } = req.body;
+  const { id } = req.body;
+  const db = loadDB();
 
-  if (!userId) {
-    return res.json({ ok: false });
+  const user = db.users.find(u => String(u.id) === String(id));
+  if (!user) return res.json({ ok: false });
+
+  if (user.energy <= 0) {
+    return res.json({
+      balance: user.balance,
+      energy: user.energy,
+      maxEnergy: user.maxEnergy,
+      tapPower: user.tapPower
+    });
   }
 
-  const users = loadUsers();
-  const user = getUser(userId);
-
+  user.energy -= 1;
   user.balance += user.tapPower;
-  users[userId] = user;
-  saveUsers(users);
 
-  res.json({ ok: true, balance: user.balance });
+  saveDB(db);
+
+  res.json({
+    balance: user.balance,
+    energy: user.energy,
+    maxEnergy: user.maxEnergy,
+    tapPower: user.tapPower
+  });
 });
 
 /* ================== TRANSFER ================== */

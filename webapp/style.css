@@ -1113,6 +1113,10 @@ body {
   display: block;
 }
 
+.menu div {
+  pointer-events: auto;
+}
+
 .menu img {
   pointer-events: auto;
 }
