@@ -43,6 +43,13 @@ body {
   margin-bottom: 16px;
 }
 
+.glass {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  border-radius: 18px;
+}
+
 /* ===== LEADERBOARD ===== */
 .lb-header {
   text-align: center;
@@ -224,6 +231,7 @@ body {
   align-items: center;
 
   background: rgba(5, 10, 20, 0.65);
+  backdrop-filter: blur(12px);
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
@@ -628,69 +636,64 @@ button:disabled {
   }
 }
 
-/* ================= BALANCE (NO BLUR – HARD FIX) ================= */
+/* ================= BALANCE (REFERENCE STYLE) ================= */
 
 #balance {
-  position: fixed;
-  top: 72px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 999999;
+  position: relative;
+  padding: 14px 26px 16px 70px;
+  min-width: 240px;
+
+  background: linear-gradient(180deg,
+      rgba(0, 255, 170, 0.25),
+      rgba(0, 180, 120, 0.15));
+  border-radius: 999px;
+  border: 1px solid rgba(0, 255, 170, 0.6);
+
+  box-shadow:
+    0 0 20px rgba(0, 255, 170, 0.6),
+    inset 0 0 20px rgba(0, 255, 170, 0.25);
+
+  color: #eafff6;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+/* текст BALANCE */
+#balance::before {
+  content: "BALANCE";
+  position: absolute;
+  top: 6px;
+  left: 72px;
+  font-size: 11px;
+  opacity: 0.8;
+  letter-spacing: 2px;
+}
+
+/* иконка N */
+#balance::after {
+  content: "N";
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+
+  background: radial-gradient(circle, #7affc6, #00c853);
+  color: #003b22;
 
   display: flex;
   align-items: center;
-  gap: 14px;
+  justify-content: center;
 
-  padding: 14px 20px;
-
-  /* 🔥 ВАЖНО: НЕ ПРОЗРАЧНЫЙ */
-  background: #0b2a23; /* ← СПЛОШНОЙ ЦВЕТ */
-
-  border-radius: 999px;
-  border: 1px solid rgba(0, 255, 180, 0.6);
+  font-weight: 900;
+  font-size: 20px;
 
   box-shadow:
-    0 0 26px rgba(0, 255, 180, 0.55);
-
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  filter: none !important;
-
-  isolation: isolate;
+    0 0 14px rgba(0, 255, 170, 0.9);
 }
-
-.balance-icon img {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: radial-gradient(circle, #9affea, #00c853);
-  padding: 5px;
-  box-shadow: 0 0 14px rgba(0, 255, 180, 0.8);
-}
-
-.balance-center {
-  display: flex;
-  flex-direction: column;
-}
-
-#balance .label {
-  font-size: 12px;
-  letter-spacing: 2px;
-  color: #7affc6;
-}
-
-.balance-value {
-  font-size: 34px;
-  font-weight: 900;
-  color: #eafff6;
-  text-shadow: 0 0 10px rgba(0, 255, 180, 0.6);
-
-  background: none !important;
-  filter: none !important;
-}
-
-
-
 
 /* цифры баланса */
 #balance {
@@ -902,7 +905,10 @@ align-items: center;
     inset 0 0 14px rgba(255, 80, 80, 0.2);
 }
 
-
+/* hide top logo completely */
+.tap-logo {
+  display: none !important;
+}
 
 /* ================= SAFE LAYOUT FIX (ALL DEVICES) ================= */
 
@@ -992,7 +998,6 @@ input {
 #tap #balance {
   margin-top: 20px;
 }
-
 /* монета */
 #tap #coin {
   margin-top: 24px;
@@ -1173,335 +1178,4 @@ body {
 .menu * {
   -webkit-tap-highlight-color: transparent;
   outline: none;
-}
-/* ================= TRANSFER BEAUTY ================= */
-
-.transfer-box {
-  background: rgba(10, 30, 25, 0.55);
-  border: 1px solid rgba(0, 255, 180, 0.25);
-  border-radius: 20px;
-  box-shadow:
-    0 0 24px rgba(0, 255, 180, 0.15),
-    inset 0 0 12px rgba(255,255,255,0.03);
-}
-
-/* labels via placeholder */
-.transfer-box input {
-  background: rgba(5, 20, 18, 0.7);
-  border: 1px solid rgba(0, 255, 180, 0.35);
-  border-radius: 14px;
-
-  padding: 16px 18px;
-  margin-bottom: 14px;
-
-  color: #eafff6;
-  font-size: 15px;
-  font-weight: 600;
-  letter-spacing: 0.4px;
-
-  box-shadow:
-    inset 0 0 10px rgba(0, 255, 180, 0.12);
-}
-
-/* placeholder as label */
-.transfer-box input::placeholder {
-  color: #7fffe5;
-  opacity: 0.65;
-  font-size: 12px;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-}
-
-/* focus glow */
-.transfer-box input:focus {
-  outline: none;
-  border-color: rgba(0, 255, 180, 0.9);
-  box-shadow:
-    0 0 16px rgba(0, 255, 180, 0.45),
-    inset 0 0 12px rgba(0, 255, 180, 0.25);
-}
-
-/* SEND button already good, just tiny polish */
-#send {
-  letter-spacing: 2px;
-  text-transform: uppercase;
-}
-/* ================= TRANSFER SUCCESS ANIMATION ================= */
-
-.transfer-success {
-  animation: transferPulse 0.6s ease-out;
-  box-shadow:
-    0 0 30px rgba(0, 255, 170, 0.7),
-    inset 0 0 20px rgba(0, 255, 170, 0.35) !important;
-  border-color: rgba(0, 255, 170, 0.8) !important;
-}
-
-@keyframes transferPulse {
-  0% {
-    transform: scale(0.97);
-    opacity: 0.7;
-  }
-  50% {
-    transform: scale(1.02);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-/* floating SUCCESS badge */
-.transfer-toast {
-  position: fixed;
-  left: 50%;
-  bottom: 120px;
-  transform: translateX(-50%);
-
-  background: linear-gradient(180deg, #7affc6, #00c853);
-  color: #003b22;
-
-  padding: 14px 22px;
-  border-radius: 999px;
-
-  font-weight: 900;
-  letter-spacing: 2px;
-  font-size: 14px;
-
-  box-shadow:
-    0 0 24px rgba(0, 255, 170, 0.9);
-
-  z-index: 9999;
-  animation: toastUp 1.6s ease forwards;
-}
-
-@keyframes toastUp {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, 20px);
-  }
-  20% {
-    opacity: 1;
-    transform: translate(-50%, 0);
-  }
-  80% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -20px);
-  }
-}
-/* ================= TRANSFER ERROR ================= */
-
-.transfer-error {
-  animation: transferShake 0.45s ease;
-  border-color: rgba(255, 80, 80, 0.8) !important;
-  box-shadow:
-    0 0 18px rgba(255, 80, 80, 0.6),
-    inset 0 0 12px rgba(255, 80, 80, 0.25) !important;
-}
-
-@keyframes transferShake {
-  0% { transform: translateX(0); }
-  20% { transform: translateX(-6px); }
-  40% { transform: translateX(6px); }
-  60% { transform: translateX(-4px); }
-  80% { transform: translateX(4px); }
-  100% { transform: translateX(0); }
-}
-
-.transfer-toast.error {
-  background: linear-gradient(180deg, #ff7a7a, #c80000);
-  color: #2b0000;
-}
-/* ================= HISTORY HIGHLIGHT ================= */
-
-.history-row.new {
-  animation: historyGlow 1.2s ease;
-  background: rgba(0, 255, 180, 0.15);
-}
-
-@keyframes historyGlow {
-  0% {
-    box-shadow: 0 0 0 rgba(0,255,180,0);
-  }
-  50% {
-    box-shadow: 0 0 18px rgba(0,255,180,0.6);
-  }
-  100% {
-    box-shadow: 0 0 0 rgba(0,255,180,0);
-  }
-}
-
-
-
-/* ГЛАВНОЕ ЧИСЛО */
-.balance-value {
-  font-size: 28px;
-  font-weight: 900;
-  letter-spacing: 1px;
-
-  background: linear-gradient(180deg, #eafff6, #7affc6);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-
-  text-shadow:
-    0 0 12px rgba(0, 255, 180, 0.5);
-}
-
-/* защита от длинных чисел */
-.balance-value {
-  max-width: 90vw;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-/* ================= BALANCE HUD (FINAL PREMIUM) ================= */
-
-
-#balance {
-  margin: 0 auto 22px;
-  max-width: 92%;
-  padding: 18px 22px;
-
-  display: flex;
-  align-items: center;
-  gap: 16px;
-
-  background: linear-gradient(
-    180deg,
-    rgba(0, 255, 180, 0.28),
-    rgba(0, 120, 90, 0.18)
-  );
-
-  border-radius: 999px;
-  border: 1px solid rgba(0, 255, 180, 0.45);
-
-  box-shadow:
-    0 0 24px rgba(0, 255, 180, 0.45);
-}
-
-
-#balance .label {
-  font-size: 13px;
-  letter-spacing: 3px;
-  color: #7affc6;
-  opacity: 0.9;
-  margin-bottom: 4px;
-}
-
-.balance-center {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-
-.coin-emoji {
-  font-size: 28px;
-  filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.8));
-}
-
-.balance-icon img {
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-
-  background: radial-gradient(circle, #7affc6, #00c853);
-  padding: 6px;
-
-  box-shadow:
-    0 0 14px rgba(0, 255, 180, 0.9);
-}
-
-.balance-value {
-  font-size: 36px;
-  font-weight: 900;
-  color: #eafff6;
-
-  background: none !important;
-  box-shadow: none !important;
-  border-radius: 0 !important;
-
-  filter: none !important;
-  backdrop-filter: none !important;
-
-  text-shadow:
-    0 0 10px rgba(0, 255, 180, 0.6);
-}
-
-
-
-
-/* pulse */
-#balance.pulse .balance-value {
-  animation: balancePulse 0.26s ease;
-}
-
-@keyframes balancePulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.08); }
-  100% { transform: scale(1); }
-}
-/* ===== BALANCE TEXT FIX (NO BLUR) ===== */
-#balance,
-#balance * {
-  backdrop-filter: none !important;
-  filter: none !important;
-}
-.balance-icon img {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-
-  background: radial-gradient(circle, #9affea, #00c853);
-  padding: 5px;
-
-  box-shadow:
-    0 0 18px rgba(0, 255, 180, 0.85);
-
-  filter: none !important;
-}
-/* ===== TAP SCREEN VERTICAL TUNE ===== */
-#tap {
-  padding-top: 40px !important; /* было больше */
-}
-
-#balance {
-  margin-top: 0;
-}
-
-#coin {
-  margin-top: 14px;
-}
-
-#energy {
-  margin-top: 14px;
-}
-#balance {
-  backdrop-filter: none !important;
-}
-#balance {
-  position: relative;
-  z-index: 10;
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
-  isolation: isolate;
-}
-#balance,
-#balance * {
-  -webkit-backdrop-filter: none !important;
-  backdrop-filter: none !important;
-  filter: none !important;
-}
-#balance {
-  background-clip: padding-box;
-  will-change: transform;
-}
-/* 🚫 KILL WEBVIEW BLUR LEAK */
-#balance,
-#balance * {
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  filter: none !important;
 }
