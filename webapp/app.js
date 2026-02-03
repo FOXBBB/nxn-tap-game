@@ -92,7 +92,9 @@ function updateUI() {
   const b = document.getElementById("balance");
   const e = document.getElementById("energy");
 
-  if (b) b.innerText = "Balance: " + formatNumber(balance);
+const value = document.querySelector(".balance-value");
+if (value) value.innerText = formatNumber(balance);
+
   if (e) e.innerText = `Energy: ${energy} / ${maxEnergy}`;
   if (energy <= 5) {
     e.classList.add("energy-low");
