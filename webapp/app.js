@@ -76,15 +76,15 @@ async function refreshMe() {
   const res = await fetch(`/me/${userId}`);
   const data = await res.json();
 
+  balance = Number(data.balance) || 0;   // 🔥 ВОТ ЭТОГО НЕ ХВАТАЛО
   energy = Number(data.energy) || 0;
   maxEnergy = Number(data.maxEnergy) || 100;
   tapPower = Number(data.tapPower) || tapPower;
 
   canTap = energy > 0;
   updateUI();
-
-
 }
+
 
 
 // ================= UI =================

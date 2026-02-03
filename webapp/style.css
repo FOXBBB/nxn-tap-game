@@ -1394,126 +1394,48 @@ body {
     inset 0 0 18px rgba(255, 255, 255, 0.08);
 }
 
-/* ===== ICON ===== */
-.balance-icon {
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  font-weight: 900;
-  font-size: 15px;
-  letter-spacing: 1px;
-
-  color: #003b22;
-
-  background: radial-gradient(
-    circle at 30% 30%,
-    #baffea,
-    #00c889
-  );
-
-  box-shadow:
-    0 0 16px rgba(0, 255, 180, 0.9),
-    inset 0 0 10px rgba(255, 255, 255, 0.35);
-}
-
-/* ===== TEXT ===== */
-.balance-text {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.balance-label {
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 2px;
-  color: #b6fff0;
-  opacity: 0.75;
-  margin-bottom: 4px;
-}
-
-/* 💎 ЧИСЛО */
-.balance-value {
-  font-size: 28px;
-  font-weight: 900;
-  letter-spacing: 1px;
-
-  background: linear-gradient(180deg, #eafff6, #7affc6);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-
-  text-shadow: 0 0 14px rgba(0, 255, 180, 0.55);
-
-  max-width: 160px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-/* ❌ убираем BALANCE и иконку N */
-#balance::before,
-#balance::after {
-  display: none !important;
-  content: none !important;
-}
-/* ✅ чистый баланс без капсулы */
-#balance {
-  background: none !important;
-  border: none !important;
-  box-shadow: none !important;
-
-  padding: 0 !important;
-  margin-bottom: 14px;
-
-  text-align: center;
-  font-weight: 900;
-  font-size: 34px;
-  letter-spacing: 1px;
-
-  color: #eafff6;
-  text-shadow:
-    0 0 12px rgba(0, 255, 180, 0.8),
-    0 0 30px rgba(0, 255, 180, 0.4);
-}
-/* подпись NXN BALANCE */
-#balance-label {
-  font-size: 12px;
-  letter-spacing: 3px;
-  opacity: 0.7;
-  margin-bottom: 4px;
-  color: #9affea;
-}
-/* ================= CLEAN NXN BALANCE ================= */
 
 #balance {
-  margin: 0 auto 18px;
-  padding: 0;
-  background: none !important;
-  border: none !important;
-  box-shadow: none !important;
-
+  margin: 0 auto 22px;
   text-align: center;
-  font-weight: 900;
-  letter-spacing: 2px;
 }
 
-/* надпись */
 #balance .label {
-  font-size: 13px;
+  font-size: 14px;
+  letter-spacing: 3px;
   color: #7affc6;
-  opacity: 0.85;
+  opacity: 0.9;
   margin-bottom: 6px;
 }
 
-/* цифры */
-#balance .value {
-  font-size: 36px;
+.balance-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.coin-emoji {
+  font-size: 28px;
+  filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.8));
+}
+
+.balance-value {
+  font-size: 40px; /* ⬅️ СДЕЛАЛИ КРУПНЕЕ */
+  font-weight: 900;
   color: #eafff6;
   text-shadow:
     0 0 12px rgba(0, 255, 180, 0.6),
-    0 0 28px rgba(0, 255, 180, 0.4);
+    0 0 30px rgba(0, 255, 180, 0.4);
+}
+
+/* pulse */
+#balance.pulse .balance-value {
+  animation: balancePulse 0.26s ease;
+}
+
+@keyframes balancePulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+  100% { transform: scale(1); }
 }
