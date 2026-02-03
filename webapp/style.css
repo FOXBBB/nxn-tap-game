@@ -640,12 +640,22 @@ button:disabled {
 
 #balance {
   position: relative;
-  padding: 14px 26px 16px 70px;
-  min-width: 240px;
+  margin: 0 auto;
 
-  background: linear-gradient(180deg,
-      rgba(0, 255, 170, 0.25),
-      rgba(0, 180, 120, 0.15));
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  padding: 14px 22px;
+  min-width: 240px;
+  max-width: 90vw;
+
+  background: linear-gradient(
+    180deg,
+    rgba(0, 255, 170, 0.25),
+    rgba(0, 180, 120, 0.15)
+  );
+
   border-radius: 999px;
   border: 1px solid rgba(0, 255, 170, 0.6);
 
@@ -653,52 +663,12 @@ button:disabled {
     0 0 20px rgba(0, 255, 170, 0.6),
     inset 0 0 20px rgba(0, 255, 170, 0.25);
 
-  color: #eafff6;
-  font-weight: 800;
-  letter-spacing: 1px;
+  backdrop-filter: none !important;
+  filter: none !important;
 }
 
-/* текст BALANCE */
-#balance::before {
-  content: "BALANCE";
-  position: absolute;
-  top: 6px;
-  left: 72px;
-  font-size: 11px;
-  opacity: 0.8;
-  letter-spacing: 2px;
-}
 
-/* иконка N */
-#balance::after {
-  content: "N";
-  position: absolute;
-  left: 18px;
-  top: 50%;
-  transform: translateY(-50%);
 
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-
-  background: radial-gradient(circle, #7affc6, #00c853);
-  color: #003b22;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  font-weight: 900;
-  font-size: 20px;
-
-  box-shadow:
-    0 0 14px rgba(0, 255, 170, 0.9);
-}
-
-/* цифры баланса */
-#balance {
-  font-size: 22px;
-}
 
 /* ================= MENU (REFERENCE STYLE) ================= */
 
@@ -1178,4 +1148,30 @@ body {
 .menu * {
   -webkit-tap-highlight-color: transparent;
   outline: none;
+}
+.balance-icon img {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  padding: 6px;
+
+  background: radial-gradient(circle, #7affc6, #00c853);
+  box-shadow: 0 0 14px rgba(0, 255, 170, 0.9);
+}
+.balance-center {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+#balance .label {
+  font-size: 12px;
+  letter-spacing: 2px;
+  opacity: 0.8;
+}
+
+.balance-value {
+  font-size: 32px;
+  font-weight: 900;
+  line-height: 1;
 }
