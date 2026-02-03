@@ -10,6 +10,7 @@ let tapPower = 1;
 let canTap = false;
 let tonConnectUI = null;
 
+const API = "https://nxn-tap-game.onrender.com";
 
 
 // ================= INIT =================
@@ -141,7 +142,8 @@ coin.onclick = async (e) => {
   updateUI();
 
   try {
-    const res = await fetch("/tap", {
+    const res = await fetch(`${API}/tap`
+, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id: userId })
