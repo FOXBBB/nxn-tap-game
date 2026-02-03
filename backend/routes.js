@@ -5,20 +5,28 @@ const router = express.Router();
 
 /* ===== SYNC USER ===== */
 router.post("/sync", async (req, res) => {
-  const { id } = req.body;
+  const { id, username, first_name, photo_url } = req.body;
   if (!id) return res.json({ ok: false });
 
   await query(
     `
-    INSERT INTO users (telegram_id)
-    VALUES ($1)
-    ON CONFLICT (telegram_id) DO NOTHING
+    INSERT INTO users (telegram_id, name, avatar)
+    VALUES ($1, $2, $3)
+    ON CONFLICT (telegram_id)
+    DO UPDATE SET
+      name = EXCLUDED.name,
+      avatar = EXCLUDED.avatar
     `,
-    [String(id)]
+    [
+      String(id),
+      username || first_name || "User",
+      photo_url || ""
+    ]
   );
 
   res.json({ ok: true });
 });
+
 
 /* ===== GET ME ===== */
 router.get("/me/:id", async (req, res) => {
@@ -146,7 +154,7 @@ router.post("/transfer", async (req, res) => {
 router.get("/leaderboard", async (req, res) => {
   const result = await query(
     `
-    SELECT telegram_id, balance
+    SELECT telegram_id, name, avatar, balance
     FROM users
     ORDER BY balance DESC
     LIMIT 10
@@ -155,5 +163,6 @@ router.get("/leaderboard", async (req, res) => {
 
   res.json(result.rows);
 });
+
 
 export default router;
