@@ -193,5 +193,24 @@ router.get("/leaderboard", async (req, res) => {
   res.json(result.rows);
 });
 
+/* ===== TRANSFER HISTORY ===== */
+router.get("/history/:id", async (req, res) => {
+  const { id } = req.params;
+
+  const result = await query(
+    `
+    SELECT from_id, to_id, amount, fee, received, created_at
+    FROM transfers
+    WHERE from_id = $1 OR to_id = $1
+    ORDER BY created_at DESC
+    LIMIT 20
+    `,
+    [id]
+  );
+
+  res.json(result.rows);
+});
+
+
 
 export default router;

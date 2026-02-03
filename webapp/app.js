@@ -242,55 +242,7 @@ document.getElementById("send").onclick = async () => {
     await refreshMe();
     updateUI();
 
-    // ================= TRANSFER HISTORY =================
-    async function loadHistory() {
-      if (!userId) return;
-
-      let res;
-      try {
-        res = await fetch(`/api/history/${userId}`);
-      } catch (e) {
-        console.error("history fetch error", e);
-        return;
-      }
-
-      let data;
-      try {
-        data = await res.json();
-      } catch {
-        console.error("history json error");
-        return;
-      }
-
-      const box = document.getElementById("history");
-      if (!box) return;
-
-      box.innerHTML = "";
-
-      if (!Array.isArray(data) || data.length === 0) {
-        box.innerHTML = "<i>No transfers yet</i>";
-        return;
-      }
-
-      data.forEach(t => {
-        const row = document.createElement("div");
-        row.className = "history-row";
-
-        const isOut = t.from_id === userId || t.fromId === userId;
-        const arrow = isOut ? "→" : "←";
-        const sign = isOut ? "-" : "+";
-        const otherId = isOut ? (t.to_id || t.toId) : (t.from_id || t.fromId);
-
-        row.innerHTML = `
-      <b>${arrow} ${otherId}</b>
-      <span>${sign}${t.received} NXN</span>
-      <i>${new Date(t.created_at || t.time).toLocaleString()}</i>
-    `;
-
-        box.appendChild(row);
-      });
-    }
-
+ 
 
 
     // ===== TRANSFER SUCCESS UI =====
@@ -299,6 +251,57 @@ document.getElementById("send").onclick = async () => {
       box.classList.add("transfer-success");
       setTimeout(() => box.classList.remove("transfer-success"), 600);
     }
+
+// ================= TRANSFER HISTORY =================
+async function loadHistory() {
+  if (!userId) return;
+
+  let res;
+  try {
+    res = await fetch(`/history/${userId}`);
+  } catch (e) {
+    console.error("history fetch error", e);
+    return;
+  }
+
+  let data;
+  try {
+    data = await res.json();
+  } catch {
+    console.error("history json error");
+    return;
+  }
+
+  const box = document.getElementById("history");
+  if (!box) return;
+
+  box.innerHTML = "";
+
+  if (!Array.isArray(data) || data.length === 0) {
+    box.innerHTML = "<i>No transfers yet</i>";
+    return;
+  }
+
+  data.forEach(t => {
+    const row = document.createElement("div");
+    row.className = "history-row";
+
+    const isOut = t.from_id === userId;
+    const arrow = isOut ? "→" : "←";
+    const sign = isOut ? "-" : "+";
+    const otherId = isOut ? t.to_id : t.from_id;
+
+    row.innerHTML = `
+      <b>${arrow} ${otherId}</b>
+      <span>${sign}${t.received} NXN</span>
+      <i>${new Date(t.created_at).toLocaleString()}</i>
+    `;
+
+    box.appendChild(row);
+  });
+}
+
+
     // burn animation
     const burn = document.createElement("div");
     burn.className = "plus-one";
@@ -326,47 +329,7 @@ document.getElementById("send").onclick = async () => {
   }
 };
 
-// ===== LOAD TRANSFER HISTORY =====
-async function loadHistory() {
-  if (!userId) return;
 
-  const res = await fetch(`/api/history/${userId}`);
-  const data = await res.json();
-
-  const box = document.getElementById("history");
-  if (!box) return;
-
-  box.innerHTML = "";
-
-  if (!data.length) {
-    box.innerHTML = "<i>No transfers yet</i>";
-    return;
-  }
-
-  data.forEach(t => {
-    const row = document.createElement("div");
-    row.className = "history-row";
-
-    // подсветка свежих (меньше 5 сек)
-    if (Date.now() - t.time < 5000) {
-      row.classList.add("new");
-    }
-
-
-   const isOut = t.from_id === userId;
-const otherId = isOut ? t.to_id : t.from_id;
-const sign = isOut ? "-" : "+";
-
-    row.innerHTML = `
-  <b>${arrow} ${dir} ID ${otherId}</b>
-  <span>${sign}${t.received} NXN</span>
-  <i>${new Date(t.time).toLocaleDateString()}</i>
-`;
-
-
-    box.appendChild(row);
-  });
-}
 
 // ===== HISTORY TOGGLE =====
 const toggle = document.getElementById("history-toggle");
