@@ -125,10 +125,13 @@
 
   <div class="shop-card glass">
     <div class="shop-info">
-      <div class="shop-name">Tap Power +5</div>
+      <div class="shop-name">Tap Power +3</div>
       <div class="shop-desc">30 days boost</div>
     </div>
-    <button class="shop-buy blue">0.2 TON</button>
+    <button class="shop-buy blue"
+        onclick="payTON(0.2, 'tap_plus_3')">
+  0.2 TON
+</button>
   </div>
 
   <div class="shop-card glass">
@@ -141,20 +144,18 @@
 </button>
   </div>
 
-  <div class="shop-card glass">
-    <div class="shop-info">
-      <div class="shop-name">Energy +200</div>
-      <div class="shop-desc">30 days boost</div>
-    </div>
-    <button class="shop-buy blue">0.2 TON</button>
-  </div>
+ 
 
   <div class="shop-card glass">
     <div class="shop-info">
-      <div class="shop-name">Energy +500</div>
+      <div class="shop-name">Energy +300</div>
       <div class="shop-desc">30 days boost</div>
     </div>
-    <button class="shop-buy blue">0.5 TON</button>
+   <button class="shop-buy blue"
+        onclick="payTON(0.5, 'energy_plus_300')">
+  0.5 TON
+</button>
+
   </div>
 
   <div class="shop-card glass">
@@ -162,7 +163,10 @@
       <div class="shop-name">Autoclicker</div>
       <div class="shop-desc">Clicks while offline (30 days)</div>
     </div>
-    <button class="shop-buy purple">1 TON</button>
+    <button class="shop-buy purple"
+        onclick="payTON(1, 'autoclicker_30d')">
+  1 TON
+</button>
   </div>
 </section>
 
@@ -189,5 +193,6 @@
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="app.js"></script>
+<script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
 </body>
 </html>

@@ -8,6 +8,8 @@ let energy = 0;
 let maxEnergy = 100;
 let tapPower = 1;
 let canTap = false;
+let tonConnectUI = null;
+
 
 
 // ================= INIT =================
@@ -22,6 +24,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   Telegram.WebApp.enableClosingConfirmation();
   Telegram.WebApp.setHeaderColor("#02040a");
   Telegram.WebApp.setBackgroundColor("#02040a");
+
+  tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+  manifestUrl: "https://https://nxn-tap-game.onrender.com/tonconnect-manifest.json"
+});
 
   tgUser = Telegram.WebApp.initDataUnsafe.user;
   userId = String(tgUser.id);
@@ -429,3 +435,29 @@ async function buyNXN(itemId) {
   }
 }
 
+async function payTON(amountTon, itemId) {
+  if (!tonConnectUI || !tonConnectUI.connected) {
+    tonConnectUI.openModal();
+    return;
+  }
+
+  const amountNano = Math.floor(amountTon * 1e9);
+
+  try {
+    await tonConnectUI.sendTransaction({
+      validUntil: Math.floor(Date.now() / 1000) + 300,
+      messages: [
+        {
+          address: "UQDg0qiBTFbmCc6OIaeCSF0tL6eSX8cC56PYTF44Ob8hDqWf",
+          amount: amountNano.toString(),
+          payload: itemId
+        }
+      ]
+    });
+
+    alert("Payment sent. Processing...");
+  } catch (e) {
+    console.error(e);
+    alert("Payment cancelled");
+  }
+}
