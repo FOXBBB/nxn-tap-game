@@ -116,6 +116,8 @@ function updateUI() {
 const coin = document.getElementById("coin");
 
 function animateCoinHit() {
+  if (!coin) return;
+
   coin.classList.add("hit");
   coin.classList.add("glow");
 
@@ -256,21 +258,8 @@ document.getElementById("send").onclick = async () => {
 async function loadHistory() {
   if (!userId) return;
 
-  let res;
-  try {
-    res = await fetch(`/history/${userId}`);
-  } catch (e) {
-    console.error("history fetch error", e);
-    return;
-  }
-
-  let data;
-  try {
-    data = await res.json();
-  } catch {
-    console.error("history json error");
-    return;
-  }
+  const res = await fetch(`/api/history/${userId}`);
+  const data = await res.json();
 
   const box = document.getElementById("history");
   if (!box) return;
@@ -300,6 +289,7 @@ async function loadHistory() {
     box.appendChild(row);
   });
 }
+
 
 
     // burn animation
