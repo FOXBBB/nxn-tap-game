@@ -1,11 +1,3 @@
-// ================= HELPERS =================
-function formatNumber(n) {
-  if (n >= 1e9) return (n / 1e9).toFixed(2) + "B";
-  if (n >= 1e6) return (n / 1e6).toFixed(2) + "M";
-  if (n >= 1e3) return (n / 1e3).toFixed(1) + "K";
-  return Math.floor(n).toString();
-}
-
 // ================= TELEGRAM =================
 let tgUser = null;
 let userId = null;
@@ -18,7 +10,6 @@ let tapPower = 1;
 let canTap = false;
 let tonConnectUI = null;
 
-const API = "https://nxn-tap-game.onrender.com";
 
 
 // ================= INIT =================
@@ -68,7 +59,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 async function syncUser() {
   if (!tgUser) return;
 
-  await fetch(`${API}/sync`), {
+  await fetch("/sync", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -77,12 +68,12 @@ async function syncUser() {
       first_name: tgUser.first_name || "",
       photo_url: tgUser.photo_url || ""
     })
-  };
+  });
 }
 
 // ================= LOAD MY STATE =================
 async function refreshMe() {
-  const res = await fetch(`${API}/me/${userId}`);
+  const res = await fetch(`/me/${userId}`);
   const data = await res.json();
 
   balance = Number(data.balance) || 0;   // 🔥 ВОТ ЭТОГО НЕ ХВАТАЛО
@@ -150,12 +141,11 @@ coin.onclick = async (e) => {
   updateUI();
 
   try {
-    const res = await fetch(`${API}/tap`
-      , {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: userId })
-      });
+    const res = await fetch("/tap", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: userId })
+    });
 
     const data = await res.json();
 
@@ -191,31 +181,18 @@ function animatePlus(e, value) {
 // ================= TRANSFER =================
 document.getElementById("send").onclick = async () => {
   const btn = document.getElementById("send");
-  const box = document.querySelector("#transfer .transfer-box");
-
-  const toId = document.getElementById("to-id").value.trim();
-  const amount = Number(document.getElementById("amount").value);
-
   btn.disabled = true;
-  box.classList.remove("transfer-error", "transfer-success");
-
-  // ❌ client validation
-  if (!toId || amount < 100) {
-    showToast("Minimum transfer is 100 NXN", "err");
-    box.classList.add("transfer-error");
-    btn.disabled = false;
-    return;
-  }
-
-  if (balance < amount) {
-    showToast("Not enough balance", "err");
-    box.classList.add("transfer-error");
-    btn.disabled = false;
-    return;
-  }
 
   try {
-    const res = await fetch(`${API}/transfer`, {
+    const toId = document.getElementById("to-id")?.value.trim();
+    const amount = Number(document.getElementById("amount")?.value);
+
+    if (!toId || amount <= 0) {
+      alert("Enter valid ID and amount");
+      return;
+    }
+
+    const res = await fetch("/transfer", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -226,36 +203,58 @@ document.getElementById("send").onclick = async () => {
     });
 
     const data = await res.json();
-
     if (!data.ok) {
-      showToast(data.error || "Transfer failed", "err");
-      box.classList.add("transfer-error");
-      btn.disabled = false;
+      const box = document.querySelector(".transfer-box");
+      if (box) {
+        box.classList.add("transfer-error");
+        setTimeout(() => box.classList.remove("transfer-error"), 450);
+      }
+
+      const toast = document.createElement("div");
+      toast.className = "transfer-toast error";
+      toast.innerText = data.error || "TRANSFER FAILED";
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 1600);
+
       return;
     }
 
-    // ✅ SUCCESS
-    balance = data.balance;
+
+    await refreshMe();
     updateUI();
 
-    balance = data.balance;
-    updateUI();
+    // ===== TRANSFER SUCCESS UI =====
+    const box = document.querySelector(".transfer-box");
+    if (box) {
+      box.classList.add("transfer-success");
+      setTimeout(() => box.classList.remove("transfer-success"), 600);
+    }
+    // burn animation
+    const burn = document.createElement("div");
+    burn.className = "plus-one";
+    burn.innerText = "-10% BURNED";
+    burn.style.color = "#ff6b6b";
+    burn.style.textShadow = "0 0 10px rgba(255,80,80,0.8)";
+    burn.style.left = "50%";
+    burn.style.top = "60%";
+    burn.style.transform = "translateX(-50%)";
+    document.body.appendChild(burn);
+    setTimeout(() => burn.remove(), 900);
 
-    playTransferAnimation(data.received, data.burned);
-    showToast(
-      `Sent ${amount} NXN · Fee 10% · Received ${data.received}`,
-      "ok"
-    );
 
-  } catch (e) {
-    showToast("Server error", "err");
-    box.classList.add("transfer-error");
+    // toast message
+    const toast = document.createElement("div");
+    toast.className = "transfer-toast";
+    toast.innerText = "TRANSFER SUCCESS ✓";
+    document.body.appendChild(toast);
+
+    setTimeout(() => toast.remove(), 1600);
+
+  } finally {
+    // 🔒 ВСЕГДА возвращаем кнопку
+    btn.disabled = false;
   }
-
-  btn.disabled = false;
 };
-
-
 
 // ===== LOAD TRANSFER HISTORY =====
 async function loadHistory() {
@@ -321,7 +320,7 @@ if (toggle && historyBox) {
 
 // ================= LEADERBOARD =================
 async function loadLeaderboard() {
-  const res = await fetch(`${API}/leaderboard`);
+  const res = await fetch("/leaderboard");
   const data = await res.json();
   if (!Array.isArray(data)) return;
 
@@ -408,7 +407,7 @@ setInterval(async () => {
   if (!userId) return;
 
   try {
-    const res = await fetch(`${API}/me/${userId}`);
+    const res = await fetch(`/me/${userId}`);
     const data = await res.json();
 
     energy = Number(data.energy) || energy;
@@ -522,36 +521,16 @@ async function payTON(amountTon, itemId) {
     alert("Payment cancelled or failed");
   }
 }
-function playTransferAnimation(received, burned) {
-  const icon = document.querySelector("#balance .balance-icon img");
-  if (!icon) return;
 
-  // 💎 coins to receiver
-  for (let i = 0; i < 6; i++) {
-    const coin = document.createElement("div");
-    coin.className = "transfer-coin";
-    coin.innerText = "💎";
 
-    const rect = icon.getBoundingClientRect();
-    coin.style.left = rect.left + rect.width / 2 + "px";
-    coin.style.top = rect.top + rect.height / 2 + "px";
 
-    document.body.appendChild(coin);
-    setTimeout(() => coin.remove(), 900);
-  }
 
-  // 🔥 burn label
-  const burn = document.createElement("div");
-  burn.className = "plus-one";
-  burn.style.color = "#ff6b6b";
-  burn.innerText = `-${burned} BURN`;
-  burn.style.left = "50%";
-  burn.style.top = "45%";
-  burn.style.transform = "translateX(-50%)";
+// ================= FORMAT LARGE NUMBERS =================
+function formatNumber(n) {
+  n = Number(n) || 0;
 
-  document.body.appendChild(burn);
-  setTimeout(() => burn.remove(), 900);
+  if (n >= 1e9) return (n / 1e9).toFixed(1).replace(".0", "") + "B";
+  if (n >= 1e6) return (n / 1e6).toFixed(1).replace(".0", "") + "M";
+  if (n >= 1e3) return (n / 1e3).toFixed(1).replace(".0", "") + "K";
+  return n.toString();
 }
-
-
-
