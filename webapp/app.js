@@ -102,6 +102,7 @@ function updateUI() {
 }
 
 
+const coin = document.getElementById("coin");
 
 function animateCoinHit() {
   coin.classList.add("hit");
@@ -406,30 +407,8 @@ setInterval(async () => {
   } catch { }
 }, 3000);
 
-// ================= STARFIELD (SPACE STYLE) =================
-const starsBox = document.getElementById("stars");
-
-if (starsBox) {
-  for (let i = 0; i < 60; i++) {
-    const s = document.createElement("div");
-    s.className = "star";
-
-    const size = Math.random() * 2 + 1;
-    s.style.width = size + "px";
-    s.style.height = size + "px";
-
-    s.style.left = Math.random() * window.innerWidth + "px";
-    s.style.top = Math.random() * window.innerHeight + "px";
 
 
-    s.style.opacity = Math.random() * 0.6 + 0.3;
-    s.style.animationDuration = 20 + Math.random() * 40 + "s";
-
-    starsBox.appendChild(s);
-  }
-}
-
-// ===== STAR FIELD (BACKGROUND ONLY) =====
 // ===== STAR FIELD (FALLING, SAFE) =====
 const stars = document.getElementById("stars");
 
@@ -479,13 +458,13 @@ async function buyNXN(itemId) {
     console.error(e);
   }
 }
+
 async function payTON(amountTon, itemId) {
   if (!tonConnectUI) {
     alert("TON not ready");
     return;
   }
 
-  // 1️⃣ подключаем кошелёк
   if (!tonConnectUI.connected) {
     await tonConnectUI.openModal();
     return;
@@ -494,24 +473,25 @@ async function payTON(amountTon, itemId) {
   const amountNano = Math.floor(amountTon * 1e9).toString();
 
   try {
-    // 2️⃣ отправляем TON
     const tx = await tonConnectUI.sendTransaction({
       validUntil: Math.floor(Date.now() / 1000) + 600,
-      messages: [{
-        address: "UQDg0qiBTFbmCc6OIaeCSF0tL6eSX8cC56PYTF44Ob8hDqWf",
-        amount: amountNano
-      }]
+      messages: [
+        {
+          address: "UQDg0qiBTFbmCc6OIaeCSF0tL6eSX8cC56PYTF44Ob8hDqWf",
+          amount: amountNano
+        }
+      ]
     });
 
-    // 3️⃣ UI receipt
+    // UI receipt
     const receipt = document.createElement("div");
     receipt.className = "transfer-toast";
     receipt.innerText = "TON PAYMENT SENT ✓";
     document.body.appendChild(receipt);
     setTimeout(() => receipt.remove(), 1600);
 
-    // 4️⃣ подтверждаем на сервере
-    const res = await fetch("/ton-confirm", {
+    // подтверждение на сервер
+    await fetch("/ton-confirm", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -521,14 +501,9 @@ async function payTON(amountTon, itemId) {
       })
     });
 
-    const data = await res.json();
-    if (!data.ok) {
-      alert(data.error || "Activation failed");
-      return;
-    }
-
-    // 5️⃣ обновляем состояние
+    // обновляем состояние
     await refreshMe();
+    updateUI();
 
   } catch (e) {
     console.error("TON ERROR", e);
@@ -536,26 +511,6 @@ async function payTON(amountTon, itemId) {
   }
 }
 
-  
-
-
-// 1. визуальный receipt (UI)
-const receipt = document.createElement("div");
-receipt.className = "transfer-toast";
-receipt.innerText = "TON PAYMENT SENT ✓";
-document.body.appendChild(receipt);
-setTimeout(() => receipt.remove(), 1600);
-
-// 2. отправляем TX на сервер
-await fetch("/ton-confirm", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    userId,
-    itemId,
-    txHash: tx.boc
-  })
-});
 
 
 
