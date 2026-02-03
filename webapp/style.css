@@ -1457,7 +1457,7 @@ body {
 }
 
 .balance-value {
-  font-size: 38px;
+  font-size: 36px;
   font-weight: 900;
   color: #eafff6;
 
@@ -1465,10 +1465,13 @@ body {
   box-shadow: none !important;
   border-radius: 0 !important;
 
+  filter: none !important;
+  backdrop-filter: none !important;
+
   text-shadow:
-    0 0 12px rgba(0, 255, 180, 0.6),
-    0 0 30px rgba(0, 255, 180, 0.4);
+    0 0 10px rgba(0, 255, 180, 0.6);
 }
+
 
 
 /* pulse */
@@ -1480,4 +1483,39 @@ body {
   0% { transform: scale(1); }
   50% { transform: scale(1.08); }
   100% { transform: scale(1); }
+}
+/* ===== BALANCE TEXT FIX (NO BLUR) ===== */
+#balance,
+#balance * {
+  backdrop-filter: none !important;
+  filter: none !important;
+}
+.balance-icon img {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+
+  background: radial-gradient(circle, #9affea, #00c853);
+  padding: 5px;
+
+  box-shadow:
+    0 0 18px rgba(0, 255, 180, 0.85);
+
+  filter: none !important;
+}
+/* ===== TAP SCREEN VERTICAL TUNE ===== */
+#tap {
+  padding-top: 40px !important; /* было больше */
+}
+
+#balance {
+  margin-top: 0;
+}
+
+#coin {
+  margin-top: 14px;
+}
+
+#energy {
+  margin-top: 14px;
 }
