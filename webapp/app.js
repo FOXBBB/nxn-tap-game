@@ -474,7 +474,7 @@ async function buyNXN(itemId) {
 
   let res;
   try {
-    res = await fetch("/buy-nxn", {
+    res = await fetch("/api/buy-nxn", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

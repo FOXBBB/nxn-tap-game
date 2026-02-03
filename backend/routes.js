@@ -211,6 +211,67 @@ router.get("/history/:id", async (req, res) => {
   res.json(result.rows);
 });
 
+/* ===== BUY FOR NXN ===== */
+router.post("/buy-nxn", async (req, res) => {
+  const { id, itemId } = req.body;
+  if (!id || !itemId) {
+    return res.json({ ok: false, error: "Invalid request" });
+  }
+
+  const userRes = await query(
+    `SELECT balance, tap_power, max_energy FROM users WHERE telegram_id = $1`,
+    [id]
+  );
+
+  if (userRes.rowCount === 0) {
+    return res.json({ ok: false, error: "User not found" });
+  }
+
+  let { balance, tap_power, max_energy } = userRes.rows[0];
+
+  // ===== SHOP ITEMS =====
+  let price = 0;
+
+  if (itemId === "tap_plus_1") {
+    price = 30000;
+    if (balance < price) {
+      return res.json({ ok: false, error: "Not enough NXN" });
+    }
+
+    tap_power += 1;
+  }
+
+  else if (itemId === "energy_plus_100") {
+    price = 50000;
+    if (balance < price) {
+      return res.json({ ok: false, error: "Not enough NXN" });
+    }
+
+    max_energy += 100;
+  }
+
+  else {
+    return res.json({ ok: false, error: "Unknown item" });
+  }
+
+  balance -= price;
+
+  await query(
+    `
+    UPDATE users
+    SET balance = $1, tap_power = $2, max_energy = $3
+    WHERE telegram_id = $4
+    `,
+    [balance, tap_power, max_energy, id]
+  );
+
+  res.json({
+    ok: true,
+    balance,
+    tapPower: tap_power,
+    maxEnergy: max_energy
+  });
+});
 
 
 export default router;
