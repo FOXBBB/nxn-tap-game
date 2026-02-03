@@ -448,34 +448,24 @@ async function payTON(amountTon, itemId) {
   try {
     const tx = await tonConnectUI.sendTransaction({
       validUntil: Math.floor(Date.now() / 1000) + 600,
+      returnUrl: window.location.href,
       messages: [
         {
           address: "UQDg0qiBTFbmCc6OIaeCSF0tL6eSX8cC56PYTF44Ob8hDqWf",
           amount: amountNano
-          // ❌ payload УБРАЛИ полностью
         }
       ]
     });
 
-    // подтверждаем на backend (пока без on-chain verify)
-    await fetch("/buy-ton", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        id: userId,
-        itemId,
-        txHash: tx.boc || "pending"
-      })
-    });
+    console.log("TX OK", tx);
+    alert("Payment sent, returning to app…");
 
-    alert("Payment sent. Activating bonus...");
-    await refreshMe();
-    updateUI();
   } catch (e) {
-    console.error("TON error:", e);
+    console.error("TON ERROR", e);
     alert("Payment cancelled or failed");
   }
 }
+
 // ================= FORMAT LARGE NUMBERS =================
 function formatNumber(n) {
   n = Number(n) || 0;
