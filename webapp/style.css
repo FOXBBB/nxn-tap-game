@@ -1221,3 +1221,19 @@ body {
   color: #ff6b6b;
   box-shadow: 0 0 12px rgba(255, 80, 80, 0.5);
 }
+/* ===== SHOP FEEDBACK ===== */
+.shop-error {
+  animation: shake 0.45s;
+}
+
+.shop-success {
+  box-shadow: 0 0 20px rgba(0,255,150,0.6);
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  50% { transform: translateX(6px); }
+  75% { transform: translateX(-4px); }
+  100% { transform: translateX(0); }
+}

@@ -462,6 +462,8 @@ if (stars) {
   }
 }
 async function buyNXN(itemId) {
+  const box = document.querySelector(".shop-box") || document.body;
+
   try {
     const res = await fetch("/api/buy-nxn", {
       method: "POST",
@@ -473,22 +475,43 @@ async function buyNXN(itemId) {
     });
 
     const data = await res.json();
+
+    // ❌ NOT ENOUGH NXN / ALREADY BOUGHT
     if (!data.ok) {
-      alert(data.error || "Purchase failed");
+      box.classList.add("shop-error");
+      setTimeout(() => box.classList.remove("shop-error"), 450);
+
+      const toast = document.createElement("div");
+      toast.className = "transfer-toast error";
+      toast.innerText = data.error || "NOT ENOUGH NXN";
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 1600);
+
       return;
     }
 
-    // обновляем состояние
+    // ✅ SUCCESS
     balance = data.balance;
     tapPower = data.tapPower;
     maxEnergy = data.maxEnergy;
 
     updateUI();
-    alert("Purchased successfully!");
+
+    box.classList.add("shop-success");
+    setTimeout(() => box.classList.remove("shop-success"), 600);
+
+    const toast = document.createElement("div");
+    toast.className = "transfer-toast";
+    toast.innerText = "PURCHASE SUCCESS ✓";
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 1600);
+
   } catch (e) {
     console.error(e);
+    alert("Purchase error");
   }
 }
+
 
 async function payTON(amountTon, itemId) {
   if (!tonConnectUI) {
