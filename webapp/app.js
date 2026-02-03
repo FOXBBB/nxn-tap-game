@@ -165,6 +165,41 @@ coin.onclick = async (e) => {
 };
 
 
+// ================= TRANSFER HISTORY =================
+async function loadHistory() {
+  if (!userId) return;
+
+  const res = await fetch(`/api/history/${userId}`);
+  const data = await res.json();
+
+  const box = document.getElementById("history");
+  if (!box) return;
+
+  box.innerHTML = "";
+
+  if (!Array.isArray(data) || data.length === 0) {
+    box.innerHTML = "<i>No transfers yet</i>";
+    return;
+  }
+
+  data.forEach(t => {
+    const row = document.createElement("div");
+    row.className = "history-row";
+
+    const isOut = t.from_id === userId;
+    const arrow = isOut ? "→" : "←";
+    const sign = isOut ? "-" : "+";
+    const otherId = isOut ? t.to_id : t.from_id;
+
+    row.innerHTML = `
+      <b>${arrow} ${otherId}</b>
+      <span>${sign}${t.received} NXN</span>
+      <i>${new Date(t.created_at).toLocaleString()}</i>
+    `;
+
+    box.appendChild(row);
+  });
+}
 
 
 
@@ -240,11 +275,12 @@ document.getElementById("send").onclick = async () => {
       return;
     }
 
+    await loadHistory();
 
     await refreshMe();
     updateUI();
 
- 
+
 
 
     // ===== TRANSFER SUCCESS UI =====
@@ -253,42 +289,6 @@ document.getElementById("send").onclick = async () => {
       box.classList.add("transfer-success");
       setTimeout(() => box.classList.remove("transfer-success"), 600);
     }
-
-// ================= TRANSFER HISTORY =================
-async function loadHistory() {
-  if (!userId) return;
-
-  const res = await fetch(`/api/history/${userId}`);
-  const data = await res.json();
-
-  const box = document.getElementById("history");
-  if (!box) return;
-
-  box.innerHTML = "";
-
-  if (!Array.isArray(data) || data.length === 0) {
-    box.innerHTML = "<i>No transfers yet</i>";
-    return;
-  }
-
-  data.forEach(t => {
-    const row = document.createElement("div");
-    row.className = "history-row";
-
-    const isOut = t.from_id === userId;
-    const arrow = isOut ? "→" : "←";
-    const sign = isOut ? "-" : "+";
-    const otherId = isOut ? t.to_id : t.from_id;
-
-    row.innerHTML = `
-      <b>${arrow} ${otherId}</b>
-      <span>${sign}${t.received} NXN</span>
-      <i>${new Date(t.created_at).toLocaleString()}</i>
-    `;
-
-    box.appendChild(row);
-  });
-}
 
 
 
