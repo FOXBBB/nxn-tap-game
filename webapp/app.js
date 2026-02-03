@@ -192,33 +192,33 @@ document.getElementById("send").onclick = async () => {
       return;
     }
 
-if (amount < 100) {
-  const box = document.querySelector(".transfer-box");
-  if (box) {
-    box.classList.add("transfer-error");
-    setTimeout(() => box.classList.remove("transfer-error"), 450);
-  }
+    if (amount < 100) {
+      const box = document.querySelector(".transfer-box");
+      if (box) {
+        box.classList.add("transfer-error");
+        setTimeout(() => box.classList.remove("transfer-error"), 450);
+      }
 
-  const toast = document.createElement("div");
-  toast.className = "transfer-toast error";
-  toast.innerText = "Minimum transfer is 100 NXN";
-  document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 1600);
+      const toast = document.createElement("div");
+      toast.className = "transfer-toast error";
+      toast.innerText = "Minimum transfer is 100 NXN";
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 1600);
 
-  btn.disabled = false;
-  return;
-}
+      btn.disabled = false;
+      return;
+    }
 
 
-   const res = await fetch("/api/transfer", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    fromId: userId,
-    toId,
-    amount
-  })
-});
+    const res = await fetch("/api/transfer", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        fromId: userId,
+        toId,
+        amount
+      })
+    });
 
 
     const data = await res.json();
@@ -241,6 +241,56 @@ if (amount < 100) {
 
     await refreshMe();
     updateUI();
+
+    // ================= TRANSFER HISTORY =================
+    async function loadHistory() {
+      if (!userId) return;
+
+      let res;
+      try {
+        res = await fetch(`/api/history/${userId}`);
+      } catch (e) {
+        console.error("history fetch error", e);
+        return;
+      }
+
+      let data;
+      try {
+        data = await res.json();
+      } catch {
+        console.error("history json error");
+        return;
+      }
+
+      const box = document.getElementById("history");
+      if (!box) return;
+
+      box.innerHTML = "";
+
+      if (!Array.isArray(data) || data.length === 0) {
+        box.innerHTML = "<i>No transfers yet</i>";
+        return;
+      }
+
+      data.forEach(t => {
+        const row = document.createElement("div");
+        row.className = "history-row";
+
+        const isOut = t.from_id === userId || t.fromId === userId;
+        const arrow = isOut ? "→" : "←";
+        const sign = isOut ? "-" : "+";
+        const otherId = isOut ? (t.to_id || t.toId) : (t.from_id || t.fromId);
+
+        row.innerHTML = `
+      <b>${arrow} ${otherId}</b>
+      <span>${sign}${t.received} NXN</span>
+      <i>${new Date(t.created_at || t.time).toLocaleString()}</i>
+    `;
+
+        box.appendChild(row);
+      });
+    }
+
 
 
     // ===== TRANSFER SUCCESS UI =====
@@ -396,6 +446,11 @@ function initMenu() {
         s.classList.add("hidden")
       );
 
+      if (btn.dataset.go === "transfer") {
+        loadHistory();
+      }
+
+
       const target = document.getElementById(btn.dataset.go);
       if (target) target.classList.remove("hidden");
 
@@ -461,11 +516,13 @@ if (stars) {
     stars.appendChild(s);
   }
 }
+
 async function buyNXN(itemId) {
   const box = document.querySelector(".shop-box") || document.body;
 
+  let res;
   try {
-    const res = await fetch("/api/buy-nxn", {
+    res = await fetch("/api/buy-nxn", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -473,44 +530,50 @@ async function buyNXN(itemId) {
         itemId
       })
     });
+  } catch (e) {
+    alert("Network error");
+    return;
+  }
 
-    const data = await res.json();
+  let data;
+  try {
+    data = await res.json();
+  } catch {
+    alert("Server error");
+    return;
+  }
 
-    // ❌ NOT ENOUGH NXN / ALREADY BOUGHT
-    if (!data.ok) {
-      box.classList.add("shop-error");
-      setTimeout(() => box.classList.remove("shop-error"), 450);
-
-      const toast = document.createElement("div");
-      toast.className = "transfer-toast error";
-      toast.innerText = data.error || "NOT ENOUGH NXN";
-      document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 1600);
-
-      return;
-    }
-
-    // ✅ SUCCESS
-    balance = data.balance;
-    tapPower = data.tapPower;
-    maxEnergy = data.maxEnergy;
-
-    updateUI();
-
-    box.classList.add("shop-success");
-    setTimeout(() => box.classList.remove("shop-success"), 600);
+  // ❌ НЕДОСТАТОЧНО NXN / УЖЕ КУПЛЕНО
+  if (!data.ok) {
+    box.classList.add("shop-error");
+    setTimeout(() => box.classList.remove("shop-error"), 450);
 
     const toast = document.createElement("div");
-    toast.className = "transfer-toast";
-    toast.innerText = "PURCHASE SUCCESS ✓";
+    toast.className = "transfer-toast error";
+    toast.innerText = data.error || "NOT ENOUGH NXN";
     document.body.appendChild(toast);
     setTimeout(() => toast.remove(), 1600);
 
-  } catch (e) {
-    console.error(e);
-    alert("Purchase error");
+    return;
   }
+
+  // ✅ УСПЕШНАЯ ПОКУПКА
+  balance = data.balance;
+  tapPower = data.tapPower;
+  maxEnergy = data.maxEnergy;
+
+  updateUI();
+
+  box.classList.add("shop-success");
+  setTimeout(() => box.classList.remove("shop-success"), 600);
+
+  const toast = document.createElement("div");
+  toast.className = "transfer-toast";
+  toast.innerText = "PURCHASE SUCCESS ✓";
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 1600);
 }
+
 
 
 async function payTON(amountTon, itemId) {
