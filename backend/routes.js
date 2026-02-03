@@ -3,6 +3,28 @@ import { query } from "./db.js";
 
 const router = express.Router();
 
+async function applyEnergyRegen(userId) {
+  const result = await query(
+    `
+    UPDATE users
+    SET
+      energy = LEAST(
+        max_energy,
+        energy + FLOOR(EXTRACT(EPOCH FROM (NOW() - last_energy_update)) / 3)
+      ),
+      last_energy_update = NOW()
+    WHERE
+      telegram_id = $1
+      AND energy < max_energy
+    RETURNING energy
+    `,
+    [userId]
+  );
+
+  return result.rowCount > 0;
+}
+
+
 /* ===== SYNC USER ===== */
 router.post("/sync", async (req, res) => {
   const { id, username, first_name, photo_url } = req.body;
@@ -31,6 +53,8 @@ router.post("/sync", async (req, res) => {
 /* ===== GET ME ===== */
 router.get("/me/:id", async (req, res) => {
   const { id } = req.params;
+
+  await applyEnergyRegen(id);
 
   const result = await query(
     `
@@ -65,7 +89,12 @@ router.post("/tap", async (req, res) => {
   const { id } = req.body;
   if (!id) return res.json({ ok: false });
 
+  await applyEnergyRegen(id);
+
+
   const result = await query(
+
+
     `
     UPDATE users
     SET
