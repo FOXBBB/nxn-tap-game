@@ -10,6 +10,7 @@ let tapPower = 1;
 let canTap = false;
 let tonConnectUI = null;
 
+const API_URL = "https://nxn-tap-game.onrender.com";
 
 
 // ================= INIT =================
@@ -192,15 +193,16 @@ document.getElementById("send").onclick = async () => {
       return;
     }
 
-    const res = await fetch("/transfer", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        fromId: userId,
-        toId,
-        amount
-      })
-    });
+   const res = await fetch(`${API_URL}/transfer`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    fromId: userId,
+    toId,
+    amount
+  })
+});
+
 
     const data = await res.json();
     if (!data.ok) {

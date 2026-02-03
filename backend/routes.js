@@ -9,6 +9,7 @@ const TON_PRICES = {
   autoclicker_30d: 1
 };
 
+
 /* ===== GET ME ===== */
 router.get("/me/:id", (req, res) => {
   const { id } = req.params;
@@ -110,7 +111,10 @@ if (user.energy <= 0) {
 
 //transfer//
 router.post("/transfer", (req, res) => {
+  console.log("TRANSFER HIT", req.body);
+
   let { fromId, toId, amount } = req.body;
+
 
   // 🔒 нормализация
   fromId = String(fromId);
