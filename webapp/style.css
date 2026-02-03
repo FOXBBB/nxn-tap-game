@@ -1520,3 +1520,6 @@ body {
 #energy {
   margin-top: 14px;
 }
+#balance {
+  backdrop-filter: none !important;
+}
