@@ -1492,3 +1492,36 @@ body {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+/* ❌ убираем BALANCE и иконку N */
+#balance::before,
+#balance::after {
+  display: none !important;
+  content: none !important;
+}
+/* ✅ чистый баланс без капсулы */
+#balance {
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+
+  padding: 0 !important;
+  margin-bottom: 14px;
+
+  text-align: center;
+  font-weight: 900;
+  font-size: 34px;
+  letter-spacing: 1px;
+
+  color: #eafff6;
+  text-shadow:
+    0 0 12px rgba(0, 255, 180, 0.8),
+    0 0 30px rgba(0, 255, 180, 0.4);
+}
+/* подпись NXN BALANCE */
+#balance-label {
+  font-size: 12px;
+  letter-spacing: 3px;
+  opacity: 0.7;
+  margin-bottom: 4px;
+  color: #9affea;
+}
