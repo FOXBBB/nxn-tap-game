@@ -733,7 +733,8 @@ align-items: center;
 
 /* центральная кнопка */
 .menu div:nth-child(2) {
-  transform: translateY(-22px) scale(1.4);
+  transform: scale(1.4);
+
   opacity: 1;
 
   background: radial-gradient(circle, #7affc6, #00c853);
@@ -831,10 +832,6 @@ align-items: center;
   transform: scale(1.1);
 }
 
-/* центральная кнопка */
-.menu-center {
-  transform: translateY(-22px);
-}
 
 .menu-icon.center {
   width: 58px;
