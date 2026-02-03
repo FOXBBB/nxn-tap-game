@@ -1062,3 +1062,10 @@ html, body {
   user-select: none;
 }
 
+/* ================= BALANCE OVERFLOW SAFE ================= */
+#balance {
+  max-width: 90vw;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

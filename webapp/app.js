@@ -91,7 +91,7 @@ function updateUI() {
   const b = document.getElementById("balance");
   const e = document.getElementById("energy");
 
-  if (b) b.innerText = "Balance: " + balance;
+  if (b) b.innerText = "Balance: " + formatNumber(balance);
   if (e) e.innerText = `Energy: ${energy} / ${maxEnergy}`;
   if (energy <= 5) {
     e.classList.add("energy-low");
@@ -475,6 +475,15 @@ async function payTON(amountTon, itemId) {
     console.error("TON error:", e);
     alert("Payment cancelled or failed");
   }
+}
+// ================= FORMAT LARGE NUMBERS =================
+function formatNumber(n) {
+  n = Number(n) || 0;
+
+  if (n >= 1e9) return (n / 1e9).toFixed(1).replace(".0", "") + "B";
+  if (n >= 1e6) return (n / 1e6).toFixed(1).replace(".0", "") + "M";
+  if (n >= 1e3) return (n / 1e3).toFixed(1).replace(".0", "") + "K";
+  return n.toString();
 }
 
 
