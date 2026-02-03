@@ -20,9 +20,11 @@ body {
 }
 
 .screen {
-  height: calc(100vh - 90px);
+  min-height: calc(100dvh - 90px);
   padding: 18px;
+  pointer-events: auto;
 }
+
 
 .hidden {
   display: none;
@@ -1031,9 +1033,12 @@ body {
   outline: none !important;
 }
 
-/* если внутри img */
+.menu div {
+  pointer-events: auto;
+}
+
 .menu img {
-  pointer-events: none;
+  pointer-events: auto;
 }
 
 /* ===== BOTTOM MENU SIZE TUNE ===== */
@@ -1217,4 +1222,14 @@ body {
 .transfer-toast.err {
   background: #ff4d4d;
   color: #2b0000;
+}
+/* ===== HARD FIX: TAP DEAD ZONE ===== */
+#stars {
+  pointer-events: none !important;
+  z-index: -9999 !important;
+}
+/* ===== FORCE TAP ENABLE ===== */
+#coin {
+  pointer-events: auto !important;
+  touch-action: manipulation !important;
 }
