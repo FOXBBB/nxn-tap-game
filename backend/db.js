@@ -1,30 +1,14 @@
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
+import pkg from "pg";
+const { Pool } = pkg;
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const DB_FILE = path.join(__dirname, "db.json");
-
-export function loadDB() {
-  if (!fs.existsSync(DB_FILE)) {
-    return { users: [], transfers: [] };
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
   }
+});
 
-  try {
-    const raw = fs.readFileSync(DB_FILE, "utf-8");
-    return JSON.parse(raw);
-  } catch (e) {
-    console.error("DB READ ERROR", e);
-    return { users: [] };
-  }
-}
-
-export function saveDB(db) {
-  try {
-    fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2));
-  } catch (e) {
-    console.error("DB WRITE ERROR", e);
-  }
+export async function query(text, params) {
+  const res = await pool.query(text, params);
+  return res;
 }
