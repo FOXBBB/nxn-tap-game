@@ -233,22 +233,36 @@ router.post("/buy-nxn", async (req, res) => {
   let price = 0;
 
   if (itemId === "tap_plus_1") {
-    price = 30000;
-    if (balance < price) {
-      return res.json({ ok: false, error: "Not enough NXN" });
-    }
+  price = 30000;
 
-    tap_power += 1;
+  // ⛔ защита от повторной покупки
+  if (tap_power >= 2) {
+    return res.json({ ok: false, error: "Tap Power already purchased" });
   }
+
+  // ⛔ недостаточно баланса
+  if (balance < price) {
+    return res.json({ ok: false, error: "Not enough NXN" });
+  }
+
+  tap_power += 1;
+}
+
 
   else if (itemId === "energy_plus_100") {
-    price = 50000;
-    if (balance < price) {
-      return res.json({ ok: false, error: "Not enough NXN" });
-    }
+  price = 50000;
 
-    max_energy += 100;
+  // ⛔ защита от повторной покупки
+  if (max_energy >= 200) {
+    return res.json({ ok: false, error: "Energy upgrade already purchased" });
   }
+
+  if (balance < price) {
+    return res.json({ ok: false, error: "Not enough NXN" });
+  }
+
+  max_energy += 100;
+}
 
   else {
     return res.json({ ok: false, error: "Unknown item" });
