@@ -213,20 +213,32 @@ body {
   bottom: 0;
   width: 100%;
   height: 90px;
+
   display: flex;
   justify-content: space-around;
   align-items: center;
+
+  background: rgba(5, 10, 20, 0.65);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(255,255,255,0.08);
 }
 
 .menu div {
-  font-size: 24px;
-  opacity: .5;
+  flex: 1;
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   cursor: pointer;
+  opacity: 0.5;
+  transition: transform 0.15s ease, opacity 0.15s ease;
 }
 
-.menu .active {
+.menu div.active {
   opacity: 1;
-  transform: scale(1.2);
+  transform: scale(1.15);
 }
 /* ===== SEND BUTTON ===== */
 #send {
@@ -964,9 +976,9 @@ html, body {
 .menu,
 .menu * {
   -webkit-tap-highlight-color: transparent;
-  -webkit-focus-ring-color: transparent;
   outline: none;
 }
+
 
 /* конкретно пункты меню */
 .menu div,
@@ -1045,9 +1057,10 @@ html, body {
 
 /* размер самих иконок */
 .menu img {
-  width: 38px;     /* ← увеличь тут (36–44 идеально) */
-  height: auto;
-  filter: drop-shadow(0 0 8px rgba(0, 255, 180, 0.6));
+  width: 34px;      /* ← можно 32–38 */
+  height: 34px;
+  object-fit: contain;
+  display: block;
 }
 
 /* активная кнопка */
