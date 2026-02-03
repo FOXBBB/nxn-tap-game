@@ -101,7 +101,14 @@
 
    <label>Amount</label>
 <div class="row">
-  <input id="amount" type="number" placeholder="NXN amount">
+ <input
+  id="amount"
+  type="number"
+  min="100"
+  step="1"
+  placeholder="NXN amount (min 100, fee 10%)"
+/>
+
 </div>
 
     <button id="send">SEND</button>

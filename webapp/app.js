@@ -68,7 +68,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 async function syncUser() {
   if (!tgUser) return;
 
-  await fetch("/sync", {
+  await fetch(`${API}/sync`), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -77,12 +77,12 @@ async function syncUser() {
       first_name: tgUser.first_name || "",
       photo_url: tgUser.photo_url || ""
     })
-  });
+  };
 }
 
 // ================= LOAD MY STATE =================
 async function refreshMe() {
-  const res = await fetch(`/me/${userId}`);
+  const res = await fetch(`${API}/me/${userId}`);
   const data = await res.json();
 
   balance = Number(data.balance) || 0;   // 🔥 ВОТ ЭТОГО НЕ ХВАТАЛО
@@ -151,11 +151,11 @@ coin.onclick = async (e) => {
 
   try {
     const res = await fetch(`${API}/tap`
-, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: userId })
-    });
+      , {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: userId })
+      });
 
     const data = await res.json();
 
@@ -215,7 +215,7 @@ document.getElementById("send").onclick = async () => {
   }
 
   try {
-    const res = await fetch("/transfer", {
+    const res = await fetch(`${API}/transfer`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -238,9 +238,14 @@ document.getElementById("send").onclick = async () => {
     balance = data.balance;
     updateUI();
 
-    playTransferAnimation(amount);
-    box.classList.add("transfer-success");
-    showToast("Transfer successful", "ok");
+    balance = data.balance;
+    updateUI();
+
+    playTransferAnimation(data.received, data.burned);
+    showToast(
+      `Sent ${amount} NXN · Fee 10% · Received ${data.received}`,
+      "ok"
+    );
 
   } catch (e) {
     showToast("Server error", "err");
@@ -316,7 +321,7 @@ if (toggle && historyBox) {
 
 // ================= LEADERBOARD =================
 async function loadLeaderboard() {
-  const res = await fetch("/leaderboard");
+  const res = await fetch(`${API}/leaderboard`);
   const data = await res.json();
   if (!Array.isArray(data)) return;
 
@@ -403,7 +408,7 @@ setInterval(async () => {
   if (!userId) return;
 
   try {
-    const res = await fetch(`/me/${userId}`);
+    const res = await fetch(`${API}/me/${userId}`);
     const data = await res.json();
 
     energy = Number(data.energy) || energy;
@@ -517,11 +522,12 @@ async function payTON(amountTon, itemId) {
     alert("Payment cancelled or failed");
   }
 }
-function playTransferAnimation(amount) {
+function playTransferAnimation(received, burned) {
   const icon = document.querySelector("#balance .balance-icon img");
   if (!icon) return;
 
-  for (let i = 0; i < 8; i++) {
+  // 💎 coins to receiver
+  for (let i = 0; i < 6; i++) {
     const coin = document.createElement("div");
     coin.className = "transfer-coin";
     coin.innerText = "💎";
@@ -531,20 +537,20 @@ function playTransferAnimation(amount) {
     coin.style.top = rect.top + rect.height / 2 + "px";
 
     document.body.appendChild(coin);
-
     setTimeout(() => coin.remove(), 900);
   }
 
-  const minus = document.createElement("div");
-  minus.className = "plus-one";
-  minus.style.color = "#ff6b6b";
-  minus.innerText = `-${amount}`;
-  minus.style.left = "50%";
-  minus.style.top = "45%";
-  minus.style.transform = "translateX(-50%)";
+  // 🔥 burn label
+  const burn = document.createElement("div");
+  burn.className = "plus-one";
+  burn.style.color = "#ff6b6b";
+  burn.innerText = `-${burned} BURN`;
+  burn.style.left = "50%";
+  burn.style.top = "45%";
+  burn.style.transform = "translateX(-50%)";
 
-  document.body.appendChild(minus);
-  setTimeout(() => minus.remove(), 900);
+  document.body.appendChild(burn);
+  setTimeout(() => burn.remove(), 900);
 }
 
 

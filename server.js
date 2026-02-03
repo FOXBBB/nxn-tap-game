@@ -1,6 +1,6 @@
 const express = require("express");
-const fs = require("fs");
 const path = require("path");
+const { Pool } = require("pg");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -9,99 +9,143 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.static("webapp"));
 
-/* ================== USERS STORAGE ================== */
-const USERS_FILE = path.join(__dirname, "data", "users.json");
-
-function loadUsers() {
-  if (!fs.existsSync(USERS_FILE)) return {};
-  return JSON.parse(fs.readFileSync(USERS_FILE, "utf8"));
-}
-
-function saveUsers(users) {
-  fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
-}
-
-function getUser(userId) {
-  const users = loadUsers();
-
-  if (!users[userId]) {
-    users[userId] = {
-      id: userId,
-      balance: 0,
-      energy: 100,
-      maxEnergy: 100,
-      tapPower: 1,
-      createdAt: Date.now()
-    };
-    saveUsers(users);
-  }
-
-  return users[userId];
-}
-
-/* ================== GET USER ================== */
-app.get("/me/:id", (req, res) => {
-  const user = getUser(req.params.id);
-  res.json(user);
+/* ================== POSTGRES ================== */
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.DATABASE_URL
+    ? { rejectUnauthorized: false }
+    : false
 });
 
-/* ================== TAP ================== */
-app.post("/tap", (req, res) => {
+/* ================== INIT DB ================== */
+async function initDB() {
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS users (
+      id TEXT PRIMARY KEY,
+      balance BIGINT DEFAULT 0,
+      energy INT DEFAULT 100,
+      max_energy INT DEFAULT 100,
+      tap_power INT DEFAULT 1,
+      created_at TIMESTAMP DEFAULT NOW()
+    );
+  `);
+}
+initDB();
+
+/* ================== HELPERS ================== */
+async function getUser(id) {
+  const res = await pool.query(
+    "SELECT * FROM users WHERE id=$1",
+    [id]
+  );
+
+  if (res.rows.length) return res.rows[0];
+
+  const user = await pool.query(
+    `INSERT INTO users (id) VALUES ($1) RETURNING *`,
+    [id]
+  );
+
+  return user.rows[0];
+}
+
+/* ================== ROUTES ================== */
+
+app.post("/sync", async (req, res) => {
   const { id } = req.body;
   if (!id) return res.json({ ok: false });
-
-  const users = loadUsers();
-  const user = getUser(id);
-
-  if (user.energy <= 0) {
-    return res.json(user);
-  }
-
-  user.energy -= 1;
-  user.balance += user.tapPower;
-
-  users[id] = user;
-  saveUsers(users);
-
-  res.json(user);
+  await getUser(id);
+  res.json({ ok: true });
 });
 
-/* ================== TRANSFER ================== */
-app.post("/transfer", (req, res) => {
-  const { fromId, toId, amount } = req.body;
-  const MIN_TRANSFER = 100;
-
-  if (!fromId || !toId) {
-    return res.json({ ok: false, error: "INVALID USER ID" });
-  }
-
-  if (!amount || amount < MIN_TRANSFER) {
-    return res.json({ ok: false, error: "MIN TRANSFER = 100 NXN" });
-  }
-
-  const users = loadUsers();
-  const fromUser = getUser(fromId);
-  const toUser = getUser(toId);
-
-  if (fromUser.balance < amount) {
-    return res.json({ ok: false, error: "NOT ENOUGH BALANCE" });
-  }
-
-  fromUser.balance -= amount;
-  toUser.balance += amount;
-
-  users[fromId] = fromUser;
-  users[toId] = toUser;
-  saveUsers(users);
-
+app.get("/me/:id", async (req, res) => {
+  const user = await getUser(req.params.id);
   res.json({
-    ok: true,
-    balance: fromUser.balance
+    balance: Number(user.balance),
+    energy: user.energy,
+    maxEnergy: user.max_energy,
+    tapPower: user.tap_power
   });
 });
 
+app.post("/tap", async (req, res) => {
+  const { id } = req.body;
+  const user = await getUser(id);
 
-/* ================== START SERVER ================== */
+  if (user.energy <= 0) {
+    return res.json({
+      balance: Number(user.balance),
+      energy: user.energy,
+      maxEnergy: user.max_energy,
+      tapPower: user.tap_power
+    });
+  }
+
+  const updated = await pool.query(
+    `UPDATE users
+     SET energy = energy - 1,
+         balance = balance + tap_power
+     WHERE id=$1
+     RETURNING *`,
+    [id]
+  );
+
+  const u = updated.rows[0];
+
+  res.json({
+    balance: Number(u.balance),
+    energy: u.energy,
+    maxEnergy: u.max_energy,
+    tapPower: u.tap_power
+  });
+});
+
+app.post("/transfer", async (req, res) => {
+  const { fromId, toId, amount } = req.body;
+  const MIN = 100;
+  const FEE = 0.1;
+
+  if (!fromId || !toId || amount < MIN) {
+    return res.json({ ok: false, error: "MIN TRANSFER 100" });
+  }
+
+  const sender = await getUser(fromId);
+  if (Number(sender.balance) < amount) {
+    return res.json({ ok: false, error: "NOT ENOUGH BALANCE" });
+  }
+
+  const received = Math.floor(amount * (1 - FEE));
+  const burned = amount - received;
+
+  await pool.query("BEGIN");
+
+  try {
+    await pool.query(
+      "UPDATE users SET balance = balance - $1 WHERE id=$2",
+      [amount, fromId]
+    );
+
+    await pool.query(
+      "UPDATE users SET balance = balance + $1 WHERE id=$2",
+      [received, toId]
+    );
+
+    await pool.query("COMMIT");
+
+    res.json({
+      ok: true,
+      balance: Number(sender.balance) - amount,
+      received,
+      burned
+    });
+
+  } catch (e) {
+    await pool.query("ROLLBACK");
+    res.json({ ok: false, error: "TRANSFER FAILED" });
+  }
+});
+
+/* ================== START ================== */
 app.listen(PORT, () => {
-  console.log("NXN server running on port", PORT);
+  console.log("NXN server running");
 });
