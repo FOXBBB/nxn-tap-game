@@ -43,13 +43,6 @@ body {
   margin-bottom: 16px;
 }
 
-.glass {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(12px);
-  border-radius: 18px;
-}
-
 /* ===== LEADERBOARD ===== */
 .lb-header {
   text-align: center;
@@ -231,7 +224,6 @@ body {
   align-items: center;
 
   background: rgba(5, 10, 20, 0.65);
-  backdrop-filter: blur(12px);
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
@@ -1188,7 +1180,6 @@ body {
   background: rgba(10, 30, 25, 0.55);
   border: 1px solid rgba(0, 255, 180, 0.25);
   border-radius: 20px;
-  backdrop-filter: blur(14px);
   box-shadow:
     0 0 24px rgba(0, 255, 180, 0.15),
     inset 0 0 12px rgba(255,255,255,0.03);
