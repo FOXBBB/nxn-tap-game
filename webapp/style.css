@@ -238,15 +238,21 @@ body {
 .menu div {
   flex: 1;
   height: 100%;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
   position: relative;
   cursor: pointer;
   opacity: 0.5;
-  transition: transform 0.15s ease, opacity 0.15s ease;
 }
+.menu div img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+}
+
 
 .menu div.active {
   opacity: 1;
@@ -1151,4 +1157,8 @@ body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}.menu,
+.menu * {
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
 }
