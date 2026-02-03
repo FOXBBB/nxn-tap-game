@@ -89,19 +89,28 @@ async function refreshMe() {
 
 // ================= UI =================
 function updateUI() {
-  const b = document.getElementById("balance");
+  const value = document.querySelector(".balance-value");
+  const hud = document.getElementById("balance");
   const e = document.getElementById("energy");
 
-const value = document.querySelector(".balance-value");
-if (value) value.innerText = formatNumber(balance);
+  if (value) {
+    const newVal = formatNumber(balance);
 
-  if (e) e.innerText = `Energy: ${energy} / ${maxEnergy}`;
-  if (energy <= 5) {
-    e.classList.add("energy-low");
-  } else {
-    e.classList.remove("energy-low");
+    if (value.innerText !== newVal && hud) {
+      hud.classList.add("pulse");
+      setTimeout(() => hud.classList.remove("pulse"), 260);
+    }
+
+    value.innerText = newVal;
+  }
+
+  if (e) {
+    e.innerText = `Energy: ${energy} / ${maxEnergy}`;
+    if (energy <= 5) e.classList.add("energy-low");
+    else e.classList.remove("energy-low");
   }
 }
+
 
 
 const coin = document.getElementById("coin");
