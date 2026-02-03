@@ -193,6 +193,24 @@ document.getElementById("send").onclick = async () => {
       return;
     }
 
+if (amount < 100) {
+  const box = document.querySelector(".transfer-box");
+  if (box) {
+    box.classList.add("transfer-error");
+    setTimeout(() => box.classList.remove("transfer-error"), 450);
+  }
+
+  const toast = document.createElement("div");
+  toast.className = "transfer-toast error";
+  toast.innerText = "Minimum transfer is 100 NXN";
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 1600);
+
+  btn.disabled = false;
+  return;
+}
+
+
    const res = await fetch(`${API_URL}/transfer`, {
   method: "POST",
   headers: { "Content-Type": "application/json" },
@@ -224,6 +242,7 @@ document.getElementById("send").onclick = async () => {
 
     await refreshMe();
     updateUI();
+
 
     // ===== TRANSFER SUCCESS UI =====
     const box = document.querySelector(".transfer-box");

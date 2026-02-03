@@ -121,9 +121,23 @@ router.post("/transfer", (req, res) => {
   toId = String(toId);
   amount = Number(amount);
 
-  if (!fromId || !toId || !amount || amount <= 0) {
-    return res.json({ ok: false, error: "Invalid transfer data" });
-  }
+  const MIN_TRANSFER = 100;
+
+if (!fromId || !toId) {
+  return res.json({ ok: false, error: "Invalid user ID" });
+}
+
+if (!Number.isFinite(amount)) {
+  return res.json({ ok: false, error: "Invalid amount" });
+}
+
+if (amount < MIN_TRANSFER) {
+  return res.json({
+    ok: false,
+    error: `Minimum transfer is ${MIN_TRANSFER} NXN`
+  });
+}
+
 
   const db = loadDB();
   if (!db.transfers) db.transfers = [];

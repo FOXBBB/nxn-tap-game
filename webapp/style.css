@@ -1175,3 +1175,49 @@ body {
   font-weight: 900;
   line-height: 1;
 }
+.transfer-box.transfer-success {
+  animation: successPulse 0.6s ease;
+  box-shadow: 0 0 20px rgba(0, 255, 150, 0.6);
+}
+
+.transfer-box.transfer-error {
+  animation: errorShake 0.45s ease;
+  box-shadow: 0 0 20px rgba(255, 80, 80, 0.6);
+}
+
+@keyframes successPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+@keyframes errorShake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  50% { transform: translateX(6px); }
+  75% { transform: translateX(-4px); }
+  100% { transform: translateX(0); }
+}
+
+.transfer-toast {
+  position: fixed;
+  bottom: 18%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 18px;
+  border-radius: 12px;
+  font-weight: 600;
+  z-index: 9999;
+}
+
+.transfer-toast.success {
+  background: rgba(0, 255, 150, 0.15);
+  color: #00ff9d;
+  box-shadow: 0 0 12px rgba(0, 255, 150, 0.5);
+}
+
+.transfer-toast.error {
+  background: rgba(255, 80, 80, 0.15);
+  color: #ff6b6b;
+  box-shadow: 0 0 12px rgba(255, 80, 80, 0.5);
+}
