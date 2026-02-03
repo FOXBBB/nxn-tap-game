@@ -10,7 +10,6 @@ let tapPower = 1;
 let canTap = false;
 let tonConnectUI = null;
 
-const API_URL = "https://nxn-tap-game.onrender.com";
 
 
 // ================= INIT =================
@@ -60,7 +59,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 async function syncUser() {
   if (!tgUser) return;
 
-  await fetch("/sync", {
+  await fetch("/api/sync", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -74,7 +73,7 @@ async function syncUser() {
 
 // ================= LOAD MY STATE =================
 async function refreshMe() {
-  const res = await fetch(`/me/${userId}`);
+  const res = await fetch(`/api/me/${userId}`);
   const data = await res.json();
 
   balance = Number(data.balance) || 0;   // 🔥 ВОТ ЭТОГО НЕ ХВАТАЛО
@@ -142,7 +141,7 @@ coin.onclick = async (e) => {
   updateUI();
 
   try {
-    const res = await fetch("/tap", {
+    const res = await fetch("/api/tap", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id: userId })
@@ -211,7 +210,7 @@ if (amount < 100) {
 }
 
 
-   const res = await fetch(`${API_URL}/transfer`, {
+   const res = await fetch("/api/transfer", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
@@ -281,7 +280,7 @@ if (amount < 100) {
 async function loadHistory() {
   if (!userId) return;
 
-  const res = await fetch(`/history/${userId}`);
+  const res = await fetch(`/api/history/${userId}`);
   const data = await res.json();
 
   const box = document.getElementById("history");
@@ -341,7 +340,7 @@ if (toggle && historyBox) {
 
 // ================= LEADERBOARD =================
 async function loadLeaderboard() {
-  const res = await fetch("/leaderboard");
+  const res = await fetch("/api/leaderboard");
   const data = await res.json();
   if (!Array.isArray(data)) return;
 
@@ -428,7 +427,7 @@ setInterval(async () => {
   if (!userId) return;
 
   try {
-    const res = await fetch(`/me/${userId}`);
+    const res = await fetch(`/api/me/${userId}`);
     const data = await res.json();
 
     energy = Number(data.energy) || energy;
@@ -464,7 +463,7 @@ if (stars) {
 }
 async function buyNXN(itemId) {
   try {
-    const res = await fetch("/buy-nxn", {
+    const res = await fetch("/api/buy-nxn", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -523,7 +522,7 @@ async function payTON(amountTon, itemId) {
     setTimeout(() => receipt.remove(), 1600);
 
     // подтверждение на сервер
-    await fetch("/ton-confirm", {
+    await fetch("/api/ton-confirm", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

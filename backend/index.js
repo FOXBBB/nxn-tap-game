@@ -12,15 +12,22 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// API
-app.use("/", routes);
+// 🔥 API ТОЛЬКО С ПРЕФИКСОМ
+app.use("/api", routes);
 
-// ⚠️ ВАЖНО: путь к webapp ОТНОСИТЕЛЬНО backend
+// 🔥 Frontend
 app.use(
   express.static(
     path.join(__dirname, "../webapp")
   )
 );
+
+// 🔥 SPA fallback (очень важно)
+app.get("*", (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "../webapp/index.html")
+  );
+});
 
 const PORT = process.env.PORT || 3000;
 
