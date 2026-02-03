@@ -436,42 +436,45 @@ async function buyNXN(itemId) {
 }
 
 async function payTON(amountTon, itemId) {
-  if (!tonConnectUI || !tonConnectUI.connected) {
-    tonConnectUI.openModal();
+  if (!tonConnectUI) return;
+
+  if (!tonConnectUI.connected) {
+    await tonConnectUI.openModal();
     return;
   }
 
-  const amountNano = Math.floor(amountTon * 1e9);
+  const amountNano = Math.floor(amountTon * 1e9).toString();
 
   try {
     const tx = await tonConnectUI.sendTransaction({
-      validUntil: Math.floor(Date.now() / 1000) + 300,
+      validUntil: Math.floor(Date.now() / 1000) + 600,
       messages: [
         {
           address: "UQDg0qiBTFbmCc6OIaeCSF0tL6eSX8cC56PYTF44Ob8hDqWf",
-          amount: amountNano.toString(),
-          payload: itemId
+          amount: amountNano
+          // ❌ payload УБРАЛИ полностью
         }
       ]
     });
 
-    // 🔥 confirm on backend
+    // подтверждаем на backend (пока без on-chain verify)
     await fetch("/buy-ton", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         id: userId,
         itemId,
-        txHash: tx.boc || "ok"
+        txHash: tx.boc || "pending"
       })
     });
 
-    alert("Purchase activated!");
+    alert("Payment sent. Activating bonus...");
     await refreshMe();
     updateUI();
   } catch (e) {
-    console.error(e);
-    alert("Payment cancelled");
+    console.error("TON error:", e);
+    alert("Payment cancelled or failed");
   }
 }
+
 

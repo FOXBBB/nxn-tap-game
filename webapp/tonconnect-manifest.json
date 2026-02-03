@@ -1,5 +1,7 @@
 {
-  "url": "https://YOUR_RENDER_DOMAIN",
+  "url": "https://nxn-tap-game.onrender.com",
   "name": "NXN Game",
-  "iconUrl": "https://YOUR_RENDER_DOMAIN/logo.png"
+  "iconUrl": "https://nxn-tap-game.onrender.com/logo.png",
+  "termsOfUseUrl": "https://nxn-tap-game.onrender.com",
+  "privacyPolicyUrl": "https://nxn-tap-game.onrender.com"
 }
