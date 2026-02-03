@@ -1523,3 +1523,20 @@ body {
 #balance {
   backdrop-filter: none !important;
 }
+#balance {
+  position: relative;
+  z-index: 10;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  isolation: isolate;
+}
+#balance,
+#balance * {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  filter: none !important;
+}
+#balance {
+  background-clip: padding-box;
+  will-change: transform;
+}
