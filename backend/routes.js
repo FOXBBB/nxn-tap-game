@@ -3,6 +3,32 @@ import { query } from "./db.js";
 
 const router = express.Router();
 
+
+async function getCurrentRewardCycle() {
+  const res = await query(`
+    SELECT *
+    FROM reward_cycles
+    ORDER BY id DESC
+    LIMIT 1
+  `);
+
+  if (res.rowCount === 0) return null;
+
+  const c = res.rows[0];
+  const now = new Date();
+
+  let state = "STAKE_ACTIVE";
+  if (now > c.stake_end_at && now <= c.claim_end_at) {
+    state = "CLAIM_ACTIVE";
+  }
+  if (now > c.claim_end_at) {
+    state = "RESET";
+  }
+
+  return { ...c, state };
+}
+
+
 async function applyBoosts(user) {
   const now = new Date();
 
@@ -430,6 +456,150 @@ router.post("/buy-nxn", async (req, res) => {
     maxEnergy: max_energy
   });
 });
+
+router.get("/reward/state", async (req, res) => {
+  const cycle = await getCurrentRewardCycle();
+  if (!cycle) {
+    return res.json({ active: false });
+  }
+
+  res.json({
+    state: cycle.state,
+    stakeEndsAt: cycle.stake_end_at,
+    claimEndsAt: cycle.claim_end_at
+  });
+});
+
+router.post("/reward/stake", async (req, res) => {
+  const { id, amount } = req.body;
+
+  const cycle = await getCurrentRewardCycle();
+  if (!cycle || cycle.state !== "STAKE_ACTIVE") {
+    return res.json({ ok: false, error: "Stake is not active" });
+  }
+
+  if (amount < 50000 || amount > 1000000) {
+    return res.json({ ok: false, error: "Invalid stake amount" });
+  }
+
+  const userRes = await query(
+    `SELECT balance, last_stake_change FROM users WHERE telegram_id = $1`,
+    [id]
+  );
+
+  if (userRes.rowCount === 0) {
+    return res.json({ ok: false, error: "User not found" });
+  }
+
+  const user = userRes.rows[0];
+
+  if (user.balance < amount) {
+    return res.json({ ok: false, error: "Not enough NXN" });
+  }
+
+  // cooldown 60s
+  if (
+    user.last_stake_change &&
+    Date.now() - new Date(user.last_stake_change).getTime() < 60000
+  ) {
+    return res.json({ ok: false, error: "Cooldown active" });
+  }
+
+  await query("BEGIN");
+
+  await query(
+    `
+    UPDATE users
+    SET balance = balance - $1,
+        last_stake_change = NOW()
+    WHERE telegram_id = $2
+    `,
+    [amount, id]
+  );
+
+  await query(
+    `
+    INSERT INTO reward_stakes (cycle_id, telegram_id, stake_amount)
+    VALUES ($1, $2, $3)
+    ON CONFLICT (cycle_id, telegram_id)
+    DO UPDATE SET
+      stake_amount = EXCLUDED.stake_amount,
+      updated_at = NOW()
+    `,
+    [cycle.id, id, amount]
+  );
+
+  await query("COMMIT");
+
+  res.json({ ok: true });
+});
+
+router.get("/reward/leaderboard", async (req, res) => {
+  const cycle = await getCurrentRewardCycle();
+  if (!cycle) return res.json([]);
+
+  const result = await query(
+    `
+    SELECT
+      rs.telegram_id,
+      rs.stake_amount,
+      u.name,
+      u.avatar
+    FROM reward_stakes rs
+    JOIN users u ON u.telegram_id = rs.telegram_id
+    WHERE rs.cycle_id = $1
+    ORDER BY rs.stake_amount DESC
+    LIMIT 100
+    `,
+    [cycle.id]
+  );
+
+  res.json(result.rows);
+});
+
+router.post("/reward/claim", async (req, res) => {
+  const { id, wallet } = req.body;
+
+  const cycle = await getCurrentRewardCycle();
+  if (!cycle || cycle.state !== "CLAIM_ACTIVE") {
+    return res.json({ ok: false, error: "Claim not active" });
+  }
+
+  const all = await query(
+    `
+    SELECT telegram_id
+    FROM reward_stakes
+    WHERE cycle_id = $1
+    ORDER BY stake_amount DESC
+    `,
+    [cycle.id]
+  );
+
+  const rank =
+    all.rows.findIndex(r => r.telegram_id === id) + 1;
+
+  if (rank === 0 || rank > 500) {
+    return res.json({ ok: false, error: "Not eligible" });
+  }
+
+  let reward = 0;
+  if (rank <= 10) reward = 10;
+  else if (rank <= 50) reward = 5;
+  else if (rank <= 200) reward = 3;
+  else reward = 1;
+
+  await query(
+    `
+    INSERT INTO reward_claims
+      (cycle_id, telegram_id, reward_amount, wallet)
+    VALUES ($1, $2, $3, $4)
+    `,
+    [cycle.id, id, reward, wallet]
+  );
+
+  res.json({ ok: true, reward });
+});
+
 
 
 export default router;
