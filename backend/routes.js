@@ -458,40 +458,46 @@ router.post("/buy-nxn", async (req, res) => {
 });
 
 /* ===== REWARD EVENT STATE ===== */
-router.get("/reward/state/:id", async (req, res) => {
-  const { id } = req.params;
+router.get("/reward/state/:userId", async (req, res) => {
+  const { userId } = req.params;
 
   const cycle = await getCurrentRewardCycle();
   if (!cycle) {
     return res.json({ active: false });
   }
 
-  const userRes = await query(
+  // текущий стейк пользователя в этом цикле
+  const stakeRes = await query(
     `
-    SELECT
-      balance,
-      reward_stake
-    FROM users
+    SELECT COALESCE(SUM(amount), 0) AS stake
+    FROM reward_stakes
     WHERE telegram_id = $1
+      AND cycle_id = $2
     `,
-    [String(id)]
+    [userId, cycle.id]
   );
 
-  if (userRes.rowCount === 0) {
-    return res.json({ active: false });
-  }
+  const userStake = Number(stakeRes.rows[0].stake || 0);
 
-  const user = userRes.rows[0];
+  // баланс пользователя
+  const userRes = await query(
+    `SELECT balance FROM users WHERE telegram_id = $1`,
+    [userId]
+  );
+
+  const balance = userRes.rowCount
+    ? Number(userRes.rows[0].balance)
+    : 0;
 
   res.json({
-    active: true,
     state: cycle.state,
     stakeEndsAt: cycle.stake_end_at,
     claimEndsAt: cycle.claim_end_at,
-    userStake: Number(user.reward_stake || 0),
-    balance: Number(user.balance)
+    userStake,
+    balance
   });
 });
+
 
 
 
