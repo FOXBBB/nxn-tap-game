@@ -468,14 +468,15 @@ router.get("/reward/state/:userId", async (req, res) => {
 
   // текущий стейк пользователя в этом цикле
   const stakeRes = await query(
-    `
-    SELECT COALESCE(SUM(amount), 0) AS stake
-    FROM reward_stakes
-    WHERE telegram_id = $1
-      AND cycle_id = $2
-    `,
-    [userId, cycle.id]
-  );
+  `
+  SELECT COALESCE(SUM(stake_amount), 0) AS stake
+  FROM reward_stakes
+  WHERE telegram_id = $1
+    AND cycle_id = $2
+  `,
+  [userId, cycle.id]
+);
+
 
   const userStake = Number(stakeRes.rows[0].stake || 0);
 

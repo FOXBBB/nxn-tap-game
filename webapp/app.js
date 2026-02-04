@@ -108,7 +108,6 @@ async function loadRewardState() {
   const res = await fetch(`/api/reward/state/${userId}`);
   const data = await res.json();
 
-  // ⛔️ Reward event не активен
   if (data.active === false) {
     rewardState = null;
     currentStake = 0;
@@ -121,17 +120,15 @@ async function loadRewardState() {
     const btn = document.getElementById("stake-confirm");
     btn.disabled = true;
     btn.innerText = "Reward Event not active";
-
     return;
   }
 
-  // ✅ Reward event активен
   rewardState = data.state;
   rewardStakeEndsAt = new Date(data.stakeEndsAt);
   rewardClaimEndsAt = new Date(data.claimEndsAt);
   currentStake = Number(data.userStake || 0);
-  balance = Number(data.balance || 0);
 
+  // ✅ используем УЖЕ СУЩЕСТВУЮЩИЙ balance
   document.getElementById("stake-balance").innerText =
     formatNumber(balance);
 
@@ -140,6 +137,7 @@ async function loadRewardState() {
 
   updateStakeButton();
 }
+
 
 
 
