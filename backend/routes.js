@@ -525,11 +525,7 @@ router.post("/reward/stake", async (req, res) => {
 
   const user = userRes.rows[0];
 
-  if (user.balance < amount) {
-    return res.json({ ok: false, error: "Not enough NXN" });
-  }
-
-  // cooldown 60s
+  // cooldown 60s (ОСТАВЛЯЕМ)
   if (
     user.last_stake_change &&
     Date.now() - new Date(user.last_stake_change).getTime() < 60000
@@ -537,8 +533,13 @@ router.post("/reward/stake", async (req, res) => {
     return res.json({ ok: false, error: "Cooldown active" });
   }
 
+  if (user.balance < amount) {
+    return res.json({ ok: false, error: "Not enough NXN" });
+  }
+
   await query("BEGIN");
 
+  // списываем баланс
   await query(
     `
     UPDATE users
@@ -549,14 +550,11 @@ router.post("/reward/stake", async (req, res) => {
     [amount, id]
   );
 
+  // ДОБАВЛЯЕМ СТЕЙК (НЕ ЗАМЕНЯЕМ, А НАКАПЛИВАЕМ)
   await query(
     `
     INSERT INTO reward_stakes (cycle_id, telegram_id, stake_amount)
     VALUES ($1, $2, $3)
-    ON CONFLICT (cycle_id, telegram_id)
-    DO UPDATE SET
-      stake_amount = EXCLUDED.stake_amount,
-      updated_at = NOW()
     `,
     [cycle.id, id, amount]
   );
@@ -565,6 +563,9 @@ router.post("/reward/stake", async (req, res) => {
 
   res.json({ ok: true });
 });
+
+
+
 
 router.get("/reward/leaderboard", async (req, res) => {
   const cycle = await getCurrentRewardCycle();

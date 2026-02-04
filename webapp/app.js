@@ -136,6 +136,7 @@ async function loadRewardState() {
     formatNumber(currentStake);
 
   updateStakeButton();
+  updateRewardTimer();
 }
 
 
@@ -566,11 +567,6 @@ function updateStakeButton() {
     return;
   }
 
-  if (currentStake > 0) {
-    btn.disabled = true;
-    btn.innerText = "Already Participated";
-    return;
-  }
 
   btn.disabled = false;
   btn.innerText = "Participate in Reward Event";
@@ -745,6 +741,8 @@ function formatNumber(n) {
   if (n >= 1e3) return (n / 1e3).toFixed(1).replace(".0", "") + "K";
   return n.toString();
 }
+
+
 function formatRemaining(ms) {
   if (ms <= 0) return "Expired";
 
@@ -758,6 +756,31 @@ function formatRemaining(ms) {
   if (hours > 0) return `${hours}h ${minutes}m`;
   return `${minutes}m ${seconds}s`;
 }
+
+/* ===== REWARD TIMER ===== */
+function updateRewardTimer() {
+  const timerEl = document.getElementById("stake-timer");
+  if (!timerEl) return;
+
+  let end;
+  if (rewardState === "STAKE_ACTIVE") {
+    end = rewardStakeEndsAt;
+  } else if (rewardState === "CLAIM_ACTIVE") {
+    end = rewardClaimEndsAt;
+  } else {
+    timerEl.innerText = "New cycle soon";
+    return;
+  }
+
+  const diff = new Date(end).getTime() - Date.now();
+  timerEl.innerText = "⏳ " + formatRemaining(diff);
+}
+
+setInterval(() => {
+  if (rewardState) updateRewardTimer();
+}, 1000);
+
+
 function updateBoostTimers() {
   const now = Date.now();
 

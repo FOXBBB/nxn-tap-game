@@ -96,14 +96,23 @@
 <!-- STAKE / REWARD EVENT -->
 <section id="stake-screen" class="screen hidden">
 
-  <h2>Reward Event</h2>
+<div class="stake-card glass">
 
-  <div class="stake-balance">
-    Balance: <b id="stake-balance">0</b> NXN
+  <div class="stake-header">
+    <h2>Reward Event</h2>
+    <div id="stake-timer" class="stake-timer">⏳ Loading...</div>
   </div>
 
-  <div class="stake-current">
-    Your stake: <b id="stake-current">0</b> NXN
+  <div class="stake-stats">
+    <div class="stake-stat">
+      <span class="label">Balance</span>
+      <span class="value" id="stake-balance">0 NXN</span>
+    </div>
+
+    <div class="stake-stat">
+      <span class="label">Your Stake</span>
+      <span class="value accent" id="stake-current">0 NXN</span>
+    </div>
   </div>
 
   <div class="stake-amounts">
@@ -113,18 +122,20 @@
     <button data-amount="200000">200k</button>
     <button data-amount="250000">250k</button>
     <button data-amount="300000">300k</button>
-    <button data-amount="max">MAX</button>
+    <button data-amount="max" class="max">MAX</button>
   </div>
 
   <button id="stake-confirm" class="stake-confirm">
-    Participate in Reward Event
+    Stake NXN
   </button>
 
   <div class="stake-warning">
-    • Staked NXN will be consumed<br>
-    • Rewards are limited and not guaranteed<br>
-    • Participation is optional
+    <p>• Staked NXN will be consumed</p>
+    <p>• Rewards are limited and not guaranteed</p>
+    <p>• Participation is optional</p>
   </div>
+
+</div>
 
 </section>
 
