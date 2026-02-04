@@ -548,57 +548,49 @@ if (stakeConfirm) {
 
     const data = await res.json();
 
-   if (!data.ok) {
+     if (!data.ok) {
 
-  // ===== COOLDOWN ANIMATION =====
-  if (data.error === "Cooldown active") {
+      if (data.error === "Cooldown active") {
+        const toast = document.createElement("div");
+        toast.className = "transfer-toast error";
+        toast.innerText = "⏳ Please wait 60 seconds";
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 1800);
+
+        const screen = document.getElementById("stake-screen");
+        screen.classList.add("stake-cooldown");
+        setTimeout(() => screen.classList.remove("stake-cooldown"), 400);
+
+        return;
+      }
+
+      alert(data.error || "Stake failed");
+      return;
+    }
+
+    // ===== ✅ SUCCESS =====
+    const screen = document.getElementById("stake-screen");
+    screen.classList.add("stake-success");
+    setTimeout(() => screen.classList.remove("stake-success"), 600);
+
+    const fly = document.createElement("div");
+    fly.className = "stake-fly";
+    fly.innerText = `-${formatNumber(selectedStakeAmount)} NXN`;
+    document.body.appendChild(fly);
+    setTimeout(() => fly.remove(), 900);
 
     const toast = document.createElement("div");
-    toast.className = "transfer-toast error";
-    toast.innerText = "⏳ Please wait 60 seconds";
+    toast.className = "transfer-toast success";
+    toast.innerText = "✅ Stake successful";
     document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 1800);
-
-    // shake effect
-    const screen = document.getElementById("stake-screen");
-    screen.classList.add("stake-cooldown");
-    setTimeout(() => screen.classList.remove("stake-cooldown"), 400);
-
-    return;
-  }
-
-  // другие ошибки
-  alert(data.error || "Stake failed");
-  return;
-}
-
+    setTimeout(() => toast.remove(), 1600);
 
     await refreshMe();
     await loadRewardState();
+
   };
 }
 
-// ===== STAKE SUCCESS ANIMATION =====
-const screen = document.getElementById("stake-screen");
-
-// glow pulse
-screen.classList.add("stake-success");
-setTimeout(() => screen.classList.remove("stake-success"), 600);
-
-// flying NXN animation
-const fly = document.createElement("div");
-fly.className = "stake-fly";
-fly.innerText = `-${formatNumber(selectedStakeAmount)} NXN`;
-document.body.appendChild(fly);
-
-setTimeout(() => fly.remove(), 900);
-
-// success toast
-const toast = document.createElement("div");
-toast.className = "transfer-toast success";
-toast.innerText = "✅ Stake successful";
-document.body.appendChild(toast);
-setTimeout(() => toast.remove(), 1600);
 
 
 function updateStakeButton() {
