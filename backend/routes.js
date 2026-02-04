@@ -457,18 +457,43 @@ router.post("/buy-nxn", async (req, res) => {
   });
 });
 
-router.get("/reward/state", async (req, res) => {
+/* ===== REWARD EVENT STATE ===== */
+router.get("/reward/state/:id", async (req, res) => {
+  const { id } = req.params;
+
   const cycle = await getCurrentRewardCycle();
   if (!cycle) {
     return res.json({ active: false });
   }
 
+  const userRes = await query(
+    `
+    SELECT
+      balance,
+      reward_stake
+    FROM users
+    WHERE telegram_id = $1
+    `,
+    [String(id)]
+  );
+
+  if (userRes.rowCount === 0) {
+    return res.json({ active: false });
+  }
+
+  const user = userRes.rows[0];
+
   res.json({
+    active: true,
     state: cycle.state,
     stakeEndsAt: cycle.stake_end_at,
-    claimEndsAt: cycle.claim_end_at
+    claimEndsAt: cycle.claim_end_at,
+    userStake: Number(user.reward_stake || 0),
+    balance: Number(user.balance)
   });
 });
+
+
 
 router.post("/reward/stake", async (req, res) => {
   const { id, amount } = req.body;
