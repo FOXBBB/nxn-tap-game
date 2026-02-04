@@ -113,12 +113,14 @@ async function loadRewardState() {
   rewardClaimEndsAt = new Date(data.claimEndsAt);
   currentStake = Number(data.userStake || 0);
 
-  // UI
+  balance = Number(data.balance || 0); // ✅ ВОТ ЭТОГО НЕ ХВАТАЛО
+
   document.getElementById("stake-balance").innerText = formatNumber(balance);
   document.getElementById("stake-current").innerText = formatNumber(currentStake);
 
   updateStakeButton();
 }
+
 
 
 // ================= UI =================
