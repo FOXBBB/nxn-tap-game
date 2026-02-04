@@ -107,7 +107,7 @@ async function refreshMe() {
   maxEnergy = Number(data.maxEnergy) || 100;
   tapPower = Number(data.tapPower) || tapPower;
 
- if (data.boosts) {
+  if (data.boosts) {
     boosts = data.boosts;
     updateBoostTimers();
   }
@@ -161,7 +161,7 @@ function updateUI() {
   const e = document.getElementById("energy");
 
   if (value) {
-    const newVal = formatNumber(balance);
+    const newVal = balance.toLocaleString("en-US");
 
     if (value.innerText !== newVal && hud) {
       hud.classList.add("pulse");
@@ -219,13 +219,13 @@ coin.onclick = async (e) => {
     const data = await res.json();
 
     // 🔥 OFFLINE EARN TOAST
-if (data.offlineEarned && data.offlineEarned > 0) {
-  const toast = document.createElement("div");
-  toast.className = "transfer-toast success";
-  toast.innerText = `+${data.offlineEarned} NXN (offline)`;
-  document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 2200);
-}
+    if (data.offlineEarned && data.offlineEarned > 0) {
+      const toast = document.createElement("div");
+      toast.className = "transfer-toast success";
+      toast.innerText = `+${data.offlineEarned} NXN (offline)`;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 2200);
+    }
 
 
     balance = Number(data.balance) || balance;
@@ -429,7 +429,7 @@ async function loadLeaderboard() {
   if (data[0]) {
     document.querySelector(".lb-top1 .name").innerText = data[0].name;
     document.querySelector(".lb-top1 .score").innerText =
-  formatNumber(data[0].balance);
+      formatNumber(data[0].balance);
     document.querySelector(".lb-top1 .avatar").src =
       data[0].avatar || placeholder;
   }
@@ -440,7 +440,7 @@ async function loadLeaderboard() {
   if (data[1] && cards[0]) {
     cards[0].querySelector(".name").innerText = data[1].name;
     cards[0].querySelector(".score").innerText =
-  formatNumber(data[1].balance);
+      formatNumber(data[1].balance);
     cards[0].querySelector(".avatar").src =
       data[1].avatar || placeholder;
   }
@@ -448,7 +448,7 @@ async function loadLeaderboard() {
   if (data[2] && cards[1]) {
     cards[1].querySelector(".name").innerText = data[2].name;
     cards[1].querySelector(".score").innerText =
-  formatNumber(data[2].balance);
+      formatNumber(data[2].balance);
     cards[1].querySelector(".avatar").src =
       data[2].avatar || placeholder;
   }
@@ -548,9 +548,9 @@ if (stakeConfirm) {
     }
 
     if (selectedStakeAmount < 10000) {
-  alert("Minimum stake is 10,000 NXN");
-  return;
-}
+      alert("Minimum stake is 10,000 NXN");
+      return;
+    }
 
 
     const res = await fetch("/api/reward/stake", {
@@ -564,7 +564,7 @@ if (stakeConfirm) {
 
     const data = await res.json();
 
-     if (!data.ok) {
+    if (!data.ok) {
 
       if (data.error === "Cooldown active") {
         const toast = document.createElement("div");

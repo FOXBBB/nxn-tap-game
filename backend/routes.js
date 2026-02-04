@@ -403,36 +403,36 @@ router.post("/buy-nxn", async (req, res) => {
   let price = 0;
 
   if (itemId === "tap_plus_1") {
-  price = 30000;
+    price = 30000;
 
-  // ⛔ защита от повторной покупки
-  if (tap_power >= 2) {
-    return res.json({ ok: false, error: "Tap Power already purchased" });
+    // ⛔ защита от повторной покупки
+    if (tap_power >= 2) {
+      return res.json({ ok: false, error: "Tap Power already purchased" });
+    }
+
+    // ⛔ недостаточно баланса
+    if (balance < price) {
+      return res.json({ ok: false, error: "Not enough NXN" });
+    }
+
+    tap_power += 1;
   }
-
-  // ⛔ недостаточно баланса
-  if (balance < price) {
-    return res.json({ ok: false, error: "Not enough NXN" });
-  }
-
-  tap_power += 1;
-}
 
 
   else if (itemId === "energy_plus_100") {
-  price = 50000;
+    price = 50000;
 
-  // ⛔ защита от повторной покупки
-  if (max_energy >= 200) {
-    return res.json({ ok: false, error: "Energy upgrade already purchased" });
+    // ⛔ защита от повторной покупки
+    if (max_energy >= 200) {
+      return res.json({ ok: false, error: "Energy upgrade already purchased" });
+    }
+
+    if (balance < price) {
+      return res.json({ ok: false, error: "Not enough NXN" });
+    }
+
+    max_energy += 100;
   }
-
-  if (balance < price) {
-    return res.json({ ok: false, error: "Not enough NXN" });
-  }
-
-  max_energy += 100;
-}
 
   else {
     return res.json({ ok: false, error: "Unknown item" });
@@ -468,14 +468,14 @@ router.get("/reward/state/:userId", async (req, res) => {
 
   // текущий стейк пользователя в этом цикле
   const stakeRes = await query(
-  `
+    `
   SELECT COALESCE(SUM(stake_amount), 0) AS stake
   FROM reward_stakes
   WHERE telegram_id = $1
     AND cycle_id = $2
   `,
-  [userId, cycle.id]
-);
+    [userId, cycle.id]
+  );
 
 
   const userStake = Number(stakeRes.rows[0].stake || 0);
