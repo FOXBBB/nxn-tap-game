@@ -578,6 +578,29 @@ if (stakeConfirm) {
   };
 }
 
+// ===== STAKE SUCCESS ANIMATION =====
+const screen = document.getElementById("stake-screen");
+
+// glow pulse
+screen.classList.add("stake-success");
+setTimeout(() => screen.classList.remove("stake-success"), 600);
+
+// flying NXN animation
+const fly = document.createElement("div");
+fly.className = "stake-fly";
+fly.innerText = `-${formatNumber(selectedStakeAmount)} NXN`;
+document.body.appendChild(fly);
+
+setTimeout(() => fly.remove(), 900);
+
+// success toast
+const toast = document.createElement("div");
+toast.className = "transfer-toast success";
+toast.innerText = "✅ Stake successful";
+document.body.appendChild(toast);
+setTimeout(() => toast.remove(), 1600);
+
+
 function updateStakeButton() {
   const btn = document.getElementById("stake-confirm");
 
@@ -608,12 +631,6 @@ fly.style.top = "55%";
 fly.style.transform = "translateX(-50%)";
 document.body.appendChild(fly);
 setTimeout(() => fly.remove(), 900);
-
-// glow effect
-const screen = document.getElementById("stake-screen");
-screen.classList.add("stake-success");
-setTimeout(() => screen.classList.remove("stake-success"), 500);
-
 
 
 
