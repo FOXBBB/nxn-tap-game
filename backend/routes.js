@@ -622,13 +622,13 @@ router.post("/reward/claim", async (req, res) => {
   else reward = 1;
 
   await query(
-    `
-    INSERT INTO reward_claims
-      (cycle_id, telegram_id, reward_amount, wallet)
-    VALUES ($1, $2, $3, $4)
-    `,
-    [cycle.id, id, reward, wallet]
-  );
+  `
+  INSERT INTO reward_stakes (cycle_id, telegram_id, stake_amount)
+  VALUES ($1, $2, $3)
+  `,
+  [cycle.id, id, amount]
+);
+
 
   res.json({ ok: true, reward });
 });
