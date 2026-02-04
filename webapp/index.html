@@ -67,26 +67,7 @@
 <!-- TAP (НЕ ТРОГАЕМ) -->
 <section id="tap" class="screen">
 
-
-  <div id="stake-leaderboard" class="screen hidden">
-
-  <h2 class="title blue">STAKE LEADERBOARD</h2>
-
-  <div id="stake-lb-list"></div>
-
-  <!-- блок ТЕБЯ -->
-  <div id="stake-lb-me" class="stake-me hidden">
-    <div class="me-label">YOU</div>
-    <div class="bar">
-      <div class="fill" id="stake-me-bar"></div>
-    </div>
-    <div class="me-rank" id="stake-me-rank"></div>
-  </div>
-
-</div>
-
  
-
 <div id="balance">
   <div class="balance-icon">
     <img src="coin.png" alt="NXN">
@@ -110,7 +91,7 @@
   </div>
 
   <div class="glass stat" id="energy">Energy: 100 / 100</div>
-</section>
+
 
 
 </section> <!-- конец TAP -->
@@ -118,7 +99,19 @@
 <!-- STAKE / REWARD EVENT -->
 <section id="stake-screen" class="screen hidden">
 
-<div id="stake-screen" class="screen hidden">
+<section id="stake-leaderboard" class="screen hidden">
+  <h2 class="title blue">STAKE LEADERBOARD</h2>
+  <div id="stake-lb-list"></div>
+
+  <div id="stake-lb-me" class="stake-me hidden">
+    <div class="me-label">YOU</div>
+    <div class="bar">
+      <div class="fill" id="stake-me-bar"></div>
+    </div>
+    <div class="me-rank" id="stake-me-rank"></div>
+  </div>
+</section>
+
 
   <!-- HEADER -->
   <div class="stake-status">
@@ -141,7 +134,6 @@
       </div>
     </div>
 
-    <!-- AMOUNTS -->
     <div class="stake-amounts">
       <button data-amount="50000">50K</button>
       <button data-amount="100000">100K</button>
@@ -150,12 +142,10 @@
       <button data-amount="max" class="max">MAX</button>
     </div>
 
-    <!-- CONFIRM -->
     <button id="stake-confirm" class="stake-confirm">
       Participate in Reward Event
     </button>
 
-    <!-- LEADERBOARD BUTTON -->
     <button id="open-stake-lb" class="stake-btn">
       View Stake Leaderboard
     </button>
@@ -166,10 +156,9 @@
     </div>
 
   </div>
-</div>
-
 
 </section>
+
 
 
 <!-- TRANSFER (НЕ ТРОГАЕМ) -->
