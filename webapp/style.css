@@ -1401,3 +1401,19 @@ body {
   text-align: center;
   line-height: 1.4;
 }
+.stake-success {
+  box-shadow: 0 0 40px rgba(0, 255, 140, 0.4);
+  transition: box-shadow 0.3s ease;
+}
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  50% { transform: translateX(6px); }
+  75% { transform: translateX(-4px); }
+  100% { transform: translateX(0); }
+}
+
+.stake-cooldown {
+  animation: shake 0.35s ease;
+  box-shadow: 0 0 25px rgba(255, 180, 0, 0.4);
+}

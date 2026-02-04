@@ -548,10 +548,30 @@ if (stakeConfirm) {
 
     const data = await res.json();
 
-    if (!data.ok) {
-      alert(data.error || "Stake failed");
-      return;
-    }
+   if (!data.ok) {
+
+  // ===== COOLDOWN ANIMATION =====
+  if (data.error === "Cooldown active") {
+
+    const toast = document.createElement("div");
+    toast.className = "transfer-toast error";
+    toast.innerText = "⏳ Please wait 60 seconds";
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 1800);
+
+    // shake effect
+    const screen = document.getElementById("stake-screen");
+    screen.classList.add("stake-cooldown");
+    setTimeout(() => screen.classList.remove("stake-cooldown"), 400);
+
+    return;
+  }
+
+  // другие ошибки
+  alert(data.error || "Stake failed");
+  return;
+}
+
 
     await refreshMe();
     await loadRewardState();
@@ -571,6 +591,30 @@ function updateStakeButton() {
   btn.disabled = false;
   btn.innerText = "Participate in Reward Event";
 }
+// успешный стейк
+const toast = document.createElement("div");
+toast.className = "transfer-toast success";
+toast.innerText = "STAKE ACCEPTED ✓";
+document.body.appendChild(toast);
+setTimeout(() => toast.remove(), 1600);
+
+// flying amount
+const fly = document.createElement("div");
+fly.className = "plus-one";
+fly.innerText = `-${formatNumber(selectedStakeAmount)} NXN`;
+fly.style.color = "#ff6b6b";
+fly.style.left = "50%";
+fly.style.top = "55%";
+fly.style.transform = "translateX(-50%)";
+document.body.appendChild(fly);
+setTimeout(() => fly.remove(), 900);
+
+// glow effect
+const screen = document.getElementById("stake-screen");
+screen.classList.add("stake-success");
+setTimeout(() => screen.classList.remove("stake-success"), 500);
+
+
 
 
 // ================= KEEP USER ONLINE =================
