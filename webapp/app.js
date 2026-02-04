@@ -69,6 +69,18 @@ document.addEventListener("DOMContentLoaded", async () => {
   initMenu();
 });
 
+const stakeBackBtn = document.getElementById("stake-back");
+
+if (stakeBackBtn) {
+  stakeBackBtn.onclick = () => {
+    document.querySelectorAll(".screen")
+      .forEach(s => s.classList.add("hidden"));
+
+    document.getElementById("tap").classList.remove("hidden");
+  };
+}
+
+
 // ================= SERVER SYNC =================
 async function syncUser() {
   if (!tgUser) return;
