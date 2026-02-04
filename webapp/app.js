@@ -3,6 +3,12 @@ let tgUser = null;
 let userId = null;
 
 // ================= GAME STATE (ONLY FROM SERVER) =================
+// ===== REWARD EVENT =====
+let rewardState = null;
+let rewardStakeEndsAt = null;
+let rewardClaimEndsAt = null;
+let currentStake = 0;
+let selectedStakeAmount = 0;
 let boosts = {
   tap: null,
   energy: null,
@@ -51,13 +57,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
   }
 
-  document.getElementById("stake-btn")?.addEventListener("click", () => {
-  document.querySelectorAll(".screen").forEach(s =>
-    s.classList.add("hidden")
-  );
 
-  document.getElementById("stake-screen").classList.remove("hidden");
-});
 
 
   // register / update user
@@ -104,6 +104,21 @@ async function refreshMe() {
   updateUI();
 }
 
+async function loadRewardState() {
+  const res = await fetch(`/api/reward/state/${userId}`);
+  const data = await res.json();
+
+  rewardState = data.state;
+  rewardStakeEndsAt = new Date(data.stakeEndsAt);
+  rewardClaimEndsAt = new Date(data.claimEndsAt);
+  currentStake = Number(data.userStake || 0);
+
+  // UI
+  document.getElementById("stake-balance").innerText = formatNumber(balance);
+  document.getElementById("stake-current").innerText = formatNumber(currentStake);
+
+  updateStakeButton();
+}
 
 
 // ================= UI =================
@@ -452,6 +467,95 @@ function initMenu() {
     };
   });
 }
+
+const stakeBtn = document.getElementById("stake-btn");
+const stakeScreen = document.getElementById("stake-screen");
+
+if (stakeBtn && stakeScreen) {
+  stakeBtn.onclick = async () => {
+    document.querySelectorAll(".screen").forEach(s =>
+      s.classList.add("hidden")
+    );
+
+    stakeScreen.classList.remove("hidden");
+
+    await refreshMe();
+    await loadRewardState();
+  };
+}
+
+document.querySelectorAll(".stake-amounts button").forEach(btn => {
+  btn.onclick = () => {
+    const val = btn.dataset.amount;
+
+    if (val === "max") {
+      selectedStakeAmount = Math.min(balance, 1_000_000);
+    } else {
+      selectedStakeAmount = Number(val);
+    }
+
+    document.querySelectorAll(".stake-amounts button")
+      .forEach(b => b.classList.remove("active"));
+
+    btn.classList.add("active");
+  };
+});
+
+
+const stakeConfirm = document.getElementById("stake-confirm");
+
+if (stakeConfirm) {
+  stakeConfirm.onclick = async () => {
+    if (rewardState !== "STAKE_ACTIVE") {
+      alert("Stake phase is closed");
+      return;
+    }
+
+    if (selectedStakeAmount < 50000) {
+      alert("Minimum stake is 50,000 NXN");
+      return;
+    }
+
+    const res = await fetch("/api/reward/stake", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: userId,
+        amount: selectedStakeAmount
+      })
+    });
+
+    const data = await res.json();
+
+    if (!data.ok) {
+      alert(data.error || "Stake failed");
+      return;
+    }
+
+    await refreshMe();
+    await loadRewardState();
+  };
+}
+
+function updateStakeButton() {
+  const btn = document.getElementById("stake-confirm");
+
+  if (rewardState !== "STAKE_ACTIVE") {
+    btn.disabled = true;
+    btn.innerText = "Stake Closed";
+    return;
+  }
+
+  if (currentStake > 0) {
+    btn.disabled = true;
+    btn.innerText = "Already Participated";
+    return;
+  }
+
+  btn.disabled = false;
+  btn.innerText = "Participate in Reward Event";
+}
+
 
 // ================= KEEP USER ONLINE =================
 setInterval(() => {
