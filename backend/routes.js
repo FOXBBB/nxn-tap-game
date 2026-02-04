@@ -22,6 +22,42 @@ async function applyBoosts(user) {
   return { tapPower, maxEnergy };
 }
 
+async function applyAutoclicker(user) {
+  if (!user.autoclicker_until) return 0;
+
+  const now = new Date();
+  const until = new Date(user.autoclicker_until);
+
+  if (now > until) return 0;
+
+  const lastSeen = user.last_seen
+    ? new Date(user.last_seen)
+    : now;
+
+  const diffSeconds = Math.floor((now - lastSeen) / 1000);
+  if (diffSeconds <= 0) return 0;
+
+  const CLICKS_PER_SEC = 0.5; // 1 клик в 2 секунды
+  const earned = Math.floor(
+    diffSeconds * CLICKS_PER_SEC * user.tap_power
+  );
+
+  if (earned <= 0) return 0;
+
+  await query(
+    `
+    UPDATE users
+    SET balance = balance + $1,
+        last_seen = NOW()
+    WHERE telegram_id = $2
+    `,
+    [earned, user.telegram_id]
+  );
+
+  return earned;
+}
+
+
 
 async function applyEnergyRegen(userId) {
   const result = await query(
@@ -78,8 +114,18 @@ router.get("/me/:id", async (req, res) => {
 
   const result = await query(
     `
-    SELECT balance, energy, max_energy, tap_power
-    FROM users
+    SELECT
+  telegram_id,
+  balance,
+  energy,
+  max_energy,
+  tap_power,
+  autoclicker_until,
+  tap_boost_until,
+  energy_boost_until,
+  last_seen
+FROM users
+
     WHERE telegram_id = $1
     `,
     [String(id)]
@@ -104,13 +150,89 @@ router.get("/me/:id", async (req, res) => {
   });
 });
 
+//ton//
+router.post("/ton-confirm", async (req, res) => {
+  const { userId, itemId } = req.body;
+
+  if (!userId || !itemId) {
+    return res.json({ ok: false });
+  }
+
+  // ⛔ защита от повторной покупки
+  const check = await query(
+    `
+    SELECT autoclicker_until
+    FROM users
+    WHERE telegram_id = $1
+    `,
+    [userId]
+  );
+
+  const user = check.rows[0];
+
+  if (
+    itemId === "autoclicker_30d" &&
+    user.autoclicker_until &&
+    new Date(user.autoclicker_until) > new Date()
+  ) {
+    return res.json({ ok: false, error: "Autoclicker already active" });
+  }
+
+  // ✅ AUTCLICKER 30 DAYS
+  if (itemId === "autoclicker_30d") {
+    await query(
+      `
+      UPDATE users
+      SET autoclicker_until = NOW() + INTERVAL '30 days'
+      WHERE telegram_id = $1
+      `,
+      [userId]
+    );
+  }
+
+  // (сюда же позже можно добавить tap_plus_3, energy_plus_300)
+
+  res.json({ ok: true });
+});
+
+
 /* ===== TAP ===== */
 router.post("/tap", async (req, res) => {
   const { id } = req.body;
   if (!id) return res.json({ ok: false });
 
+  // 1️⃣ реген энергии
   await applyEnergyRegen(id);
 
+  // 2️⃣ получаем пользователя
+  const userRes = await query(
+    `
+    SELECT
+      telegram_id,
+      balance,
+      energy,
+      max_energy,
+      tap_power,
+      autoclicker_until,
+      tap_boost_until,
+      energy_boost_until,
+      last_seen
+    FROM users
+    WHERE telegram_id = $1
+    `,
+    [String(id)]
+  );
+
+  if (userRes.rowCount === 0) {
+    return res.json({ ok: false });
+  }
+
+  const user = userRes.rows[0];
+
+  // 3️⃣ начисляем оффлайн-автоклик
+  const offlineEarned = await applyAutoclicker(user);
+
+  // 4️⃣ сам тап
   const result = await query(
     `
     UPDATE users
@@ -118,34 +240,40 @@ router.post("/tap", async (req, res) => {
       balance = balance + tap_power,
       energy = GREATEST(energy - 1, 0)
     WHERE telegram_id = $1
-    RETURNING balance, energy, max_energy, tap_power,
-              tap_boost_until, energy_boost_until, autoclicker_until
+    RETURNING
+      balance,
+      energy,
+      max_energy,
+      tap_power,
+      tap_boost_until,
+      energy_boost_until,
+      autoclicker_until
     `,
     [String(id)]
   );
 
-  if (result.rowCount === 0) {
-    return res.json({ ok: false });
-  }
+  const u = result.rows[0];
 
-  const u = result.rows[0]; // ✅ ВОТ ЭТОГО НЕ ХВАТАЛО
-
+  // 5️⃣ применяем TON-бусты
   const boosted = await applyBoosts(u);
 
+  // 6️⃣ ответ клиенту
   res.json({
     ok: true,
     balance: Number(u.balance),
     energy: Number(u.energy),
     maxEnergy: boosted.maxEnergy,
     tapPower: boosted.tapPower,
-    boosts: {
-      tap: u.tap_boost_until,
-      energy: u.energy_boost_until,
-      autoclicker: u.autoclicker_until
-    }
-  });
-}); // ✅ ВАЖНО — ЭТА СКОБКА ЗАКРЫВАЕТ РОУТ
 
+    offlineEarned: earnedOffline,
+boosts: {
+  tap: user.tap_boost_until,
+  energy: user.energy_boost_until,
+  autoclicker: user.autoclicker_until
+}
+
+  });
+});
 
 /* ===== TRANSFER ===== */
 router.post("/transfer", async (req, res) => {
