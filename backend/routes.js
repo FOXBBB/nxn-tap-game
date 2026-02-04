@@ -201,22 +201,12 @@ router.post("/tap", async (req, res) => {
   const { id } = req.body;
   if (!id) return res.json({ ok: false });
 
-  // 1️⃣ реген энергии
   await applyEnergyRegen(id);
 
-  // 2️⃣ получаем пользователя
+  // 1️⃣ получаем пользователя
   const userRes = await query(
     `
-    SELECT
-      telegram_id,
-      balance,
-      energy,
-      max_energy,
-      tap_power,
-      autoclicker_until,
-      tap_boost_until,
-      energy_boost_until,
-      last_seen
+    SELECT *
     FROM users
     WHERE telegram_id = $1
     `,
@@ -229,16 +219,17 @@ router.post("/tap", async (req, res) => {
 
   const user = userRes.rows[0];
 
-  // 3️⃣ начисляем оффлайн-автоклик
-  const offlineEarned = await applyAutoclicker(user);
+  // 2️⃣ оффлайн автокликер
+  const earnedOffline = await applyAutoclicker(user);
 
-  // 4️⃣ сам тап
+  // 3️⃣ обычный тап
   const result = await query(
     `
     UPDATE users
     SET
       balance = balance + tap_power,
-      energy = GREATEST(energy - 1, 0)
+      energy = GREATEST(energy - 1, 0),
+      last_seen = NOW()
     WHERE telegram_id = $1
     RETURNING
       balance,
@@ -254,26 +245,25 @@ router.post("/tap", async (req, res) => {
 
   const u = result.rows[0];
 
-  // 5️⃣ применяем TON-бусты
+  // 4️⃣ применяем бусты
   const boosted = await applyBoosts(u);
 
-  // 6️⃣ ответ клиенту
+  // 5️⃣ ответ клиенту
   res.json({
     ok: true,
     balance: Number(u.balance),
     energy: Number(u.energy),
     maxEnergy: boosted.maxEnergy,
     tapPower: boosted.tapPower,
-
-    offlineEarned: earnedOffline,
-boosts: {
-  tap: user.tap_boost_until,
-  energy: user.energy_boost_until,
-  autoclicker: user.autoclicker_until
-}
-
+    offlineEarned: earnedOffline,   // ✅ ТЕПЕРЬ СУЩЕСТВУЕТ
+    boosts: {
+      tap: u.tap_boost_until,
+      energy: u.energy_boost_until,
+      autoclicker: u.autoclicker_until
+    }
   });
 });
+
 
 /* ===== TRANSFER ===== */
 router.post("/transfer", async (req, res) => {
