@@ -510,7 +510,7 @@ router.post("/reward/stake", async (req, res) => {
     return res.json({ ok: false, error: "Stake is not active" });
   }
 
-  if (amount < 50000 || amount > 1000000) {
+  if (amount < 10000 || amount > 1000000) {
     return res.json({ ok: false, error: "Invalid stake amount" });
   }
 
@@ -636,47 +636,81 @@ ORDER BY total_stake DESC
 });
 
 
+
+
 router.post("/reward/claim", async (req, res) => {
   const { id, wallet } = req.body;
+
+  if (!id || !wallet) {
+    return res.json({ ok: false, error: "Wallet required" });
+  }
 
   const cycle = await getCurrentRewardCycle();
   if (!cycle || cycle.state !== "CLAIM_ACTIVE") {
     return res.json({ ok: false, error: "Claim not active" });
   }
 
-  const all = await query(
+  // ❌ проверка — уже клеймил?
+  const existing = await query(
+    `
+    SELECT 1
+    FROM reward_claims
+    WHERE cycle_id = $1 AND telegram_id = $2
+    `,
+    [cycle.id, id]
+  );
+
+  if (existing.rowCount > 0) {
+    return res.json({ ok: false, error: "Already claimed" });
+  }
+
+  // получаем топ 500
+  const ranks = await query(
     `
     SELECT telegram_id
     FROM reward_stakes
     WHERE cycle_id = $1
-    ORDER BY stake_amount DESC
+    GROUP BY telegram_id
+    ORDER BY SUM(stake_amount) DESC
+    LIMIT 500
     `,
     [cycle.id]
   );
 
   const rank =
-    all.rows.findIndex(r => r.telegram_id === id) + 1;
+    ranks.rows.findIndex(r => r.telegram_id === id) + 1;
 
-  if (rank === 0 || rank > 500) {
+  if (rank === 0) {
     return res.json({ ok: false, error: "Not eligible" });
   }
 
+  // 🎯 РАСПРЕДЕЛЕНИЕ
   let reward = 0;
   if (rank <= 10) reward = 10;
   else if (rank <= 50) reward = 5;
   else if (rank <= 200) reward = 3;
-  else reward = 1;
+  else if (rank <= 500) reward = 1;
 
+  if (reward === 0) {
+    return res.json({ ok: false, error: "No reward" });
+  }
+
+  // ✅ сохраняем claim (пока БЕЗ tx)
   await query(
-  `
-  INSERT INTO reward_stakes (cycle_id, telegram_id, stake_amount)
-  VALUES ($1, $2, $3)
-  `,
-  [cycle.id, id, amount]
-);
+    `
+    INSERT INTO reward_claims
+      (cycle_id, telegram_id, reward_amount, wallet, claimed)
+    VALUES ($1, $2, $3, $4, false)
+    `,
+    [cycle.id, id, reward, wallet]
+  );
 
+  // ⏭️ ЗДЕСЬ ПОЗЖЕ БУДЕТ TON TX
 
-  res.json({ ok: true, reward });
+  res.json({
+    ok: true,
+    reward
+  });
 });
 
 

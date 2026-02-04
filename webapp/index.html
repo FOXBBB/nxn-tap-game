@@ -1,309 +1,294 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport"
-      content="width=device-width,
+  <meta name="viewport" content="width=device-width,
                initial-scale=1,
                maximum-scale=1,
                minimum-scale=1,
                user-scalable=no,
                viewport-fit=cover">
 
-               
+
   <title>NXN Game</title>
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
   <div class="stars" id="stars"></div>
 
 
-<div class="bg"></div>
+  <div class="bg"></div>
 
-<!-- LEADERBOARD -->
-<section id="leaderboard" class="screen hidden">
-  <div class="lb-header">
-    <div class="lb-title">
-      <span class="trophy"></span>
-      LEADERBOARD
+  <!-- LEADERBOARD -->
+  <section id="leaderboard" class="screen hidden">
+    <div class="lb-header">
+      <div class="lb-title">
+        <span class="trophy"></span>
+        LEADERBOARD
+      </div>
+      <div class="lb-sub">TOP 10 PLAYERS</div>
     </div>
-    <div class="lb-sub">TOP 10 PLAYERS</div>
-  </div>
 
-  <!-- TOP 1 -->
-  <div class="lb-top1">
-    <img class="avatar" src="">
-    <div class="info">
-      <div class="rank gold">#1</div>
-      <div class="name"></div>
-    </div>
-    <div class="score"></div>
-  </div>
-
-  <!-- TOP 2 / 3 -->
-  <div class="lb-top23">
-    <div class="lb-card silver">
+    <!-- TOP 1 -->
+    <div class="lb-top1">
       <img class="avatar" src="">
-      <div class="rank">#2</div>
-      <div class="name"></div>
+      <div class="info">
+        <div class="rank gold">#1</div>
+        <div class="name"></div>
+      </div>
       <div class="score"></div>
     </div>
 
-    <div class="lb-card bronze">
-      <img class="avatar" src="">
-      <div class="rank">#3</div>
-      <div class="name"></div>
-      <div class="score"></div>
-    </div>
-  </div>
-
-  <!-- TOP 4–10 -->
-  <div class="lb-list glass"></div>
-</section>
-
-
-
-
-<!-- TAP (НЕ ТРОГАЕМ) -->
-<section id="tap" class="screen">
-
- 
-<div id="balance">
-  <div class="balance-icon">
-    <img src="coin.png" alt="NXN">
-  </div>
-
-  <div class="balance-center">
-    <div class="label">NXN BALANCE</div>
-    <div class="balance-row">
-      <span class="balance-value">0</span>
-    </div>
-  </div>
-</div>
-
-<button id="stake-btn" class="stake-btn">
-  STAKE
-</button>
-
-
-  <div class="coin-box">
-    <img src="coin.png" id="coin">
-  </div>
-
-  <div class="glass stat" id="energy">Energy: 100 / 100</div>
-
-
-
-</section> <!-- конец TAP -->
-
-<!-- STAKE / REWARD EVENT -->
-<section id="stake-screen" class="screen hidden">
-
-  <!-- HEADER -->
-  <div class="stake-status">
-    <div class="stake-phase">REWARD EVENT</div>
-    <div id="stake-timer" class="stake-timer">⏳ loading...</div>
-  </div>
-
-  <!-- CARD -->
-  <div class="glass stake-card">
-
-    <div class="stake-stats">
-      <div class="stake-stat">
-        <div class="label">Balance</div>
-        <span class="value accent" id="stake-balance">0</span>
+    <!-- TOP 2 / 3 -->
+    <div class="lb-top23">
+      <div class="lb-card silver">
+        <img class="avatar" src="">
+        <div class="rank">#2</div>
+        <div class="name"></div>
+        <div class="score"></div>
       </div>
 
-      <div class="stake-stat">
-        <div class="label">Your Stake</div>
-        <span class="value" id="stake-current">0</span>
+      <div class="lb-card bronze">
+        <img class="avatar" src="">
+        <div class="rank">#3</div>
+        <div class="name"></div>
+        <div class="score"></div>
       </div>
     </div>
 
-    <div class="stake-amounts">
-      <button data-amount="50000">50K</button>
-      <button data-amount="100000">100K</button>
-      <button data-amount="150000">150K</button>
-      <button data-amount="200000">200K</button>
-      <button data-amount="max" class="max">MAX</button>
+    <!-- TOP 4–10 -->
+    <div class="lb-list glass"></div>
+  </section>
+
+
+
+
+  <!-- TAP (НЕ ТРОГАЕМ) -->
+  <section id="tap" class="screen">
+
+
+    <div id="balance">
+      <div class="balance-icon">
+        <img src="coin.png" alt="NXN">
+      </div>
+
+      <div class="balance-center">
+        <div class="label">NXN BALANCE</div>
+        <div class="balance-row">
+          <span class="balance-value">0</span>
+        </div>
+      </div>
     </div>
 
-    <button id="stake-confirm" class="stake-confirm">
-      Participate in Reward Event
+    <button id="stake-btn" class="stake-btn">
+      STAKE
     </button>
 
-    <button id="open-stake-lb" class="stake-btn">
-      View Stake Leaderboard
+
+    <div class="coin-box">
+      <img src="coin.png" id="coin">
+    </div>
+
+    <div class="glass stat" id="energy">Energy: 100 / 100</div>
+
+
+
+  </section> <!-- конец TAP -->
+
+  <!-- STAKE / REWARD EVENT -->
+  <section id="stake-screen" class="screen hidden">
+
+    <!-- HEADER -->
+    <div class="stake-status">
+      <div class="stake-phase">REWARD EVENT</div>
+      <div id="stake-timer" class="stake-timer">⏳ loading...</div>
+    </div>
+
+    <!-- CARD -->
+    <div class="glass stake-card">
+
+      <div class="stake-stats">
+        <div class="stake-stat">
+          <div class="label">Balance</div>
+          <span class="value accent" id="stake-balance">0</span>
+        </div>
+
+        <div class="stake-stat">
+          <div class="label">Your Stake</div>
+          <span class="value" id="stake-current">0</span>
+        </div>
+      </div>
+
+      <div class="stake-amounts">
+        <button data-amount="10000">10K</button>
+        <button data-amount="20000">20K</button>
+        <button data-amount="50000">50K</button>
+        <button data-amount="100000">100K</button>
+        <button data-amount="150000">150K</button>
+        <button data-amount="200000">200K</button>
+        <button data-amount="max" class="max">MAX</button>
+      </div>
+
+      <button id="stake-confirm" class="stake-confirm">
+        Participate in Reward Event
+      </button>
+
+      <button id="open-stake-lb" class="stake-btn">
+        View Stake Leaderboard
+      </button>
+
+      <div class="stake-warning">
+        • Staked NXN is consumed<br>
+        • Rewards are not guaranteed
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- STAKE LEADERBOARD (ОТДЕЛЬНЫЙ ЭКРАН) -->
+  <section id="stake-leaderboard" class="screen hidden">
+    <button id="back-to-stake" class="stake-btn">
+      ← Back to Stake
     </button>
 
-    <div class="stake-warning">
-      • Staked NXN is consumed<br>
-      • Rewards are not guaranteed
+    <h2 class="title blue">STAKE LEADERBOARD</h2>
+
+    <div id="stake-lb-list"></div>
+
+    <div id="stake-lb-me" class="stake-me hidden">
+      <div class="me-label">YOU</div>
+      <div class="bar">
+        <div class="fill" id="stake-me-bar"></div>
+      </div>
+      <div class="me-rank" id="stake-me-rank"></div>
     </div>
-
-  </div>
-
-</section>
-
-<!-- STAKE LEADERBOARD (ОТДЕЛЬНЫЙ ЭКРАН) -->
-<section id="stake-leaderboard" class="screen hidden">
-  <button id="back-to-stake" class="stake-btn">
-  ← Back to Stake
-</button>
-
-  <h2 class="title blue">STAKE LEADERBOARD</h2>
-
-  <div id="stake-lb-list"></div>
-
-  <div id="stake-lb-me" class="stake-me hidden">
-    <div class="me-label">YOU</div>
-    <div class="bar">
-      <div class="fill" id="stake-me-bar"></div>
-    </div>
-    <div class="me-rank" id="stake-me-rank"></div>
-  </div>
-</section>
+  </section>
 
 
 
-<!-- TRANSFER (НЕ ТРОГАЕМ) -->
-<section id="transfer" class="screen hidden">
-  <div class="title blue">TRANSFER COINS</div>
-  <div class="subtitle yellow">BY ID</div>
-<div class="glass stat" id="my-id">Your ID: ...</div>
+  <!-- TRANSFER (НЕ ТРОГАЕМ) -->
+  <section id="transfer" class="screen hidden">
+    <div class="title blue">TRANSFER COINS</div>
+    <div class="subtitle yellow">BY ID</div>
+    <div class="glass stat" id="my-id">Your ID: ...</div>
 
-  <div class="glass transfer-box">
-   <label>Recipient ID</label>
-<input id="to-id" placeholder="Telegram ID">
+    <div class="glass transfer-box">
+      <label>Recipient ID</label>
+      <input id="to-id" placeholder="Telegram ID">
 
-   <label>Amount</label>
-<div class="row">
- <input
-  id="amount"
-  type="number"
-  min="100"
-  step="1"
-  placeholder="NXN amount (min 100, fee 10%)"
-/>
+      <label>Amount</label>
+      <div class="row">
+        <input id="amount" type="number" min="100" step="1" placeholder="NXN amount (min 100, fee 10%)" />
 
-</div>
+      </div>
 
-    <button id="send">SEND</button>
+      <button id="send">SEND</button>
       <!-- TRANSFER HISTORY -->
-<!-- HISTORY TOGGLE -->
-<div id="history-toggle" class="history-toggle">
-  Transfer history ⬇️
-</div>
+      <!-- HISTORY TOGGLE -->
+      <div id="history-toggle" class="history-toggle">
+        Transfer history ⬇️
+      </div>
 
-<div id="history" class="glass history-box hidden"></div>
+      <div id="history" class="glass history-box hidden"></div>
 
-    <p>Enter ID and amount to send coins</p>
-  </div>
-
-
-  <img src="transfer.png" class="transfer-img">
-</section>
-
-<!-- SHOP (НЕ ТРОГАЕМ) -->
-<section id="shop" class="screen hidden">
-  <div class="title blue">SHOP</div>
-  <div class="subtitle yellow">UPGRADES</div>
-
-  <div class="shop-card glass">
-    <div class="shop-info">
-      <div class="shop-name">Tap Power +1</div>
-      <div class="shop-desc">Permanent upgrade</div>
+      <p>Enter ID and amount to send coins</p>
     </div>
-    <button class="shop-buy green" onclick="buyNXN('tap_plus_1')">
-   — 30 000 NXN
-</button>
-  </div>
 
-  <div class="shop-card glass">
-    <div class="shop-info">
-      <div class="shop-name">Tap Power +3</div>
-      <div class="shop-desc">30 days boost</div>
+
+    <img src="transfer.png" class="transfer-img">
+  </section>
+
+  <!-- SHOP (НЕ ТРОГАЕМ) -->
+  <section id="shop" class="screen hidden">
+    <div class="title blue">SHOP</div>
+    <div class="subtitle yellow">UPGRADES</div>
+
+    <div class="shop-card glass">
+      <div class="shop-info">
+        <div class="shop-name">Tap Power +1</div>
+        <div class="shop-desc">Permanent upgrade</div>
+      </div>
+      <button class="shop-buy green" onclick="buyNXN('tap_plus_1')">
+        — 30 000 NXN
+      </button>
     </div>
-    <button
-  class="shop-buy blue"
-  data-item="tap_plus_3"
-  data-price="0.2 TON"
-  onclick="payTON(0.2, 'tap_plus_3')"
->
-  0.2 TON
-</button>
 
-  </div>
+    <div class="shop-card glass">
+      <div class="shop-info">
+        <div class="shop-name">Tap Power +3</div>
+        <div class="shop-desc">30 days boost</div>
+      </div>
+      <button class="shop-buy blue" data-item="tap_plus_3" data-price="0.2 TON" onclick="payTON(0.2, 'tap_plus_3')">
+        0.2 TON
+      </button>
 
-  <div class="shop-card glass">
-    <div class="shop-info">
-      <div class="shop-name">Energy +100</div>
-      <div class="shop-desc">Permanent upgrade</div>
     </div>
-    <button class="shop-buy green" onclick="buyNXN('energy_plus_100')">
-   — 50 000 NXN
-</button>
-  </div>
 
- 
-
-  <div class="shop-card glass">
-    <div class="shop-info">
-      <div class="shop-name">Energy +300</div>
-      <div class="shop-desc">30 days boost</div>
+    <div class="shop-card glass">
+      <div class="shop-info">
+        <div class="shop-name">Energy +100</div>
+        <div class="shop-desc">Permanent upgrade</div>
+      </div>
+      <button class="shop-buy green" onclick="buyNXN('energy_plus_100')">
+        — 50 000 NXN
+      </button>
     </div>
-   <button
-  class="shop-buy blue"
-  data-item="energy_plus_300"
-  data-price="0.5 TON"
-  onclick="payTON(0.5, 'energy_plus_300')"
->
-  0.5 TON
-</button>
 
 
-  </div>
 
-  <div class="shop-card glass">
-    <div class="shop-info">
-      <div class="shop-name">Autoclicker</div>
-      <div class="shop-desc">Clicks while offline (30 days)</div>
+    <div class="shop-card glass">
+      <div class="shop-info">
+        <div class="shop-name">Energy +300</div>
+        <div class="shop-desc">30 days boost</div>
+      </div>
+      <button class="shop-buy blue" data-item="energy_plus_300" data-price="0.5 TON"
+        onclick="payTON(0.5, 'energy_plus_300')">
+        0.5 TON
+      </button>
+
+
     </div>
-    <button
-  class="shop-buy purple"
-  data-item="autoclicker_30d"
-  data-price="1 TON"
-  onclick="payTON(1, 'autoclicker_30d')"
->
-  1 TON
-</button>
 
+    <div class="shop-card glass">
+      <div class="shop-info">
+        <div class="shop-name">Autoclicker</div>
+        <div class="shop-desc">Clicks while offline (30 days)</div>
+      </div>
+      <button class="shop-buy purple" data-item="autoclicker_30d" data-price="1 TON"
+        onclick="payTON(1, 'autoclicker_30d')">
+        1 TON
+      </button>
+
+    </div>
+  </section>
+
+  <!-- MENU -->
+  <div class="menu">
+    <div data-go="leaderboard">
+      <span><img src="menu-leaderboard.png"></span>
+    </div>
+
+    <div data-go="tap">
+      <span><img src="menu-tap.png"></span>
+    </div>
+
+    <div data-go="transfer">
+      <span><img src="menu-transfer.png"></span>
+    </div>
+
+    <div data-go="shop">
+      <span><img src="menu-shop.png"></span>
+    </div>
   </div>
-</section>
-
-<!-- MENU -->
-<div class="menu">
-  <div data-go="leaderboard">
-    <span><img src="menu-leaderboard.png"></span>
-  </div>
-
-  <div data-go="tap">
-    <span><img src="menu-tap.png"></span>
-  </div>
-
-  <div data-go="transfer">
-    <span><img src="menu-transfer.png"></span>
-  </div>
-
-  <div data-go="shop">
-    <span><img src="menu-shop.png"></span>
-  </div>
-</div>
 
 
 
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script src="app.js"></script>
-<script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="app.js"></script>
+  <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
 </body>
+
 </html>

@@ -532,10 +532,11 @@ if (stakeConfirm) {
       return;
     }
 
-    if (selectedStakeAmount < 50000) {
-      alert("Minimum stake is 50,000 NXN");
-      return;
-    }
+    if (selectedStakeAmount < 10000) {
+  alert("Minimum stake is 10,000 NXN");
+  return;
+}
+
 
     const res = await fetch("/api/reward/stake", {
       method: "POST",
