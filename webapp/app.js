@@ -938,3 +938,10 @@ async function loadStakeLeaderboard() {
       .innerText = `#${data.me.rank}`;
   }
 }
+document.getElementById("back-to-stake").onclick = () => {
+  document.querySelectorAll(".screen")
+    .forEach(s => s.classList.add("hidden"));
+
+  document.getElementById("stake-screen")
+    .classList.remove("hidden");
+};
