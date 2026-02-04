@@ -567,12 +567,15 @@ router.post("/reward/stake", async (req, res) => {
 
 
 
-router.get("/reward/leaderboard", async (req, res) => {
+router.get("/reward/leaderboard/:userId", async (req, res) => {
+  const { userId } = req.params;
   const cycle = await getCurrentRewardCycle();
-  if (!cycle) return res.json([]);
+  if (!cycle) {
+    return res.json({ top: [], me: null });
+  }
 
-  const result = await query(
-    `
+  // получаем всех игроков цикла
+  const all = await query(`
     SELECT
       rs.telegram_id,
       rs.stake_amount,
@@ -582,13 +585,55 @@ router.get("/reward/leaderboard", async (req, res) => {
     JOIN users u ON u.telegram_id = rs.telegram_id
     WHERE rs.cycle_id = $1
     ORDER BY rs.stake_amount DESC
-    LIMIT 100
-    `,
-    [cycle.id]
-  );
+  `, [cycle.id]);
 
-  res.json(result.rows);
+  if (all.rowCount === 0) {
+    return res.json({ top: [], me: null });
+  }
+
+  const maxStake = Number(all.rows[0].stake_amount);
+
+  let me = null;
+
+  const top = all.rows.slice(0, 100).map((u, index) => {
+    const rank = index + 1;
+    const progress = Math.max(
+      5,
+      Math.round((Number(u.stake_amount) / maxStake) * 100)
+    );
+
+    if (u.telegram_id === userId) {
+      me = { rank, progress };
+    }
+
+    return {
+      rank,
+      name: u.name,
+      avatar: u.avatar,
+      progress
+    };
+  });
+
+  // если игрок не в топ-100 — ищем его позицию
+  if (!me) {
+    const idx = all.rows.findIndex(
+      r => r.telegram_id === userId
+    );
+
+    if (idx !== -1) {
+      me = {
+        rank: idx + 1,
+        progress: Math.max(
+          5,
+          Math.round((Number(all.rows[idx].stake_amount) / maxStake) * 100)
+        )
+      };
+    }
+  }
+
+  res.json({ top, me });
 });
+
 
 router.post("/reward/claim", async (req, res) => {
   const { id, wallet } = req.body;
