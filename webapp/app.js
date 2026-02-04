@@ -881,3 +881,60 @@ function updateOneBoost(until, itemId, label) {
 setInterval(() => {
   updateBoostTimers();
 }, 1000);
+
+
+const openStakeLbBtn = document.getElementById("open-stake-lb");
+const stakeLbScreen = document.getElementById("stake-leaderboard");
+
+if (openStakeLbBtn && stakeLbScreen) {
+  openStakeLbBtn.onclick = async () => {
+
+    // скрываем все экраны
+    document.querySelectorAll(".screen")
+      .forEach(s => s.classList.add("hidden"));
+
+    // показываем stake leaderboard
+    stakeLbScreen.classList.remove("hidden");
+
+    // грузим данные
+    await loadStakeLeaderboard();
+  };
+}
+async function loadStakeLeaderboard() {
+  const list = document.getElementById("stake-lb-list");
+  list.innerHTML = "Loading...";
+
+  const res = await fetch(`/api/reward/leaderboard/${userId}`);
+  const data = await res.json();
+
+  list.innerHTML = "";
+
+  // TOP LIST
+  data.top.forEach(u => {
+    const row = document.createElement("div");
+    row.className = "stake-lb-row";
+
+    row.innerHTML = `
+      <span class="rank">#${u.rank}</span>
+      <img class="avatar" src="${u.avatar || 'avatar.png'}">
+      <span class="name">${u.name}</span>
+      <div class="bar">
+        <div class="fill" style="width:${u.progress}%"></div>
+      </div>
+    `;
+
+    list.appendChild(row);
+  });
+
+  // YOU
+  if (data.me) {
+    const meBox = document.getElementById("stake-lb-me");
+    meBox.classList.remove("hidden");
+
+    document.getElementById("stake-me-bar")
+      .style.width = data.me.progress + "%";
+
+    document.getElementById("stake-me-rank")
+      .innerText = `#${data.me.rank}`;
+  }
+}

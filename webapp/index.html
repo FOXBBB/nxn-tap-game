@@ -61,8 +61,30 @@
   <div class="lb-list glass"></div>
 </section>
 
+
+
+
 <!-- TAP (НЕ ТРОГАЕМ) -->
 <section id="tap" class="screen">
+
+
+  <div id="stake-leaderboard" class="screen hidden">
+
+  <h2 class="title blue">STAKE LEADERBOARD</h2>
+
+  <div id="stake-lb-list"></div>
+
+  <!-- блок ТЕБЯ -->
+  <div id="stake-lb-me" class="stake-me hidden">
+    <div class="me-label">YOU</div>
+    <div class="bar">
+      <div class="fill" id="stake-me-bar"></div>
+    </div>
+    <div class="me-rank" id="stake-me-rank"></div>
+  </div>
+
+</div>
+
  
 
 <div id="balance">
@@ -96,46 +118,56 @@
 <!-- STAKE / REWARD EVENT -->
 <section id="stake-screen" class="screen hidden">
 
-<div class="stake-card glass">
+<div id="stake-screen" class="screen hidden">
 
-  <div class="stake-header">
-    <h2>Reward Event</h2>
-    <div id="stake-timer" class="stake-timer">⏳ Loading...</div>
+  <!-- HEADER -->
+  <div class="stake-status">
+    <div class="stake-phase">REWARD EVENT</div>
+    <div id="stake-timer" class="stake-timer">⏳ loading...</div>
   </div>
 
-  <div class="stake-stats">
-    <div class="stake-stat">
-      <span class="label">Balance</span>
-      <span class="value" id="stake-balance">0 NXN</span>
+  <!-- CARD -->
+  <div class="glass stake-card">
+
+    <div class="stake-stats">
+      <div class="stake-stat">
+        <div class="label">Balance</div>
+        <span class="value accent" id="stake-balance">0</span>
+      </div>
+
+      <div class="stake-stat">
+        <div class="label">Your Stake</div>
+        <span class="value" id="stake-current">0</span>
+      </div>
     </div>
 
-    <div class="stake-stat">
-      <span class="label">Your Stake</span>
-      <span class="value accent" id="stake-current">0 NXN</span>
+    <!-- AMOUNTS -->
+    <div class="stake-amounts">
+      <button data-amount="50000">50K</button>
+      <button data-amount="100000">100K</button>
+      <button data-amount="150000">150K</button>
+      <button data-amount="200000">200K</button>
+      <button data-amount="max" class="max">MAX</button>
     </div>
+
+    <!-- CONFIRM -->
+    <button id="stake-confirm" class="stake-confirm">
+      Participate in Reward Event
+    </button>
+
+    <!-- LEADERBOARD BUTTON -->
+    <button id="open-stake-lb" class="stake-btn">
+      View Stake Leaderboard
+    </button>
+
+    <div class="stake-warning">
+      • Staked NXN is consumed<br>
+      • Rewards are not guaranteed
+    </div>
+
   </div>
-
-  <div class="stake-amounts">
-    <button data-amount="50000">50k</button>
-    <button data-amount="100000">100k</button>
-    <button data-amount="150000">150k</button>
-    <button data-amount="200000">200k</button>
-    <button data-amount="250000">250k</button>
-    <button data-amount="300000">300k</button>
-    <button data-amount="max" class="max">MAX</button>
-  </div>
-
-  <button id="stake-confirm" class="stake-confirm">
-    Stake NXN
-  </button>
-
-  <div class="stake-warning">
-    <p>• Staked NXN will be consumed</p>
-    <p>• Rewards are limited and not guaranteed</p>
-    <p>• Participation is optional</p>
-  </div>
-
 </div>
+
 
 </section>
 
