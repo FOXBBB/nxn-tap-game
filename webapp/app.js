@@ -617,7 +617,7 @@ function updateStakeButton() {
 
 
   btn.disabled = false;
-  btn.innerText = "Participate in Reward Event";
+  btn.innerText = "Stake NeXoN";
 }
 // успешный стейк
 const toast = document.createElement("div");
