@@ -576,15 +576,16 @@ router.get("/reward/leaderboard/:userId", async (req, res) => {
 
   // получаем всех игроков цикла
   const all = await query(`
-    SELECT
-      rs.telegram_id,
-      rs.stake_amount,
-      u.name,
-      u.avatar
-    FROM reward_stakes rs
-    JOIN users u ON u.telegram_id = rs.telegram_id
-    WHERE rs.cycle_id = $1
-    ORDER BY rs.stake_amount DESC
+   SELECT
+  rs.telegram_id,
+  SUM(rs.stake_amount) AS total_stake,
+  u.name,
+  u.avatar
+FROM reward_stakes rs
+JOIN users u ON u.telegram_id = rs.telegram_id
+WHERE rs.cycle_id = $1
+GROUP BY rs.telegram_id, u.name, u.avatar
+ORDER BY total_stake DESC
   `, [cycle.id]);
 
   if (all.rowCount === 0) {
@@ -599,7 +600,7 @@ router.get("/reward/leaderboard/:userId", async (req, res) => {
     const rank = index + 1;
     const progress = Math.max(
       5,
-      Math.round((Number(u.stake_amount) / maxStake) * 100)
+      Math.round((Number(u.total_stake) / maxStake) * 100)
     );
 
     if (u.telegram_id === userId) {
