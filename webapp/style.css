@@ -1521,8 +1521,21 @@ body {
 .stake-back:active {
   transform: scale(0.95);
 }
-.lb-top1 .score,
-.lb-card .score,
+.lb-card .score {
+  width: 100%;
+  text-align: center;
+  margin-top: 6px;
+  font-weight: 700;
+}
+
+.lb-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;   /* 🔥 ВОТ ЭТО ГЛАВНОЕ */
+  justify-content: center;
+  text-align: center;
+}
+
 .lb-list i {
   max-width: 72px;
   text-align: right;
