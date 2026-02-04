@@ -1521,3 +1521,11 @@ body {
 .stake-back:active {
   transform: scale(0.95);
 }
+.lb-top1 .score,
+.lb-card .score,
+.lb-list i {
+  max-width: 72px;
+  text-align: right;
+  white-space: nowrap;
+}
+

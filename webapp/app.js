@@ -428,7 +428,8 @@ async function loadLeaderboard() {
   // TOP 1
   if (data[0]) {
     document.querySelector(".lb-top1 .name").innerText = data[0].name;
-    document.querySelector(".lb-top1 .score").innerText = data[0].balance;
+    document.querySelector(".lb-top1 .score").innerText =
+  formatNumber(data[0].balance);
     document.querySelector(".lb-top1 .avatar").src =
       data[0].avatar || placeholder;
   }
@@ -438,14 +439,16 @@ async function loadLeaderboard() {
 
   if (data[1] && cards[0]) {
     cards[0].querySelector(".name").innerText = data[1].name;
-    cards[0].querySelector(".score").innerText = data[1].balance;
+    cards[0].querySelector(".score").innerText =
+  formatNumber(data[1].balance);
     cards[0].querySelector(".avatar").src =
       data[1].avatar || placeholder;
   }
 
   if (data[2] && cards[1]) {
     cards[1].querySelector(".name").innerText = data[2].name;
-    cards[1].querySelector(".score").innerText = data[2].balance;
+    cards[1].querySelector(".score").innerText =
+  formatNumber(data[2].balance);
     cards[1].querySelector(".avatar").src =
       data[2].avatar || placeholder;
   }
@@ -461,7 +464,7 @@ async function loadLeaderboard() {
       <span>#${i + 4}</span>
       <img src="${u.avatar || placeholder}">
       <b>${u.name}</b>
-      <i>${u.balance}</i>
+      <i>${formatNumber(u.balance)}</i>
     `;
     list.appendChild(row);
   });
