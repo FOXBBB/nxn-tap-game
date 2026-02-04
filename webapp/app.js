@@ -51,6 +51,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
   }
 
+  document.getElementById("stake-btn")?.addEventListener("click", () => {
+  document.querySelectorAll(".screen").forEach(s =>
+    s.classList.add("hidden")
+  );
+
+  document.getElementById("stake-screen").classList.remove("hidden");
+});
+
+
   // register / update user
   await syncUser();
 

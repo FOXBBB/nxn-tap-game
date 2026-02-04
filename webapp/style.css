@@ -1243,3 +1243,19 @@ body {
   75% { transform: translateX(-4px); }
   100% { transform: translateX(0); }
 }
+.stake-btn {
+  margin-top: 12px;
+  width: 100%;
+  padding: 14px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #1cff9a, #00b86b);
+  color: #02040a;
+  font-weight: 700;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+
+.stake-btn:active {
+  transform: scale(0.98);
+}
