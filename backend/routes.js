@@ -576,7 +576,7 @@ router.get("/reward/leaderboard/:userId", async (req, res) => {
 
   // получаем всех игроков цикла
   const all = await query(`
-   SELECT
+  SELECT
   rs.telegram_id,
   SUM(rs.stake_amount) AS total_stake,
   u.name,
@@ -592,7 +592,7 @@ ORDER BY total_stake DESC
     return res.json({ top: [], me: null });
   }
 
-  const maxStake = Number(all.rows[0].stake_amount);
+  const maxStake = Number(all.rows[0].total_stake);
 
   let me = null;
 
