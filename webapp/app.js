@@ -220,52 +220,51 @@ function animateCoinHit() {
 }
 
 
+
 // ================= TAP =================
 if (coin) {
   coin.onclick = async (e) => {
-  if (energy <= 0) return;
+    if (energy <= 0) return;
 
-  animateCoinHit();
-  }
-  // дальше логика тапа (как у тебя сейчас)
+    animateCoinHit();
 
+    // optimistic UI
+    energy -= 1;
+    balance += tapPower;
+    updateUI();
 
-  // optimistic UI
-  energy -= 1;
-  balance += tapPower;
-  updateUI();
+    try {
+      const res = await fetch("/api/tap", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: userId })
+      });
 
-  try {
-    const res = await fetch("/api/tap", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: userId })
-    });
+      const data = await res.json();
 
-    const data = await res.json();
+      // 🔥 OFFLINE EARN TOAST
+      if (data.offlineEarned && data.offlineEarned > 0) {
+        const toast = document.createElement("div");
+        toast.className = "transfer-toast success";
+        toast.innerText = `+${data.offlineEarned} NXN (offline)`;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2200);
+      }
 
-    // 🔥 OFFLINE EARN TOAST
-    if (data.offlineEarned && data.offlineEarned > 0) {
-      const toast = document.createElement("div");
-      toast.className = "transfer-toast success";
-      toast.innerText = `+${data.offlineEarned} NXN (offline)`;
-      document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 2200);
+      balance = Number(data.balance) || balance;
+      energy = Number(data.energy) || energy;
+      maxEnergy = Number(data.maxEnergy) || maxEnergy;
+      tapPower = Number(data.tapPower) || tapPower;
+
+      updateUI();
+    } catch (err) {
+      console.error("tap error", err);
     }
 
+    animatePlus(e, tapPower);
+  };
+}
 
-    balance = Number(data.balance) || balance;
-    energy = Number(data.energy) || energy;
-    maxEnergy = Number(data.maxEnergy) || maxEnergy;
-    tapPower = Number(data.tapPower) || tapPower;
-
-    updateUI();
-  } catch (err) {
-    console.error("tap error", err);
-  }
-
-  animatePlus(e, tapPower);
-};
 
 
 // ================= TRANSFER HISTORY =================
