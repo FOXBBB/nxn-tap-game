@@ -1480,12 +1480,31 @@ body {
 
 /* YOU */
 .stake-me {
-  position: sticky;
-  bottom: 12px;
-  padding: 12px;
-  background: rgba(0,255,170,0.08);
-  border-radius: 14px;
+  margin: 14px 12px 18px;
+  padding: 12px 14px;
+  border-radius: 16px;
+
+  background: linear-gradient(
+    90deg,
+    rgba(0,255,170,0.18),
+    rgba(0,255,170,0.08)
+  );
+
+  box-shadow: 0 0 18px rgba(0,255,170,0.25);
 }
+
+.stake-me .me-label {
+  font-size: 12px;
+  letter-spacing: 1px;
+  opacity: 0.8;
+  margin-bottom: 6px;
+}
+
+.stake-me .me-rank {
+  margin-top: 6px;
+  font-weight: bold;
+}
+
 .stake-status {
   display: grid;
   grid-template-columns: auto 1fr auto;

@@ -160,17 +160,20 @@
       ← Back to Stake
     </button>
 
-    <h2 class="title blue">STAKE LEADERBOARD</h2>
+   <h2 class="title blue">STAKE LEADERBOARD</h2>
 
-    <div id="stake-lb-list"></div>
+<!-- YOU BLOCK (PINNED UNDER TITLE) -->
+<div id="stake-lb-me" class="stake-me hidden">
+  <div class="me-label">YOU</div>
+  <div class="bar">
+    <div class="fill" id="stake-me-bar"></div>
+  </div>
+  <div class="me-rank" id="stake-me-rank"></div>
+</div>
 
-    <div id="stake-lb-me" class="stake-me hidden">
-      <div class="me-label">YOU</div>
-      <div class="bar">
-        <div class="fill" id="stake-me-bar"></div>
-      </div>
-      <div class="me-rank" id="stake-me-rank"></div>
-    </div>
+<!-- LIST -->
+<div id="stake-lb-list"></div>
+
   </section>
 
 
