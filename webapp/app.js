@@ -532,18 +532,22 @@ function initMenu() {
 const stakeBtn = document.getElementById("stake-btn");
 const stakeScreen = document.getElementById("stake-screen");
 
-if (stakeBtn && stakeScreen) {
-  stakeBtn.onclick = async () => {
-    document.querySelectorAll(".screen").forEach(s =>
-      s.classList.add("hidden")
-    );
+stakeBtn.onclick = async () => {
+  document.querySelectorAll(".screen").forEach(s =>
+    s.classList.add("hidden")
+  );
 
-    stakeScreen.classList.remove("hidden");
+  stakeScreen.classList.remove("hidden");
 
-    await refreshMe();
-    await loadRewardState();
-  };
-}
+  await refreshMe();
+  await loadRewardState();
+
+  // 🔥 ДОБАВИТЬ
+  if (rewardState === "CLAIM_ACTIVE") {
+    loadClaimInfo();
+  }
+};
+
 
 
 
