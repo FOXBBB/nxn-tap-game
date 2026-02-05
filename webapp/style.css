@@ -1609,3 +1609,15 @@ body {
   background: rgba(255,255,255,0.08);
   color: #fff;
 }
+.claim-input {
+  color: #000;
+}
+
+.claim-input::placeholder {
+  color: #333;
+  opacity: 1;
+}
+.claim-input {
+  color: #111;
+  background: rgba(255,255,255,0.9);
+}

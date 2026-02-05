@@ -87,10 +87,64 @@ async function loadClaimInfo() {
   const box = document.getElementById("claim-box");
   if (!box) return;
 
-  if (!data.eligible) {
+  async function loadClaimInfo() {
+  const res = await fetch(`/api/reward/claim-info/${userId}`);
+  const data = await res.json();
+
+  // в конце /reward/claim-info
+const claimedRow = await query(`
+  SELECT wallet
+  FROM reward_claims
+  WHERE cycle_id = $1 AND telegram_id = $2
+`, [cycle.id, userId]);
+
+if (claimedRow.rowCount > 0) {
+  return res.json({
+    eligible: false,
+    claimed: true,
+    wallet: claimedRow.rows[0].wallet
+  });
+}
+
+
+  const box = document.getElementById("claim-box");
+  const amountEl = document.getElementById("claim-amount");
+  const input = document.getElementById("claim-wallet");
+  const btn = document.getElementById("claim-btn");
+
+  if (!box) return;
+
+  // ❌ CLAIM ФАЗА НЕ АКТИВНА
+  if (rewardState !== "CLAIM_ACTIVE") {
     box.classList.add("hidden");
     return;
   }
+
+  // ❌ НЕ ДОПУЩЕН (ранг > 500)
+  if (!data.eligible && !data.claimed) {
+    box.classList.add("hidden");
+    return;
+  }
+
+  // ✅ УЖЕ ЗАКЛЕЙМИЛ
+  if (data.claimed) {
+    box.classList.remove("hidden");
+    amountEl.innerText = "Submitted";
+    input.value = data.wallet || "";
+    input.disabled = true;
+    btn.disabled = true;
+    btn.innerText = "Reward Claimed";
+    return;
+  }
+
+  // ✅ МОЖНО КЛЕЙМИТЬ
+  box.classList.remove("hidden");
+  amountEl.innerText = data.reward;
+  input.disabled = false;
+  btn.disabled = false;
+  btn.innerText = "Claim Reward";
+}
+
 
   document.getElementById("claim-amount").innerText =
     data.reward;
