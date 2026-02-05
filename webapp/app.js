@@ -130,12 +130,6 @@ async function loadClaimInfo() {
 }
 
 
-  document.getElementById("claim-amount").innerText =
-    data.reward;
-
-  box.classList.remove("hidden");
-
-
 
 
 // ================= SERVER SYNC =================
