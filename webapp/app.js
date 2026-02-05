@@ -140,20 +140,11 @@ async function loadRewardState() {
   const data = await res.json();
 
 
-  if (data.active === false) {
-    rewardState = null;
-    currentStake = 0;
+ if (!data.state) {
+  rewardState = null;
+  return;
+}
 
-    document.getElementById("stake-balance").innerText =
-      formatNumber(balance);
-
-    document.getElementById("stake-current").innerText = "0";
-
-    const btn = document.getElementById("stake-confirm");
-    btn.disabled = true;
-    btn.innerText = "Reward Event not active";
-    return;
-  }
 
   rewardState = data.state;
 
