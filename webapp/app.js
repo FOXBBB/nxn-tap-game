@@ -146,25 +146,24 @@ if (data.state === "CLAIM_ACTIVE") {
 
   rewardState = data.state;
 
-  if (rewardState === "CLAIM_ACTIVE") {
-  await loadClaimInfo();
+rewardStakeEndsAt = new Date(data.stakeEndsAt);
+rewardClaimEndsAt = new Date(data.claimEndsAt);
+currentStake = Number(data.userStake || 0);
+
+document.getElementById("stake-balance").innerText =
+  formatNumber(balance);
+
+document.getElementById("stake-current").innerText =
+  formatNumber(currentStake);
+
+updateStakeButton();
+updateRewardTimer();
+
+// 👇 ЕДИНСТВЕННЫЙ ВЫЗОВ
+if (rewardState === "CLAIM_ACTIVE") {
+  loadClaimInfo();
 }
 
-
-  rewardStakeEndsAt = new Date(data.stakeEndsAt);
-  rewardClaimEndsAt = new Date(data.claimEndsAt);
-  currentStake = Number(data.userStake || 0);
-
-  // ✅ используем УЖЕ СУЩЕСТВУЮЩИЙ balance
-  document.getElementById("stake-balance").innerText =
-    formatNumber(balance);
-
-  document.getElementById("stake-current").innerText =
-    formatNumber(currentStake);
-
-  updateStakeButton();
-  updateRewardTimer();
-}
 
 async function loadClaimInfo() {
   const res = await fetch(`/api/reward/claim-info/${userId}`);
@@ -999,74 +998,43 @@ document.getElementById("back-to-stake").onclick = () => {
 };
 
 
-document.getElementById("claim-btn").onclick = async () => {
-  const wallet = document.getElementById("claim-wallet").value.trim();
+const claimBtn = document.getElementById("claim-btn");
 
-  if (!wallet) {
-    alert("Enter TON wallet");
-    return;
-  }
+if (claimBtn) {
+  claimBtn.onclick = async () => {
+    const wallet =
+      document.getElementById("claim-wallet").value.trim();
 
-  const res = await fetch("/api/reward/claim", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      id: userId,
-      wallet
-    })
-  });
+    if (!wallet) {
+      alert("Enter TON wallet");
+      return;
+    }
 
-  const data = await res.json();
+    const res = await fetch("/api/reward/claim", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: userId, wallet })
+    });
 
-  if (!data.ok) {
-    alert(data.error || "Claim failed");
-    return;
-  }
+    const data = await res.json();
 
-  const toast = document.createElement("div");
-  toast.className = "transfer-toast success";
-  toast.innerText = "🎉 Reward claimed";
-  document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 2000);
+    if (!data.ok) {
+      alert(data.error || "Claim failed");
+      return;
+    }
 
-  document.getElementById("claim-btn").onclick = async () => {
-  const wallet = document
-    .getElementById("claim-wallet")
-    .value.trim();
+    // ✅ UI после клейма
+    document.getElementById("claim-amount").innerText =
+      "Claimed ✓";
 
-  if (!wallet) {
-    alert("Enter TON wallet");
-    return;
-  }
+    claimBtn.disabled = true;
+    claimBtn.innerText = "Reward Claimed";
 
-  const res = await fetch("/api/reward/claim", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id: userId, wallet })
-  });
-
-  const data = await res.json();
-
-  if (!data.ok) {
-    alert(data.error || "Claim failed");
-    return;
-  }
-
-  // ✅ UI feedback
-  document.getElementById("claim-amount").innerText =
-    "Claimed ✓";
-
-  document.getElementById("claim-btn").disabled = true;
-  document.getElementById("claim-btn").innerText =
-    "Reward Claimed";
-
-  const toast = document.createElement("div");
-  toast.className = "transfer-toast success";
-  toast.innerText = "🎉 Reward claimed successfully";
-  document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 2000);
-};
-};
-
-
-
+    const toast = document.createElement("div");
+    toast.className = "transfer-toast success";
+    toast.innerText = "🎉 Reward claimed";
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2000);
+  };
+}
+}
