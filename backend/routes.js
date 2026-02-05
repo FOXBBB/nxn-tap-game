@@ -4,6 +4,7 @@ import { query } from "./db.js";
 const router = express.Router();
 
 
+
 async function getCurrentRewardCycle() {
   const res = await query(`
     SELECT *
@@ -19,26 +20,22 @@ async function getCurrentRewardCycle() {
 
   let state = "STAKE_ACTIVE";
 
-  if (now > c.stake_end_at && now <= c.claim_end_at) {
+  if (now > new Date(c.stake_end) && now <= new Date(c.claim_end)) {
     state = "CLAIM_ACTIVE";
   }
 
-  if (now > c.claim_end_at) {
-    // 🔥 СГОРАНИЕ + RESET
-    await query(
-      `DELETE FROM reward_stakes WHERE cycle_id = $1`,
-      [c.id]
-    );
-
-    await query(
-      `DELETE FROM reward_claims WHERE cycle_id = $1`,
-      [c.id]
-    );
-
+  if (now > new Date(c.claim_end)) {
+    await query(`DELETE FROM reward_stakes WHERE cycle_id = $1`, [c.id]);
+    await query(`DELETE FROM reward_claims WHERE cycle_id = $1`, [c.id]);
     state = "RESET";
   }
 
-  return { ...c, state };
+  return {
+    ...c,
+    state,
+    stake_end_at: c.stake_end,   // 👈 для фронта
+    claim_end_at: c.claim_end    // 👈 для фронта
+  };
 }
 
 
@@ -794,22 +791,22 @@ async function checkRewardCycle() {
   await query(`DELETE FROM reward_claims`);
 
   // 🚀 новый цикл: 7 дней stake + 2 дня claim
-  await query(`
-    INSERT INTO reward_cycles (
-      start_at,
-      stake_end_at,
-      claim_end_at,
-      reward_pool_total,
-      carry_over
-    )
-    VALUES (
-      NOW(),
-      NOW() + INTERVAL '7 days',
-      NOW() + INTERVAL '9 days',
-      1500,
-      0
-    )
-  `);
+ await query(`
+  INSERT INTO reward_cycles (
+    start_at,
+    stake_end,
+    claim_end,
+    reward_pool_total,
+    carry_over
+  )
+  VALUES (
+    NOW(),
+    NOW() + INTERVAL '7 days',
+    NOW() + INTERVAL '9 days',
+    1500,
+    0
+  )
+`);
 
   console.log("✅ New reward cycle created");
 }
