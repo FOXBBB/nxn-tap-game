@@ -20,21 +20,33 @@ async function getCurrentRewardCycle() {
 
   let state = "STAKE_ACTIVE";
 
-  if (now > new Date(c.stake_end) && now <= new Date(c.claim_end)) {
+  if (
+    now > new Date(c.stake_end_at) &&
+    now <= new Date(c.claim_end_at)
+  ) {
     state = "CLAIM_ACTIVE";
   }
 
-  if (now > new Date(c.claim_end)) {
-    await query(`DELETE FROM reward_event_stakes WHERE cycle_id = $1`, [c.id]);
-    await query(`DELETE FROM reward_event_claims WHERE cycle_id = $1`, [c.id]);
+  if (now > new Date(c.claim_end_at)) {
+    await query(
+      `DELETE FROM reward_event_stakes WHERE cycle_id = $1`,
+      [c.id]
+    );
+    await query(
+      `DELETE FROM reward_event_claims WHERE cycle_id = $1`,
+      [c.id]
+    );
     state = "RESET";
   }
 
   return {
-    ...c,
-    state,  
+    id: c.id,
+    state,
+    stake_end_at: c.stake_end_at,
+    claim_end_at: c.claim_end_at
   };
 }
+
 
 
 
@@ -471,10 +483,11 @@ router.post("/buy-nxn", async (req, res) => {
 router.get("/reward/state/:userId", async (req, res) => {
   const { userId } = req.params;
 
-  const cycle = await getCurrentRewardCycle();
-  if (!cycle) {
-    return res.json({ active: false });
-  }
+ const cycle = await getCurrentRewardCycle();
+if (!cycle) {
+  return res.json({ state: null });
+}
+
 
   // текущий стейк пользователя в этом цикле
   const stakeRes = await query(
@@ -776,7 +789,26 @@ async function checkRewardCycle() {
     LIMIT 1
   `);
 
-  if (res.rowCount === 0) return;
+  if (res.rowCount === 0) {
+  await query(`
+    INSERT INTO reward_event_cycles (
+      start_at,
+      stake_end_at,
+      claim_end_at,
+      reward_pool_total,
+      carry_over
+    )
+    VALUES (
+      NOW(),
+      NOW() + INTERVAL '7 days',
+      NOW() + INTERVAL '9 days',
+      1500,
+      0
+    )
+  `);
+  return;
+}
+
 
   const cycle = res.rows[0];
   const now = new Date();
