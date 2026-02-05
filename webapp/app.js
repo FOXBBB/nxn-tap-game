@@ -1029,7 +1029,43 @@ document.getElementById("claim-btn").onclick = async () => {
   document.body.appendChild(toast);
   setTimeout(() => toast.remove(), 2000);
 
-  document.getElementById("claim-box").classList.add("hidden");
+  document.getElementById("claim-btn").onclick = async () => {
+  const wallet = document
+    .getElementById("claim-wallet")
+    .value.trim();
+
+  if (!wallet) {
+    alert("Enter TON wallet");
+    return;
+  }
+
+  const res = await fetch("/api/reward/claim", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id: userId, wallet })
+  });
+
+  const data = await res.json();
+
+  if (!data.ok) {
+    alert(data.error || "Claim failed");
+    return;
+  }
+
+  // ✅ UI feedback
+  document.getElementById("claim-amount").innerText =
+    "Claimed ✓";
+
+  document.getElementById("claim-btn").disabled = true;
+  document.getElementById("claim-btn").innerText =
+    "Reward Claimed";
+
+  const toast = document.createElement("div");
+  toast.className = "transfer-toast success";
+  toast.innerText = "🎉 Reward claimed successfully";
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2000);
+};
 };
 
 
