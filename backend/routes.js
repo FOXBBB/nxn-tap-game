@@ -8,7 +8,7 @@ const router = express.Router();
 async function getCurrentRewardCycle() {
   const res = await query(`
     SELECT *
-    FROM reward_cycles
+    FROM reward_event_cycles
     ORDER BY id DESC
     LIMIT 1
   `);
@@ -25,8 +25,8 @@ async function getCurrentRewardCycle() {
   }
 
   if (now > new Date(c.claim_end)) {
-    await query(`DELETE FROM reward_stakes WHERE cycle_id = $1`, [c.id]);
-    await query(`DELETE FROM reward_claims WHERE cycle_id = $1`, [c.id]);
+    await query(`DELETE FROM reward_event_stakes WHERE cycle_id = $1`, [c.id]);
+    await query(`DELETE FROM reward_event_claims WHERE cycle_id = $1`, [c.id]);
     state = "RESET";
   }
 
@@ -482,7 +482,7 @@ router.get("/reward/state/:userId", async (req, res) => {
   const stakeRes = await query(
     `
   SELECT COALESCE(SUM(stake_amount), 0) AS stake
-  FROM reward_stakes
+  FROM reward_event_stakes
   WHERE telegram_id = $1
     AND cycle_id = $2
   `,
@@ -565,7 +565,7 @@ router.post("/reward/stake", async (req, res) => {
   // ДОБАВЛЯЕМ СТЕЙК (НЕ ЗАМЕНЯЕМ, А НАКАПЛИВАЕМ)
   await query(
     `
-    INSERT INTO reward_stakes (cycle_id, telegram_id, stake_amount)
+    INSERT INTO reward_event_stakes (cycle_id, telegram_id, stake_amount)
     VALUES ($1, $2, $3)
     `,
     [cycle.id, id, amount]
@@ -593,7 +593,7 @@ router.get("/reward/leaderboard/:userId", async (req, res) => {
   SUM(rs.stake_amount) AS total_stake,
   u.name,
   u.avatar
-FROM reward_stakes rs
+FROM reward_event_stakes rs
 JOIN users u ON u.telegram_id = rs.telegram_id
 WHERE rs.cycle_id = $1
 GROUP BY rs.telegram_id, u.name, u.avatar
@@ -662,7 +662,7 @@ router.post("/reward/claim", async (req, res) => {
   // 2️⃣ защита от двойного claim
   const already = await query(`
     SELECT 1
-    FROM reward_claims
+    FROM reward_event_claims
     WHERE cycle_id = $1 AND telegram_id = $2
   `, [cycle.id, id]);
 
@@ -673,7 +673,7 @@ router.post("/reward/claim", async (req, res) => {
   // 3️⃣ определяем ранг
   const all = await query(`
     SELECT telegram_id, SUM(stake_amount) AS total
-FROM reward_stakes
+FROM reward_event_stakes
 WHERE cycle_id = $1
 GROUP BY telegram_id
 ORDER BY total DESC
@@ -696,7 +696,7 @@ ORDER BY total DESC
 
   // 5️⃣ сохраняем claim
 await query(`
-  INSERT INTO reward_claims
+  INSERT INTO reward_event_claims
     (cycle_id, telegram_id, wallet, reward_amount, status)
   VALUES ($1, $2, $3, $4, 'PENDING')
 `, [cycle.id, id, wallet, reward]);
@@ -718,14 +718,14 @@ router.get("/reward/claim-info/:userId", async (req, res) => {
 
   // уже клеймил?
   const claimed = await query(`
-    SELECT 1 FROM reward_claims
+    SELECT 1 FROM reward_event_claims
     WHERE cycle_id = $1 AND telegram_id = $2
   `, [cycle.id, userId]);
 
   if (claimed.rowCount > 0) {
   const info = await query(`
     SELECT wallet, reward_amount
-    FROM reward_claims
+    FROM reward_event_claims
     WHERE cycle_id = $1 AND telegram_id = $2
   `, [cycle.id, userId]);
 
@@ -740,7 +740,7 @@ router.get("/reward/claim-info/:userId", async (req, res) => {
   // определяем ранг
   const all = await query(`
     SELECT telegram_id
-    FROM reward_stakes
+    FROM reward_event_stakes
     WHERE cycle_id = $1
     GROUP BY telegram_id
     ORDER BY SUM(stake_amount) DESC
@@ -771,7 +771,7 @@ router.get("/reward/claim-info/:userId", async (req, res) => {
 async function checkRewardCycle() {
   const res = await query(`
     SELECT *
-    FROM reward_cycles
+    FROM reward_event_cycles
     ORDER BY id DESC
     LIMIT 1
   `);
@@ -787,12 +787,12 @@ async function checkRewardCycle() {
   console.log("⏳ Reward cycle ended. Starting new cycle...");
 
   // 🔥 стейки просто очищаем (они сгорели)
-  await query(`DELETE FROM reward_stakes`);
-  await query(`DELETE FROM reward_claims`);
+  await query(`DELETE FROM reward_event_stakes`);
+  await query(`DELETE FROM reward_event_claims`);
 
   // 🚀 новый цикл: 7 дней stake + 2 дня claim
  await query(`
-  INSERT INTO reward_cycles (
+  INSERT INTO reward_event_cycles (
     start_at,
     stake_end,
     claim_end,
