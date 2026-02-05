@@ -698,11 +698,12 @@ ORDER BY total DESC
   else reward = 1;
 
   // 5️⃣ сохраняем claim
-  await query(`
-    INSERT INTO reward_claims
-      (cycle_id, telegram_id, wallet, reward_amount)
-    VALUES ($1, $2, $3, $4)
-  `, [cycle.id, id, wallet, reward]);
+await query(`
+  INSERT INTO reward_claims
+    (cycle_id, telegram_id, wallet, reward_amount, status)
+  VALUES ($1, $2, $3, $4, 'PENDING')
+`, [cycle.id, id, wallet, reward]);
+
 
   // ❗ здесь позже будет TON send
 
@@ -771,33 +772,29 @@ router.get("/reward/claim-info/:userId", async (req, res) => {
 
 // ================= REWARD CYCLE AUTO CHECK =================
 async function checkRewardCycle() {
-  const { rows } = await db.query(`
+  const res = await query(`
     SELECT *
     FROM reward_cycles
     ORDER BY id DESC
     LIMIT 1
   `);
 
-  const cycle = rows[0];
-  if (!cycle) return;
+  if (res.rowCount === 0) return;
 
+  const cycle = res.rows[0];
   const now = new Date();
 
-  // ⛔ ещё не закончился claim
+  // ⛔ claim ещё не закончился — ничего не делаем
   if (now <= new Date(cycle.claim_end_at)) return;
 
   console.log("⏳ Reward cycle ended. Starting new cycle...");
 
-  // 🔥 ничего не делаем с невостребованными наградами — они просто сгорают
-
-  // 🔄 обнуляем стейки
-  await db.query(`
-    UPDATE reward_stakes
-    SET amount = 0
-  `);
+  // 🔥 стейки просто очищаем (они сгорели)
+  await query(`DELETE FROM reward_stakes`);
+  await query(`DELETE FROM reward_claims`);
 
   // 🚀 новый цикл: 7 дней stake + 2 дня claim
-  await db.query(`
+  await query(`
     INSERT INTO reward_cycles (
       start_at,
       stake_end_at,
@@ -824,8 +821,67 @@ setInterval(() => {
   );
 }, 60 * 60 * 1000); // 1 раз в час
 
-
 export { checkRewardCycle };
+// ================= REWARD CYCLE AUTO CHECK =================
+async function checkRewardCycle() {
+  const res = await query(`
+    SELECT *
+    FROM reward_cycles
+    ORDER BY id DESC
+    LIMIT 1
+  `);
+
+  if (res.rowCount === 0) return;
+  const cycle = res.rows[0];
+
+  const now = new Date();
+
+  // ⛔ ещё идёт claim период
+  if (now <= new Date(cycle.claim_end_at)) return;
+
+  console.log("🔥 Claim period ended. Expiring rewards...");
+
+  // 1️⃣ Все PENDING → EXPIRED
+  await query(`
+    UPDATE reward_claims
+    SET status = 'EXPIRED'
+    WHERE cycle_id = $1
+      AND status = 'PENDING'
+  `, [cycle.id]);
+
+  // 2️⃣ очищаем стейки
+  await query(`
+    DELETE FROM reward_stakes
+    WHERE cycle_id = $1
+  `, [cycle.id]);
+
+  // 3️⃣ создаём новый цикл (7 + 2)
+  await query(`
+    INSERT INTO reward_cycles (
+      start_at,
+      stake_end_at,
+      claim_end_at,
+      reward_pool_total,
+      carry_over
+    )
+    VALUES (
+      NOW(),
+      NOW() + INTERVAL '7 days',
+      NOW() + INTERVAL '9 days',
+      1500,
+      0
+    )
+  `);
+
+  console.log("✅ New reward cycle started");
+}
+
+// ⏱ проверяем раз в час
+setInterval(() => {
+  checkRewardCycle().catch(err =>
+    console.error("Reward cycle error:", err)
+  );
+}, 60 * 60 * 1000);
 
 
 export default router;
