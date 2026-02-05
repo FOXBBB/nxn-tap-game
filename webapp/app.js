@@ -174,6 +174,7 @@ updateRewardTimer();
 if (rewardState === "CLAIM_ACTIVE") {
   loadClaimInfo();
 }
+}
 
 
 
@@ -220,11 +221,12 @@ function animateCoinHit() {
 
 
 // ================= TAP =================
-coin.onclick = async (e) => {
+if (coin) {
+  coin.onclick = async (e) => {
   if (energy <= 0) return;
 
   animateCoinHit();
-
+  }
   // дальше логика тапа (как у тебя сейчас)
 
 
@@ -648,16 +650,6 @@ function updateStakeButton() {
   btn.disabled = false;
   btn.innerText = "Stake NeXoN";
 }
-// flying amount
-const fly = document.createElement("div");
-fly.className = "plus-one";
-fly.innerText = `-${formatNumber(selectedStakeAmount)} NXN`;
-fly.style.color = "#ff6b6b";
-fly.style.left = "50%";
-fly.style.top = "55%";
-fly.style.transform = "translateX(-50%)";
-document.body.appendChild(fly);
-setTimeout(() => fly.remove(), 900);
 
 
 
@@ -1014,11 +1006,5 @@ if (claimBtn) {
     claimBtn.disabled = true;
     claimBtn.innerText = "Reward Claimed";
 
-    const toast = document.createElement("div");
-    toast.className = "transfer-toast success";
-    toast.innerText = "🎉 Reward claimed";
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 2000);
   };
-}
 }
