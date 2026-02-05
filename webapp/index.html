@@ -100,28 +100,6 @@
   <!-- STAKE / REWARD EVENT -->
   <section id="stake-screen" class="screen hidden">
 
-<!-- CLAIM REWARD -->
-<div id="claim-box" class="glass claim-box hidden">
-
-  <div class="claim-title">🎁 Claim Reward</div>
-
-  <input
-    id="claim-wallet"
-    placeholder="Enter TON wallet address"
-    class="claim-input"
-  />
-
-  <button id="claim-btn" class="stake-confirm">
-    Claim Reward
-  </button>
-
-  <div class="claim-note">
-    • Claim available for 3 days<br>
-    • Unclaimed rewards will burn
-  </div>
-
-</div>
-
 
     <!-- HEADER -->
     <div class="stake-status">
@@ -176,6 +154,27 @@
     </div>
 
   </section>
+
+  <!-- CLAIM REWARD -->
+<div id="claim-box" class="glass claim-box hidden">
+  <div class="claim-title">🎁 Claim Reward</div>
+
+  <div class="claim-info">
+    Your reward:
+    <b id="claim-amount">—</b> NXN
+  </div>
+
+  <input
+    id="claim-wallet"
+    placeholder="Enter TON wallet"
+    class="claim-input"
+  />
+
+  <button id="claim-btn" class="stake-confirm">
+    Claim Reward
+  </button>
+</div>
+
 
   <!-- STAKE LEADERBOARD (ОТДЕЛЬНЫЙ ЭКРАН) -->
   <section id="stake-leaderboard" class="screen hidden">
