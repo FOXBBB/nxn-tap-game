@@ -675,10 +675,11 @@ router.post("/reward/claim", async (req, res) => {
 
   // 3️⃣ определяем ранг
   const all = await query(`
-    SELECT telegram_id
-    FROM reward_stakes
-    WHERE cycle_id = $1
-    ORDER BY stake_amount DESC
+    SELECT telegram_id, SUM(stake_amount) AS total
+FROM reward_stakes
+WHERE cycle_id = $1
+GROUP BY telegram_id
+ORDER BY total DESC
   `, [cycle.id]);
 
   const rank =

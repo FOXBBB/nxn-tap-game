@@ -80,6 +80,25 @@ if (stakeBackBtn) {
   };
 }
 
+async function loadClaimInfo() {
+  const res = await fetch(`/api/reward/claim-info/${userId}`);
+  const data = await res.json();
+
+  const box = document.getElementById("claim-box");
+  if (!box) return;
+
+  if (!data.eligible) {
+    box.classList.add("hidden");
+    return;
+  }
+
+  document.getElementById("claim-amount").innerText =
+    data.reward;
+
+  box.classList.remove("hidden");
+}
+
+
 
 // ================= SERVER SYNC =================
 async function syncUser() {
@@ -120,14 +139,6 @@ async function loadRewardState() {
   const res = await fetch(`/api/reward/state/${userId}`);
   const data = await res.json();
 
-  const claimBox = document.getElementById("claim-box");
-
-if (data.state === "CLAIM_ACTIVE") {
-  claimBox?.classList.remove("hidden");
-} else {
-  claimBox?.classList.add("hidden");
-}
-
 
   if (data.active === false) {
     rewardState = null;
@@ -163,26 +174,6 @@ updateRewardTimer();
 if (rewardState === "CLAIM_ACTIVE") {
   loadClaimInfo();
 }
-
-
-async function loadClaimInfo() {
-  const res = await fetch(`/api/reward/claim-info/${userId}`);
-  const data = await res.json();
-
-  const box = document.getElementById("claim-box");
-  if (!box) return;
-
-  if (!data.eligible) {
-    box.classList.add("hidden");
-    return;
-  }
-
-  document.getElementById("claim-amount").innerText =
-    data.reward;
-
-  box.classList.remove("hidden");
-}
-
 
 
 
@@ -657,13 +648,6 @@ function updateStakeButton() {
   btn.disabled = false;
   btn.innerText = "Stake NeXoN";
 }
-// успешный стейк
-const toast = document.createElement("div");
-toast.className = "transfer-toast success";
-toast.innerText = "STAKE ACCEPTED ✓";
-document.body.appendChild(toast);
-setTimeout(() => toast.remove(), 1600);
-
 // flying amount
 const fly = document.createElement("div");
 fly.className = "plus-one";
