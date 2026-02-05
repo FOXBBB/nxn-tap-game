@@ -709,6 +709,53 @@ router.post("/reward/claim", async (req, res) => {
 });
 
 
+router.get("/reward/claim-info/:userId", async (req, res) => {
+  const { userId } = req.params;
+
+  const cycle = await getCurrentRewardCycle();
+  if (!cycle || cycle.state !== "CLAIM_ACTIVE") {
+    return res.json({ eligible: false });
+  }
+
+  // уже клеймил?
+  const claimed = await query(`
+    SELECT 1 FROM reward_claims
+    WHERE cycle_id = $1 AND telegram_id = $2
+  `, [cycle.id, userId]);
+
+  if (claimed.rowCount > 0) {
+    return res.json({ eligible: false });
+  }
+
+  // определяем ранг
+  const all = await query(`
+    SELECT telegram_id
+    FROM reward_stakes
+    WHERE cycle_id = $1
+    GROUP BY telegram_id
+    ORDER BY SUM(stake_amount) DESC
+  `, [cycle.id]);
+
+  const rank =
+    all.rows.findIndex(r => r.telegram_id === userId) + 1;
+
+  if (rank === 0 || rank > 500) {
+    return res.json({ eligible: false });
+  }
+
+  let reward = 0;
+  if (rank <= 10) reward = 10;
+  else if (rank <= 50) reward = 5;
+  else if (rank <= 200) reward = 3;
+  else reward = 1;
+
+  res.json({
+    eligible: true,
+    rank,
+    reward
+  });
+});
+
 
 
 export default router;
