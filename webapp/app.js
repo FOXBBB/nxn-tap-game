@@ -520,6 +520,15 @@ if (stakeBtn && stakeScreen) {
   };
 }
 
+const claimBox = document.getElementById("claim-box");
+
+if (rewardState === "CLAIM_ACTIVE" && data.eligible) {
+  claimBox.classList.remove("hidden");
+} else {
+  claimBox.classList.add("hidden");
+}
+
+
 document.querySelectorAll(".stake-amounts button").forEach(btn => {
   btn.onclick = () => {
     const val = btn.dataset.amount;
@@ -960,4 +969,38 @@ document.getElementById("back-to-stake").onclick = () => {
 
   document.getElementById("stake-screen")
     .classList.remove("hidden");
+};
+
+
+document.getElementById("claim-btn").onclick = async () => {
+  const wallet = document.getElementById("claim-wallet").value.trim();
+
+  if (!wallet) {
+    alert("Enter TON wallet");
+    return;
+  }
+
+  const res = await fetch("/api/reward/claim", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      id: userId,
+      wallet
+    })
+  });
+
+  const data = await res.json();
+
+  if (!data.ok) {
+    alert(data.error || "Claim failed");
+    return;
+  }
+
+  const toast = document.createElement("div");
+  toast.className = "transfer-toast success";
+  toast.innerText = "🎉 Reward claimed";
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2000);
+
+  document.getElementById("claim-box").classList.add("hidden");
 };

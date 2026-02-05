@@ -27,6 +27,20 @@ async function getCurrentRewardCycle() {
 
   return { ...c, state };
 }
+if (now > c.claim_end_at) {
+  await query(
+    `DELETE FROM reward_stakes WHERE cycle_id = $1`,
+    [c.id]
+  );
+
+  await query(
+    `DELETE FROM reward_claims WHERE cycle_id = $1`,
+    [c.id]
+  );
+
+  state = "RESET";
+}
+
 
 
 async function applyBoosts(user) {
@@ -499,6 +513,15 @@ router.get("/reward/state/:userId", async (req, res) => {
   });
 });
 
+const rankRes = await query(`
+  SELECT telegram_id
+  FROM reward_stakes
+  WHERE cycle_id = $1
+  ORDER BY stake_amount DESC
+`, [cycle.id]);
+
+const rank =
+  rankRes.rows.findIndex(r => r.telegram_id === userId) + 1;
 
 
 
@@ -641,77 +664,58 @@ ORDER BY total_stake DESC
 router.post("/reward/claim", async (req, res) => {
   const { id, wallet } = req.body;
 
-  if (!id || !wallet) {
-    return res.json({ ok: false, error: "Wallet required" });
-  }
-
+  // 1️⃣ проверяем цикл
   const cycle = await getCurrentRewardCycle();
   if (!cycle || cycle.state !== "CLAIM_ACTIVE") {
     return res.json({ ok: false, error: "Claim not active" });
   }
 
-  // ❌ проверка — уже клеймил?
-  const existing = await query(
-    `
+  // 2️⃣ защита от двойного claim
+  const already = await query(`
     SELECT 1
     FROM reward_claims
     WHERE cycle_id = $1 AND telegram_id = $2
-    `,
-    [cycle.id, id]
-  );
+  `, [cycle.id, id]);
 
-  if (existing.rowCount > 0) {
+  if (already.rowCount > 0) {
     return res.json({ ok: false, error: "Already claimed" });
   }
 
-  // получаем топ 500
-  const ranks = await query(
-    `
+  // 3️⃣ определяем ранг
+  const all = await query(`
     SELECT telegram_id
     FROM reward_stakes
     WHERE cycle_id = $1
-    GROUP BY telegram_id
-    ORDER BY SUM(stake_amount) DESC
-    LIMIT 500
-    `,
-    [cycle.id]
-  );
+    ORDER BY stake_amount DESC
+  `, [cycle.id]);
 
   const rank =
-    ranks.rows.findIndex(r => r.telegram_id === id) + 1;
+    all.rows.findIndex(r => r.telegram_id === id) + 1;
 
-  if (rank === 0) {
+  if (rank === 0 || rank > 500) {
     return res.json({ ok: false, error: "Not eligible" });
   }
 
-  // 🎯 РАСПРЕДЕЛЕНИЕ
+  // 4️⃣ расчёт награды (ПО ТВОЕМУ ТЗ)
   let reward = 0;
+
   if (rank <= 10) reward = 10;
   else if (rank <= 50) reward = 5;
   else if (rank <= 200) reward = 3;
-  else if (rank <= 500) reward = 1;
+  else reward = 1;
 
-  if (reward === 0) {
-    return res.json({ ok: false, error: "No reward" });
-  }
-
-  // ✅ сохраняем claim (пока БЕЗ tx)
-  await query(
-    `
+  // 5️⃣ сохраняем claim
+  await query(`
     INSERT INTO reward_claims
-      (cycle_id, telegram_id, reward_amount, wallet, claimed)
-    VALUES ($1, $2, $3, $4, false)
-    `,
-    [cycle.id, id, reward, wallet]
-  );
+      (cycle_id, telegram_id, wallet, reward_amount)
+    VALUES ($1, $2, $3, $4)
+  `, [cycle.id, id, wallet, reward]);
 
-  // ⏭️ ЗДЕСЬ ПОЗЖЕ БУДЕТ TON TX
+  // ❗ здесь позже будет TON send
 
-  res.json({
-    ok: true,
-    reward
-  });
+  res.json({ ok: true, reward });
 });
+
 
 
 
