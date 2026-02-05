@@ -527,9 +527,10 @@ router.post("/reward/stake", async (req, res) => {
   }
 
   const userRes = await query(
-    `SELECT balance, last_stake_change FROM users WHERE telegram_id = $1`,
-    [id]
-  );
+  `SELECT balance FROM users WHERE telegram_id = $1`,
+  [String(userId)]
+);
+
 
   if (userRes.rowCount === 0) {
     return res.json({ ok: false, error: "User not found" });
