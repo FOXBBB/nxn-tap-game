@@ -3,6 +3,7 @@ import cors from "cors";
 import routes from "./routes.js";
 import path from "path";
 import { fileURLToPath } from "url";
+import { checkRewardCycle } from "./routes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -34,3 +35,11 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log("NXN backend running on", PORT);
 });
+
+// ================= AUTO REWARD CYCLE =================
+setInterval(() => {
+  checkRewardCycle().catch(err =>
+    console.error("Reward cycle error:", err)
+  );
+}, 60 * 60 * 1000); // 1 раз в час
+
