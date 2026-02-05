@@ -725,9 +725,13 @@ router.get("/reward/claim-info/:userId", async (req, res) => {
   `, [cycle.id, userId]);
 
   if (claimed.rowCount > 0) {
-    return res.json({ eligible: false });
-  }
-
+  return res.json({
+    eligible: false,
+    claimed: true,
+    wallet: claimed.rows[0].wallet,
+    reward: claimed.rows[0].reward_amount
+  });
+}
   // определяем ранг
   const all = await query(`
     SELECT telegram_id
