@@ -32,9 +32,7 @@ async function getCurrentRewardCycle() {
 
   return {
     ...c,
-    state,
-    stake_end_at: c.stake_end,   // 👈 для фронта
-    claim_end_at: c.claim_end    // 👈 для фронта
+    state,  
   };
 }
 
@@ -527,9 +525,10 @@ router.post("/reward/stake", async (req, res) => {
   }
 
   const userRes = await query(
-  `SELECT balance FROM users WHERE telegram_id = $1`,
-  [String(userId)]
+  `SELECT balance, last_stake_change FROM users WHERE telegram_id = $1`,
+  [id]
 );
+
 
 
   if (userRes.rowCount === 0) {
@@ -795,8 +794,8 @@ async function checkRewardCycle() {
  await query(`
   INSERT INTO reward_event_cycles (
     start_at,
-    stake_end,
-    claim_end,
+    stake_end_at,
+    claim_end_at,
     reward_pool_total,
     carry_over
   )
@@ -808,6 +807,7 @@ async function checkRewardCycle() {
     0
   )
 `);
+
 
   console.log("✅ New reward cycle created");
 }
