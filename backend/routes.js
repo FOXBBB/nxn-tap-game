@@ -817,6 +817,15 @@ async function checkRewardCycle() {
   console.log("✅ New reward cycle created");
 }
 
+// ================= AUTO REWARD CYCLE =================
+setInterval(() => {
+  checkRewardCycle().catch(err =>
+    console.error("Reward cycle error:", err)
+  );
+}, 60 * 60 * 1000); // 1 раз в час
+
+
+export { checkRewardCycle };
 
 
 export default router;
