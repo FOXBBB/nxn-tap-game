@@ -130,46 +130,6 @@ async function loadClaimInfo() {
 }
 
 
-
-  const box = document.getElementById("claim-box");
-  const amountEl = document.getElementById("claim-amount");
-  const input = document.getElementById("claim-wallet");
-  const btn = document.getElementById("claim-btn");
-
-  if (!box) return;
-
-  // ❌ CLAIM ФАЗА НЕ АКТИВНА
-  if (rewardState !== "CLAIM_ACTIVE") {
-    box.classList.add("hidden");
-    return;
-  }
-
-  // ❌ НЕ ДОПУЩЕН (ранг > 500)
-  if (!data.eligible && !data.claimed) {
-    box.classList.add("hidden");
-    return;
-  }
-
-  // ✅ УЖЕ ЗАКЛЕЙМИЛ
-  if (data.claimed) {
-    box.classList.remove("hidden");
-    amountEl.innerText = "Submitted";
-    input.value = data.wallet || "";
-    input.disabled = true;
-    btn.disabled = true;
-    btn.innerText = "Reward Claimed";
-    return;
-  }
-
-  // ✅ МОЖНО КЛЕЙМИТЬ
-  box.classList.remove("hidden");
-  amountEl.innerText = data.reward;
-  input.disabled = false;
-  btn.disabled = false;
-  btn.innerText = "Claim Reward";
-
-
-
   document.getElementById("claim-amount").innerText =
     data.reward;
 
