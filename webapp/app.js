@@ -120,6 +120,15 @@ async function loadRewardState() {
   const res = await fetch(`/api/reward/state/${userId}`);
   const data = await res.json();
 
+  const claimBox = document.getElementById("claim-box");
+
+if (data.state === "CLAIM_ACTIVE" && data.eligible) {
+  claimBox?.classList.remove("hidden");
+} else {
+  claimBox?.classList.add("hidden");
+}
+
+
   if (data.active === false) {
     rewardState = null;
     currentStake = 0;

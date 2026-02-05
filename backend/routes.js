@@ -18,28 +18,29 @@ async function getCurrentRewardCycle() {
   const now = new Date();
 
   let state = "STAKE_ACTIVE";
+
   if (now > c.stake_end_at && now <= c.claim_end_at) {
     state = "CLAIM_ACTIVE";
   }
+
   if (now > c.claim_end_at) {
+    // 🔥 СГОРАНИЕ + RESET
+    await query(
+      `DELETE FROM reward_stakes WHERE cycle_id = $1`,
+      [c.id]
+    );
+
+    await query(
+      `DELETE FROM reward_claims WHERE cycle_id = $1`,
+      [c.id]
+    );
+
     state = "RESET";
   }
 
   return { ...c, state };
 }
-if (now > c.claim_end_at) {
-  await query(
-    `DELETE FROM reward_stakes WHERE cycle_id = $1`,
-    [c.id]
-  );
 
-  await query(
-    `DELETE FROM reward_claims WHERE cycle_id = $1`,
-    [c.id]
-  );
-
-  state = "RESET";
-}
 
 
 
@@ -513,15 +514,6 @@ router.get("/reward/state/:userId", async (req, res) => {
   });
 });
 
-const rankRes = await query(`
-  SELECT telegram_id
-  FROM reward_stakes
-  WHERE cycle_id = $1
-  ORDER BY stake_amount DESC
-`, [cycle.id]);
-
-const rank =
-  rankRes.rows.findIndex(r => r.telegram_id === userId) + 1;
 
 
 
