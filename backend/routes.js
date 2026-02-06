@@ -89,6 +89,7 @@ async function applyAutoclicker(user) {
     SET balance = balance + $1,
         last_seen = NOW()
     WHERE telegram_id = $2::text
+  AND energy > 0
     `,
     [earned, user.telegram_id]
   );
@@ -98,26 +99,34 @@ async function applyAutoclicker(user) {
 
 
 
-async function applyEnergyRegen(userId) {
-  const result = await query(
-    `
-    UPDATE users
-    SET
-      energy = LEAST(
-        max_energy,
-        energy + FLOOR(EXTRACT(EPOCH FROM (NOW() - last_energy_update)) / 3)
-      ),
-      last_energy_update = NOW()
-    WHERE
-      telegram_id = $1
-      AND energy < max_energy
-    RETURNING energy
-    `,
-    [userId]
+async function applyEnergyRegen(user) {
+  const now = new Date();
+  const last = user.last_energy_update
+    ? new Date(user.last_energy_update)
+    : now;
+
+  const diffSec = Math.floor((now - last) / 1000);
+  if (diffSec <= 0) return;
+
+  const boosted = await applyBoosts(user);
+  const maxEnergy = boosted.maxEnergy;
+
+  const regen = diffSec; // 1 энергия в секунду
+  const newEnergy = Math.min(
+    maxEnergy,
+    user.energy + regen
   );
 
-  return result.rowCount > 0;
+  await query(`
+    UPDATE users
+    SET energy = $1,
+        last_energy_update = NOW()
+    WHERE telegram_id = $2::text
+  AND energy > 0
+  `, [newEnergy, user.telegram_id]);
 }
+
+
 
 
 /* ===== SYNC USER ===== */
@@ -160,7 +169,7 @@ router.get("/__debug/db", async (req, res) => {
 router.get("/me/:id", async (req, res) => {
   const { id } = req.params;
 
-  await applyEnergyRegen(id);
+  await applyEnergyRegen(user);
 
   const result = await query(
     `
@@ -182,12 +191,7 @@ FROM users
   );
 
   if (result.rowCount === 0) {
-    return res.json({
-      balance: 0,
-      energy: 100,
-      maxEnergy: 100,
-      tapPower: 1
-    });
+  return res.json({ ok: false, error: "NO_ENERGY" });
   }
 
   const u = result.rows[0];
@@ -281,11 +285,7 @@ router.post("/ton-confirm", async (req, res) => {
 
 async function runAutoclickers() {
   const res = await query(`
-    SELECT
-      telegram_id,
-      tap_power,
-      autoclicker_until,
-      last_seen
+    SELECT *
     FROM users
     WHERE autoclicker_until IS NOT NULL
       AND autoclicker_until > NOW()
@@ -296,12 +296,11 @@ async function runAutoclickers() {
     const last = u.last_seen ? new Date(u.last_seen) : now;
     const diffSec = Math.floor((now - last) / 1000);
 
-    if (diffSec < 5) continue;
+    if (diffSec < 1) continue;
 
-    const clicks = Math.floor(diffSec / 2); // 1 клик в 2 сек
-    if (clicks <= 0) continue;
-
-    const earned = clicks * u.tap_power;
+    const clicks = diffSec; // 1 клик в секунду
+    const boosted = await applyBoosts(u);
+    const earned = clicks * boosted.tapPower;
 
     await query(`
       UPDATE users
@@ -309,13 +308,10 @@ async function runAutoclickers() {
         balance = balance + $1,
         last_seen = NOW()
       WHERE telegram_id = $2::text
+  AND energy > 0
     `, [earned, u.telegram_id]);
   }
 }
-
-setInterval(() => {
-  runAutoclickers().catch(console.error);
-}, 10_000); // каждые 10 секунд
 
 
 /* ===== TAP ===== */
@@ -323,7 +319,7 @@ router.post("/tap", async (req, res) => {
   const { id } = req.body;
   if (!id) return res.json({ ok: false });
 
-  await applyEnergyRegen(id);
+  await applyEnergyRegen(user);
 
   // 1️⃣ получаем пользователя
   const userRes = await query(`
@@ -350,6 +346,7 @@ router.post("/tap", async (req, res) => {
       energy = GREATEST(energy - 1, 0),
       last_seen = NOW()
     WHERE telegram_id = $2::text
+  AND energy > 0
     RETURNING
       balance,
       energy,
@@ -416,12 +413,14 @@ router.post("/transfer", async (req, res) => {
   const received = amount - fee;
 
   await query(
-    `UPDATE users SET balance = balance - $1 WHERE telegram_id = $2::text`,
+    `UPDATE users SET balance = balance - $1 WHERE telegram_id = $2::text
+  AND energy > 0`,
     [amount, fromId]
   );
 
   await query(
-    `UPDATE users SET balance = balance + $1 WHERE telegram_id = $2::text`,
+    `UPDATE users SET balance = balance + $1 WHERE telegram_id = $2::text
+  AND energy > 0`,
     [received, toId]
   );
 
@@ -637,6 +636,7 @@ router.post("/reward/stake", async (req, res) => {
     SET balance = balance - $1,
         last_stake_change = NOW()
     WHERE telegram_id = $2::text
+  AND energy > 0
     `,
     [amount, id]
   );
