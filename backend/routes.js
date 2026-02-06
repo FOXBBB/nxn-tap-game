@@ -88,7 +88,7 @@ async function applyAutoclicker(user) {
     UPDATE users
     SET balance = balance + $1,
         last_seen = NOW()
-    WHERE telegram_id = $2
+    WHERE telegram_id = $2::text
     `,
     [earned, user.telegram_id]
   );
@@ -176,7 +176,7 @@ router.get("/me/:id", async (req, res) => {
   last_seen
 FROM users
 
-    WHERE telegram_id = $1
+    WHERE telegram_id = $1::text
     `,
     [String(id)]
   );
@@ -213,7 +213,7 @@ router.post("/ton-confirm", async (req, res) => {
     `
     SELECT autoclicker_until
     FROM users
-    WHERE telegram_id = $1
+    WHERE telegram_id = $1::text
     `,
     [userId]
   );
@@ -234,7 +234,7 @@ router.post("/ton-confirm", async (req, res) => {
       `
       UPDATE users
       SET autoclicker_until = NOW() + INTERVAL '30 days'
-      WHERE telegram_id = $1
+      WHERE telegram_id = $1::text
       `,
       [userId]
     );
@@ -258,7 +258,7 @@ router.post("/tap", async (req, res) => {
     `
     SELECT *
     FROM users
-    WHERE telegram_id = $1
+    WHERE telegram_id = $1::text
     `,
     [String(id)]
   );
@@ -280,7 +280,7 @@ router.post("/tap", async (req, res) => {
       balance = balance + tap_power,
       energy = GREATEST(energy - 1, 0),
       last_seen = NOW()
-    WHERE telegram_id = $1
+    WHERE telegram_id = $1::text
     RETURNING
       balance,
       energy,
@@ -341,7 +341,7 @@ router.post("/transfer", async (req, res) => {
   }
 
   const sender = await query(
-    `SELECT balance FROM users WHERE telegram_id = $1`,
+    `SELECT balance FROM users WHERE telegram_id = $1::text`,
     [fromId]
   );
 
@@ -353,12 +353,12 @@ router.post("/transfer", async (req, res) => {
   const received = amount - fee;
 
   await query(
-    `UPDATE users SET balance = balance - $1 WHERE telegram_id = $2`,
+    `UPDATE users SET balance = balance - $1 WHERE telegram_id = $2::text`,
     [amount, fromId]
   );
 
   await query(
-    `UPDATE users SET balance = balance + $1 WHERE telegram_id = $2`,
+    `UPDATE users SET balance = balance + $1 WHERE telegram_id = $2::text`,
     [received, toId]
   );
 
@@ -413,7 +413,7 @@ router.post("/buy-nxn", async (req, res) => {
   }
 
   const userRes = await query(
-    `SELECT balance, tap_power, max_energy FROM users WHERE telegram_id = $1`,
+    `SELECT balance, tap_power, max_energy FROM users WHERE telegram_id = $1::text`,
     [id]
   );
 
@@ -496,7 +496,7 @@ if (!cycle) {
     `
   SELECT COALESCE(SUM(stake_amount), 0) AS stake
   FROM reward_event_stakes
-  WHERE telegram_id = $1
+  WHERE telegram_id = $1::text
     AND cycle_id = $2
   `,
     [userId, cycle.id]
@@ -507,7 +507,7 @@ if (!cycle) {
 
   // баланс пользователя
   const userRes = await query(
-    `SELECT balance FROM users WHERE telegram_id = $1`,
+    `SELECT balance FROM users WHERE telegram_id = $1::text`,
     [userId]
   );
 
@@ -528,7 +528,8 @@ if (!cycle) {
 
 
 router.post("/reward/stake", async (req, res) => {
-  const { id, amount } = req.body;
+  const id = String(req.body.id);
+const amount = Number(req.body.amount);
 
   const cycle = await getCurrentRewardCycle();
   if (!cycle || cycle.state !== "STAKE_ACTIVE") {
@@ -540,7 +541,7 @@ router.post("/reward/stake", async (req, res) => {
   }
 
   const userRes = await query(
-  `SELECT balance, last_stake_change FROM users WHERE telegram_id = $1`,
+  `SELECT balance, last_stake_change FROM users WHERE telegram_id = $1::text`,
   [id]
 );
 
@@ -572,7 +573,7 @@ router.post("/reward/stake", async (req, res) => {
     UPDATE users
     SET balance = balance - $1,
         last_stake_change = NOW()
-    WHERE telegram_id = $2
+    WHERE telegram_id = $2::text
     `,
     [amount, id]
   );
@@ -585,7 +586,7 @@ router.post("/reward/stake", async (req, res) => {
     stake_amount,
     last_updated
   )
-  VALUES ($1, $2, $3, NOW())
+  VALUES ($1, $2::text, $3, NOW())
   ON CONFLICT (cycle_id, telegram_id)
   DO UPDATE SET
     stake_amount = reward_event_stakes.stake_amount + EXCLUDED.stake_amount,
@@ -685,7 +686,7 @@ router.post("/reward/claim", async (req, res) => {
   const already = await query(`
     SELECT 1
     FROM reward_event_claims
-    WHERE cycle_id = $1 AND telegram_id = $2
+    WHERE cycle_id = $1 AND telegram_id = $2::text
   `, [cycle.id, id]);
 
   if (already.rowCount > 0) {
@@ -741,14 +742,14 @@ router.get("/reward/claim-info/:userId", async (req, res) => {
   // уже клеймил?
   const claimed = await query(`
     SELECT 1 FROM reward_event_claims
-    WHERE cycle_id = $1 AND telegram_id = $2
+    WHERE cycle_id = $1 AND telegram_id = $2::text
   `, [cycle.id, userId]);
 
   if (claimed.rowCount > 0) {
   const info = await query(`
     SELECT wallet, reward_amount
     FROM reward_event_claims
-    WHERE cycle_id = $1 AND telegram_id = $2
+    WHERE cycle_id = $1 AND telegram_id = $2::text
   `, [cycle.id, userId]);
 
   return res.json({
