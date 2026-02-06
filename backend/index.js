@@ -4,7 +4,6 @@ import routes from "./routes.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import { checkRewardCycle, runAutoclickers } from "./routes.js";
-import { runAutoSendNXN } from "./autoSendNXN.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -50,6 +49,3 @@ setInterval(() => {
 }, 2000); // ⬅️ КАЖДУЮ СЕКУНДУ
 
 
-setInterval(() => {
-  runAutoSendNXN().catch(console.error);
-}, 15000); // каждые 15 сек
