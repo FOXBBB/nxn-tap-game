@@ -208,39 +208,64 @@ router.post("/ton-confirm", async (req, res) => {
     return res.json({ ok: false });
   }
 
-  // ⛔ защита от повторной покупки
-  const check = await query(
-    `
-    SELECT autoclicker_until
+  const userRes = await query(`
+    SELECT
+      tap_boost_until,
+      energy_boost_until,
+      autoclicker_until
     FROM users
-    WHERE telegram_id = $1::text
-    `,
-    [userId]
-  );
+    WHERE telegram_id = $1
+  `, [userId]);
 
-  const user = check.rows[0];
-
-  if (
-    itemId === "autoclicker_30d" &&
-    user.autoclicker_until &&
-    new Date(user.autoclicker_until) > new Date()
-  ) {
-    return res.json({ ok: false, error: "Autoclicker already active" });
+  if (userRes.rowCount === 0) {
+    return res.json({ ok: false, error: "User not found" });
   }
 
-  // ✅ AUTCLICKER 30 DAYS
-  if (itemId === "autoclicker_30d") {
-    await query(
-      `
+  const user = userRes.rows[0];
+  const now = new Date();
+
+  // ===== TAP +3 (30 days) =====
+  if (itemId === "tap_plus_3") {
+    if (user.tap_boost_until && new Date(user.tap_boost_until) > now) {
+      return res.json({ ok: false, error: "Tap boost already active" });
+    }
+
+    await query(`
+      UPDATE users
+      SET tap_boost_until = NOW() + INTERVAL '30 days'
+      WHERE telegram_id = $1
+    `, [userId]);
+  }
+
+  // ===== ENERGY +300 (30 days) =====
+  else if (itemId === "energy_plus_300") {
+    if (user.energy_boost_until && new Date(user.energy_boost_until) > now) {
+      return res.json({ ok: false, error: "Energy boost already active" });
+    }
+
+    await query(`
+      UPDATE users
+      SET energy_boost_until = NOW() + INTERVAL '30 days'
+      WHERE telegram_id = $1
+    `, [userId]);
+  }
+
+  // ===== AUTCLICKER (30 days) =====
+  else if (itemId === "autoclicker_30d") {
+    if (user.autoclicker_until && new Date(user.autoclicker_until) > now) {
+      return res.json({ ok: false, error: "Autoclicker already active" });
+    }
+
+    await query(`
       UPDATE users
       SET autoclicker_until = NOW() + INTERVAL '30 days'
-      WHERE telegram_id = $1::text
-      `,
-      [userId]
-    );
+      WHERE telegram_id = $1
+    `, [userId]);
   }
 
-  // (сюда же позже можно добавить tap_plus_3, energy_plus_300)
+  else {
+    return res.json({ ok: false, error: "Unknown TON item" });
+  }
 
   res.json({ ok: true });
 });
