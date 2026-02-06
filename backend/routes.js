@@ -899,6 +899,7 @@ async function checkRewardCycle() {
 }
 
 
-export { checkRewardCycle };
+export { checkRewardCycle, runAutoclickers };
 
 export default router;
+
