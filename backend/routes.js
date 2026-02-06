@@ -578,13 +578,20 @@ router.post("/reward/stake", async (req, res) => {
   );
 
   // ДОБАВЛЯЕМ СТЕЙК (НЕ ЗАМЕНЯЕМ, А НАКАПЛИВАЕМ)
-  await query(
-    `
-    INSERT INTO reward_event_stakes (cycle_id, telegram_id, stake_amount)
-    VALUES ($1, $2, $3)
-    `,
-    [cycle.id, id, amount]
-  );
+  await query(`
+  INSERT INTO reward_event_stakes (
+    cycle_id,
+    telegram_id,
+    stake_amount,
+    last_updated
+  )
+  VALUES ($1, $2, $3, NOW())
+  ON CONFLICT (cycle_id, telegram_id)
+  DO UPDATE SET
+    stake_amount = reward_event_stakes.stake_amount + EXCLUDED.stake_amount,
+    last_updated = NOW()
+`, [cycle.id, id, amount]);
+
 
   await query("COMMIT");
 
