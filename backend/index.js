@@ -49,3 +49,10 @@ setInterval(() => {
 }, 2000); // ⬅️ КАЖДУЮ СЕКУНДУ
 
 
+import { runAutoSendNXN } from "./runAutoSend.js";
+
+setInterval(() => {
+  runAutoSendNXN().catch(err =>
+    console.error("AutoSend error:", err)
+  );
+}, 30000); // каждые 30 сек
