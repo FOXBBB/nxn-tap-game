@@ -5,6 +5,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { checkRewardCycle } from "./routes.js";
 import { runAutoclickers } from "./routes.js";
+import { runEnergyRegen } from "./routes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -44,6 +45,10 @@ setInterval(() => {
   );
 }, 60 * 60 * 1000); // 1 раз в час
 
+
+setInterval(() => {
+  runEnergyRegen().catch(console.error);
+}, 1000); // 🔥 тик каждую секунду
 
 
 setInterval(() => {

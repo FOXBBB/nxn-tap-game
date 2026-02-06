@@ -272,9 +272,42 @@ router.post("/ton-confirm", async (req, res) => {
 });
 
 
-async function runAutoclickers() {
-  console.log("🔥 runAutoclickers CALLED");
+async function runEnergyRegen() {
+  const res = await query(`
+    SELECT telegram_id, energy, max_energy, last_energy_update
+    FROM users
+  `);
 
+  const now = Date.now();
+
+  for (const u of res.rows) {
+    const last = u.last_energy_update
+      ? new Date(u.last_energy_update).getTime()
+      : now;
+
+    const diffSec = Math.floor((now - last) / 1000);
+    if (diffSec < 3) continue;
+
+    const regen = Math.floor(diffSec / 3);
+    const newEnergy = Math.min(
+      u.max_energy,
+      u.energy + regen
+    );
+
+    if (newEnergy !== u.energy) {
+      await query(`
+        UPDATE users
+        SET energy = $1,
+            last_energy_update = NOW()
+        WHERE telegram_id = $2::text
+      `, [newEnergy, u.telegram_id]);
+    }
+  }
+}
+
+
+
+async function runAutoclickers() {
   const res = await query(`
     SELECT *
     FROM users
@@ -282,18 +315,16 @@ async function runAutoclickers() {
       AND autoclicker_until > NOW()
   `);
 
-  console.log("👥 autoclick users:", res.rowCount);
+  const now = Date.now();
 
   for (const u of res.rows) {
-    const now = new Date();
     const last = u.last_autoclick_at
-      ? new Date(u.last_autoclick_at)
+      ? new Date(u.last_autoclick_at).getTime()
       : now;
 
     const diffSec = Math.floor((now - last) / 1000);
-
-    // ⛔ 1 клик в 2 секунды
     const clicks = Math.floor(diffSec / 2);
+
     if (clicks <= 0) continue;
 
     const boosted = await applyBoosts(u);
@@ -306,12 +337,11 @@ async function runAutoclickers() {
         last_autoclick_at = NOW()
       WHERE telegram_id = $2::text
     `, [earned, u.telegram_id]);
-
-    console.log(
-  `USER ${u.telegram_id} diff=${diffSec}s clicks=${clicks} earned=${earned}`
-    );
   }
 }
+
+
+
 
 
 
@@ -345,9 +375,13 @@ router.post("/tap", async (req, res) => {
     energy = energy - 1,
     last_seen = NOW()
   WHERE telegram_id = $2::text
-    AND energy > 0
+    AND energy >= 1
   RETURNING balance, energy
-`, [realTapPower, String(id)]);
+`, [realTapPower, id]);
+
+if (result.rowCount === 0) {
+  return res.json({ ok: false, error: "NO_ENERGY" });
+}
 
 
   const u = result.rows[0];
