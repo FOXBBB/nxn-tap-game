@@ -72,10 +72,12 @@ export async function runAutoSendNXN() {
   for (const c of pending.rows) {
     try {
       console.log("🚀 Sending NXN to", c.wallet);
+      console.log("🧪 CLAIM ROW:", claim);
+      console.log("🧪 WALLET VALUE:", claim.wallet, typeof claim.wallet);
 
       const tx = await sendJetton({
-        to: c.wallet,
-        amount: c.reward_amount,
+        to: claim.wallet,          // UQ...
+        amount: rewardAmount,      // в jetton units
       });
 
       await query(`
