@@ -192,17 +192,20 @@ FROM users
 
   const u = result.rows[0];
 
-  res.json({
-    balance: Number(u.balance),
-    energy: Number(u.energy),
-    maxEnergy: Number(u.max_energy),
-    tapPower: Number(u.tap_power),
-    boosts: {
-      tap: u.tap_boost_until,
-      energy: u.energy_boost_until,
-      autoclicker: u.autoclicker_until
-    }
-  });
+ const boosted = await applyBoosts(u);
+
+res.json({
+  balance: Number(u.balance),
+  energy: Number(u.energy),
+  maxEnergy: boosted.maxEnergy,
+  tapPower: boosted.tapPower,
+  boosts: {
+    tap: u.tap_boost_until,
+    energy: u.energy_boost_until,
+    autoclicker: u.autoclicker_until
+  }
+});
+
 });
 
 //ton//
@@ -323,14 +326,11 @@ router.post("/tap", async (req, res) => {
   await applyEnergyRegen(id);
 
   // 1️⃣ получаем пользователя
-  const userRes = await query(
-    `
+  const userRes = await query(`
     SELECT *
     FROM users
     WHERE telegram_id = $1::text
-    `,
-    [String(id)]
-  );
+  `, [String(id)]);
 
   if (userRes.rowCount === 0) {
     return res.json({ ok: false });
@@ -338,57 +338,44 @@ router.post("/tap", async (req, res) => {
 
   const user = userRes.rows[0];
 
- 
+  // 2️⃣ считаем бусты СРАЗУ
+  const boosted = await applyBoosts(user);
+  const realTapPower = boosted.tapPower;
 
-  // 3️⃣ обычный тап
-  const result = await query(
-    `
+  // 3️⃣ обновляем энергию + баланс ОДНИМ UPDATE
+  const result = await query(`
     UPDATE users
-SET
-  energy = GREATEST(energy - 1, 0),
-  last_seen = NOW()
-WHERE telegram_id = $1::text
-RETURNING
-  balance,
-  energy,
-  max_energy,
-  tap_power,
-  tap_boost_until,
-  energy_boost_until,
-  autoclicker_until
-    `,
-    [String(id)]
-  );
+    SET
+      balance = balance + $1,
+      energy = GREATEST(energy - 1, 0),
+      last_seen = NOW()
+    WHERE telegram_id = $2::text
+    RETURNING
+      balance,
+      energy,
+      max_energy,
+      tap_power,
+      tap_boost_until,
+      energy_boost_until,
+      autoclicker_until
+  `, [realTapPower, String(id)]);
 
   const u = result.rows[0];
 
-  // 4️⃣ применяем бусты
-
-  const realTapPower = boosted.tapPower;
-
-await query(`
-  UPDATE users
-  SET balance = balance + $1
-  WHERE telegram_id = $2::text
-`, [realTapPower, String(id)]);
-
-
-  // 5️⃣ ответ клиенту
- const boosted = await applyBoosts(u);
-
-res.json({
-  balance: Number(u.balance),
-  energy: Number(u.energy),
-  maxEnergy: boosted.maxEnergy,
-  tapPower: boosted.tapPower,
-  boosts: {
-    tap: u.tap_boost_until,
-    energy: u.energy_boost_until,
-    autoclicker: u.autoclicker_until
-  }
+  // 4️⃣ ответ клиенту
+  res.json({
+    balance: Number(u.balance),
+    energy: Number(u.energy),
+    maxEnergy: boosted.maxEnergy,
+    tapPower: realTapPower,
+    boosts: {
+      tap: u.tap_boost_until,
+      energy: u.energy_boost_until,
+      autoclicker: u.autoclicker_until
+    }
+  });
 });
 
-});
 
 
 /* ===== TRANSFER ===== */
