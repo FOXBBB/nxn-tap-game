@@ -9,7 +9,10 @@ export async function runAutoSendNXN() {
 
   try {
     const { rows } = await query(`
-      SELECT id, ton_address, amount
+      SELECT
+        id,
+        wallet,
+        reward_amount
       FROM reward_event_claims
       WHERE status = 'PENDING'
       ORDER BY id ASC
@@ -21,16 +24,18 @@ export async function runAutoSendNXN() {
     const claim = rows[0];
 
     console.log(
-      `🚀 AutoSend NXN | claim=${claim.id} | amount=${claim.amount}`
+      `🚀 AutoSend NXN | claim=${claim.id} | amount=${claim.reward_amount} | to=${claim.wallet}`
     );
 
     await autoSendNXN({
       db: { query },
       claimId: claim.id,
-      userTonAddress: claim.ton_address,
-      amount: claim.amount,
+      userTonAddress: claim.wallet,
+      amount: claim.reward_amount,
     });
 
+  } catch (err) {
+    console.error("AutoSend error:", err);
   } finally {
     running = false;
   }
