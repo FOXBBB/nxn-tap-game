@@ -101,24 +101,45 @@ async function applyAutoclicker(user) {
 
 async function applyEnergyRegen(user) {
   const now = new Date();
+
   const last = user.last_energy_update
     ? new Date(user.last_energy_update)
     : now;
 
   const diffSec = Math.floor((now - last) / 1000);
-if (diffSec < 3) return;
 
-const regenPoints = Math.floor(diffSec / 3);
-const newEnergy = Math.min(maxEnergy, user.energy + regenPoints);
+  // ⛔ меньше 3 секунд — регена нет
+  if (diffSec < 3) return;
 
-await query(`
-  UPDATE users
-  SET
-    energy = $1,
-    last_energy_update = last_energy_update + INTERVAL '3 seconds' * $2
-  WHERE telegram_id = $3::text
-`, [newEnergy, regenPoints, user.telegram_id]);
+  // ✅ 1 энергия = 3 секунды
+  const regenPoints = Math.floor(diffSec / 3);
 
+  // ✅ вычисляем maxEnergy ПРАВИЛЬНО
+  let maxEnergy = user.max_energy;
+
+  if (
+    user.energy_boost_until &&
+    now < new Date(user.energy_boost_until)
+  ) {
+    maxEnergy += 300;
+  }
+
+  const newEnergy = Math.min(
+    maxEnergy,
+    user.energy + regenPoints
+  );
+
+  await query(
+    `
+    UPDATE users
+    SET
+      energy = $1,
+      last_energy_update = NOW()
+    WHERE telegram_id = $2::text
+      AND energy < $3
+    `,
+    [newEnergy, user.telegram_id, maxEnergy]
+  );
 }
 
 
@@ -308,27 +329,41 @@ async function runAutoclickers() {
       AND autoclicker_until > NOW()
   `);
 
-  const now = Date.now();
-
   for (const u of res.rows) {
+    const now = new Date();
+
     const last = u.last_autoclick_at
-      ? new Date(u.last_autoclick_at).getTime()
-      : now - 2000; // стартовый тик
+      ? new Date(u.last_autoclick_at)
+      : now;
 
-    // ⏱️ ровно 1 клик раз в 2 секунды
-    if (now - last < 2000) continue;
+    const diffSec = Math.floor((now - last) / 1000);
 
-    const tapBoost =
-      u.tap_power +
-      (u.tap_boost_until && new Date(u.tap_boost_until) > new Date() ? 3 : 0);
+    // ⛔ 1 клик = 2 секунды
+    const clicks = Math.floor(diffSec / 2);
+    if (clicks <= 0) continue;
 
-    await query(`
+    // считаем tap power + бусты
+    let tapPower = u.tap_power;
+
+    if (
+      u.tap_boost_until &&
+      now < new Date(u.tap_boost_until)
+    ) {
+      tapPower += 3;
+    }
+
+    const earned = clicks * tapPower;
+
+    await query(
+      `
       UPDATE users
       SET
         balance = balance + $1,
         last_autoclick_at = NOW()
       WHERE telegram_id = $2::text
-    `, [tapBoost, u.telegram_id]);
+      `,
+      [earned, u.telegram_id]
+    );
   }
 }
 
@@ -341,11 +376,10 @@ router.post("/tap", async (req, res) => {
   const { id } = req.body;
   if (!id) return res.json({ ok: false });
 
-  const userRes = await query(`
-    SELECT *
-    FROM users
-    WHERE telegram_id = $1::text
-  `, [String(id)]);
+  const userRes = await query(
+    `SELECT * FROM users WHERE telegram_id = $1::text`,
+    [String(id)]
+  );
 
   if (userRes.rowCount === 0) {
     return res.json({ ok: false });
@@ -353,39 +387,47 @@ router.post("/tap", async (req, res) => {
 
   const user = userRes.rows[0];
 
-  await applyEnergyRegen(user); // ✅ теперь корректно
+  await applyEnergyRegen(user);
 
-  const boosted = await applyBoosts(user);
-  const realTapPower = boosted.tapPower;
+  // ⛔ если энергии 0 — тап запрещён
+  if (user.energy <= 0) {
+    return res.json({
+      ok: false,
+      energy: 0
+    });
+  }
 
- const result = await query(`
-  UPDATE users
-  SET
-    balance = balance + $1,
-    energy = GREATEST(energy - 1, 0)
-    last_seen = NOW()
-  WHERE telegram_id = $2::text
+  // считаем бусты
+  let tapPower = user.tap_power;
+
+  if (
+    user.tap_boost_until &&
+    new Date() < new Date(user.tap_boost_until)
+  ) {
+    tapPower += 3;
+  }
+
+  const result = await query(
+    `
+    UPDATE users
+    SET
+      balance = balance + $1,
+      energy = energy - 1,
+      last_seen = NOW()
+    WHERE telegram_id = $2::text
       AND energy > 0
-  RETURNING balance, energy
-`, [realTapPower, id]);
-
-if (result.rowCount === 0) {
-  return res.json({ ok: false, error: "NO_ENERGY" });
-}
-
+    RETURNING balance, energy
+    `,
+    [tapPower, String(id)]
+  );
 
   const u = result.rows[0];
 
   res.json({
+    ok: true,
     balance: Number(u.balance),
     energy: Number(u.energy),
-    maxEnergy: boosted.maxEnergy,
-    tapPower: realTapPower,
-    boosts: {
-      tap: user.tap_boost_until,
-      energy: user.energy_boost_until,
-      autoclicker: user.autoclicker_until
-    }
+    tapPower
   });
 });
 

@@ -48,7 +48,7 @@ setInterval(() => {
 // autoclicker
 setInterval(() => {
   runAutoclickers().catch(console.error);
-}, 1000); // ⬅️ КАЖДУЮ СЕКУНДУ
+}, 2000); // ⬅️ КАЖДУЮ СЕКУНДУ
 
 
 
