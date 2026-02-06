@@ -106,26 +106,19 @@ async function applyEnergyRegen(user) {
     : now;
 
   const diffSec = Math.floor((now - last) / 1000);
-  if (diffSec < 3) return; // ⛔ меньше 3 секунд — ничего
+if (diffSec < 3) return;
 
-  const regenPoints = Math.floor(diffSec / 3); // ✅ 1 энергия = 3 сек
+const regenPoints = Math.floor(diffSec / 3);
+const newEnergy = Math.min(maxEnergy, user.energy + regenPoints);
 
-  const boosted = await applyBoosts(user);
-  const maxEnergy = boosted.maxEnergy;
+await query(`
+  UPDATE users
+  SET
+    energy = $1,
+    last_energy_update = last_energy_update + INTERVAL '3 seconds' * $2
+  WHERE telegram_id = $3::text
+`, [newEnergy, regenPoints, user.telegram_id]);
 
-  const newEnergy = Math.min(
-    maxEnergy,
-    user.energy + regenPoints
-  );
-
-  await query(`
-    UPDATE users
-    SET
-      energy = $1,
-      last_energy_update = NOW()
-    WHERE telegram_id = $2::text
-      AND energy < $1
-  `, [newEnergy, user.telegram_id]);
 }
 
 
@@ -315,23 +308,19 @@ async function runAutoclickers() {
       AND autoclicker_until > NOW()
   `);
 
-  const now = new Date();
+  const now = Date.now();
 
   for (const u of res.rows) {
     const last = u.last_autoclick_at
-      ? new Date(u.last_autoclick_at)
-      : new Date(now.getTime() - 2000); // 🔥 КРИТИЧНО
+      ? new Date(u.last_autoclick_at).getTime()
+      : now - 2000; // стартовый тик
 
-    const diffSec = Math.floor((now - last) / 1000);
-    const clicks = Math.floor(diffSec / 2); // 1 клик = 2 сек
+    // ⏱️ ровно 1 клик раз в 2 секунды
+    if (now - last < 2000) continue;
 
-    if (clicks <= 0) continue;
-
-    const boostedTap =
+    const tapBoost =
       u.tap_power +
-      (u.tap_boost_until && now < new Date(u.tap_boost_until) ? 3 : 0);
-
-    const earned = clicks * boostedTap;
+      (u.tap_boost_until && new Date(u.tap_boost_until) > new Date() ? 3 : 0);
 
     await query(`
       UPDATE users
@@ -339,10 +328,9 @@ async function runAutoclickers() {
         balance = balance + $1,
         last_autoclick_at = NOW()
       WHERE telegram_id = $2::text
-    `, [earned, u.telegram_id]);
+    `, [tapBoost, u.telegram_id]);
   }
 }
-
 
 
 
@@ -374,10 +362,10 @@ router.post("/tap", async (req, res) => {
   UPDATE users
   SET
     balance = balance + $1,
-    energy = energy - 1,
+    energy = GREATEST(energy - 1, 0)
     last_seen = NOW()
   WHERE telegram_id = $2::text
-    AND energy >= 1
+      AND energy > 0
   RETURNING balance, energy
 `, [realTapPower, id]);
 

@@ -672,21 +672,19 @@ setInterval(() => {
   syncUser();
 }, 5000);
 // ================= ENERGY SYNC TICK =================
-// pulls real energy from server so regen is visible without taps
 setInterval(async () => {
   if (!userId) return;
 
-  try {
-    const res = await fetch(`/api/me/${userId}`);
-    const data = await res.json();
+  const res = await fetch(`/api/me/${userId}`);
+  const data = await res.json();
 
-    energy = Number(data.energy) || energy;
-    maxEnergy = Number(data.maxEnergy) || maxEnergy;
-    canTap = energy > 0;
-    updateUI();
+  balance = Number(data.balance) || balance;
+  energy = Number(data.energy) || energy;
+  maxEnergy = Number(data.maxEnergy) || maxEnergy;
 
-  } catch { }
-}, 3000);
+  updateUI();
+}, 1000); // 🔥 каждую секунду
+
 
 
 
