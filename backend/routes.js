@@ -287,9 +287,11 @@ async function runAutoclickers() {
       : now;
 
     const diffSec = Math.floor((now - last) / 1000);
-    if (diffSec < 2) continue; // ⛔ 2 секунды
 
-    const clicks = Math.floor(diffSec / 2); // ✅ 1 клик / 2 сек
+    // ⛔ 1 клик в 2 секунды
+    const clicks = Math.floor(diffSec / 2);
+    if (clicks <= 0) continue;
+
     const boosted = await applyBoosts(u);
     const earned = clicks * boosted.tapPower;
 
@@ -300,8 +302,13 @@ async function runAutoclickers() {
         last_autoclick_at = NOW()
       WHERE telegram_id = $2::text
     `, [earned, u.telegram_id]);
+
+    console.log(
+      `AUTOCLICK ${u.telegram_id}: +${earned} NXN`
+    );
   }
 }
+
 
 
 
