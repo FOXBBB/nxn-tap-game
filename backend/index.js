@@ -51,8 +51,12 @@ setInterval(() => {
 
 import { runAutoSendNXN } from "./runAutoSend.js";
 
+console.log("🔥 AutoSend interval INIT");
+
 setInterval(() => {
+  console.log("⏱ AutoSend tick");
   runAutoSendNXN().catch(err =>
     console.error("AutoSend error:", err)
   );
-}, 30000); // каждые 30 сек
+}, 15000);
+

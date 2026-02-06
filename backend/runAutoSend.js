@@ -4,8 +4,11 @@ import { autoSendNXN } from "./autoSendNXN.js";
 let running = false;
 
 export async function runAutoSendNXN() {
+  console.log("🚀 runAutoSendNXN called");
+
   if (running) return;
   running = true;
+
 
   try {
     const { rows } = await query(`
