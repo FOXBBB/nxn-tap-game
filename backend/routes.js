@@ -111,18 +111,18 @@ async function applyEnergyRegen(user) {
   const boosted = await applyBoosts(user);
   const maxEnergy = boosted.maxEnergy;
 
-  const regen = diffSec; // 1 энергия в секунду
   const newEnergy = Math.min(
     maxEnergy,
-    user.energy + regen
+    user.energy + diffSec
   );
 
   await query(`
     UPDATE users
-    SET energy = $1,
-        last_energy_update = NOW()
+    SET
+      energy = $1,
+      last_energy_update = NOW()
     WHERE telegram_id = $2::text
-  AND energy > 0
+      AND energy < $1
   `, [newEnergy, user.telegram_id]);
 }
 
@@ -165,52 +165,38 @@ router.get("/__debug/db", async (req, res) => {
 
 
 
-/* ===== GET ME ===== */
 router.get("/me/:id", async (req, res) => {
   const { id } = req.params;
 
-  await applyEnergyRegen(user);
-
-  const result = await query(
-    `
-    SELECT
-  telegram_id,
-  balance,
-  energy,
-  max_energy,
-  tap_power,
-  autoclicker_until,
-  tap_boost_until,
-  energy_boost_until,
-  last_seen
-FROM users
-
+  const userRes = await query(`
+    SELECT *
+    FROM users
     WHERE telegram_id = $1::text
-    `,
-    [String(id)]
-  );
+  `, [String(id)]);
 
-  if (result.rowCount === 0) {
-  return res.json({ ok: false, error: "NO_ENERGY" });
+  if (userRes.rowCount === 0) {
+    return res.json({ ok: false, error: "USER_NOT_FOUND" });
   }
 
-  const u = result.rows[0];
+  const user = userRes.rows[0];
 
- const boosted = await applyBoosts(u);
+  await applyEnergyRegen(user); // ✅ ТЕПЕРЬ ОК
 
-res.json({
-  balance: Number(u.balance),
-  energy: Number(u.energy),
-  maxEnergy: boosted.maxEnergy,
-  tapPower: boosted.tapPower,
-  boosts: {
-    tap: u.tap_boost_until,
-    energy: u.energy_boost_until,
-    autoclicker: u.autoclicker_until
-  }
+  const boosted = await applyBoosts(user);
+
+  res.json({
+    balance: Number(user.balance),
+    energy: Number(user.energy),
+    maxEnergy: boosted.maxEnergy,
+    tapPower: boosted.tapPower,
+    boosts: {
+      tap: user.tap_boost_until,
+      energy: user.energy_boost_until,
+      autoclicker: user.autoclicker_until
+    }
+  });
 });
 
-});
 
 //ton//
 router.post("/ton-confirm", async (req, res) => {
@@ -303,13 +289,13 @@ async function runAutoclickers() {
     const earned = clicks * boosted.tapPower;
 
     await query(`
-      UPDATE users
-      SET
-        balance = balance + $1,
-        last_seen = NOW()
-      WHERE telegram_id = $2::text
-  AND energy > 0
-    `, [earned, u.telegram_id]);
+  UPDATE users
+  SET
+    balance = balance + $1,
+    last_seen = NOW()
+  WHERE telegram_id = $2::text
+`, [earned, u.telegram_id]);
+
   }
 }
 
@@ -319,9 +305,6 @@ router.post("/tap", async (req, res) => {
   const { id } = req.body;
   if (!id) return res.json({ ok: false });
 
-  await applyEnergyRegen(user);
-
-  // 1️⃣ получаем пользователя
   const userRes = await query(`
     SELECT *
     FROM users
@@ -334,11 +317,11 @@ router.post("/tap", async (req, res) => {
 
   const user = userRes.rows[0];
 
-  // 2️⃣ считаем бусты СРАЗУ
+  await applyEnergyRegen(user); // ✅ теперь корректно
+
   const boosted = await applyBoosts(user);
   const realTapPower = boosted.tapPower;
 
-  // 3️⃣ обновляем энергию + баланс ОДНИМ UPDATE
   const result = await query(`
     UPDATE users
     SET
@@ -346,29 +329,21 @@ router.post("/tap", async (req, res) => {
       energy = GREATEST(energy - 1, 0),
       last_seen = NOW()
     WHERE telegram_id = $2::text
-  AND energy > 0
-    RETURNING
-      balance,
-      energy,
-      max_energy,
-      tap_power,
-      tap_boost_until,
-      energy_boost_until,
-      autoclicker_until
+      AND energy < $1
+    RETURNING balance, energy
   `, [realTapPower, String(id)]);
 
   const u = result.rows[0];
 
-  // 4️⃣ ответ клиенту
   res.json({
     balance: Number(u.balance),
     energy: Number(u.energy),
     maxEnergy: boosted.maxEnergy,
     tapPower: realTapPower,
     boosts: {
-      tap: u.tap_boost_until,
-      energy: u.energy_boost_until,
-      autoclicker: u.autoclicker_until
+      tap: user.tap_boost_until,
+      energy: user.energy_boost_until,
+      autoclicker: user.autoclicker_until
     }
   });
 });
