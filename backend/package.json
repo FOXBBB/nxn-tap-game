@@ -6,15 +6,16 @@
   "scripts": {
     "start": "node index.js"
   },
-  "dependencies": {
+   "dependencies": {
     "express": "^4.19.2",
     "cors": "^2.8.5",
+
+    "pg": "^8.11.5",
+    "dotenv": "^16.4.5",
 
     "@ton/ton": "^13.9.0",
     "@ton/core": "^0.59.0",
     "@ton/crypto": "^3.2.0",
-    "@orbs-network/ton-access": "^2.3.2",
-
-    "dotenv": "^16.4.5"
+    "@orbs-network/ton-access": "^2.3.2"
   }
 }
