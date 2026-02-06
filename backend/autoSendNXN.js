@@ -36,8 +36,8 @@ export async function autoSendNXN({
   const client = new TonClient({ endpoint });
 
   // 2. Wallet keypair (Ed25519)
-  const seed = Buffer.from(process.env.PRIVATE_KEY_HEX, "hex");
-  const keyPair = nacl.sign.keyPair.fromSeed(seed);
+const secretKey = Buffer.from(process.env.PRIVATE_KEY_HEX, "hex");
+const keyPair = nacl.sign.keyPair.fromSecretKey(secretKey);
 
   const wallet = WalletContractV4.create({
     workchain: 0,
