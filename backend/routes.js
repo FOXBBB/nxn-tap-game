@@ -273,12 +273,16 @@ router.post("/ton-confirm", async (req, res) => {
 
 
 async function runAutoclickers() {
+  console.log("🔥 runAutoclickers CALLED");
+
   const res = await query(`
     SELECT *
     FROM users
     WHERE autoclicker_until IS NOT NULL
       AND autoclicker_until > NOW()
   `);
+
+  console.log("👥 autoclick users:", res.rowCount);
 
   for (const u of res.rows) {
     const now = new Date();
@@ -304,7 +308,7 @@ async function runAutoclickers() {
     `, [earned, u.telegram_id]);
 
     console.log(
-      `AUTOCLICK ${u.telegram_id}: +${earned} NXN`
+  `USER ${u.telegram_id} diff=${diffSec}s clicks=${clicks} earned=${earned}`
     );
   }
 }
