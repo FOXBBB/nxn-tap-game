@@ -39,10 +39,11 @@ export async function autoSendNXN({
 const secretKey = Buffer.from(process.env.PRIVATE_KEY_HEX, "hex");
 const keyPair = nacl.sign.keyPair.fromSecretKey(secretKey);
 
-  const wallet = WalletContractV4.create({
-    workchain: 0,
-    publicKey: keyPair.publicKey,
-  });
+const wallet = WalletContractV4.create({
+  workchain: 0,
+  publicKey: Buffer.from(keyPair.publicKey),
+});
+
   const walletContract = client.open(wallet);
 
   // 3. Sender jetton wallet
