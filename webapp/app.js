@@ -250,10 +250,6 @@ if (coin) {
 
     animateCoinHit();
 
-    // optimistic UI
-    energy -= 1;
-    balance += tapPower;
-    updateUI();
 
     try {
       const res = await fetch("/api/tap", {

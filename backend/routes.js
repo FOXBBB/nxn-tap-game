@@ -193,11 +193,16 @@ FROM users
   const u = result.rows[0];
 
   res.json({
-    balance: Number(u.balance),
-    energy: Number(u.energy),
-    maxEnergy: Number(u.max_energy),
-    tapPower: Number(u.tap_power)
-  });
+  balance: Number(u.balance),
+  energy: Number(u.energy),
+  maxEnergy: Number(u.max_energy),
+  tapPower: Number(u.tap_power),
+  boosts: {
+    tap: u.tap_boost_until,
+    energy: u.energy_boost_until,
+    autoclicker: u.autoclicker_until
+  }
+});
 });
 
 //ton//
