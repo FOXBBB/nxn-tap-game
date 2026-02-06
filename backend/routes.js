@@ -276,6 +276,45 @@ router.post("/ton-confirm", async (req, res) => {
 });
 
 
+async function runAutoclickers() {
+  const res = await query(`
+    SELECT
+      telegram_id,
+      tap_power,
+      autoclicker_until,
+      last_seen
+    FROM users
+    WHERE autoclicker_until IS NOT NULL
+      AND autoclicker_until > NOW()
+  `);
+
+  for (const u of res.rows) {
+    const now = new Date();
+    const last = u.last_seen ? new Date(u.last_seen) : now;
+    const diffSec = Math.floor((now - last) / 1000);
+
+    if (diffSec < 5) continue;
+
+    const clicks = Math.floor(diffSec / 2); // 1 клик в 2 сек
+    if (clicks <= 0) continue;
+
+    const earned = clicks * u.tap_power;
+
+    await query(`
+      UPDATE users
+      SET
+        balance = balance + $1,
+        last_seen = NOW()
+      WHERE telegram_id = $2::text
+    `, [earned, u.telegram_id]);
+  }
+}
+
+setInterval(() => {
+  runAutoclickers().catch(console.error);
+}, 10_000); // каждые 10 секунд
+
+
 /* ===== TAP ===== */
 router.post("/tap", async (req, res) => {
   const { id } = req.body;
@@ -299,8 +338,7 @@ router.post("/tap", async (req, res) => {
 
   const user = userRes.rows[0];
 
-  // 2️⃣ оффлайн автокликер
-  const earnedOffline = await applyAutoclicker(user);
+ 
 
   // 3️⃣ обычный тап
   const result = await query(
@@ -325,7 +363,6 @@ RETURNING
   const u = result.rows[0];
 
   // 4️⃣ применяем бусты
-  const boosted = await applyBoosts(u);
 
   const realTapPower = boosted.tapPower;
 
@@ -337,19 +374,20 @@ await query(`
 
 
   // 5️⃣ ответ клиенту
-  res.json({
-    ok: true,
-    balance: Number(u.balance) + realTapPower,
-    energy: Number(u.energy),
-    maxEnergy: boosted.maxEnergy,
-    tapPower: realTapPower,
-    offlineEarned: earnedOffline,   // ✅ ТЕПЕРЬ СУЩЕСТВУЕТ
-    boosts: {
-      tap: u.tap_boost_until,
-      energy: u.energy_boost_until,
-      autoclicker: u.autoclicker_until
-    }
-  });
+ const boosted = await applyBoosts(u);
+
+res.json({
+  balance: Number(u.balance),
+  energy: Number(u.energy),
+  maxEnergy: boosted.maxEnergy,
+  tapPower: boosted.tapPower,
+  boosts: {
+    tap: u.tap_boost_until,
+    energy: u.energy_boost_until,
+    autoclicker: u.autoclicker_until
+  }
+});
+
 });
 
 

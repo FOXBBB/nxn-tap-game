@@ -261,13 +261,6 @@ if (coin) {
       const data = await res.json();
 
       // 🔥 OFFLINE EARN TOAST
-      if (data.offlineEarned && data.offlineEarned > 0) {
-        const toast = document.createElement("div");
-        toast.className = "transfer-toast success";
-        toast.innerText = `+${data.offlineEarned} NXN (offline)`;
-        document.body.appendChild(toast);
-        setTimeout(() => toast.remove(), 2200);
-      }
 
       balance = Number(data.balance) || balance;
       energy = Number(data.energy) || energy;
