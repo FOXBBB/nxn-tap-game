@@ -60,13 +60,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 
-  // register / update user
   await syncUser();
+await refreshMe();
+await loadRewardState();
+updateUI();
+initMenu();
 
-  // get actual state
-  await refreshMe();
-  updateUI();
-  initMenu();
 });
 
 const stakeBackBtn = document.getElementById("stake-back");

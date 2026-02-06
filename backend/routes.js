@@ -18,25 +18,15 @@ async function getCurrentRewardCycle() {
   const c = res.rows[0];
   const now = new Date();
 
-  let state = "STAKE_ACTIVE";
+  let state = null;
 
-  if (
+  if (now >= new Date(c.start_at) && now <= new Date(c.stake_end_at)) {
+    state = "STAKE_ACTIVE";
+  } else if (
     now > new Date(c.stake_end_at) &&
     now <= new Date(c.claim_end_at)
   ) {
     state = "CLAIM_ACTIVE";
-  }
-
-  if (now > new Date(c.claim_end_at)) {
-    await query(
-      `DELETE FROM reward_event_stakes WHERE cycle_id = $1`,
-      [c.id]
-    );
-    await query(
-      `DELETE FROM reward_event_claims WHERE cycle_id = $1`,
-      [c.id]
-    );
-    state = "RESET";
   }
 
   return {
@@ -46,6 +36,7 @@ async function getCurrentRewardCycle() {
     claim_end_at: c.claim_end_at
   };
 }
+
 
 
 
@@ -844,12 +835,6 @@ async function checkRewardCycle() {
   console.log("✅ New reward cycle created");
 }
 
-// ================= AUTO REWARD CYCLE =================
-setInterval(() => {
-  checkRewardCycle().catch(err =>
-    console.error("Reward cycle error:", err)
-  );
-}, 60 * 60 * 1000); // 1 раз в час
 
 export { checkRewardCycle };
 
