@@ -3,9 +3,9 @@ import cors from "cors";
 import routes from "./routes.js";
 import path from "path";
 import { fileURLToPath } from "url";
-import { checkRewardCycle } from "./routes.js";
-import { runAutoclickers } from "./routes.js";
-import { runEnergyRegen } from "./routes.js";
+import { checkRewardCycle, runAutoclickers } from "./routes.js";
+
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -38,20 +38,16 @@ app.listen(PORT, () => {
   console.log("NXN backend running on", PORT);
 });
 
-// ================= AUTO REWARD CYCLE =================
+// reward cycle
 setInterval(() => {
   checkRewardCycle().catch(err =>
     console.error("Reward cycle error:", err)
   );
-}, 60 * 60 * 1000); // 1 раз в час
+}, 60 * 60 * 1000); // 1 час
 
-
-setInterval(() => {
-  runEnergyRegen().catch(console.error);
-}, 1000); // 🔥 тик каждую секунду
-
-
+// autoclicker
 setInterval(() => {
   runAutoclickers().catch(console.error);
-}, 2000); // ⏱ каждые 2 секунды
+}, 2000); // каждые 2 секунды
+
 

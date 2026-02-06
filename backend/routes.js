@@ -309,11 +309,19 @@ async function runEnergyRegen() {
 
 async function runAutoclickers() {
   const res = await query(`
-    SELECT *
-    FROM users
-    WHERE autoclicker_until IS NOT NULL
-      AND autoclicker_until > NOW()
-  `);
+  SELECT
+    telegram_id,
+    tap_power,
+    max_energy,
+    tap_boost_until,
+    energy_boost_until,
+    autoclicker_until,
+    last_autoclick_at
+  FROM users
+  WHERE autoclicker_until IS NOT NULL
+    AND autoclicker_until > NOW()
+`);
+
 
   const now = Date.now();
 
