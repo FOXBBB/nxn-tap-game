@@ -4,17 +4,17 @@ import dotenv from "dotenv";
 import { TonClient, WalletContractV4 } from "@ton/ton";
 import { mnemonicToPrivateKey } from "@ton/crypto";
 import { Address, toNano } from "@ton/core";
-import { JettonMaster } from "@ton/ton";
+import { JettonMaster, JettonWallet } from "@ton/ton";
 import { getHttpEndpoint } from "@orbs-network/ton-access";
 
 dotenv.config();
 
 /* ================= ENV ================= */
 
-const JETTON_MASTER = process.env.NXN_JETTON_MASTER; // EQ...
+const JETTON_MASTER = process.env.NXN_JETTON_MASTER;
 const DECIMALS = Number(process.env.NXN_DECIMALS || 3);
-const ADMIN_PRIVATE_KEY = process.env.TON_ADMIN_PRIVATE_KEY; // hex
-const ADMIN_WALLET = process.env.TON_ADMIN_WALLET; // UQ...
+const ADMIN_PRIVATE_KEY = process.env.TON_ADMIN_PRIVATE_KEY;
+const ADMIN_WALLET = process.env.TON_ADMIN_WALLET;
 
 if (!JETTON_MASTER || !ADMIN_PRIVATE_KEY || !ADMIN_WALLET) {
   throw new Error("❌ TON ENV VARS NOT SET");
@@ -27,7 +27,7 @@ const publicKey = secretKey.slice(32);
 
 /* ================= SEND JETTON ================= */
 
-async function sendJetton(toAddress, amount) {
+async function sendJetton(to, amount) {
   const endpoint = await getHttpEndpoint({ network: "mainnet" });
   const client = new TonClient({ endpoint });
 
@@ -43,12 +43,14 @@ async function sendJetton(toAddress, amount) {
     JettonMaster.create(Address.parse(JETTON_MASTER))
   );
 
-  // admin jetton wallet
+  // admin jetton wallet address
   const adminJettonWalletAddress =
     await jettonMaster.getWalletAddress(wallet.address);
 
-  const adminJettonWallet =
-    client.openJettonWallet(adminJettonWalletAddress);
+  // admin jetton wallet contract
+  const adminJettonWallet = client.open(
+    JettonWallet.create(adminJettonWalletAddress)
+  );
 
   const jettonAmount =
     BigInt(amount) * BigInt(10 ** DECIMALS);
@@ -56,21 +58,21 @@ async function sendJetton(toAddress, amount) {
   const seqno = await walletContract.getSeqno();
 
   console.log("🟡 SEND JETTON");
-  console.log("➡️ TO:", toAddress);
+  console.log("➡️ TO:", to);
   console.log("➡️ AMOUNT:", amount);
 
   await adminJettonWallet.sendTransfer(
     walletContract.sender(secretKey),
-    toNano("0.05"), // TON fee
+    toNano("0.05"),                 // TON fee
     jettonAmount,
-    Address.parse(toAddress),
-    wallet.address,
+    Address.parse(to),              // destination
+    wallet.address,                 // response address
     null,
     toNano("0.02"),
     null
   );
 
-  // ждём подтверждение seqno
+  // ждём подтверждение
   while ((await walletContract.getSeqno()) === seqno) {
     await new Promise(r => setTimeout(r, 1500));
   }
