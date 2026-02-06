@@ -309,34 +309,29 @@ async function runEnergyRegen() {
 
 async function runAutoclickers() {
   const res = await query(`
-  SELECT
-    telegram_id,
-    tap_power,
-    max_energy,
-    tap_boost_until,
-    energy_boost_until,
-    autoclicker_until,
-    last_autoclick_at
-  FROM users
-  WHERE autoclicker_until IS NOT NULL
-    AND autoclicker_until > NOW()
-`);
+    SELECT *
+    FROM users
+    WHERE autoclicker_until IS NOT NULL
+      AND autoclicker_until > NOW()
+  `);
 
-
-  const now = Date.now();
+  const now = new Date();
 
   for (const u of res.rows) {
     const last = u.last_autoclick_at
-      ? new Date(u.last_autoclick_at).getTime()
-      : now;
+      ? new Date(u.last_autoclick_at)
+      : new Date(now.getTime() - 2000); // 🔥 КРИТИЧНО
 
     const diffSec = Math.floor((now - last) / 1000);
-    const clicks = Math.floor(diffSec / 2);
+    const clicks = Math.floor(diffSec / 2); // 1 клик = 2 сек
 
     if (clicks <= 0) continue;
 
-    const boosted = await applyBoosts(u);
-    const earned = clicks * boosted.tapPower;
+    const boostedTap =
+      u.tap_power +
+      (u.tap_boost_until && now < new Date(u.tap_boost_until) ? 3 : 0);
+
+    const earned = clicks * boostedTap;
 
     await query(`
       UPDATE users
@@ -347,7 +342,6 @@ async function runAutoclickers() {
     `, [earned, u.telegram_id]);
   }
 }
-
 
 
 
