@@ -73,7 +73,7 @@ export async function runAutoSendNXN() {
     FROM reward_event_claims
     WHERE status = 'PENDING'
     ORDER BY created_at
-    LIMIT 5
+    LIMIT 3
   `);
 
   if (pending.rowCount === 0) return;
@@ -84,9 +84,13 @@ export async function runAutoSendNXN() {
       console.log("➡️ Wallet:", c.wallet);
       console.log("➡️ Amount:", c.reward_amount);
 
+      if (!c.wallet || typeof c.wallet !== "string") {
+        throw new Error("Wallet is empty or invalid");
+      }
+
       const tx = await sendJetton({
-        to: c.wallet,
-        amount: c.reward_amount,
+        to: c.wallet,                // ✅ ИСПРАВЛЕНО
+        amount: Number(c.reward_amount), // ✅ ИСПРАВЛЕНО
       });
 
       await query(`
@@ -100,8 +104,8 @@ export async function runAutoSendNXN() {
 
       console.log("✅ PAID:", c.wallet);
 
-    } catch (err) {
-      console.error("❌ SEND FAILED:", err.message);
+    } catch (e) {
+      console.error("❌ SEND FAILED", e.message);
 
       await query(`
         UPDATE reward_event_claims
