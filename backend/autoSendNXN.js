@@ -1,27 +1,22 @@
 import { query } from "./db.js";
+import { keyPairFromSecretKey } from "@ton/crypto";
 import { TonClient, WalletContractV4, internal } from "@ton/ton";
 import { getHttpEndpoint } from "@orbs-network/ton-access";
-import { Address } from "@ton/core";
+import { Address, beginCell } from "@ton/core";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-/* ================= ENV ================= */
-
-const JETTON_MASTER = process.env.NXN_JETTON_MASTER; // EQ...
+const JETTON_MASTER = process.env.NXN_JETTON_MASTER;
 const DECIMALS = Number(process.env.NXN_DECIMALS || 3);
 const PRIVATE_KEY_HEX = process.env.TON_ADMIN_PRIVATE_KEY;
 
 if (!JETTON_MASTER || !PRIVATE_KEY_HEX) {
-  throw new Error("❌ TON ENV VARS NOT SET");
+  throw new Error("TON ENV VARS NOT SET");
 }
 
-/* ================= WALLET ================= */
-
 const secretKey = Buffer.from(PRIVATE_KEY_HEX, "hex");
-const publicKey = secretKey.slice(32);
-
-/* ================= SEND JETTON ================= */
+const keyPair = keyPairFromSecretKey(secretKey);
 
 async function sendJetton({ to, amount }) {
   const endpoint = await getHttpEndpoint({ network: "mainnet" });
@@ -29,7 +24,7 @@ async function sendJetton({ to, amount }) {
 
   const wallet = WalletContractV4.create({
     workchain: 0,
-    publicKey,
+    publicKey: keyPair.publicKey,
   });
 
   const walletContract = client.open(wallet);
@@ -37,35 +32,36 @@ async function sendJetton({ to, amount }) {
   const toAddress = Address.parse(to);
   const jettonMaster = Address.parse(JETTON_MASTER);
 
-  const jettonAmount =
-    BigInt(amount) * BigInt(10 ** DECIMALS);
+  const jettonAmount = BigInt(amount) * BigInt(10 ** DECIMALS);
 
-  const body = internal({
-    value: "0.06",
-    bounce: true,
-    body: {
-      type: "transfer",
-      queryId: Date.now(),
-      amount: jettonAmount,
-      destination: toAddress,
-      responseDestination: wallet.address,
-      forwardTonAmount: "0.02",
-      forwardPayload: null,
-    },
-  });
+  // Jetton transfer payload
+  const body = beginCell()
+    .storeUint(0xf8a7ea5, 32) // jetton transfer op
+    .storeUint(0, 64)        // query id
+    .storeCoins(jettonAmount)
+    .storeAddress(toAddress)
+    .storeAddress(wallet.address)
+    .storeBit(0)             // no custom payload
+    .storeCoins(0)
+    .storeBit(0)
+    .endCell();
 
   const seqno = await walletContract.getSeqno();
 
   await walletContract.sendTransfer({
     seqno,
-    secretKey,
-    messages: [body],
+    secretKey: keyPair.secretKey,
+    messages: [
+      internal({
+        to: jettonMaster,
+        value: "0.05",
+        body,
+      }),
+    ],
   });
 
   return seqno;
 }
-
-/* ================= AUTOSEND ================= */
 
 export async function runAutoSendNXN() {
   const pending = await query(`
@@ -76,42 +72,27 @@ export async function runAutoSendNXN() {
     LIMIT 3
   `);
 
-  if (pending.rowCount === 0) return;
-
   for (const c of pending.rows) {
     try {
       console.log("🚀 Sending NXN");
       console.log("➡️ Wallet:", c.wallet);
       console.log("➡️ Amount:", c.reward_amount);
 
-      if (!c.wallet || typeof c.wallet !== "string") {
-        throw new Error("Wallet is empty or invalid");
-      }
-
       const tx = await sendJetton({
-        to: c.wallet,                // ✅ ИСПРАВЛЕНО
-        amount: Number(c.reward_amount), // ✅ ИСПРАВЛЕНО
+        to: c.wallet,
+        amount: c.reward_amount,
       });
 
-      await query(`
-        UPDATE reward_event_claims
-        SET
-          status = 'PAID',
-          paid_at = NOW(),
-          tx_hash = $1
-        WHERE id = $2
-      `, [String(tx), c.id]);
+      await query(
+        `UPDATE reward_event_claims
+         SET status='PAID', paid_at=NOW(), tx_hash=$1
+         WHERE id=$2`,
+        [String(tx), c.id]
+      );
 
-      console.log("✅ PAID:", c.wallet);
-
+      console.log("✅ PAID", c.wallet);
     } catch (e) {
       console.error("❌ SEND FAILED", e.message);
-
-      await query(`
-        UPDATE reward_event_claims
-        SET status = 'ERROR'
-        WHERE id = $1
-      `, [c.id]);
     }
   }
 }
