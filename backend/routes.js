@@ -193,16 +193,16 @@ FROM users
   const u = result.rows[0];
 
   res.json({
-  balance: Number(u.balance),
-  energy: Number(u.energy),
-  maxEnergy: Number(u.max_energy),
-  tapPower: Number(u.tap_power),
-  boosts: {
-    tap: u.tap_boost_until,
-    energy: u.energy_boost_until,
-    autoclicker: u.autoclicker_until
-  }
-});
+    balance: Number(u.balance),
+    energy: Number(u.energy),
+    maxEnergy: Number(u.max_energy),
+    tapPower: Number(u.tap_power),
+    boosts: {
+      tap: u.tap_boost_until,
+      energy: u.energy_boost_until,
+      autoclicker: u.autoclicker_until
+    }
+  });
 });
 
 //ton//
@@ -306,19 +306,18 @@ router.post("/tap", async (req, res) => {
   const result = await query(
     `
     UPDATE users
-    SET
-      balance = balance + tap_power,
-      energy = GREATEST(energy - 1, 0),
-      last_seen = NOW()
-    WHERE telegram_id = $1::text
-    RETURNING
-      balance,
-      energy,
-      max_energy,
-      tap_power,
-      tap_boost_until,
-      energy_boost_until,
-      autoclicker_until
+SET
+  energy = GREATEST(energy - 1, 0),
+  last_seen = NOW()
+WHERE telegram_id = $1::text
+RETURNING
+  balance,
+  energy,
+  max_energy,
+  tap_power,
+  tap_boost_until,
+  energy_boost_until,
+  autoclicker_until
     `,
     [String(id)]
   );
@@ -328,13 +327,22 @@ router.post("/tap", async (req, res) => {
   // 4️⃣ применяем бусты
   const boosted = await applyBoosts(u);
 
+  const realTapPower = boosted.tapPower;
+
+await query(`
+  UPDATE users
+  SET balance = balance + $1
+  WHERE telegram_id = $2::text
+`, [realTapPower, String(id)]);
+
+
   // 5️⃣ ответ клиенту
   res.json({
     ok: true,
-    balance: Number(u.balance),
+    balance: Number(u.balance) + realTapPower,
     energy: Number(u.energy),
     maxEnergy: boosted.maxEnergy,
-    tapPower: boosted.tapPower,
+    tapPower: realTapPower,
     offlineEarned: earnedOffline,   // ✅ ТЕПЕРЬ СУЩЕСТВУЕТ
     boosts: {
       tap: u.tap_boost_until,
@@ -515,10 +523,10 @@ router.post("/buy-nxn", async (req, res) => {
 router.get("/reward/state/:userId", async (req, res) => {
   const { userId } = req.params;
 
- const cycle = await getCurrentRewardCycle();
-if (!cycle) {
-  return res.json({ state: null });
-}
+  const cycle = await getCurrentRewardCycle();
+  if (!cycle) {
+    return res.json({ state: null });
+  }
 
 
   // текущий стейк пользователя в этом цикле
@@ -559,7 +567,7 @@ if (!cycle) {
 
 router.post("/reward/stake", async (req, res) => {
   const id = String(req.body.id);
-const amount = Number(req.body.amount);
+  const amount = Number(req.body.amount);
 
   const cycle = await getCurrentRewardCycle();
   if (!cycle || cycle.state !== "STAKE_ACTIVE") {
@@ -571,9 +579,9 @@ const amount = Number(req.body.amount);
   }
 
   const userRes = await query(
-  `SELECT balance, last_stake_change FROM users WHERE telegram_id = $1::text`,
-  [id]
-);
+    `SELECT balance, last_stake_change FROM users WHERE telegram_id = $1::text`,
+    [id]
+  );
 
 
 
@@ -748,7 +756,7 @@ ORDER BY total DESC
   else reward = 1;
 
   // 5️⃣ сохраняем claim
-await query(`
+  await query(`
   INSERT INTO reward_event_claims
     (cycle_id, telegram_id, wallet, reward_amount, status)
   VALUES ($1, $2, $3, $4, 'PENDING')
@@ -776,19 +784,19 @@ router.get("/reward/claim-info/:userId", async (req, res) => {
   `, [cycle.id, userId]);
 
   if (claimed.rowCount > 0) {
-  const info = await query(`
+    const info = await query(`
     SELECT wallet, reward_amount
     FROM reward_event_claims
     WHERE cycle_id = $1 AND telegram_id = $2::text
   `, [cycle.id, userId]);
 
-  return res.json({
-    eligible: true,
-    claimed: true,
-    wallet: info.rows[0].wallet,
-    reward: info.rows[0].reward_amount
-  });
-}
+    return res.json({
+      eligible: true,
+      claimed: true,
+      wallet: info.rows[0].wallet,
+      reward: info.rows[0].reward_amount
+    });
+  }
 
   // определяем ранг
   const all = await query(`
@@ -830,7 +838,7 @@ async function checkRewardCycle() {
   `);
 
   if (res.rowCount === 0) {
-  await query(`
+    await query(`
     INSERT INTO reward_event_cycles (
       start_at,
       stake_end_at,
@@ -846,8 +854,8 @@ async function checkRewardCycle() {
       0
     )
   `);
-  return;
-}
+    return;
+  }
 
 
   const cycle = res.rows[0];
@@ -863,7 +871,7 @@ async function checkRewardCycle() {
   await query(`DELETE FROM reward_event_claims`);
 
   // 🚀 новый цикл: 7 дней stake + 2 дня claim
- await query(`
+  await query(`
   INSERT INTO reward_event_cycles (
     start_at,
     stake_end_at,
