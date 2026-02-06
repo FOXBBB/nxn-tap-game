@@ -106,14 +106,16 @@ async function applyEnergyRegen(user) {
     : now;
 
   const diffSec = Math.floor((now - last) / 1000);
-  if (diffSec <= 0) return;
+  if (diffSec < 3) return; // ⛔ меньше 3 секунд — ничего
+
+  const regenPoints = Math.floor(diffSec / 3); // ✅ 1 энергия = 3 сек
 
   const boosted = await applyBoosts(user);
   const maxEnergy = boosted.maxEnergy;
 
   const newEnergy = Math.min(
     maxEnergy,
-    user.energy + diffSec
+    user.energy + regenPoints
   );
 
   await query(`
@@ -125,6 +127,7 @@ async function applyEnergyRegen(user) {
       AND energy < $1
   `, [newEnergy, user.telegram_id]);
 }
+
 
 
 
@@ -279,25 +282,27 @@ async function runAutoclickers() {
 
   for (const u of res.rows) {
     const now = new Date();
-    const last = u.last_seen ? new Date(u.last_seen) : now;
+    const last = u.last_autoclick_at
+      ? new Date(u.last_autoclick_at)
+      : now;
+
     const diffSec = Math.floor((now - last) / 1000);
+    if (diffSec < 2) continue; // ⛔ 2 секунды
 
-    if (diffSec < 1) continue;
-
-    const clicks = diffSec; // 1 клик в секунду
+    const clicks = Math.floor(diffSec / 2); // ✅ 1 клик / 2 сек
     const boosted = await applyBoosts(u);
     const earned = clicks * boosted.tapPower;
 
     await query(`
-  UPDATE users
-  SET
-    balance = balance + $1,
-    last_seen = NOW()
-  WHERE telegram_id = $2::text
-`, [earned, u.telegram_id]);
-
+      UPDATE users
+      SET
+        balance = balance + $1,
+        last_autoclick_at = NOW()
+      WHERE telegram_id = $2::text
+    `, [earned, u.telegram_id]);
   }
 }
+
 
 
 /* ===== TAP ===== */

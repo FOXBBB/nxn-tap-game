@@ -43,3 +43,12 @@ setInterval(() => {
   );
 }, 60 * 60 * 1000); // 1 раз в час
 
+import { runAutoclickers } from "./routes.js";
+
+setInterval(async () => {
+  try {
+    await runAutoclickers();
+  } catch (e) {
+    console.error("Autoclicker error:", e.message);
+  }
+}, 2000); // ⏱ каждые 2 секунды
