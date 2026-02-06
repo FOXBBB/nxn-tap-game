@@ -52,4 +52,4 @@ setInterval(() => {
 
 setInterval(() => {
   runAutoSendNXN().catch(console.error);
-}, 30_000); // каждые 30 секунд
+}, 15000); // каждые 15 сек
