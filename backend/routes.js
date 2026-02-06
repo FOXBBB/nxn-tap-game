@@ -89,7 +89,7 @@ async function applyAutoclicker(user) {
     SET balance = balance + $1,
         last_seen = NOW()
     WHERE telegram_id = $2::text
-  AND energy > 0
+  
     `,
     [earned, user.telegram_id]
   );
@@ -322,16 +322,17 @@ router.post("/tap", async (req, res) => {
   const boosted = await applyBoosts(user);
   const realTapPower = boosted.tapPower;
 
-  const result = await query(`
-    UPDATE users
-    SET
-      balance = balance + $1,
-      energy = GREATEST(energy - 1, 0),
-      last_seen = NOW()
-    WHERE telegram_id = $2::text
-      AND energy < $1
-    RETURNING balance, energy
-  `, [realTapPower, String(id)]);
+ const result = await query(`
+  UPDATE users
+  SET
+    balance = balance + $1,
+    energy = energy - 1,
+    last_seen = NOW()
+  WHERE telegram_id = $2::text
+    AND energy > 0
+  RETURNING balance, energy
+`, [realTapPower, String(id)]);
+
 
   const u = result.rows[0];
 
@@ -389,13 +390,13 @@ router.post("/transfer", async (req, res) => {
 
   await query(
     `UPDATE users SET balance = balance - $1 WHERE telegram_id = $2::text
-  AND energy > 0`,
+  `,
     [amount, fromId]
   );
 
   await query(
     `UPDATE users SET balance = balance + $1 WHERE telegram_id = $2::text
-  AND energy > 0`,
+  `,
     [received, toId]
   );
 
@@ -611,7 +612,7 @@ router.post("/reward/stake", async (req, res) => {
     SET balance = balance - $1,
         last_stake_change = NOW()
     WHERE telegram_id = $2::text
-  AND energy > 0
+  
     `,
     [amount, id]
   );
