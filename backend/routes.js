@@ -145,6 +145,17 @@ router.post("/sync", async (req, res) => {
 });
 
 
+router.get("/__debug/db", async (req, res) => {
+  const r = await query(`
+    SELECT current_database() as db,
+           current_user as user,
+           inet_server_addr() as host
+  `);
+  res.json(r.rows[0]);
+});
+
+
+
 /* ===== GET ME ===== */
 router.get("/me/:id", async (req, res) => {
   const { id } = req.params;
