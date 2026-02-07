@@ -96,10 +96,6 @@ document.getElementById("copy-ref").onclick = () => {
   const code = document.getElementById("ref-code").innerText;
   navigator.clipboard.writeText(code);
 
-  Telegram.WebApp.showPopup({
-    title: "Copied",
-    message: "Referral code copied"
-  });
 };
 
 
@@ -126,8 +122,6 @@ document.getElementById("bind-ref").onclick = async () => {
     alert(data.error);
     return;
   }
-
-  alert("Referral linked ✓");
 
   // перезагружаем экран
   document.getElementById("open-referral").click();
@@ -215,12 +209,6 @@ fly.className = "ref-stake-fly";
 fly.innerText = `+${formatNumber(amount)} NXN`;
 document.body.appendChild(fly);
 setTimeout(() => fly.remove(), 900);
-
-// 🔔 popup (Telegram native)
-Telegram.WebApp.showPopup({
-  title: "Success",
-  message: "Referral NXN staked successfully"
-});
 
 // обновляем данные
 await refreshMe();
