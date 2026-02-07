@@ -112,7 +112,10 @@ router.get("/referral/me/:userId", async (req, res) => {
   const { userId } = req.params;
 
   const userRes = await query(`
-    SELECT referral_code, referred_by, referral_stack_balance
+    SELECT
+      referral_code,
+      referred_by,
+      referral_stack_balance
     FROM users
     WHERE telegram_id = $1::text
   `, [userId]);
@@ -121,26 +124,40 @@ router.get("/referral/me/:userId", async (req, res) => {
     return res.json({ ok: false });
   }
 
-  const stats = await query(`
-    SELECT
-      COUNT(*) FILTER (WHERE inviter_telegram_id = $1) AS invited,
-      COUNT(*) FILTER (WHERE inviter_telegram_id = $1 AND activated = true) AS active
-    FROM referrals
+  // invited count
+  const invitedRes = await query(`
+    SELECT COUNT(*)::int AS invited
+    FROM referral_links
+    WHERE inviter_id = $1
   `, [userId]);
 
-  const earned = stats.rows[0].invited * 50000;
+  // active referrals (реально сделали stake > 0)
+  const activeRes = await query(`
+    SELECT COUNT(DISTINCT rl.invited_id)::int AS active
+    FROM referral_links rl
+    JOIN reward_event_stakes rs
+      ON rs.telegram_id = rl.invited_id
+    WHERE rl.inviter_id = $1
+      AND rs.stake_amount > 0
+  `, [userId]);
+
+  // total earned = invited * 50k
+  const invited = invitedRes.rows[0].invited;
+  const totalEarned = invited * 50000;
 
   res.json({
+    ok: true,
     referralCode: userRes.rows[0].referral_code,
     referredBy: userRes.rows[0].referred_by,
     referralStackBalance: Number(userRes.rows[0].referral_stack_balance),
     stats: {
-      invited: Number(stats.rows[0].invited),
-      active: Number(stats.rows[0].active),
-      totalEarned: earned
+      invited,
+      active: activeRes.rows[0].active,
+      totalEarned
     }
   });
 });
+
 
 
 

@@ -1960,3 +1960,33 @@ input, button {
     0 2px 0 #c49000,
     0 6px 12px rgba(255,200,80,0.3);
 }
+/* ===== OPEN REFERRAL BUTTON (STAKE) ===== */
+.ref-open-btn {
+  width: 100%;
+  margin-top: 10px;
+  padding: 14px;
+
+  border-radius: 16px;
+  border: none;
+
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+
+  background: linear-gradient(135deg, #6cf0ff, #1a6aff);
+  color: #041b2d;
+
+  box-shadow:
+    0 6px 0 #0d47a1,
+    0 14px 22px rgba(80,150,255,0.45);
+
+  cursor: pointer;
+}
+
+.ref-open-btn:active {
+  transform: translateY(4px);
+  box-shadow:
+    0 2px 0 #0d47a1,
+    0 6px 12px rgba(80,150,255,0.3);
+}
