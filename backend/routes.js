@@ -185,6 +185,9 @@ router.get("/__debug/db", async (req, res) => {
 router.get("/me/:id", async (req, res) => {
   const { id } = req.params;
 
+  const user = userRes.rows[0];
+await applyEnergyRegen(user);
+
   const userRes = await query(`
     SELECT *
     FROM users
@@ -194,8 +197,6 @@ router.get("/me/:id", async (req, res) => {
   if (userRes.rowCount === 0) {
     return res.json({ ok: false });
   }
-
-  const user = userRes.rows[0];
 
   const boosted = await applyBoosts(user);
 
@@ -285,40 +286,6 @@ router.post("/ton-confirm", async (req, res) => {
 });
 
 
-async function runEnergyRegen() {
-  const res = await query(`
-    SELECT telegram_id, energy, max_energy, last_energy_update
-    FROM users
-  `);
-
-  const now = Date.now();
-
-  for (const u of res.rows) {
-    const last = u.last_energy_update
-      ? new Date(u.last_energy_update).getTime()
-      : now;
-
-    const diffSec = Math.floor((now - last) / 1000);
-    if (diffSec < 3) continue;
-
-    const regen = Math.floor(diffSec / 3);
-    const newEnergy = Math.min(
-      u.max_energy,
-      u.energy + regen
-    );
-
-    if (newEnergy !== u.energy) {
-      await query(`
-        UPDATE users
-        SET energy = $1,
-            last_energy_update = NOW()
-        WHERE telegram_id = $2::text
-      `, [newEnergy, u.telegram_id]);
-    }
-  }
-}
-
-
 
 async function runAutoclickers() {
   const res = await query(`
@@ -386,7 +353,7 @@ router.post("/tap", async (req, res) => {
 
   const user = userRes.rows[0];
 
-  // ⛔ если энергии нет — НЕЛЬЗЯ тапать
+  // ⛔ энергии нет — стоп
   if (user.energy <= 0) {
     return res.json({
       ok: false,
@@ -396,7 +363,6 @@ router.post("/tap", async (req, res) => {
     });
   }
 
-  // считаем tap power + буст
   let tapPower = user.tap_power;
   if (
     user.tap_boost_until &&
@@ -405,15 +371,16 @@ router.post("/tap", async (req, res) => {
     tapPower += 3;
   }
 
-  // ✅ СНАЧАЛА списываем энергию
+  // 🔥 ТОЛЬКО СПИСАНИЕ
   const result = await query(
     `
     UPDATE users
     SET
-      energy = GREATEST(energy - 1, 0),
+      energy = energy - 1,
       balance = balance + $1,
       last_seen = NOW()
     WHERE telegram_id = $2::text
+      AND energy > 0
     RETURNING balance, energy
     `,
     [tapPower, String(id)]

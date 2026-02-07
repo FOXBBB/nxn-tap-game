@@ -19,6 +19,7 @@ let energy = 0;
 let maxEnergy = 100;
 let tapPower = 1;
 let canTap = false;
+let tapInProgress = false;
 let tonConnectUI = null;
 
 
@@ -244,10 +245,15 @@ function animateCoinHit() {
 // ================= TAP =================
 if (coin) {
   coin.onclick = async (e) => {
-  if (!canTap) return;
+    // ⛔ если энергия 0 — сразу стоп
+    if (!canTap) return;
 
-    animateCoinHit();
+    // ⛔ если уже идёт запрос — стоп
+    if (tapInProgress) return;
 
+    tapInProgress = true;
+
+    let data;
 
     try {
       const res = await fetch("/api/tap", {
@@ -256,23 +262,37 @@ if (coin) {
         body: JSON.stringify({ id: userId })
       });
 
-      const data = await res.json();
-
-      // 🔥 OFFLINE EARN TOAST
-
-      balance = Number(data.balance) || balance;
-      energy = Number(data.energy) || energy;
-      maxEnergy = Number(data.maxEnergy) || maxEnergy;
-      tapPower = Number(data.tapPower) || tapPower;
-
-      updateUI();
+      data = await res.json();
     } catch (err) {
       console.error("tap error", err);
+      tapInProgress = false;
+      return;
     }
 
-    animatePlus(e, tapPower);
+    // ⛔ сервер запретил тап (energy = 0)
+    if (!data.ok) {
+      energy = Number(data.energy) || 0;
+      updateUI();
+      updateTapState();
+      tapInProgress = false;
+      return;
+    }
+
+    // ✅ ТОЛЬКО ЗДЕСЬ АНИМАЦИЯ
+    animateCoinHit();
+    animatePlus(e, data.tapPower);
+
+    balance = Number(data.balance);
+    energy = Number(data.energy);
+    tapPower = Number(data.tapPower);
+
+    updateUI();
+    updateTapState();
+
+    tapInProgress = false;
   };
 }
+
 
 
 
