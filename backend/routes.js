@@ -192,12 +192,10 @@ router.get("/me/:id", async (req, res) => {
   `, [String(id)]);
 
   if (userRes.rowCount === 0) {
-    return res.json({ ok: false, error: "USER_NOT_FOUND" });
+    return res.json({ ok: false });
   }
 
   const user = userRes.rows[0];
-
-  await applyEnergyRegen(user); // ✅ ТЕПЕРЬ ОК
 
   const boosted = await applyBoosts(user);
 
@@ -213,6 +211,7 @@ router.get("/me/:id", async (req, res) => {
     }
   });
 });
+
 
 
 //ton//
