@@ -1,6 +1,7 @@
 // backend/autoSendNXN.js
 
-import { TonClient, WalletContractW5, internal } from "@ton/ton";
+import tonPkg from "@ton/ton";
+const { TonClient, WalletContractW5, internal } = tonPkg;
 import { Address, beginCell, toNano } from "@ton/core";
 import { getHttpEndpoint } from "@orbs-network/ton-access";
 import { mnemonicToPrivateKey } from "@ton/crypto";
