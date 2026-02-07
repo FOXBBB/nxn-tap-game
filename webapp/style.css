@@ -1778,3 +1778,27 @@ input, button {
   background: transparent;
   border: 1px solid rgba(255,255,255,0.2);
 }
+.stack-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.stack-btn {
+  flex: 1;
+  padding: 14px;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+}
+
+.stack-btn.primary {
+  background: linear-gradient(135deg, #1aff7c, #0fbf60);
+  color: #02040a;
+}
+
+.stack-btn.secondary {
+  background: rgba(26,255,124,0.12);
+  color: #1aff7c;
+  border: 1px solid rgba(26,255,124,0.35);
+}

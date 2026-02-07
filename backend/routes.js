@@ -199,41 +199,42 @@ router.post("/sync", async (req, res) => {
   const { id, username, first_name, photo_url } = req.body;
   if (!id) return res.json({ ok: false });
 
-  const userCheck = await query(
+  const userRes = await query(
     `SELECT referral_code FROM users WHERE telegram_id = $1::text`,
     [String(id)]
   );
 
-  let referralCode = null;
+  let referralCode;
 
-  if (userCheck.rowCount === 0 || !userCheck.rows[0].referral_code) {
+  if (userRes.rowCount === 0 || !userRes.rows[0].referral_code) {
     referralCode = generateReferralCode();
+  } else {
+    referralCode = userRes.rows[0].referral_code;
   }
 
- const refCode = generateReferralCode();
-
-await query(`
-  INSERT INTO users (
-    telegram_id,
-    name,
-    avatar,
-    referral_code
-  )
-  VALUES ($1, $2, $3, $4)
-  ON CONFLICT (telegram_id)
-  DO UPDATE SET
-    name = EXCLUDED.name,
-    avatar = EXCLUDED.avatar
-`, [
-  String(id),
-  username || first_name || "User",
-  photo_url || "",
-  refCode
-]);
-
+  await query(`
+    INSERT INTO users (
+      telegram_id,
+      name,
+      avatar,
+      referral_code
+    )
+    VALUES ($1, $2, $3, $4)
+    ON CONFLICT (telegram_id)
+    DO UPDATE SET
+      name = EXCLUDED.name,
+      avatar = EXCLUDED.avatar,
+      referral_code = users.referral_code
+  `, [
+    String(id),
+    username || first_name || "User",
+    photo_url || "",
+    referralCode
+  ]);
 
   res.json({ ok: true });
 });
+
 
 
 
