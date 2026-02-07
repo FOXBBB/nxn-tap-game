@@ -1,45 +1,37 @@
+// backend/runAutoSend.js
+
 import { query } from "./db.js";
 import { autoSendNXN } from "./autoSendNXN.js";
-
-let running = false;
 
 export async function runAutoSendNXN() {
   console.log("🚀 runAutoSendNXN called");
 
-  if (running) return;
-  running = true;
+  const res = await query(`
+    SELECT id, wallet, reward_amount
+    FROM reward_event_claims
+    WHERE status = 'PENDING'
+    ORDER BY id
+    LIMIT 1
+  `);
 
-
-  try {
-    const { rows } = await query(`
-      SELECT
-        id,
-        wallet,
-        reward_amount
-      FROM reward_event_claims
-      WHERE status = 'PENDING'
-      ORDER BY id ASC
-      LIMIT 1
-    `);
-
-    if (rows.length === 0) return;
-
-    const claim = rows[0];
-
-    console.log(
-      `🚀 AutoSend NXN | claim=${claim.id} | amount=${claim.reward_amount} | to=${claim.wallet}`
-    );
-
-    await autoSendNXN({
-      db: { query },
-      claimId: claim.id,
-      userTonAddress: claim.wallet,
-      amount: claim.reward_amount,
-    });
-
-  } catch (err) {
-    console.error("AutoSend error:", err);
-  } finally {
-    running = false;
+  if (res.rows.length === 0) {
+    console.log("ℹ️ No pending claims");
+    return;
   }
+
+  const claim = res.rows[0];
+
+  console.log(
+    "📦 CLAIM FROM DB:",
+    claim.id,
+    claim.wallet,
+    claim.reward_amount
+  );
+
+  // ❗ ОБРАТИ ВНИМАНИЕ
+  await autoSendNXN({
+    claimId: claim.id,
+    wallet: claim.wallet,           // ← ВАЖНО
+    amount: claim.reward_amount,
+  });
 }
