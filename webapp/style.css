@@ -54,7 +54,7 @@ body {
 .lb-title {
   font-size: 38px;
   font-weight: 900;
-  background: linear-gradient(180deg, #ffe27a, #ffb300);
+  background: linear-gradient(180deg, #7eff7a, #09ff00);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -1234,7 +1234,7 @@ body {
   font-weight: 900;
   letter-spacing: 2px;
 
-  background: linear-gradient(135deg, #ffe27a, #ffb300);
+  background: linear-gradient(135deg, #a0ff7a, #00ff62);
   color: #2a1a00;
 
   box-shadow:
@@ -2083,4 +2083,49 @@ input, button {
 #cancel-referral-stake.secondary {
   margin-top: 8px;
   opacity: 0.75;
+}
+/* ===== DISABLED STAKE BUTTON ===== */
+
+button:disabled {
+  background: linear-gradient(135deg, #2b2f3a, #1f232d) !important;
+  color: #9fa6b2 !important;
+  cursor: not-allowed !important;
+  box-shadow: none !important;
+}
+
+/* ===== REFERRAL STAKE MODAL BUTTONS ===== */
+
+#referral-stake-modal button {
+  height: 52px;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+}
+
+/* CONFIRM */
+#confirm-referral-stake {
+  background: linear-gradient(135deg, #2cff9c, #00c070);
+  color: #02140c;
+  border: none;
+
+  box-shadow:
+    0 6px 0 #00995a,
+    0 12px 22px rgba(0, 255, 150, 0.45);
+}
+
+#confirm-referral-stake:active {
+  transform: translateY(4px);
+  box-shadow:
+    0 2px 0 #00995a,
+    0 6px 12px rgba(0, 255, 150, 0.3);
+}
+
+/* CANCEL */
+#cancel-referral-stake {
+  margin-top: 10px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.18);
+  color: #fff;
 }

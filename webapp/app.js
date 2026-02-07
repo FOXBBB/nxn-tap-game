@@ -172,14 +172,16 @@ document.getElementById("cancel-referral-stake").onclick = () => {
 
 
 document.getElementById("confirm-referral-stake").onclick = async () => {
-  const amount = Number(
-    document.getElementById("referral-stake-amount").value
-  );
+ const amount = Number(
+  document.getElementById("referral-stake-amount").value
+);
 
-  if (!Number.isFinite(amount) || amount <= 0) {
-    alert("Enter valid amount");
-    return;
-  }
+if (amount < 10000) {
+  alert("Minimum referral stake is 10,000 NXN");
+  return;
+}
+
+
 
   const res = await fetch("/api/referral/stake", {
     method: "POST",
@@ -335,6 +337,22 @@ updateRewardTimer();
 if (rewardState === "CLAIM_ACTIVE") {
   loadClaimInfo();
 }
+}
+
+
+const referralStakeBtn = document.getElementById("stake-referral-btn");
+const confirmReferralStake = document.getElementById("confirm-referral-stake");
+
+if (data.state !== "STAKE_ACTIVE") {
+  referralStakeBtn.disabled = true;
+  referralStakeBtn.textContent = "Stake Closed";
+
+  confirmReferralStake.disabled = true;
+} else {
+  referralStakeBtn.disabled = false;
+  referralStakeBtn.textContent = "Stake Referral NXN";
+
+  confirmReferralStake.disabled = false;
 }
 
 
@@ -1199,3 +1217,18 @@ if (claimBtn) {
 
   };
 }
+
+// ===== REFERRAL STAKE QUICK AMOUNTS =====
+
+document.querySelectorAll("[data-ref-amount]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const val = btn.dataset.refAmount;
+    const input = document.getElementById("referral-stake-amount");
+
+    if (val === "max") {
+      input.value = window.referralStackBalance || 0;
+    } else {
+      input.value = Number(val);
+    }
+  });
+});

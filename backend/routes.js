@@ -50,8 +50,6 @@ async function getCurrentRewardCycle() {
 
 
 
-
-
 async function applyBoosts(user) {
   const now = new Date();
 
