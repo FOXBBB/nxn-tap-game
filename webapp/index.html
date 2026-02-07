@@ -26,7 +26,7 @@
     <div class="game">
       <!-- всё остальное -->
 
-      
+
 
       <!-- LEADERBOARD -->
       <section id="leaderboard" class="screen hidden">
@@ -105,39 +105,39 @@
       </section> <!-- конец TAP -->
 
 
-<div id="referral-screen" class="screen hidden">
+      <div id="referral-screen" class="screen hidden">
 
-  <h2>Referral</h2>
+        <h2>Referral</h2>
 
-  <!-- YOUR CODE -->
-  <div class="ref-box">
-    <div class="ref-label">Your referral code</div>
-    <div class="ref-code" id="ref-code">—</div>
-    <button id="copy-ref">Copy code</button>
-  </div>
+        <!-- YOUR CODE -->
+        <div class="ref-box">
+          <div class="ref-label">Your referral code</div>
+          <div class="ref-code" id="ref-code">—</div>
+          <button id="copy-ref">Copy code</button>
+        </div>
 
-  <!-- BIND CODE -->
-  <div class="ref-box">
-    <div class="ref-label">Enter referral code</div>
-    <input id="ref-input" placeholder="NXN-XXXXXX" />
-    <button id="bind-ref">Bind referral</button>
-  </div>
+        <!-- BIND CODE -->
+        <div class="ref-box">
+          <div class="ref-label">Enter referral code</div>
+          <input id="ref-input" placeholder="NXN-XXXXXX" />
+          <button id="bind-ref">Bind referral</button>
+        </div>
 
-  <!-- STATS -->
-  <div class="ref-stats">
-    <div>Invited: <b id="ref-invited">0</b></div>
-    <div>Active referrals: <b id="ref-active">0</b></div>
-    <div>Total earned: <b id="ref-earned">0</b> NXN</div>
-  </div>
+        <!-- STATS -->
+        <div class="ref-stats">
+          <div>Invited: <b id="ref-invited">0</b></div>
+          <div>Active referrals: <b id="ref-active">0</b></div>
+          <div>Total earned: <b id="ref-earned">0</b> NXN</div>
+        </div>
 
-  <!-- BALANCE -->
-  <div class="ref-balance">
-    Referral Stack Balance:
-    <b id="ref-balance">0</b> NXN
-  </div>
+        <!-- BALANCE -->
+        <div class="ref-balance">
+          Referral Stack Balance:
+          <b id="ref-balance">0</b> NXN
+        </div>
 
-  <button id="back-from-ref">Back</button>
-</div>
+        <button id="back-from-ref">Back</button>
+      </div>
 
 
 
@@ -185,6 +185,11 @@
           <button id="stake-confirm" class="stake-confirm">
             Stake NeXoN
           </button>
+
+          <button id="stake-referral-btn" class="ref-stake-btn">
+            Stake Referral NXN
+          </button>
+
 
           <button id="open-stake-lb" class="stake-btn">
             View Stake Leaderboard
@@ -359,6 +364,36 @@
           <span><img src="menu-shop.png"></span>
         </div>
       </div>
+
+
+
+      <div id="referral-stake-modal" class="modal hidden">
+  <div class="modal-box">
+
+    <h3>Stake Referral NXN</h3>
+
+    <div class="modal-balance">
+      Available:
+      <b id="referral-stake-balance">0</b> NXN
+    </div>
+
+    <input
+      id="referral-stake-amount"
+      type="number"
+      placeholder="Enter amount"
+    />
+
+    <button id="confirm-referral-stake">
+      Confirm Stake
+    </button>
+
+    <button id="cancel-referral-stake" class="secondary">
+      Cancel
+    </button>
+
+  </div>
+</div>
+
 
 
 

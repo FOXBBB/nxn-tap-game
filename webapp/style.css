@@ -1716,3 +1716,65 @@ input, button {
   margin-top: 14px;
   font-size: 16px;
 }
+/* ===== Referral Stake Button ===== */
+.ref-stake-btn {
+  margin-top: 10px;
+  background: linear-gradient(135deg, #2cff9a, #1fa36b);
+  color: #001b10;
+  font-weight: 600;
+}
+
+/* ===== Modal ===== */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-box {
+  background: rgba(10,20,15,0.95);
+  border-radius: 18px;
+  padding: 20px;
+  width: 90%;
+  max-width: 360px;
+  text-align: center;
+  box-shadow: 0 0 40px rgba(0,255,150,0.15);
+}
+
+.modal-box h3 {
+  margin-bottom: 12px;
+}
+
+.modal-balance {
+  font-size: 14px;
+  opacity: 0.8;
+  margin-bottom: 12px;
+}
+
+.modal-box input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 12px;
+  border: none;
+  margin-bottom: 12px;
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+}
+
+.modal-box button {
+  width: 100%;
+  margin-top: 6px;
+}
+
+.modal-box button.secondary {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.2);
+}

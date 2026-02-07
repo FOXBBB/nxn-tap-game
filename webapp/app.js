@@ -151,6 +151,66 @@ if (stakeBackBtn) {
 };
 }
 
+
+const refStakeBtn = document.getElementById("stake-referral-btn");
+const refModal = document.getElementById("referral-stake-modal");
+
+refStakeBtn.onclick = async () => {
+  const data = await loadReferral();
+
+  document.getElementById("referral-stake-balance").innerText =
+    formatNumber(data.referralStackBalance);
+
+  refModal.classList.remove("hidden");
+};
+
+
+document.getElementById("cancel-referral-stake").onclick = () => {
+  refModal.classList.add("hidden");
+};
+
+
+
+document.getElementById("confirm-referral-stake").onclick = async () => {
+  const amount = Number(
+    document.getElementById("referral-stake-amount").value
+  );
+
+  if (!Number.isFinite(amount) || amount <= 0) {
+    alert("Enter valid amount");
+    return;
+  }
+
+  const res = await fetch("/api/referral/stake", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      userId,
+      amount
+    })
+  });
+
+  const data = await res.json();
+
+  if (!data.ok) {
+    alert(data.error);
+    return;
+  }
+
+  refModal.classList.add("hidden");
+
+  Telegram.WebApp.showPopup({
+    title: "Success",
+    message: "Referral NXN staked"
+  });
+
+  await refreshMe();
+  await loadRewardState();
+};
+
+
+
+
 async function loadClaimInfo() {
   const res = await fetch(`/api/reward/claim-info/${userId}`);
   const data = await res.json();
