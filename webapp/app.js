@@ -69,6 +69,80 @@ initMenu();
 
 });
 
+document.getElementById("open-referral").onclick = async () => {
+  const data = await loadReferral();
+
+  showScreen("referral-screen");
+
+  document.getElementById("ref-code").innerText = data.referralCode;
+  document.getElementById("ref-balance").innerText =
+    formatNumber(data.referralStackBalance);
+
+  document.getElementById("ref-invited").innerText =
+    data.stats.invited;
+
+  document.getElementById("ref-active").innerText =
+    data.stats.active;
+
+  document.getElementById("ref-earned").innerText =
+    formatNumber(data.stats.totalEarned);
+
+  // если уже привязан
+  if (data.referredBy) {
+    const input = document.getElementById("ref-input");
+    input.value = "Bound";
+    input.disabled = true;
+    document.getElementById("bind-ref").disabled = true;
+  }
+};
+
+document.getElementById("copy-ref").onclick = () => {
+  const code = document.getElementById("ref-code").innerText;
+  navigator.clipboard.writeText(code);
+
+  Telegram.WebApp.showPopup({
+    title: "Copied",
+    message: "Referral code copied"
+  });
+};
+
+
+document.getElementById("bind-ref").onclick = async () => {
+  const code = document.getElementById("ref-input").value.trim();
+
+  if (!code) {
+    alert("Enter referral code");
+    return;
+  }
+
+  const res = await fetch("/api/referral/bind", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      userId,
+      code
+    })
+  });
+
+  const data = await res.json();
+
+  if (!data.ok) {
+    alert(data.error);
+    return;
+  }
+
+  alert("Referral linked ✓");
+
+  // перезагружаем экран
+  document.getElementById("open-referral").click();
+};
+
+document.getElementById("back-from-ref").onclick = () => {
+  showScreen("stake-screen");
+};
+
+
+
 const stakeBackBtn = document.getElementById("stake-back");
 
 if (stakeBackBtn) {
@@ -164,6 +238,12 @@ async function refreshMe() {
   updateUI();
   updateTapState();
 }
+
+async function loadReferral() {
+  const res = await fetch(`/api/referral/me/${userId}`);
+  return await res.json();
+}
+
 
 async function loadRewardState() {
   const res = await fetch(`/api/reward/state/${userId}`);
@@ -291,6 +371,13 @@ if (coin) {
 
     tapInProgress = false;
   };
+}
+
+
+
+async function loadReferral() {
+  const res = await fetch(`/api/referral/me/${userId}`);
+  return await res.json();
 }
 
 

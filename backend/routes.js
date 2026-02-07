@@ -1,6 +1,17 @@
 import express from "express";
 import { query } from "./db.js";
 
+
+function generateReferralCode() {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let code = "NXN-";
+  for (let i = 0; i < 6; i++) {
+    code += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return code;
+}
+
+
 const router = express.Router();
 
 
@@ -98,6 +109,157 @@ async function applyAutoclicker(user) {
 }
 
 
+router.get("/referral/me/:userId", async (req, res) => {
+  const { userId } = req.params;
+
+  const userRes = await query(`
+    SELECT referral_code, referred_by, referral_stack_balance
+    FROM users
+    WHERE telegram_id = $1::text
+  `, [userId]);
+
+  if (userRes.rowCount === 0) {
+    return res.json({ ok: false });
+  }
+
+  const stats = await query(`
+    SELECT
+      COUNT(*) FILTER (WHERE inviter_telegram_id = $1) AS invited,
+      COUNT(*) FILTER (WHERE inviter_telegram_id = $1 AND activated = true) AS active
+    FROM referrals
+  `, [userId]);
+
+  const earned = stats.rows[0].invited * 50000;
+
+  res.json({
+    referralCode: userRes.rows[0].referral_code,
+    referredBy: userRes.rows[0].referred_by,
+    referralStackBalance: Number(userRes.rows[0].referral_stack_balance),
+    stats: {
+      invited: Number(stats.rows[0].invited),
+      active: Number(stats.rows[0].active),
+      totalEarned: earned
+    }
+  });
+});
+
+
+
+router.post("/referral/bind", async (req, res) => {
+  const { userId, code } = req.body;
+
+  const userRes = await query(`
+    SELECT referral_code, referred_by
+    FROM users
+    WHERE telegram_id = $1::text
+  `, [userId]);
+
+  if (userRes.rowCount === 0) {
+    return res.json({ ok: false });
+  }
+
+  const user = userRes.rows[0];
+
+  if (user.referred_by) {
+    return res.json({ ok: false, error: "ALREADY_BOUND" });
+  }
+
+  if (user.referral_code === code) {
+    return res.json({ ok: false, error: "CANNOT_USE_OWN_CODE" });
+  }
+
+  const inviter = await query(`
+    SELECT telegram_id
+    FROM users
+    WHERE referral_code = $1
+  `, [code]);
+
+  if (inviter.rowCount === 0) {
+    return res.json({ ok: false, error: "CODE_NOT_FOUND" });
+  }
+
+  const inviterId = inviter.rows[0].telegram_id;
+
+  await query("BEGIN");
+
+  await query(`
+    UPDATE users
+    SET referred_by = $1,
+        referral_stack_balance = referral_stack_balance + 50000
+    WHERE telegram_id = $2::text
+  `, [code, userId]);
+
+  await query(`
+    UPDATE users
+    SET referral_stack_balance = referral_stack_balance + 50000
+    WHERE telegram_id = $1::text
+  `, [inviterId]);
+
+  await query(`
+    INSERT INTO referrals (inviter_telegram_id, invited_telegram_id)
+    VALUES ($1, $2)
+  `, [inviterId, userId]);
+
+  await query("COMMIT");
+
+  res.json({ ok: true });
+});
+
+
+
+router.post("/referral/stake", async (req, res) => {
+  const { userId, amount } = req.body;
+
+  const cycle = await getCurrentRewardCycle();
+  if (!cycle || cycle.state !== "STAKE_ACTIVE") {
+    return res.json({ ok: false, error: "STAKE_CLOSED" });
+  }
+
+  const userRes = await query(`
+    SELECT referral_stack_balance
+    FROM users
+    WHERE telegram_id = $1::text
+  `, [userId]);
+
+  if (userRes.rowCount === 0) {
+    return res.json({ ok: false });
+  }
+
+  if (userRes.rows[0].referral_stack_balance < amount) {
+    return res.json({ ok: false, error: "NOT_ENOUGH_REFERRAL_NXN" });
+  }
+
+  await query("BEGIN");
+
+  await query(`
+    UPDATE users
+    SET referral_stack_balance = referral_stack_balance - $1
+    WHERE telegram_id = $2::text
+  `, [amount, userId]);
+
+  await query(`
+    INSERT INTO referral_stakes (cycle_id, telegram_id, amount)
+    VALUES ($1, $2::text, $3)
+    ON CONFLICT (cycle_id, telegram_id)
+    DO UPDATE SET amount = referral_stakes.amount + EXCLUDED.amount
+  `, [cycle.id, userId, amount]);
+
+  await query(`
+    UPDATE referrals
+    SET activated = true
+    WHERE invited_telegram_id = $1::text
+  `, [userId]);
+
+  await query("COMMIT");
+
+  res.json({ ok: true });
+});
+
+
+
+
+
+
 
 async function applyEnergyRegen(user) {
   const now = new Date();
@@ -151,10 +313,21 @@ router.post("/sync", async (req, res) => {
   const { id, username, first_name, photo_url } = req.body;
   if (!id) return res.json({ ok: false });
 
+  const userCheck = await query(
+    `SELECT referral_code FROM users WHERE telegram_id = $1::text`,
+    [String(id)]
+  );
+
+  let referralCode = null;
+
+  if (userCheck.rowCount === 0 || !userCheck.rows[0].referral_code) {
+    referralCode = generateReferralCode();
+  }
+
   await query(
     `
-    INSERT INTO users (telegram_id, name, avatar)
-    VALUES ($1, $2, $3)
+    INSERT INTO users (telegram_id, name, avatar, referral_code)
+    VALUES ($1, $2, $3, $4)
     ON CONFLICT (telegram_id)
     DO UPDATE SET
       name = EXCLUDED.name,
@@ -163,21 +336,12 @@ router.post("/sync", async (req, res) => {
     [
       String(id),
       username || first_name || "User",
-      photo_url || ""
+      photo_url || "",
+      referralCode
     ]
   );
 
   res.json({ ok: true });
-});
-
-
-router.get("/__debug/db", async (req, res) => {
-  const r = await query(`
-    SELECT current_database() as db,
-           current_user as user,
-           inet_server_addr() as host
-  `);
-  res.json(r.rows[0]);
 });
 
 

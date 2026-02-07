@@ -104,6 +104,43 @@
 
       </section> <!-- конец TAP -->
 
+
+<div id="referral-screen" class="screen hidden">
+
+  <h2>Referral</h2>
+
+  <!-- YOUR CODE -->
+  <div class="ref-box">
+    <div class="ref-label">Your referral code</div>
+    <div class="ref-code" id="ref-code">—</div>
+    <button id="copy-ref">Copy code</button>
+  </div>
+
+  <!-- BIND CODE -->
+  <div class="ref-box">
+    <div class="ref-label">Enter referral code</div>
+    <input id="ref-input" placeholder="NXN-XXXXXX" />
+    <button id="bind-ref">Bind referral</button>
+  </div>
+
+  <!-- STATS -->
+  <div class="ref-stats">
+    <div>Invited: <b id="ref-invited">0</b></div>
+    <div>Active referrals: <b id="ref-active">0</b></div>
+    <div>Total earned: <b id="ref-earned">0</b> NXN</div>
+  </div>
+
+  <!-- BALANCE -->
+  <div class="ref-balance">
+    Referral Stack Balance:
+    <b id="ref-balance">0</b> NXN
+  </div>
+
+  <button id="back-from-ref">Back</button>
+</div>
+
+
+
       <!-- STAKE / REWARD EVENT -->
       <section id="stake-screen" class="screen hidden">
 
@@ -152,6 +189,10 @@
           <button id="open-stake-lb" class="stake-btn">
             View Stake Leaderboard
           </button>
+
+          <button id="open-referral">Referral</button>
+
+
 
           <div class="stake-warning">
             • Staked NXN is consumed<br>
@@ -318,6 +359,9 @@
           <span><img src="menu-shop.png"></span>
         </div>
       </div>
+
+
+
 
 
 

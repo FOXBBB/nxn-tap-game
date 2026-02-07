@@ -1690,3 +1690,29 @@ input, button {
   filter: grayscale(1) brightness(0.65);
   opacity: 0.8;
 }
+.ref-box {
+  background: rgba(255,255,255,0.05);
+  padding: 12px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+
+.ref-label {
+  font-size: 13px;
+  opacity: 0.7;
+}
+
+.ref-code {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 6px 0;
+}
+
+.ref-stats div {
+  margin: 6px 0;
+}
+
+.ref-balance {
+  margin-top: 14px;
+  font-size: 16px;
+}
