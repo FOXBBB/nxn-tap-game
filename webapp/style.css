@@ -1,84 +1,38 @@
-/* ================= RESET & BASE ================= */
-
 * {
   box-sizing: border-box;
-  -webkit-tap-highlight-color: transparent;
-}
-
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  background: #02040a;
-  color: #fff;
   font-family: Arial, sans-serif;
-  overflow-x: hidden;
-  -webkit-text-size-adjust: 100%;
 }
 
-.hidden {
-  display: none !important;
+body {
+  margin: 0;
+  color: #fff;
+  background: #02040a;
 }
 
-/* ================= APP LAYOUT (SOURCE OF TRUTH) ================= */
-
-#app {
-  min-height: 100dvh;
-  display: flex;
-  justify-content: center;
-}
-
-.game {
-  position: relative;
-  width: 100%;
-  max-width: 420px;
-  height: 100dvh;
-  overflow: hidden;
-}
-
-/* background */
 .bg {
   position: fixed;
   inset: 0;
-  z-index: 0;
   background:
     radial-gradient(circle at 70% 20%, #1a6aff55, transparent 40%),
     radial-gradient(circle at 20% 80%, #00ffa255, transparent 45%),
     linear-gradient(180deg, #050814, #02040a);
+  z-index: -2;
 }
-
-/* ================= SCREENS ================= */
 
 .screen {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-
-  padding: 16px;
-  padding-bottom: 140px; /* место под меню */
-  overflow-y: auto;
+  height: calc(100vh - 90px);
+  padding: 18px;
 }
 
-/* ================= GLASS ================= */
-
-.glass {
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.15);
-  backdrop-filter: blur(12px);
-  border-radius: 18px;
+.hidden {
+  display: none;
 }
-
-/* ================= TITLES ================= */
 
 .title.blue {
   text-align: center;
   font-size: 34px;
   font-weight: 900;
-  background: linear-gradient(180deg,#6cf0ff,#1a6aff);
+  background: linear-gradient(180deg, #6cf0ff, #1a6aff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -86,130 +40,169 @@ html, body {
 .subtitle.yellow {
   text-align: center;
   color: #ffcc55;
+  margin-bottom: 16px;
 }
 
-/* ================= BALANCE ================= */
-
-#balance {
-  margin: 0 auto;
-  padding: 16px 24px;
-  min-width: 260px;
-  max-width: 95%;
-
-  display: flex;
-  align-items: center;
-  gap: 14px;
-
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-
-  border-radius: 999px;
-  border: 1px solid rgba(0,255,170,0.6);
-
-  background: linear-gradient(
-    180deg,
-    rgba(0,255,170,0.25),
-    rgba(0,180,120,0.15)
-  );
-
-  box-shadow:
-    0 0 20px rgba(0,255,170,0.6),
-    inset 0 0 20px rgba(0,255,170,0.25);
+.glass {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  border-radius: 18px;
 }
 
-.balance-value {
-  font-size: 34px;
+/* ===== LEADERBOARD ===== */
+.lb-header {
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+.lb-title {
+  font-size: 38px;
   font-weight: 900;
-  line-height: 1;
+  background: linear-gradient(180deg, #ffe27a, #ffb300);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-@media (max-width: 360px) {
-  .balance-value {
-    font-size: 28px;
-  }
+.lb-sub {
+  color: #9bdcff;
+  letter-spacing: 2px;
 }
 
-/* ================= TAP ================= */
-
-#tap {
+.lb-top1 {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 18px;
+  justify-content: space-between;
+  padding: 18px;
+  margin: 14px auto;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #ffcf40, #ff9f00);
+  color: #1a1a1a;
+  max-width: 95%;
+}
+
+.lb-top1 .avatar {
+  width: 90px;
+  border-radius: 50%;
+}
+
+.lb-top1 .info {
+  flex: 1;
+  margin-left: 14px;
+}
+
+.lb-top1 .rank {
+  font-size: 28px;
+  font-weight: 900;
+}
+
+.lb-top1 .name {
+  font-size: 22px;
+  font-weight: 900;
+}
+
+.lb-top1 .score {
+  font-size: 22px;
+  font-weight: 900;
+}
+
+.lb-top23 {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.lb-card {
+  flex: 1;
+  text-align: center;
+  padding: 14px;
+  border-radius: 18px;
+}
+
+.lb-card .avatar {
+  width: 70px;
+  border-radius: 50%;
+}
+
+.lb-card .rank {
+  font-weight: 900;
+  margin-top: 6px;
+}
+
+.lb-card .name {
+  font-weight: 800;
+}
+
+.lb-card .score {
+  color: #ffd966;
+}
+
+.silver {
+  background: linear-gradient(135deg, #d9d9d9, #9e9e9e);
+  color: #111;
+}
+
+.bronze {
+  background: linear-gradient(135deg, #d29c6b, #9c6a3d);
+  color: #111;
+}
+
+.lb-list {
+  padding: 12px;
+}
+
+.lb-list .row {
+  display: grid;
+  grid-template-columns: 40px 50px 1fr auto;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 14px;
+  margin-bottom: 8px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.lb-list .row img {
+  width: 40px;
+  border-radius: 50%;
+}
+
+.lb-list .row b {
+  font-size: 16px;
+}
+
+.lb-list .row i {
+  color: #ffcc55;
+  font-style: normal;
+}
+
+.lb-list .green {
+  background: linear-gradient(135deg, #00ff8855, #00cc6655);
+}
+
+/* ===== TAP ===== */
+.stat {
+  width: fit-content;
+  margin: 10px auto;
+  padding: 10px 20px;
 }
 
 .coin-box {
   text-align: center;
+  background: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
 }
+
 
 .coin-box img {
-  width: min(70vw, 260px);
-  aspect-ratio: 1;
-  transition: transform 0.1s ease;
+  width: 260px;
+  cursor: pointer;
 }
 
-.coin-box img.tap {
-  transform: scale(0.92);
-}
-
-#energy {
-  position: relative;
-  padding: 16px 28px;
-  font-size: 20px;
-  font-weight: 800;
-  text-align: center;
-
-  border-radius: 18px;
-  border: 1px solid rgba(0,255,180,0.45);
-
-  background: linear-gradient(
-    180deg,
-    rgba(0,255,180,0.35),
-    rgba(0,120,80,0.25)
-  );
-
-  box-shadow:
-    0 0 18px rgba(0,255,180,0.35),
-    inset 0 0 14px rgba(0,255,180,0.15);
-}
-
-#energy.energy-low {
-  color: #ffb3b3;
-  border-color: rgba(255,80,80,0.6);
-}
-
-/* ================= PLUS +X ================= */
-
-.plus-one {
-  position: fixed;
-  left: 50%;
-  pointer-events: none;
-  font-weight: 800;
-  font-size: 18px;
-  color: #00ffb0;
-  text-shadow: 0 0 10px rgba(0,255,180,0.8);
-  animation: floatUp 0.8s ease-out forwards;
-  z-index: 9999;
-}
-
-@keyframes floatUp {
-  from { opacity: 0; transform: translate(-50%,0) scale(0.8); }
-  20% { opacity: 1; }
-  to { opacity: 0; transform: translate(-50%,-60px) scale(1.1); }
-}
-
-/* ================= TRANSFER ================= */
-
-#transfer {
-  min-height: 100%;
-  padding-bottom: 160px;
-}
-
+/* ===== TRANSFER ===== */
 .transfer-box {
-  width: 100%;
-  max-width: 420px;
-  margin: 0 auto 40px;
+  width: 85%;
+  margin: 0 auto;
   padding: 18px;
 }
 
@@ -220,72 +213,907 @@ html, body {
   border: none;
 }
 
-/* ================= SHOP ================= */
-
-.shop-card {
-  width: 100%;
-  max-width: 420px;
-  margin: 14px auto;
-  padding: 16px;
-
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  border-radius: 18px;
+.transfer-img {
+  width: 260px;
+  display: block;
+  margin: 18px auto 0;
 }
 
-/* ================= LEADERBOARD ================= */
-
-.lb-top1 {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 20px;
-  border-radius: 22px;
-  background: linear-gradient(135deg,#ffcf40,#ff9f00);
-  color: #111;
-}
-
-.lb-top1 .avatar {
-  width: 96px;
-  height: 96px;
-  border-radius: 50%;
-}
-
-.lb-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-/* ================= MENU (FINAL) ================= */
-
+/* ===== MENU ===== */
 .menu {
   position: fixed;
-  left: 0;
   bottom: 0;
-  z-index: 1000;
-
   width: 100%;
-  height: 96px;
-  padding-bottom: env(safe-area-inset-bottom);
+  height: 90px;
 
   display: flex;
   justify-content: space-around;
   align-items: center;
 
-  background: rgba(6,25,22,0.65);
-  backdrop-filter: blur(16px);
-  border-top: 1px solid rgba(0,255,180,0.25);
+  background: rgba(5, 10, 20, 0.65);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .menu div {
-  display: grid;
-  place-items: center;
+  flex: 1;
+  height: 100%;
+  position: relative;
+  cursor: pointer;
+  opacity: 0.5;
+}
+.menu div img {
+  display: block !important;
+
+  width: 42px;
+  height: 42px;
+
+  margin: 0 !important;
+  padding: 0 !important;
+
+  vertical-align: middle !important;
+}
+
+
+
+.menu div.active {
+  opacity: 1;
+}
+.menu div.active img {
+  width: 52px;
+  height: 52px;
+}
+
+
+
+/* ===== SEND BUTTON ===== */
+#send {
+  width: 100%;
+  margin-top: 14px;
+  padding: 16px 0;
+  font-size: 20px;
+  font-weight: 900;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+
+  background: linear-gradient(180deg, #3dff8e, #00c853);
+  color: #0b2e1a;
+  box-shadow:
+    0 6px 0 #009944,
+    0 10px 20px rgba(0, 255, 136, 0.4);
+}
+
+#send:active {
+  transform: translateY(4px);
+  box-shadow:
+    0 2px 0 #009944,
+    0 6px 12px rgba(0, 255, 136, 0.3);
+}
+
+/* ===== SHOP (STYLE LIKE TRANSFER) ===== */
+
+.shop-card {
+  width: 85%;
+  margin: 14px auto;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 18px;
+}
+
+.shop-info {
+  text-align: left;
+}
+
+.shop-name {
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.shop-desc {
+  font-size: 14px;
+  opacity: 0.7;
+  margin-top: 4px;
+}
+
+.shop-buy {
+  min-width: 120px;
+  padding: 12px 16px;
+  border-radius: 999px;
+  border: none;
+  font-size: 14px;
+  font-weight: 900;
+  cursor: pointer;
+  color: #0b2e1a;
+}
+
+.shop-buy.green {
+  background: linear-gradient(180deg, #3dff8e, #00c853);
+  box-shadow: 0 4px 0 #009944;
+}
+
+.shop-buy.blue {
+  background: linear-gradient(180deg, #6cf0ff, #1a6aff);
+  box-shadow: 0 4px 0 #0d47a1;
+  color: #041b2d;
+}
+
+.shop-buy.purple {
+  background: linear-gradient(180deg, #c77dff, #7b2cff);
+  box-shadow: 0 4px 0 #4a148c;
+  color: #1b0033;
+}
+
+.shop-buy:active {
+  transform: translateY(3px);
+  box-shadow: none;
+}
+.shop-buy:disabled {
+  background: linear-gradient(180deg, #444, #222);
+  color: #9affea;
+  box-shadow: none;
+}
+
+
+.history-box {
+  margin-top: 16px;
+  padding: 12px;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.history-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.history-row b {
+  font-weight: 700;
+}
+
+.history-row span {
+  color: #ffcc55;
+}
+
+.history-row i {
+  font-style: normal;
+  opacity: 0.7;
+  font-size: 12px;
+}
+
+.history-toggle {
+  margin-top: 14px;
+  text-align: center;
+  opacity: 0.85;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.history-toggle:hover {
+  opacity: 1;
+}
+
+.history-box {
+  margin-top: 10px;
+  padding: 12px;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.hidden {
+  display: none;
+}
+
+.plus-one {
+  position: fixed;
+  color: #6cf0ff;
+  font-weight: 800;
+  font-size: 18px;
+  pointer-events: none;
+  animation: floatUp 0.9s ease-out forwards;
+  text-shadow: 0 0 10px rgba(108, 240, 255, 0.8);
+}
+
+@keyframes floatUp {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 0) scale(0.8);
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -60px) scale(1.1);
+  }
+}
+
+.coin-box img {
+  transition: transform 0.08s ease;
+}
+
+.coin-box img.tap {
+  transform: scale(0.92);
+}
+
+/* ================= TAP ANIMATION (UI ONLY) ================= */
+
+#coin {
+  transition: transform 0.12s ease, filter 0.12s ease;
+  will-change: transform;
+}
+
+#coin.tap-anim {
+  transform: scale(0.92);
+  filter: drop-shadow(0 0 12px rgba(0, 255, 180, 0.6));
+}
+
+/* floating +X */
+.plus-one {
+  position: fixed;
+  pointer-events: none;
+  font-weight: 700;
+  font-size: 18px;
+  color: #00ffb0;
+  text-shadow: 0 0 8px rgba(0, 255, 180, 0.8);
+  animation: floatUp 0.8s ease-out forwards;
+  z-index: 9999;
+}
+
+@keyframes floatUp {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 0) scale(0.8);
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -60px) scale(1.1);
+  }
+}
+
+/* ================= ENERGY VISUAL ================= */
+
+#energy {
+  transition: color 0.3s ease;
+}
+
+/* low energy warning */
+.energy-low {
+  color: #ff4d4d;
+  animation: energyPulse 1s infinite;
+}
+
+@keyframes energyPulse {
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+/* ================= BUTTONS ================= */
+
+button {
+  transition: transform 0.1s ease, opacity 0.1s ease;
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+button:disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* ================= HARD FIX: REMOVE TAP SQUARE ================= */
+
+/* disable any tap highlight / focus */
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-focus-ring-color: transparent;
+  outline: none;
+}
+
+/* coin container hard reset */
+#coin {
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+/* parent tap areas (Telegram WebView issue) */
+#coin:active,
+#coin:focus,
+#coin:focus-visible {
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* VERY IMPORTANT: parent of coin */
+#coin-wrapper,
+.coin-wrapper,
+.tap-area,
+.tap,
+.coin-container {
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+/* kill pseudo-elements that cause square */
+#coin-wrapper::before,
+#coin-wrapper::after,
+.tap-area::before,
+.tap-area::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* ================= COIN TAP PHYSICS ================= */
+
+#coin {
+  transition: transform 0.12s cubic-bezier(.34, 1.56, .64, 1),
+    filter 0.12s ease;
+  will-change: transform, filter;
+}
+
+/* удар */
+#coin.hit {
+  transform: scale(0.9);
+  filter: drop-shadow(0 0 18px rgba(0, 255, 180, 0.9));
+}
+
+/* glow импульс */
+#coin.glow {
+  animation: coinGlow 0.25s ease-out;
+}
+
+@keyframes coinGlow {
+  0% {
+    filter: drop-shadow(0 0 0 rgba(0, 255, 180, 0));
+  }
+
+  50% {
+    filter: drop-shadow(0 0 25px rgba(0, 255, 180, 1));
+  }
+
+  100% {
+    filter: drop-shadow(0 0 0 rgba(0, 255, 180, 0));
+  }
+}
+
+/* ===== STAR BACKGROUND (SAFE) ===== */
+#stars {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  overflow: hidden;
+}
+
+#stars span {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: white;
+  opacity: 0.6;
+  border-radius: 50%;
+}
+
+/* ===== STAR FALL (DIAGONAL, SPACE STYLE) ===== */
+
+#stars span {
+  animation: starMove linear infinite;
+}
+
+@keyframes starMove {
+  from {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  to {
+    transform: translate(-120px, 160px);
+    opacity: 0;
+  }
+}
+
+/* ================= BALANCE (REFERENCE STYLE) ================= */
+
+#balance {
+  position: relative;
+  margin: 0 auto;
+
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  padding: 14px 22px;
+  min-width: 240px;
+  max-width: 90vw;
+
+  background: linear-gradient(
+    180deg,
+    rgba(0, 255, 170, 0.25),
+    rgba(0, 180, 120, 0.15)
+  );
+
+  border-radius: 999px;
+  border: 1px solid rgba(0, 255, 170, 0.6);
+
+  box-shadow:
+    0 0 20px rgba(0, 255, 170, 0.6),
+    inset 0 0 20px rgba(0, 255, 170, 0.25);
+
+  backdrop-filter: none !important;
+  filter: none !important;
+}
+
+
+
+
+/* ================= MENU (REFERENCE STYLE) ================= */
+
+.menu {
+  height: 96px;
+  background: rgba(5, 20, 18, 0.6);
+  backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(0, 255, 170, 0.25);
+align-items: center;
+  box-shadow:
+    0 -10px 30px rgba(0, 255, 170, 0.25);
+}
+
+/* обычные иконки */
+.menu div {
+  opacity: 0.5;
+  font-size: 22px;
+  transition: all 0.2s ease;
+}
+
+.menu div span {
+  display: contents !important;
+}
+
+
+/* активная */
+.menu .active {
+  opacity: 1;
+  color: #7affc6;
+  text-shadow: 0 0 12px rgba(0, 255, 170, 0.8);
+}
+
+/* центральная кнопка */
+.menu div:nth-child(2) {
+  transform: scale(1.4);
+
+  opacity: 1;
+
+  background: radial-gradient(circle, #7affc6, #00c853);
+  color: #003b22;
+
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-shadow:
+    0 0 30px rgba(0, 255, 170, 1);
+}
+
+/* ===== MAIN LOGO (FINAL FIX) ===== */
+
+#tap .tap-logo {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 18px;
+}
+
+#tap .tap-logo img {
+  display: block;
+
+  width: 380px;
+  /* ⬅️ ВОТ ГЛАВНОЕ — РЕАЛЬНО БОЛЬШЕ */
+  height: auto;
+
+  filter:
+    drop-shadow(0 0 18px rgba(0, 200, 255, 0.6)) drop-shadow(0 0 40px rgba(255, 215, 100, 0.5));
+
+  animation: logoFloat 6s ease-in-out infinite;
+}
+
+
+
+
+
+/* лёгкое "парение", премиум эффект */
+@keyframes logoFloat {
+  0% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-6px);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
+}
+
+/* ================= MENU ICONS (PNG) ================= */
+
+.menu {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 90px;
+
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+
+  background: rgba(6, 25, 22, 0.65);
+  backdrop-filter: blur(16px);
+
+  border-top: 1px solid rgba(0, 255, 180, 0.25);
+}
+
+.menu div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-icon {
+  width: 32px;
+  height: auto;
+  opacity: 0.55;
+  transition: all 0.2s ease;
+  filter: drop-shadow(0 0 6px rgba(0, 255, 180, 0.35));
+}
+
+/* активная иконка */
+.menu .active .menu-icon {
+  opacity: 1;
+  filter: drop-shadow(0 0 14px rgba(0, 255, 180, 0.9));
+  transform: scale(1.1);
+}
+
+
+.menu-icon.center {
+  width: 58px;
+  opacity: 1;
+
+  filter:
+    drop-shadow(0 0 20px rgba(0, 255, 180, 1)) drop-shadow(0 0 40px rgba(0, 255, 180, 0.6));
+}
+
+/* ================= ENERGY HUD (VISUAL ONLY) ================= */
+
+#energy {
+  position: relative;
+  margin-top: 22px;
+  padding: 16px 28px;
+
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 1px;
+
+  color: #eafff6;
+  text-align: center;
+
+  background:
+    linear-gradient(180deg,
+      rgba(0, 255, 180, 0.35),
+      rgba(0, 120, 80, 0.25));
+
+  border-radius: 18px;
+  border: 1px solid rgba(0, 255, 180, 0.45);
+
+  box-shadow:
+    0 0 18px rgba(0, 255, 180, 0.35),
+    inset 0 0 14px rgba(0, 255, 180, 0.15);
+}
+
+/* ENERGY label */
+#energy::before {
+  content: "ENERGY";
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  padding: 2px 10px;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 2px;
+
+  color: #9affea;
+  background: rgba(0, 40, 30, 0.85);
+
+  border-radius: 999px;
+  border: 1px solid rgba(0, 255, 180, 0.4);
+
+  box-shadow: 0 0 10px rgba(0, 255, 180, 0.35);
+}
+
+/* LOW ENERGY WARNING */
+#energy.energy-low {
+  color: #ffb3b3;
+  border-color: rgba(255, 80, 80, 0.6);
+
+  background:
+    linear-gradient(180deg,
+      rgba(255, 80, 80, 0.35),
+      rgba(120, 0, 0, 0.25));
+
+  box-shadow:
+    0 0 18px rgba(255, 80, 80, 0.45),
+    inset 0 0 14px rgba(255, 80, 80, 0.2);
+}
+
+/* hide top logo completely */
+.tap-logo {
+  display: none !important;
+}
+
+/* ================= SAFE LAYOUT FIX (ALL DEVICES) ================= */
+
+/* защита от вылезания текста */
+* {
+  box-sizing: border-box;
+}
+
+/* leaderboard rows */
+.lb-list .row,
+.lb-top1,
+.lb-card {
+  overflow: hidden;
+}
+
+/* имена и цифры */
+.lb-list .row b,
+.lb-list .row i,
+.lb-top1 .name,
+.lb-top1 .score,
+.lb-card .name,
+.lb-card .score {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* transfer + history */
+.history-row,
+.transfer-box,
+.shop-card {
+  overflow: hidden;
+}
+
+/* inputs */
+input {
+  max-width: 100%;
+}
+
+/* маленькие экраны */
+@media (max-width: 380px) {
+  .lb-top1 {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .lb-top1 .avatar {
+    margin-bottom: 10px;
+  }
+
+  .lb-top1 .score {
+    font-size: 18px;
+  }
+}
+
+/* ================= TAP SCREEN VERTICAL OFFSET ================= */
+
+/* опускаем весь контент главного экрана */
+#tap {
+  padding-top: 40px;
+  /* было 0 / мало */
+}
+
+/* дополнительно чуть воздуха между элементами */
+#tap #balance {
+  margin-top: 10px;
+}
+
+#tap #coin {
+  margin-top: 16px;
+}
+
+#tap #energy {
+  margin-top: 18px;
+}
+
+/* ================= TAP SCREEN FINAL VERTICAL SHIFT ================= */
+
+/* общий контейнер тапа — опускаем всё сразу */
+#tap {
+  padding-top: 80px;
+  /* БЫЛО ~40 → ДЕЛАЕМ ЗАМЕТНО НИЖЕ */
+}
+
+/* баланс */
+#tap #balance {
+  margin-top: 20px;
+}
+/* монета */
+#tap #coin {
+  margin-top: 24px;
+}
+
+/* энергия */
+#tap #energy {
+  margin-top: 26px;
+}
+
+/* ===== iOS SAFE AREA FIX ===== */
+body {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Telegram iOS header compensation */
+.screen {
+  padding-top: 24px;
+}
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+
+.screen {
+  min-height: calc(100dvh - 90px);
+}
+
+/* ===== iOS HARD SCALE FIX ===== */
+@supports (-webkit-touch-callout: none) {
+  html {
+    font-size: 16px !important;
+  }
+
+  body {
+    zoom: 1 !important;
+    -webkit-text-size-adjust: 100%;
+  }
+}
+
+/* ================= REMOVE MENU TAP HIGHLIGHT (iOS FIX) ================= */
+
+.menu,
+.menu * {
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+
+
+/* конкретно пункты меню */
+.menu div,
+.menu div:active,
+.menu div:focus,
+.menu div:focus-visible {
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* если внутри img */
+.menu img {
+  pointer-events: none;
+}
+
+/* ===== BOTTOM MENU SIZE TUNE ===== */
+
+.menu {
+  height: 104px;
+  /* было 90px */
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.menu div {
+  font-size: 28px;
+  /* было ~24px */
   width: 56px;
   height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.55;
+}
+
+/* активный пункт */
+.menu .active {
+  opacity: 1;
+  transform: scale(1.25);
+  /* чуть больше акцента */
+}
+
+/* ================= iOS MENU IMAGE FIX ================= */
+
+/* убиваем ios highlight полностью */
+.menu,
+.menu * {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-focus-ring-color: transparent;
+  outline: none;
+}
+
+/* контейнеры меню */
+.menu div {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* 🔥 ВАЖНО: img не должны быть interactive */
+.menu img {
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* iOS active / focus kill */
+.menu div:active,
+.menu div:focus,
+.menu div:focus-visible {
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+
+/* ================= FINAL MENU ALIGN FIX ================= */
+
+.menu div {
+  display: grid !important;
+  place-items: center !important;
+
+  height: 100%;
+  padding: 0 !important;
+  margin: 0 !important;
+
+  line-height: 0 !important;
+  font-size: 0 !important;
+
   opacity: 0.5;
 }
 
@@ -293,14 +1121,504 @@ html, body {
   opacity: 1;
 }
 
+
+/* размер самих иконок */
 .menu img {
-  width: 42px;
+  width: 42px;      /* БОЛЬШЕ */
   height: 42px;
   object-fit: contain;
-  pointer-events: none;
+  display: block;
 }
 
+
+/* активная кнопка */
 .menu .active img {
   width: 44px;
-  filter: drop-shadow(0 0 14px rgba(0,255,180,0.9));
+  filter: drop-shadow(0 0 14px rgba(0, 255, 180, 0.9));
+}
+
+/* menu img should not receive touch */
+.menu img {
+  pointer-events: none;
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+/* ================= BALANCE OVERFLOW SAFE ================= */
+#balance {
+  max-width: 90vw;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}.menu,
+.menu * {
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+.balance-icon img {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  padding: 6px;
+
+  background: radial-gradient(circle, #7affc6, #00c853);
+  box-shadow: 0 0 14px rgba(0, 255, 170, 0.9);
+}
+.balance-center {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+#balance .label {
+  font-size: 12px;
+  letter-spacing: 2px;
+  opacity: 0.8;
+}
+
+.balance-value {
+  font-size: 32px;
+  font-weight: 900;
+  line-height: 1;
+}
+.transfer-box.transfer-success {
+  animation: successPulse 0.6s ease;
+  box-shadow: 0 0 20px rgba(0, 255, 150, 0.6);
+}
+
+.transfer-box.transfer-error {
+  animation: errorShake 0.45s ease;
+  box-shadow: 0 0 20px rgba(255, 80, 80, 0.6);
+}
+
+@keyframes successPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+@keyframes errorShake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  50% { transform: translateX(6px); }
+  75% { transform: translateX(-4px); }
+  100% { transform: translateX(0); }
+}
+
+.transfer-toast {
+  position: fixed;
+  bottom: 18%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 18px;
+  border-radius: 12px;
+  font-weight: 600;
+  z-index: 9999;
+}
+
+.transfer-toast.success {
+  background: rgba(0, 255, 150, 0.15);
+  color: #00ff9d;
+  box-shadow: 0 0 12px rgba(0, 255, 150, 0.5);
+}
+
+.transfer-toast.error {
+  background: rgba(255, 80, 80, 0.15);
+  color: #ff6b6b;
+  box-shadow: 0 0 12px rgba(255, 80, 80, 0.5);
+}
+/* ===== SHOP FEEDBACK ===== */
+.shop-error {
+  animation: shake 0.45s;
+}
+
+.shop-success {
+  box-shadow: 0 0 20px rgba(0,255,150,0.6);
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  50% { transform: translateX(6px); }
+  75% { transform: translateX(-4px); }
+  100% { transform: translateX(0); }
+}
+.stake-btn {
+  margin-top: 12px;
+  width: 100%;
+  padding: 14px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #1cff9a, #00b86b);
+  color: #02040a;
+  font-weight: 700;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+
+.stake-btn:active {
+  transform: scale(0.98);
+}
+.stake-confirm[disabled] {
+  background: linear-gradient(135deg, #2b2f3a, #1f232d);
+  color: #9fa6b2;
+  cursor: default;
+  opacity: 1;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
+}
+
+.stake-confirm[disabled]::after {
+  content: "✓";
+  margin-left: 8px;
+  color: #4ade80;
+}
+.stake-status {
+  margin-bottom: 14px;
+  padding: 12px;
+  text-align: center;
+}
+
+.stake-phase {
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #4ade80;
+}
+
+.stake-timer {
+  font-size: 14px;
+  opacity: 0.85;
+}
+/* ===== STAKE SCREEN ===== */
+
+.stake-card {
+  max-width: 420px;
+  margin: 20px auto;
+  padding: 18px;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.stake-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stake-header h2 {
+  font-size: 20px;
+  margin: 0;
+}
+
+.stake-timer {
+  font-size: 13px;
+  opacity: 0.8;
+  color: #9cffb5;
+}
+
+.stake-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.stake-stat {
+  background: rgba(255,255,255,0.04);
+  border-radius: 14px;
+  padding: 12px;
+  text-align: center;
+}
+
+.stake-stat .label {
+  font-size: 12px;
+  opacity: 0.6;
+}
+
+.stake-stat .value {
+  display: block;
+  margin-top: 4px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.stake-stat .value.accent {
+  color: #7dffb3;
+}
+
+.stake-amounts {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.stake-amounts button {
+  background: rgba(255,255,255,0.06);
+  border: none;
+  border-radius: 12px;
+  padding: 10px 0;
+  color: #fff;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.15s;
+}
+
+.stake-amounts button:hover {
+  background: rgba(255,255,255,0.12);
+}
+
+.stake-amounts button.active {
+  background: linear-gradient(135deg, #2cff9c, #00c070);
+  color: #02140c;
+}
+
+.stake-amounts button.max {
+  grid-column: span 2;
+  font-weight: 600;
+}
+
+.stake-confirm {
+  margin-top: 6px;
+  background: linear-gradient(135deg, #2cff9c, #00c070);
+  border: none;
+  border-radius: 16px;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #02140c;
+  cursor: pointer;
+  transition: 0.15s;
+}
+
+.stake-confirm:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.stake-warning {
+  font-size: 11px;
+  opacity: 0.6;
+  text-align: center;
+  line-height: 1.4;
+}
+.stake-success {
+  box-shadow: 0 0 40px rgba(0, 255, 140, 0.4);
+  transition: box-shadow 0.3s ease;
+}
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  50% { transform: translateX(6px); }
+  75% { transform: translateX(-4px); }
+  100% { transform: translateX(0); }
+}
+
+.stake-cooldown {
+  animation: shake 0.35s ease;
+  box-shadow: 0 0 25px rgba(255, 180, 0, 0.4);
+}
+/* ===== STAKE SUCCESS ===== */
+
+.stake-success {
+  box-shadow: 0 0 35px rgba(0, 255, 150, 0.5);
+  transition: box-shadow 0.3s ease;
+}
+
+.stake-fly {
+  position: fixed;
+  left: 50%;
+  top: 55%;
+  transform: translateX(-50%);
+  font-size: 22px;
+  font-weight: bold;
+  color: #00ff9c;
+  text-shadow: 0 0 15px rgba(0,255,160,0.9);
+  animation: flyUp 0.9s ease forwards;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+@keyframes flyUp {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 20px) scale(0.8);
+  }
+  30% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -80px) scale(1.05);
+  }
+}
+.stake-lb-row {
+  display: grid;
+  grid-template-columns: 36px 40px 1fr 120px;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 6px;
+}
+
+.stake-lb-row .avatar {
+  width: 36px;
+  border-radius: 50%;
+}
+
+.bar {
+  height: 8px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  background: linear-gradient(90deg,#2cff9c,#00c070);
+  transition: width 0.4s ease;
+}
+
+/* YOU */
+.stake-me {
+  margin: 14px 12px 18px;
+  padding: 12px 14px;
+  border-radius: 16px;
+
+  background: linear-gradient(
+    90deg,
+    rgba(0,255,170,0.18),
+    rgba(0,255,170,0.08)
+  );
+
+  box-shadow: 0 0 18px rgba(0,255,170,0.25);
+}
+
+.stake-me .me-label {
+  font-size: 12px;
+  letter-spacing: 1px;
+  opacity: 0.8;
+  margin-bottom: 6px;
+}
+
+.stake-me .me-rank {
+  margin-top: 6px;
+  font-weight: bold;
+}
+
+.stake-status {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+
+  padding: 12px 16px;
+}
+
+.stake-title-wrap {
+  text-align: center;
+  justify-self: center;
+}
+
+
+/* центр */
+.stake-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stake-back {
+  font-size: 26px;
+  font-weight: 800;
+
+  padding: 6px 10px;
+  border-radius: 12px;
+  border: none;
+
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.stake-back:hover {
+  background: rgba(255,255,255,0.18);
+  transform: translateX(-2px);
+}
+
+.stake-back:active {
+  transform: scale(0.92);
+}
+
+
+
+.stake-timer {
+  margin-top: 4px;
+  font-size: 13px;
+  opacity: 0.75;
+}
+
+
+.stake-phase {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+
+.lb-card .score {
+  width: 100%;
+  text-align: center;
+  margin-top: 6px;
+  font-weight: 700;
+}
+
+.lb-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;   /* 🔥 ВОТ ЭТО ГЛАВНОЕ */
+  justify-content: center;
+  text-align: center;
+}
+
+.lb-list i {
+  max-width: 72px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.claim-box {
+  margin-top: 18px;
+  padding: 16px;
+  border-radius: 18px;
+}
+
+.claim-title {
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.claim-input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  outline: none;
+  margin-bottom: 12px;
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+}
+.claim-input {
+  color: #000;
+}
+
+.claim-input {
+  color: #000;
+  background: rgba(255,255,255,0.9);
+}
+
+.claim-input::placeholder {
+  color: #444;
+  opacity: 1;
 }
