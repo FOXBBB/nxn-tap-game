@@ -1238,8 +1238,8 @@ body {
   color: #2a1a00;
 
   box-shadow:
-    0 6px 0 #cc8f00,
-    0 14px 26px rgba(255, 200, 80, 0.45);
+    0 6px 0 #00e457,
+    0 14px 26px rgba(80, 255, 188, 0.45);
 
   cursor: pointer;
 }

@@ -337,24 +337,23 @@ updateRewardTimer();
 if (rewardState === "CLAIM_ACTIVE") {
   loadClaimInfo();
 }
+
+// ===== REFERRAL STAKE AVAILABILITY =====
+const refStakeBtn = document.getElementById("stake-referral-btn");
+const refConfirmBtn = document.getElementById("confirm-referral-stake");
+
+if (refStakeBtn && refConfirmBtn) {
+  if (rewardState !== "STAKE_ACTIVE") {
+    refStakeBtn.disabled = true;
+    refStakeBtn.textContent = "Stake Closed";
+    refConfirmBtn.disabled = true;
+  } else {
+    refStakeBtn.disabled = false;
+    refStakeBtn.textContent = "Stake Referral NXN";
+    refConfirmBtn.disabled = false;
+  }
 }
-
-
-const referralStakeBtn = document.getElementById("stake-referral-btn");
-const confirmReferralStake = document.getElementById("confirm-referral-stake");
-
-if (data.state !== "STAKE_ACTIVE") {
-  referralStakeBtn.disabled = true;
-  referralStakeBtn.textContent = "Stake Closed";
-
-  confirmReferralStake.disabled = true;
-} else {
-  referralStakeBtn.disabled = false;
-  referralStakeBtn.textContent = "Stake Referral NXN";
-
-  confirmReferralStake.disabled = false;
 }
-
 
 
 
