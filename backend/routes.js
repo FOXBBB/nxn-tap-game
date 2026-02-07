@@ -1122,9 +1122,14 @@ router.post("/referral/bind", async (req, res) => {
 router.post("/referral/stake", async (req, res) => {
   const { userId, amount } = req.body;
 
-  if (amount <= 0) {
-    return res.json({ ok: false, error: "Invalid amount" });
-  }
+  const MIN_REF_STAKE = 10000;
+
+if (!Number.isFinite(amount) || amount < MIN_REF_STAKE) {
+  return res.json({
+    ok: false,
+    error: `Minimum referral stake is ${MIN_REF_STAKE} NXN`
+  });
+}
 
   const user = await query(`
     SELECT referral_stack_balance

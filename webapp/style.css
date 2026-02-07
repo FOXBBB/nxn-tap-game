@@ -1220,21 +1220,35 @@ body {
   75% { transform: translateX(-4px); }
   100% { transform: translateX(0); }
 }
+/* ===== MAIN STAKE BUTTON (TAP SCREEN) ===== */
+
 .stake-btn {
-  margin-top: 12px;
   width: 100%;
-  padding: 14px;
-  border-radius: 14px;
-  background: linear-gradient(135deg, #1cff9a, #00b86b);
-  color: #02040a;
-  font-weight: 700;
-  font-size: 16px;
+  margin: 14px auto 6px;
+  padding: 16px;
+
+  border-radius: 18px;
   border: none;
+
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: 2px;
+
+  background: linear-gradient(135deg, #ffe27a, #ffb300);
+  color: #2a1a00;
+
+  box-shadow:
+    0 6px 0 #cc8f00,
+    0 14px 26px rgba(255, 200, 80, 0.45);
+
   cursor: pointer;
 }
 
 .stake-btn:active {
-  transform: scale(0.98);
+  transform: translateY(4px);
+  box-shadow:
+    0 2px 0 #cc8f00,
+    0 6px 12px rgba(255, 200, 80, 0.3);
 }
 .stake-confirm[disabled] {
   background: linear-gradient(135deg, #2b2f3a, #1f232d);
@@ -1989,4 +2003,84 @@ input, button {
   box-shadow:
     0 2px 0 #0d47a1,
     0 6px 12px rgba(80,150,255,0.3);
+}
+/* ===== REFERRAL STAKE MODAL (PREMIUM) ===== */
+
+#referral-stake-modal .modal-box {
+  background: linear-gradient(
+    180deg,
+    rgba(10, 30, 25, 0.96),
+    rgba(5, 15, 12, 0.96)
+  );
+
+  border-radius: 22px;
+  padding: 22px;
+
+  border: 1px solid rgba(0, 255, 170, 0.25);
+  box-shadow:
+    0 0 40px rgba(0, 255, 170, 0.25),
+    inset 0 0 25px rgba(0, 255, 170, 0.08);
+}
+
+#referral-stake-modal h3 {
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  margin-bottom: 14px;
+
+  background: linear-gradient(180deg, #7affc6, #2cff9c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.modal-balance {
+  margin-bottom: 14px;
+  font-size: 14px;
+  opacity: 0.85;
+}
+
+.modal-balance b {
+  color: #7affc6;
+  font-weight: 900;
+}
+
+#referral-stake-amount {
+  height: 54px;
+  font-size: 18px;
+  font-weight: 800;
+  text-align: center;
+
+  background: rgba(255,255,255,0.95);
+  color: #02040a;
+
+  border-radius: 14px;
+  border: none;
+}
+
+#referral-stake-amount::placeholder {
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+}
+
+/* hint */
+#referral-stake-modal .hint {
+  margin-top: 8px;
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+/* confirm */
+#confirm-referral-stake {
+  margin-top: 14px;
+  background: linear-gradient(135deg, #2cff9c, #00c070);
+  color: #02140c;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+/* cancel */
+#cancel-referral-stake.secondary {
+  margin-top: 8px;
+  opacity: 0.75;
 }
