@@ -1663,3 +1663,28 @@ body {
   color: #444;
   opacity: 1;
 }
+/* ===== SCREEN ARCHITECTURE FIX ===== */
+
+.game {
+  position: relative;
+  overflow: hidden;
+}
+
+.screen {
+  position: absolute;
+  inset: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  background: transparent;
+
+  padding: 16px;
+  padding-bottom: 120px; /* место под меню */
+
+  overflow-y: auto;
+}
+
+.hidden {
+  display: none !important;
+}
