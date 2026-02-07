@@ -161,6 +161,7 @@ async function refreshMe() {
 
   canTap = energy > 0;
   updateUI();
+  updateTapState();
 }
 
 async function loadRewardState() {
@@ -243,7 +244,7 @@ function animateCoinHit() {
 // ================= TAP =================
 if (coin) {
   coin.onclick = async (e) => {
-    if (energy <= 0) return;
+  if (!canTap) return;
 
     animateCoinHit();
 
@@ -666,7 +667,21 @@ setInterval(async () => {
   maxEnergy = Number(data.maxEnergy) || maxEnergy;
 
   updateUI();
+  updateTapState();
 }, 1000); // 🔥 каждую секунду
+
+function updateTapState() {
+  if (!coin) return;
+
+  if (energy <= 0) {
+    coin.classList.add("coin-disabled");
+    canTap = false;
+  } else {
+    coin.classList.remove("coin-disabled");
+    canTap = true;
+  }
+}
+
 
 function showScreen(id) {
   // скрываем все экраны

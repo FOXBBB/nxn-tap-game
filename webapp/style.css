@@ -1685,3 +1685,8 @@ input, button {
   font-size: 20px;
   letter-spacing: 1px;
 }
+.coin-disabled {
+  pointer-events: none;
+  filter: grayscale(1) brightness(0.65);
+  opacity: 0.8;
+}
