@@ -72,11 +72,8 @@ const stakeBackBtn = document.getElementById("stake-back");
 
 if (stakeBackBtn) {
   stakeBackBtn.onclick = () => {
-    document.querySelectorAll(".screen")
-      .forEach(s => s.classList.add("hidden"));
-
-    document.getElementById("tap").classList.remove("hidden");
-  };
+  showScreen("tap");
+};
 }
 
 async function loadClaimInfo() {
@@ -509,55 +506,41 @@ async function loadLeaderboard() {
 // ================= MENU =================
 function initMenu() {
   document.querySelectorAll(".menu div").forEach(btn => {
-    btn.onclick = () => {
-      document.querySelectorAll(".screen").forEach(s =>
-        s.classList.add("hidden")
-      );
+    btn.addEventListener("click", (e) => {
+      // 🔑 важно: всегда берём div, даже если клик по img
+      const targetBtn = e.currentTarget;
+      const go = targetBtn.dataset.go;
 
-      if (btn.dataset.go === "transfer") {
+      if (!go) return;
+
+      showScreen(go);
+
+      if (go === "transfer") {
         loadHistory();
       }
 
-
-      const target = document.getElementById(btn.dataset.go);
-      if (target) target.classList.remove("hidden");
-
-      document.querySelectorAll(".menu div").forEach(b =>
-        b.classList.remove("active")
-      );
-      btn.classList.add("active");
-
-      if (btn.dataset.go === "transfer") {
-        loadHistory();
-      }
-
-
-      if (btn.dataset.go === "leaderboard") {
+      if (go === "leaderboard") {
         loadLeaderboard();
-
       }
-    };
+    });
   });
 }
+
 
 const stakeBtn = document.getElementById("stake-btn");
 const stakeScreen = document.getElementById("stake-screen");
 
 stakeBtn.onclick = async () => {
-  document.querySelectorAll(".screen").forEach(s =>
-    s.classList.add("hidden")
-  );
-
-  stakeScreen.classList.remove("hidden");
+  showScreen("stake-screen");
 
   await refreshMe();
   await loadRewardState();
 
-  // 🔥 ДОБАВИТЬ
   if (rewardState === "CLAIM_ACTIVE") {
     loadClaimInfo();
   }
 };
+
 
 
 
@@ -685,6 +668,24 @@ setInterval(async () => {
   updateUI();
 }, 1000); // 🔥 каждую секунду
 
+function showScreen(id) {
+  // скрываем все экраны
+  document.querySelectorAll(".screen")
+    .forEach(s => s.classList.add("hidden"));
+
+  // показываем нужный
+  const screen = document.getElementById(id);
+  if (screen) {
+    screen.classList.remove("hidden");
+  }
+
+  // обновляем активное меню
+  document.querySelectorAll(".menu div")
+    .forEach(b => b.classList.remove("active"));
+
+  const activeBtn = document.querySelector(`.menu div[data-go="${id}"]`);
+  if (activeBtn) activeBtn.classList.add("active");
+}
 
 
 
@@ -978,11 +979,7 @@ async function loadStakeLeaderboard() {
   }
 }
 document.getElementById("back-to-stake").onclick = () => {
-  document.querySelectorAll(".screen")
-    .forEach(s => s.classList.add("hidden"));
-
-  document.getElementById("stake-screen")
-    .classList.remove("hidden");
+  showScreen("stake-screen");
 };
 
 
