@@ -44,6 +44,9 @@ const wallet = WalletContractV4.create({
   publicKey: Buffer.from(keyPair.publicKey),
 });
 
+console.log("🚨 SENDER WALLET ADDRESS:", wallet.address.toString());
+
+
   const walletContract = client.open(wallet);
 
   // 3. Sender jetton wallet
