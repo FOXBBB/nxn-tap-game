@@ -1,7 +1,7 @@
 // backend/autoSendNXN.js
 
 import tonPkg from "@ton/ton";
-const { TonClient, WalletContractW5, internal } = tonPkg;
+const { TonClient, WalletContractV4, internal } = tonPkg;
 import { Address, beginCell, toNano } from "@ton/core";
 import { getHttpEndpoint } from "@orbs-network/ton-access";
 import { mnemonicToPrivateKey } from "@ton/crypto";
@@ -46,10 +46,10 @@ export async function autoSendNXN({ claimId, wallet, amount }) {
     process.env.TON_MNEMONIC.trim().split(/\s+/)
   );
 
-  const adminWallet = WalletContractW5.create({
-    workchain: 0,
-    publicKey: keyPair.publicKey,
-  });
+  const adminWallet = WalletContractV4.create({
+  workchain: 0,
+  publicKey: keyPair.publicKey,
+});
 
   const adminWalletContract = client.open(adminWallet);
 
