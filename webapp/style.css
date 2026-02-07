@@ -1748,3 +1748,72 @@ body {
     height: 92px;
   }
 }
+/* ================= LAYOUT SOURCE OF TRUTH ================= */
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+#app {
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+}
+
+.game {
+  width: 100%;
+  max-width: 420px;
+  height: 100dvh;
+  position: relative;
+  overflow: hidden;
+}
+
+.screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 16px;
+  padding-bottom: 140px; /* место под меню */
+}
+/* ================= MENU FINAL ================= */
+
+.menu {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 96px;
+  padding-bottom: env(safe-area-inset-bottom);
+
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+
+  background: rgba(6, 25, 22, 0.65);
+  backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(0, 255, 180, 0.25);
+
+  z-index: 1000;
+}
+#balance {
+  max-width: 100%;
+  width: fit-content;
+  min-width: 260px;
+
+  padding: 16px 24px;
+  white-space: nowrap;
+}
+
+#transfer {
+  min-height: 100%;
+  padding-bottom: calc(160px + env(safe-area-inset-bottom));
+}
+
+.transfer-box {
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto 40px;
+}
