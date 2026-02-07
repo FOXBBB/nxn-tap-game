@@ -51,10 +51,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     myIdEl.textContent = "Your ID: " + userId;
     myIdEl.onclick = () => {
       navigator.clipboard.writeText(userId);
-      Telegram.WebApp.showPopup({
-        title: "Copied",
-        message: "Your ID copied"
-      });
     };
   }
 
