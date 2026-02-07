@@ -184,20 +184,24 @@ router.get("/__debug/db", async (req, res) => {
 
 router.get("/me/:id", async (req, res) => {
   const { id } = req.params;
+  if (!id) return res.json({ ok: false });
 
-  const user = userRes.rows[0];
-await applyEnergyRegen(user);
-
-  const userRes = await query(`
-    SELECT *
-    FROM users
-    WHERE telegram_id = $1::text
-  `, [String(id)]);
+  // 1️⃣ получаем пользователя
+  const userRes = await query(
+    `SELECT * FROM users WHERE telegram_id = $1::text`,
+    [String(id)]
+  );
 
   if (userRes.rowCount === 0) {
     return res.json({ ok: false });
   }
 
+  const user = userRes.rows[0];
+
+  // 2️⃣ РЕГЕН ЭНЕРГИИ ТОЛЬКО ЗДЕСЬ
+  await applyEnergyRegen(user);
+
+  // 3️⃣ применяем бусты
   const boosted = await applyBoosts(user);
 
   res.json({
