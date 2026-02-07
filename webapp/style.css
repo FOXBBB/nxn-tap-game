@@ -955,21 +955,25 @@ input {
   max-width: 100%;
 }
 
-/* маленькие экраны */
 @media (max-width: 380px) {
   .lb-top1 {
-    flex-direction: column;
-    text-align: center;
+    padding: 20px;
   }
 
   .lb-top1 .avatar {
-    margin-bottom: 10px;
+    width: 84px;
+    height: 84px;
+  }
+
+  .lb-top1 .name {
+    font-size: 22px;
   }
 
   .lb-top1 .score {
-    font-size: 18px;
+    font-size: 20px;
   }
 }
+
 
 /* ================= TAP SCREEN VERTICAL OFFSET ================= */
 
@@ -1666,25 +1670,7 @@ body {
 }
 /* ===== SCREEN ARCHITECTURE FIX ===== */
 
-.game {
-  position: relative;
-  overflow: hidden;
-}
 
-.screen {
-  position: absolute;
-  inset: 0;
-
-  display: flex;
-  flex-direction: column;
-
-  background: transparent;
-
-  padding: 16px;
-  padding-bottom: 120px; /* место под меню */
-
-  overflow-y: auto;
-}
 
 .hidden {
   display: none !important;
@@ -1724,8 +1710,14 @@ body {
 /* ===== TRANSFER FULL HEIGHT FIX ===== */
 
 #transfer {
-  padding-bottom: 160px; /* ⬅️ больше чем меню */
+  min-height: 100%;
+  padding-bottom: calc(140px + env(safe-area-inset-bottom));
 }
+
+#transfer .transfer-box {
+  margin-bottom: 40px;
+}
+
 
 .transfer-box {
   width: 100%;
