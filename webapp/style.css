@@ -24,14 +24,15 @@ html, body {
 }
 
 .game {
+  position: relative;
   width: 100%;
-  max-width: 420px;
+  max-width: 480px;     /* ⬅️ было 420 */
+  min-width: 320px;
 
   height: 100svh;
-  max-height: 860px;
+  margin: 0 auto;
 
-  position: relative;
-  overflow: hidden;   /* 🔥 КЛЮЧ */
+  overflow: hidden;
 }
 
 
@@ -1687,4 +1688,71 @@ body {
 
 .hidden {
   display: none !important;
+}
+/* ===== LEADERBOARD TOP 1 FIX ===== */
+
+.lb-top1 {
+  max-width: 100%;
+  padding: 20px;
+}
+
+.lb-top1 .avatar {
+  width: 96px;
+  height: 96px;
+}
+
+.lb-top1 .name {
+  font-size: 24px;
+}
+
+.lb-top1 .score {
+  font-size: 22px;
+}
+/* ===== STAKE CARD SIZE FIX ===== */
+
+.stake-card {
+  width: 100%;
+  max-width: 440px;
+  margin: 16px auto;
+  padding: 20px;
+}
+
+.stake-amounts button {
+  font-size: 15px;
+  padding: 12px 0;
+}
+/* ===== TRANSFER FULL HEIGHT FIX ===== */
+
+#transfer {
+  padding-bottom: 160px; /* ⬅️ больше чем меню */
+}
+
+.transfer-box {
+  width: 100%;
+  max-width: 440px;
+}
+/* ===== BALANCE FIX ===== */
+
+#balance {
+  width: auto;
+  max-width: 95%;
+  padding: 16px 24px;
+}
+
+.balance-value {
+  font-size: 34px;
+}
+@media (max-width: 360px) {
+  .balance-value {
+    font-size: 28px;
+  }
+
+  .lb-top1 .avatar {
+    width: 80px;
+    height: 80px;
+  }
+
+  .menu {
+    height: 92px;
+  }
 }
