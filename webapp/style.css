@@ -2129,3 +2129,51 @@ button:disabled {
   border: 1px solid rgba(255,255,255,0.18);
   color: #fff;
 }
+/* ===== REFERRAL STAKE SUCCESS ANIMATION ===== */
+
+.ref-stake-success {
+  animation: refStakeGlow 0.6s ease;
+  box-shadow: 0 0 40px rgba(0, 255, 150, 0.6);
+}
+
+@keyframes refStakeGlow {
+  0% {
+    box-shadow: 0 0 0 rgba(0,255,150,0);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(0,255,150,0.9);
+  }
+  100% {
+    box-shadow: 0 0 0 rgba(0,255,150,0);
+  }
+}
+
+/* flying +NXN */
+.ref-stake-fly {
+  position: fixed;
+  left: 50%;
+  top: 55%;
+  transform: translateX(-50%);
+  font-size: 24px;
+  font-weight: 900;
+  color: #00ff9c;
+  text-shadow: 0 0 18px rgba(0,255,160,0.9);
+  animation: refFlyUp 0.9s ease forwards;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+@keyframes refFlyUp {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 20px) scale(0.8);
+  }
+  30% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -90px) scale(1.05);
+  }
+}

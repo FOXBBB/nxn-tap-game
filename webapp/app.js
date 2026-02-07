@@ -195,19 +195,41 @@ if (amount < 10000) {
   const data = await res.json();
 
   if (!data.ok) {
-    alert(data.error);
-    return;
-  }
+  alert(data.error);
+  return;
+}
 
-  refModal.classList.add("hidden");
+/* ===== SUCCESS ANIMATION ===== */
 
-  Telegram.WebApp.showPopup({
-    title: "Success",
-    message: "Referral NXN staked"
-  });
+// закрываем модалку
+refModal.classList.add("hidden");
 
-  await refreshMe();
-  await loadRewardState();
+// 💥 glow стейк карточки
+const stakeCard = document.querySelector(".stake-card");
+if (stakeCard) {
+  stakeCard.classList.add("ref-stake-success");
+  setTimeout(() => {
+    stakeCard.classList.remove("ref-stake-success");
+  }, 600);
+}
+
+// 🚀 летящий текст
+const fly = document.createElement("div");
+fly.className = "ref-stake-fly";
+fly.innerText = `+${formatNumber(amount)} NXN`;
+document.body.appendChild(fly);
+setTimeout(() => fly.remove(), 900);
+
+// 🔔 popup (Telegram native)
+Telegram.WebApp.showPopup({
+  title: "Success",
+  message: "Referral NXN staked successfully"
+});
+
+// обновляем данные
+await refreshMe();
+await loadRewardState();
+
 };
 
 
