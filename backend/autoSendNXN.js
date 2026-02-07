@@ -26,8 +26,10 @@ function jettonAmount(amount) {
  * MAIN AUTO SEND
  */
 export async function autoSendNXN({ claimId, wallet, amount }) {
+  const userWalletAddress = wallet;
+
   console.log(
-    `🚀 AutoSend NXN | claim=${claimId} | amount=${amount} | to=${wallet}`
+    `🚀 AutoSend NXN | claim=${claimId} | amount=${amount} | to=${userWalletAddress}`
   );
 
   // 1️⃣ TON client
@@ -40,13 +42,13 @@ export async function autoSendNXN({ claimId, wallet, amount }) {
   }
 
   const keyPair = await mnemonicToPrivateKey(
-    process.env.TON_MNEMONIC.trim().split(" ")
+    process.env.TON_MNEMONIC.trim().split(/\s+/)
   );
 
-  const wallet = WalletContractW5.create({
-  workchain: 0,
-  publicKey,
-});
+  const adminWallet = WalletContractW5.create({
+    workchain: 0,
+    publicKey: keyPair.publicKey,
+  });
 
   const adminWalletContract = client.open(adminWallet);
 
@@ -78,7 +80,7 @@ export async function autoSendNXN({ claimId, wallet, amount }) {
     .storeUint(0x0f8a7ea5, 32) // jetton_transfer
     .storeUint(0, 64) // query_id
     .storeCoins(jettonAmount(amount))
-    .storeAddress(Address.parse(wallet)) // destination
+    .storeAddress(Address.parse(userWalletAddress)) // destination
     .storeAddress(adminWallet.address) // response destination
     .storeBit(false) // no custom payload
     .storeCoins(toNano("0.01")) // forward TON
