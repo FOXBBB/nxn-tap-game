@@ -387,19 +387,18 @@ router.post("/tap", async (req, res) => {
 
   const user = userRes.rows[0];
 
-  await applyEnergyRegen(user);
-
-  // ⛔ если энергии 0 — тап запрещён
+  // ⛔ если энергии нет — НЕЛЬЗЯ тапать
   if (user.energy <= 0) {
     return res.json({
       ok: false,
-      energy: 0
+      balance: Number(user.balance),
+      energy: 0,
+      tapPower: user.tap_power
     });
   }
 
-  // считаем бусты
+  // считаем tap power + буст
   let tapPower = user.tap_power;
-
   if (
     user.tap_boost_until &&
     new Date() < new Date(user.tap_boost_until)
@@ -407,15 +406,15 @@ router.post("/tap", async (req, res) => {
     tapPower += 3;
   }
 
+  // ✅ СНАЧАЛА списываем энергию
   const result = await query(
     `
     UPDATE users
     SET
+      energy = GREATEST(energy - 1, 0),
       balance = balance + $1,
-      energy = energy - 1,
       last_seen = NOW()
     WHERE telegram_id = $2::text
-      AND energy > 0
     RETURNING balance, energy
     `,
     [tapPower, String(id)]
@@ -430,6 +429,7 @@ router.post("/tap", async (req, res) => {
     tapPower
   });
 });
+
 
 
 
