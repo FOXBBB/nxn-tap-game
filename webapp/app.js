@@ -409,33 +409,32 @@ function animateCoinHit() {
 
 // ================= TAP =================
 if (coin) {
- coin.addEventListener("touchstart", (e) => {
+coin.addEventListener("touchstart", (e) => {
   e.preventDefault();
 
-   isTappingNow = true;
+  if (!canTap) return;
 
-   if (!canTap) return;
+  isTappingNow = true;
 
-if (flushTimer) clearTimeout(flushTimer);
-flushTimer = setTimeout(() => {
-  flushTapBuffer();
-}, 120);
-
+  if (flushTimer) clearTimeout(flushTimer);
+  flushTimer = setTimeout(() => {
+    flushTapBuffer();
+  }, 120);
 
   const touches = e.touches.length || 1;
 
-  
+  // 👉 ВАЖНО: сначала считаем
+  const actualTaps = Math.min(energy, touches);
+  if (actualTaps <= 0) return;
 
-  // 🔥 мгновенный UI
+  // UI
   animateCoinHit();
   animatePlus(e, tapPower * actualTaps);
 
-  const actualTaps = Math.min(energy, touches);
-
-tapBuffer += actualTaps;
-balance += tapPower * actualTaps;
-energy -= actualTaps;
-
+  // state
+  tapBuffer += actualTaps;
+  balance += tapPower * actualTaps;
+  energy -= actualTaps;
 
   updateUI();
   updateTapState();
