@@ -23,6 +23,7 @@ let tapInProgress = false;
 let tonConnectUI = null;
 let tapBuffer = 0;
 let tapFlushInProgress = false;
+let isTappingNow = false;
 
 
 // ================= INIT =================
@@ -409,6 +410,8 @@ if (coin) {
  coin.addEventListener("touchstart", (e) => {
   e.preventDefault();
 
+   isTappingNow = true;
+
   if (!canTap) return;
 
   const touches = e.touches.length || 1;
@@ -466,15 +469,17 @@ async function flushTapBuffer() {
     }
 
   } catch (e) {
-    // сеть упала — откат
-    balance -= tapPower * amount;
-    energy += amount;
-    updateUI();
-    updateTapState();
-  }
+  balance -= tapPower * amount;
+  energy += amount;
+  updateUI();
+  updateTapState();
+  isTappingNow = false;
+}
 
   tapFlushInProgress = false;
+isTappingNow = false;
 }
+
 
 
 
@@ -526,16 +531,31 @@ async function loadHistory() {
 
 
 
-
 function animatePlus(e, value) {
   const plus = document.createElement("div");
   plus.className = "plus-one";
   plus.innerText = `+${value}`;
-  plus.style.left = e.clientX + "px";
-  plus.style.top = e.clientY - 10 + "px";
+
+  let x = 0;
+  let y = 0;
+
+  if (e.touches && e.touches[0]) {
+    x = e.touches[0].clientX;
+    y = e.touches[0].clientY;
+  } else {
+    x = e.clientX || window.innerWidth / 2;
+    y = e.clientY || window.innerHeight / 2;
+  }
+
+  plus.style.left = x + "px";
+  plus.style.top  = (y - 20) + "px";
+
   document.body.appendChild(plus);
   setTimeout(() => plus.remove(), 800);
 }
+
+
+
 
 // ================= TRANSFER =================
 document.getElementById("send").onclick = async () => {
@@ -868,6 +888,7 @@ setInterval(() => {
 }, 5000);
 // ================= ENERGY SYNC TICK =================
 setInterval(async () => {
+  if (isTappingNow) return;
   if (!userId) return;
 
   const res = await fetch(`/api/me/${userId}`);
