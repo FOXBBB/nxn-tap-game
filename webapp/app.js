@@ -30,6 +30,32 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
+document
+  .querySelectorAll("#referral-stake-modal .stake-amounts button")
+  .forEach(btn => {
+    btn.onclick = () => {
+      const val = btn.dataset.refAmount;
+      const input = document.getElementById("referral-stake-amount");
+
+      if (val === "max") {
+        const max = Number(
+          document.getElementById("referral-stake-balance").innerText.replace(/[^0-9]/g, "")
+        );
+        input.value = max;
+      } else {
+        input.value = Number(val);
+      }
+
+      document
+        .querySelectorAll("#referral-stake-modal .stake-amounts button")
+        .forEach(b => b.classList.remove("active"));
+
+      btn.classList.add("active");
+    };
+  });
+
+
+
   Telegram.WebApp.ready();
   Telegram.WebApp.expand();
 
@@ -82,12 +108,16 @@ document.getElementById("copy-ref").onclick = () => {
   navigator.clipboard.writeText(code);
 
   const toast = document.createElement("div");
-  toast.className = "transfer-toast success";
-  toast.innerText = "Referral code copied ✓";
+  toast.className = "transfer-toast";
+  toast.style.background = "#0f172a";
+  toast.style.border = "1px solid #22c55e";
+  toast.style.color = "#22c55e";
+  toast.innerText = "Referral code copied";
   document.body.appendChild(toast);
 
-  setTimeout(() => toast.remove(), 1400);
+  setTimeout(() => toast.remove(), 1500);
 };
+
 
 document.getElementById("bind-ref").onclick = async () => {
   const code = document.getElementById("ref-input").value.trim();
@@ -135,11 +165,10 @@ document.getElementById("confirm-referral-stake").onclick = async () => {
     document.getElementById("referral-stake-amount").value
   );
 
-if (amount < 10000) {
-  showMinStakeModal();
-  return;
-}
-
+  if (amount < 10000) {
+    showMinStackModal();
+    return;
+  }
 
   const res = await fetch("/api/referral/stake", {
     method: "POST",
@@ -148,7 +177,7 @@ if (amount < 10000) {
   });
 
   const data = await res.json();
-  if (!data.ok) return alert(data.error);
+  if (!data.ok) return;
 
   document
     .getElementById("referral-stake-modal")
@@ -219,17 +248,6 @@ async function loadClaimInfo() {
   btn.innerText = "Claim Reward";
 }
 
-const fly = document.createElement("div");
-fly.className = "stake-fly";
-fly.innerText = `-${formatNumber(selectedStakeAmount)} NXN`;
-document.body.appendChild(fly);
-setTimeout(() => fly.remove(), 900);
-
-const toast = document.createElement("div");
-toast.className = "transfer-toast success";
-toast.innerText = "Stake successful ✓";
-document.body.appendChild(toast);
-setTimeout(() => toast.remove(), 1600);
 
 
 
@@ -707,6 +725,20 @@ if (stakeConfirm) {
 
     if (!data.ok) {
 
+      const fly = document.createElement("div");
+fly.className = "stake-fly";
+fly.innerText = `-${formatNumber(selectedStakeAmount)} NXN`;
+document.body.appendChild(fly);
+setTimeout(() => fly.remove(), 900);
+
+const toast = document.createElement("div");
+toast.className = "transfer-toast success";
+toast.innerText = "Stake successful ✓";
+document.body.appendChild(toast);
+setTimeout(() => toast.remove(), 1600);
+
+
+
       if (data.error === "Cooldown active") {
         const toast = document.createElement("div");
         toast.className = "transfer-toast error";
@@ -726,14 +758,6 @@ if (stakeConfirm) {
     }
 
 
-
-function showMinStakeModal() {
-  const toast = document.createElement("div");
-  toast.className = "transfer-toast error";
-  toast.innerText = "Minimum stake is 10,000 NXN";
-  document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 1600);
-}
 
 
     // ===== ✅ SUCCESS =====
