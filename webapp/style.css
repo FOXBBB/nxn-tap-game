@@ -2309,4 +2309,18 @@ body.locked {
   overflow: hidden;
 }
 
+.lb-list {
+  max-height: 55vh;     /* 🔥 ключевое */
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+/* красивый скролл */
+.lb-list::-webkit-scrollbar {
+  width: 6px;
+}
+.lb-list::-webkit-scrollbar-thumb {
+  background: rgba(34,197,94,0.6);
+  border-radius: 6px;
+}
 

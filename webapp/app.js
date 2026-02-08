@@ -739,21 +739,25 @@ async function loadLeaderboard() {
       data[2].avatar || placeholder;
   }
 
-  // TOP 4–10
-  const list = document.querySelector(".lb-list");
-  list.innerHTML = "";
+  
+  // TOP 4–100
+const list = document.querySelector(".lb-list");
+list.innerHTML = "";
 
-  data.slice(3).forEach((u, i) => {
-    const row = document.createElement("div");
-    row.className = "row";
-    row.innerHTML = `
-      <span>#${i + 4}</span>
-      <img src="${u.avatar || placeholder}">
-      <b>${u.name}</b>
-      <i>${formatNumber(u.balance)}</i>
-    `;
-    list.appendChild(row);
-  });
+data.slice(3).forEach((u, i) => {
+  const rank = i + 4;
+
+  const row = document.createElement("div");
+  row.className = "row";
+  row.innerHTML = `
+    <span>#${rank}</span>
+    <img src="${u.avatar || placeholder}">
+    <b>${u.name}</b>
+    <i>${formatNumber(u.balance)}</i>
+  `;
+
+  list.appendChild(row);
+});
 }
 
 // ================= MENU =================

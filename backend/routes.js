@@ -542,7 +542,7 @@ router.get("/leaderboard", async (req, res) => {
     SELECT telegram_id, name, avatar, balance
     FROM users
     ORDER BY balance DESC
-    LIMIT 10
+    LIMIT 100
     `
   );
 
