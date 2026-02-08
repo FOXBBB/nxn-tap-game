@@ -25,7 +25,7 @@ let tapBuffer = 0;
 let tapFlushInProgress = false;
 let isTappingNow = false;
 let flushTimer = null;
-
+let hasLocalEnergyDelta = false;
 
 
 // ================= INIT =================
@@ -423,22 +423,23 @@ coin.addEventListener("touchstart", (e) => {
 
   const touches = e.touches.length || 1;
 
-  // 👉 ВАЖНО: сначала считаем
+  // 🔴 СНАЧАЛА считаем, сколько реально можем потратить
   const actualTaps = Math.min(energy, touches);
   if (actualTaps <= 0) return;
 
-  // UI
+  // 🎨 UI
   animateCoinHit();
   animatePlus(e, tapPower * actualTaps);
 
-  // state
+  // 🧠 ЛОКАЛЬНО меняем состояние
   tapBuffer += actualTaps;
   balance += tapPower * actualTaps;
   energy -= actualTaps;
 
+  hasLocalEnergyDelta = true; // 👈 КРИТИЧЕСКИ ВАЖНО
+
   updateUI();
   updateTapState();
-
 }, { passive: false });
 
 }
@@ -487,7 +488,9 @@ async function flushTapBuffer() {
 }
 
   tapFlushInProgress = false;
-  isTappingNow = false;
+isTappingNow = false;
+hasLocalEnergyDelta = false; // 👈 ТЕПЕРЬ СЕРВЕРУ МОЖНО ВЕРИТЬ
+
 }
 
 
@@ -905,12 +908,18 @@ setInterval(async () => {
   const data = await res.json();
 
   balance = Number(data.balance) || balance;
-  energy = Number(data.energy) || energy;
+
+  // ❗ ВАЖНО: сервер НЕ ТРОГАЕТ энергию, если есть локальные тапы
+  if (!hasLocalEnergyDelta) {
+    energy = Number(data.energy) || energy;
+  }
+
   maxEnergy = Number(data.maxEnergy) || maxEnergy;
 
   updateUI();
   updateTapState();
-}, 1000); // 🔥 каждую секунду
+}, 1000);
+
 
 function updateTapState() {
   if (!coin) return;
