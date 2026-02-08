@@ -25,6 +25,40 @@ let tonConnectUI = null;
 
 // ================= INIT =================
 document.addEventListener("DOMContentLoaded", async () => {
+ 
+ document.getElementById("open-referral").onclick = async () => {
+  const res = await fetch(`/api/referral/me/${userId}`);
+  const data = await res.json();
+
+  showScreen("referral-screen");
+
+  document.getElementById("ref-code").innerText = data.referralCode;
+  document.getElementById("ref-invited").innerText = data.stats.invited;
+  document.getElementById("ref-earned").innerText =
+    formatNumber(data.stats.totalEarned);
+};
+
+document.getElementById("stake-referral-btn").onclick = async () => {
+  const res = await fetch(`/api/referral/me/${userId}`);
+  const data = await res.json();
+
+  document.getElementById("referral-stake-balance").innerText =
+    formatNumber(data.referralStackBalance);
+
+  document
+    .getElementById("referral-stake-modal")
+    .classList.remove("hidden");
+};
+
+
+document.getElementById("cancel-referral-stake").onclick = () => {
+  document
+    .getElementById("referral-stake-modal")
+    .classList.add("hidden");
+};
+
+
+ 
   if (!window.Telegram || !Telegram.WebApp) {
     alert("Open app from Telegram");
     return;
