@@ -78,9 +78,15 @@ document.getElementById("open-referral").onclick = async () => {
 
 
 document.getElementById("copy-ref").onclick = () => {
-  navigator.clipboard.writeText(
-    document.getElementById("ref-code").innerText
-  );
+  const code = document.getElementById("ref-code").innerText;
+  navigator.clipboard.writeText(code);
+
+  const toast = document.createElement("div");
+  toast.className = "transfer-toast success";
+  toast.innerText = "Referral code copied ✓";
+  document.body.appendChild(toast);
+
+  setTimeout(() => toast.remove(), 1400);
 };
 
 document.getElementById("bind-ref").onclick = async () => {
@@ -129,7 +135,11 @@ document.getElementById("confirm-referral-stake").onclick = async () => {
     document.getElementById("referral-stake-amount").value
   );
 
-  if (amount < 10000) return alert("Minimum 10,000 NXN");
+if (amount < 10000) {
+  showMinStakeModal();
+  return;
+}
+
 
   const res = await fetch("/api/referral/stake", {
     method: "POST",
@@ -209,6 +219,17 @@ async function loadClaimInfo() {
   btn.innerText = "Claim Reward";
 }
 
+const fly = document.createElement("div");
+fly.className = "stake-fly";
+fly.innerText = `-${formatNumber(selectedStakeAmount)} NXN`;
+document.body.appendChild(fly);
+setTimeout(() => fly.remove(), 900);
+
+const toast = document.createElement("div");
+toast.className = "transfer-toast success";
+toast.innerText = "Stake successful ✓";
+document.body.appendChild(toast);
+setTimeout(() => toast.remove(), 1600);
 
 
 
@@ -645,7 +666,7 @@ document.querySelectorAll(".stake-amounts button").forEach(btn => {
     const val = btn.dataset.amount;
 
     if (val === "max") {
-      selectedStakeAmount = Math.min(balance, 1_000_000);
+      selectedStakeAmount = balance;
     } else {
       selectedStakeAmount = Number(val);
     }
@@ -667,10 +688,10 @@ if (stakeConfirm) {
       return;
     }
 
-    if (selectedStakeAmount < 10000) {
-      alert("Minimum stake is 10,000 NXN");
-      return;
-    }
+   if (selectedStakeAmount < 10000) {
+  showMinStakeModal();
+  return;
+}
 
 
     const res = await fetch("/api/reward/stake", {
@@ -703,6 +724,17 @@ if (stakeConfirm) {
       alert(data.error || "Stake failed");
       return;
     }
+
+
+
+function showMinStakeModal() {
+  const toast = document.createElement("div");
+  toast.className = "transfer-toast error";
+  toast.innerText = "Minimum stake is 10,000 NXN";
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 1600);
+}
+
 
     // ===== ✅ SUCCESS =====
     const screen = document.getElementById("stake-screen");
