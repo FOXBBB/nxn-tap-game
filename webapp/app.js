@@ -297,9 +297,10 @@ async function refreshMe() {
   const res = await fetch(`/api/me/${userId}`);
   const data = await res.json();
 
-  balance = Number(data.balance) || 0;   // 🔥 ВОТ ЭТОГО НЕ ХВАТАЛО
-  energy = Number(data.energy) || 0;
-  maxEnergy = Number(data.maxEnergy) || 100;
+  // Убедитесь, что сервер возвращает актуальные данные
+  balance = Number(data.balance) || 0;
+  energy = Number(data.energy) || 0; // Если сервер возвращает неправильное значение, это нужно исправить на сервере
+  maxEnergy = Number(data.maxEnergy) || 100;  // Убедитесь, что maxEnergy не изменяется случайно
   tapPower = Number(data.tapPower) || tapPower;
 
   if (data.boosts) {
@@ -311,6 +312,7 @@ async function refreshMe() {
   updateUI();
   updateTapState();
 }
+
 
 async function loadReferral() {
   const res = await fetch(`/api/referral/me/${userId}`);
@@ -906,25 +908,33 @@ setInterval(() => {
   syncUser();
 }, 5000);
 // ================= ENERGY SYNC TICK =================
+// Регенерация энергии на клиенте каждую секунду
 setInterval(async () => {
-  if (isTappingNow) return;
   if (!userId) return;
 
   const res = await fetch(`/api/me/${userId}`);
   const data = await res.json();
 
+  // Обновляем баланс и энергию с сервера
   balance = Number(data.balance) || balance;
   energy = Number(data.energy) || energy;
-  maxEnergy = Number(data.maxEnergy) || maxEnergy;
+  maxEnergy = Number(data.maxEnergy) || 100;
 
-  // Добавляем логику для регенерации энергии на клиенте
+  // Добавляем логику для регенерации энергии
   if (energy < maxEnergy) {
-    energy += 1;  // Увеличиваем энергию на 1
+    energy += 1;  // Увеличиваем энергию на 1 каждую секунду
   }
 
+  // Если энергия достигла максимума, прекращаем регенерацию
+  if (energy > maxEnergy) {
+    energy = maxEnergy;
+  }
+
+  // Обновляем UI и состояние кнопок
   updateUI();
   updateTapState();
 }, 3000);  // 3 секунды
+
 
 
 
