@@ -21,11 +21,6 @@ let tapPower = 1;
 let canTap = false;
 let tapInProgress = false;
 let tonConnectUI = null;
-let tapBuffer = 0;
-let tapFlushInProgress = false;
-let isTappingNow = false;
-let flushTimer = null;
-let hasLocalEnergyDelta = false;
 
 
 
@@ -56,6 +51,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     myIdEl.textContent = "Your ID: " + userId;
     myIdEl.onclick = () => {
       navigator.clipboard.writeText(userId);
+      Telegram.WebApp.showPopup({
+        title: "Copied",
+        message: "Your ID copied"
+      });
     };
   }
 
@@ -70,74 +69,6 @@ initMenu();
 
 });
 
-document.getElementById("open-referral").onclick = async () => {
-  const data = await loadReferral();
-
-  showScreen("referral-screen");
-
-  document.getElementById("ref-code").innerText = data.referralCode;
-  document.getElementById("ref-balance").innerText =
-    formatNumber(data.referralStackBalance);
-
-  document.getElementById("ref-invited").innerText =
-    data.stats.invited;
-
-  document.getElementById("ref-active").innerText =
-    data.stats.active;
-
-  document.getElementById("ref-earned").innerText =
-    formatNumber(data.stats.totalEarned);
-
-  // если уже привязан
-  if (data.referredBy) {
-    const input = document.getElementById("ref-input");
-    input.value = "Bound";
-    input.disabled = true;
-    document.getElementById("bind-ref").disabled = true;
-  }
-};
-
-document.getElementById("copy-ref").onclick = () => {
-  const code = document.getElementById("ref-code").innerText;
-  navigator.clipboard.writeText(code);
-
-};
-
-
-document.getElementById("bind-ref").onclick = async () => {
-  const code = document.getElementById("ref-input").value.trim();
-
-  if (!code) {
-    alert("Enter referral code");
-    return;
-  }
-
-  const res = await fetch("/api/referral/bind", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      userId,
-      code
-    })
-  });
-
-  const data = await res.json();
-
-  if (!data.ok) {
-    alert(data.error);
-    return;
-  }
-
-  // перезагружаем экран
-  document.getElementById("open-referral").click();
-};
-
-document.getElementById("back-from-ref").onclick = () => {
-  showScreen("stake-screen");
-};
-
-
-
 const stakeBackBtn = document.getElementById("stake-back");
 
 if (stakeBackBtn) {
@@ -145,84 +76,6 @@ if (stakeBackBtn) {
   showScreen("tap");
 };
 }
-
-
-const refStakeBtn = document.getElementById("stake-referral-btn");
-const refModal = document.getElementById("referral-stake-modal");
-
-refStakeBtn.onclick = async () => {
-  const data = await loadReferral();
-
-  document.getElementById("referral-stake-balance").innerText =
-    formatNumber(data.referralStackBalance);
-
-  refModal.classList.remove("hidden");
-};
-
-
-document.getElementById("cancel-referral-stake").onclick = () => {
-  refModal.classList.add("hidden");
-};
-
-
-
-document.getElementById("confirm-referral-stake").onclick = async () => {
- const amount = Number(
-  document.getElementById("referral-stake-amount").value
-);
-
-if (amount < 10000) {
-  showMinStackModal();
-  return;
-}
-
-
-
-  const res = await fetch("/api/referral/stake", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      userId,
-      amount
-    })
-  });
-
-  const data = await res.json();
-
-  if (!data.ok) {
-  alert(data.error);
-  return;
-}
-
-/* ===== SUCCESS ANIMATION ===== */
-
-// закрываем модалку
-refModal.classList.add("hidden");
-
-// 💥 glow стейк карточки
-const stakeCard = document.querySelector(".stake-card");
-if (stakeCard) {
-  stakeCard.classList.add("ref-stake-success");
-  setTimeout(() => {
-    stakeCard.classList.remove("ref-stake-success");
-  }, 600);
-}
-
-// 🚀 летящий текст
-const fly = document.createElement("div");
-fly.className = "ref-stake-fly";
-fly.innerText = `+${formatNumber(amount)} NXN`;
-document.body.appendChild(fly);
-setTimeout(() => fly.remove(), 900);
-
-// обновляем данные
-await refreshMe();
-await loadRewardState();
-
-};
-
-
-
 
 async function loadClaimInfo() {
   const res = await fetch(`/api/reward/claim-info/${userId}`);
@@ -297,10 +150,9 @@ async function refreshMe() {
   const res = await fetch(`/api/me/${userId}`);
   const data = await res.json();
 
-  // Убедитесь, что сервер возвращает актуальные данные
-  balance = Number(data.balance) || 0;
-  energy = Number(data.energy) || 0; // Если сервер возвращает неправильное значение, это нужно исправить на сервере
-  maxEnergy = Number(data.maxEnergy) || 100;  // Убедитесь, что maxEnergy не изменяется случайно
+  balance = Number(data.balance) || 0;   // 🔥 ВОТ ЭТОГО НЕ ХВАТАЛО
+  energy = Number(data.energy) || 0;
+  maxEnergy = Number(data.maxEnergy) || 100;
   tapPower = Number(data.tapPower) || tapPower;
 
   if (data.boosts) {
@@ -312,13 +164,6 @@ async function refreshMe() {
   updateUI();
   updateTapState();
 }
-
-
-async function loadReferral() {
-  const res = await fetch(`/api/referral/me/${userId}`);
-  return await res.json();
-}
-
 
 async function loadRewardState() {
   const res = await fetch(`/api/reward/state/${userId}`);
@@ -350,23 +195,8 @@ updateRewardTimer();
 if (rewardState === "CLAIM_ACTIVE") {
   loadClaimInfo();
 }
-
-// ===== REFERRAL STAKE AVAILABILITY =====
-const refStakeBtn = document.getElementById("stake-referral-btn");
-const refConfirmBtn = document.getElementById("confirm-referral-stake");
-
-if (refStakeBtn && refConfirmBtn) {
-  if (rewardState !== "STAKE_ACTIVE") {
-    refStakeBtn.disabled = true;
-    refStakeBtn.textContent = "Stake Closed";
-    refConfirmBtn.disabled = true;
-  } else {
-    refStakeBtn.disabled = false;
-    refStakeBtn.textContent = "Stake Referral NXN";
-    refConfirmBtn.disabled = false;
-  }
 }
-}
+
 
 
 
@@ -410,104 +240,57 @@ function animateCoinHit() {
   }, 120);
 }
 
+
+
 // ================= TAP =================
 if (coin) {
-  coin.addEventListener("touchstart", (e) => {
-    e.preventDefault();
+  coin.onclick = async (e) => {
+    // ⛔ если энергия 0 — сразу стоп
     if (!canTap) return;
 
-    isTappingNow = true;
+    // ⛔ если уже идёт запрос — стоп
+    if (tapInProgress) return;
 
-    if (flushTimer) clearTimeout(flushTimer);
-    flushTimer = setTimeout(() => {
-      flushTapBuffer();
-    }, 120);
+    tapInProgress = true;
 
-    const touches = e.touches?.length || 1;
-    const actualTaps = Math.min(energy, touches);
-    if (actualTaps <= 0) return;
+    let data;
 
-    // 🎨 UI
+    try {
+      const res = await fetch("/api/tap", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: userId })
+      });
+
+      data = await res.json();
+    } catch (err) {
+      console.error("tap error", err);
+      tapInProgress = false;
+      return;
+    }
+
+    // ⛔ сервер запретил тап (energy = 0)
+    if (!data.ok) {
+      energy = Number(data.energy) || 0;
+      updateUI();
+      updateTapState();
+      tapInProgress = false;
+      return;
+    }
+
+    // ✅ ТОЛЬКО ЗДЕСЬ АНИМАЦИЯ
     animateCoinHit();
-    animatePlus(e, tapPower * actualTaps);
+    animatePlus(e, data.tapPower);
 
-    // ✅ ВОТ ТУТ, ВНУТРИ ОБРАБОТЧИКА
-    tapBuffer += actualTaps;
-    balance += tapPower * actualTaps;
-    energy -= actualTaps;
-    hasLocalEnergyDelta = true;
+    balance = Number(data.balance);
+    energy = Number(data.energy);
+    tapPower = Number(data.tapPower);
 
     updateUI();
     updateTapState();
-  }, { passive: false });
 
-
-
-
-tapBuffer += actualTaps;
-balance += tapPower * actualTaps;
-energy -= actualTaps;        // 🔥 ВОТ ЧЕГО НЕ ХВАТАЛО
-hasLocalEnergyDelta = true;
-
-
-}
-
-
-async function flushTapBuffer() {
-  if (tapFlushInProgress) return;
-  if (tapBuffer <= 0) return;
-
-  tapFlushInProgress = true;
-
-  const amount = tapBuffer;
-  tapBuffer = 0;
-
-  try {
-    const res = await fetch("/api/tap", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        id: userId,
-        taps: amount
-      })
-    });
-
-    const data = await res.json();
-
-    if (!data.ok) {
-      // сервер отклонил — откат
-     
-
-
-      updateUI();
-      updateTapState();
-    } else {
-    // ❗ НИЧЕГО НЕ ДЕЛАЕМ
-// сервер только подтверждает, что всё ок
-
-      updateUI();
-      updateTapState();
-    }
-
-  } catch (e) {
-  balance -= tapPower * amount;
-  energy += amount;
-  updateUI();
-  updateTapState();
-}
-
-  tapFlushInProgress = false;
-isTappingNow = false;
-hasLocalEnergyDelta = false; // 👈 ТЕПЕРЬ СЕРВЕРУ МОЖНО ВЕРИТЬ
-}
-
-
-
-
-
-async function loadReferral() {
-  const res = await fetch(`/api/referral/me/${userId}`);
-  return await res.json();
+    tapInProgress = false;
+  };
 }
 
 
@@ -552,31 +335,16 @@ async function loadHistory() {
 
 
 
+
 function animatePlus(e, value) {
   const plus = document.createElement("div");
   plus.className = "plus-one";
   plus.innerText = `+${value}`;
-
-  let x = 0;
-  let y = 0;
-
-  if (e.touches && e.touches[0]) {
-    x = e.touches[0].clientX;
-    y = e.touches[0].clientY;
-  } else {
-    x = e.clientX || window.innerWidth / 2;
-    y = e.clientY || window.innerHeight / 2;
-  }
-
-  plus.style.left = x + "px";
-  plus.style.top  = (y - 20) + "px";
-
+  plus.style.left = e.clientX + "px";
+  plus.style.top = e.clientY - 10 + "px";
   document.body.appendChild(plus);
   setTimeout(() => plus.remove(), 800);
 }
-
-
-
 
 // ================= TRANSFER =================
 document.getElementById("send").onclick = async () => {
@@ -908,41 +676,24 @@ setInterval(() => {
   syncUser();
 }, 5000);
 // ================= ENERGY SYNC TICK =================
-// Регенерация энергии на клиенте каждую секунду
 setInterval(async () => {
   if (!userId) return;
 
   const res = await fetch(`/api/me/${userId}`);
   const data = await res.json();
 
-  // Обновляем баланс и энергию с сервера
   balance = Number(data.balance) || balance;
   energy = Number(data.energy) || energy;
-  maxEnergy = Number(data.maxEnergy) || 100;
+  maxEnergy = Number(data.maxEnergy) || maxEnergy;
 
-  // Добавляем логику для регенерации энергии
-  if (energy < maxEnergy) {
-    energy += 1;  // Увеличиваем энергию на 1 каждую секунду
-  }
-
-  // Если энергия достигла максимума, прекращаем регенерацию
-  if (energy > maxEnergy) {
-    energy = maxEnergy;
-  }
-
-  // Обновляем UI и состояние кнопок
   updateUI();
   updateTapState();
-}, 3000);  // 3 секунды
-
-
-
+}, 1000); // 🔥 каждую секунду
 
 function updateTapState() {
   if (!coin) return;
 
   if (energy <= 0) {
-
     coin.classList.add("coin-disabled");
     canTap = false;
   } else {
@@ -1301,18 +1052,3 @@ if (claimBtn) {
 
   };
 }
-
-// ===== REFERRAL STAKE QUICK AMOUNTS =====
-
-document.querySelectorAll("[data-ref-amount]").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const val = btn.dataset.refAmount;
-    const input = document.getElementById("referral-stake-amount");
-
-    if (val === "max") {
-      input.value = window.referralStackBalance || 0;
-    } else {
-      input.value = Number(val);
-    }
-  });
-});
