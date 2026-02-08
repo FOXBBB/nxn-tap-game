@@ -26,6 +26,8 @@ let tapFlushInProgress = false;
 let isTappingNow = false;
 let flushTimer = null;
 let hasLocalEnergyDelta = false;
+let predictedEnergy = null;
+
 
 
 // ================= INIT =================
@@ -385,7 +387,10 @@ function updateUI() {
   }
 
   if (e) {
-    e.innerText = `Energy: ${energy} / ${maxEnergy}`;
+    const shownEnergy =
+  predictedEnergy !== null ? predictedEnergy : energy;
+
+e.innerText = `Energy: ${shownEnergy} / ${maxEnergy}`;
     if (energy <= 5) e.classList.add("energy-low");
     else e.classList.remove("energy-low");
   }
@@ -419,7 +424,10 @@ coin.addEventListener("touchstart", (e) => {
   if (flushTimer) clearTimeout(flushTimer);
   flushTimer = setTimeout(() => {
     flushTapBuffer();
+    predictedEnergy = null;
   }, 120);
+
+
 
   const touches = e.touches.length || 1;
 
@@ -434,7 +442,13 @@ coin.addEventListener("touchstart", (e) => {
   // 🧠 ЛОКАЛЬНО меняем состояние
   tapBuffer += actualTaps;
   balance += tapPower * actualTaps;
-  energy -= actualTaps;
+
+if (predictedEnergy === null) {
+  predictedEnergy = energy;
+}
+
+predictedEnergy = Math.max(0, predictedEnergy - actualTaps);
+
 
   hasLocalEnergyDelta = true; // 👈 КРИТИЧЕСКИ ВАЖНО
 
