@@ -424,7 +424,6 @@ coin.addEventListener("touchstart", (e) => {
   if (flushTimer) clearTimeout(flushTimer);
   flushTimer = setTimeout(() => {
     flushTapBuffer();
-    predictedEnergy = null;
   }, 120);
 
 
@@ -504,7 +503,7 @@ async function flushTapBuffer() {
   tapFlushInProgress = false;
 isTappingNow = false;
 hasLocalEnergyDelta = false; // 👈 ТЕПЕРЬ СЕРВЕРУ МОЖНО ВЕРИТЬ
-
+predictedEnergy = null;
 }
 
 
@@ -938,7 +937,10 @@ setInterval(async () => {
 function updateTapState() {
   if (!coin) return;
 
-  if (energy <= 0) {
+  const effectiveEnergy =
+    predictedEnergy !== null ? predictedEnergy : energy;
+
+  if (effectiveEnergy <= 0) {
     coin.classList.add("coin-disabled");
     canTap = false;
   } else {
