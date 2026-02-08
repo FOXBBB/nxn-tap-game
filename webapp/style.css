@@ -5,14 +5,21 @@
 
 body {
   margin: 0;
-  color: #fff;
-  background: #02040a;
+  font-family: system-ui, sans-serif;
+  background:
+    radial-gradient(800px 400px at 20% -10%, rgba(34,197,94,0.25), transparent 60%),
+    radial-gradient(900px 500px at 80% 10%, rgba(16,185,129,0.22), transparent 60%),
+    linear-gradient(180deg, #030806 0%, #050708 40%, #020403 100%);
+  color: #e5e7eb;
+  overflow: hidden;
 }
 
 .bg {
   position: fixed;
   inset: 0;
-  z-index: 0;
+  z-index: 1;
+  background:
+    radial-gradient(600px 300px at 50% 30%, rgba(34,197,94,0.12), transparent 70%);
   pointer-events: none;
 }
 
