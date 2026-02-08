@@ -244,7 +244,7 @@ function animateCoinHit() {
 
 // ================= TAP =================
 if (coin) {
-  coin.onclick = async (e) => {
+coin.onclick = async (e) => {
     // ⛔ если энергия 0 — сразу стоп
     if (!canTap) return;
 
@@ -290,7 +290,7 @@ if (coin) {
     updateTapState();
 
     tapInProgress = false;
-  };
+};
 }
 
 
