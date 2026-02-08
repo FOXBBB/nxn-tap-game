@@ -167,7 +167,7 @@ document.getElementById("confirm-referral-stake").onclick = async () => {
 );
 
 if (amount < 10000) {
-  alert("Minimum referral stake is 10,000 NXN");
+  showMinStackModal();
   return;
 }
 

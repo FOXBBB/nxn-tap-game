@@ -2177,3 +2177,50 @@ button:disabled {
     transform: translate(-50%, -90px) scale(1.05);
   }
 }
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  animation: fadeIn 0.25s ease;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-card {
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(34,197,94,0.35);
+  border-radius: 18px;
+  padding: 28px;
+  max-width: 360px;
+  text-align: center;
+  animation: scaleIn 0.25s ease;
+}
+
+.modal-card h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  color: #22c55e;
+}
+
+.modal-card p {
+  font-size: 14px;
+  color: #9ca3af;
+  margin-bottom: 20px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
