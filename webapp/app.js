@@ -36,9 +36,10 @@ document
     btn.onclick = () => {
       const val = btn.dataset.refAmount;
 
-      const balance = Number(
-        document.getElementById("referral-stake-balance").innerText.replace(/[^0-9]/g, "")
-      );
+      const balance = parseFormattedNumber(
+  document.getElementById("referral-stake-balance").innerText
+);
+
 
       let amount;
       if (val === "max") {
@@ -199,17 +200,25 @@ setTimeout(() => fly.remove(), 900);
     .getElementById("referral-stake-modal")
     .classList.add("hidden");
 
-  await refreshMe();
-// 🔄 instant referral balance update
+
+// 🔄 обновляем ВСЁ состояние
+await refreshMe();
+await loadRewardState();
+
+// 🔄 обновляем referral данные
 const refRes = await fetch(`/api/referral/me/${userId}`);
 const refData = await refRes.json();
 
+// referral balances
 document.getElementById("ref-balance").innerText =
   formatNumber(refData.referralStackBalance);
 
 document.getElementById("referral-stake-balance").innerText =
   formatNumber(refData.referralStackBalance);
 
+// 🔥 ОБЯЗАТЕЛЬНО обновляем stake экран
+document.getElementById("stake-balance").innerText =
+  formatNumber(balance);
 
 
 };
@@ -1037,6 +1046,20 @@ function formatNumber(n) {
   if (n >= 1e3) return (n / 1e3).toFixed(1).replace(".0", "") + "K";
   return n.toString();
 }
+
+
+function parseFormattedNumber(text) {
+  if (!text) return 0;
+
+  const t = text.toUpperCase();
+
+  if (t.includes("B")) return parseFloat(t) * 1e9;
+  if (t.includes("M")) return parseFloat(t) * 1e6;
+  if (t.includes("K")) return parseFloat(t) * 1e3;
+
+  return Number(t.replace(/[^0-9.]/g, ""));
+}
+
 
 
 function formatRemaining(ms) {
