@@ -24,6 +24,8 @@ let tonConnectUI = null;
 let tapBuffer = 0;
 let tapFlushInProgress = false;
 let isTappingNow = false;
+let flushTimer = null;
+
 
 
 // ================= INIT =================
@@ -412,23 +414,32 @@ if (coin) {
 
    isTappingNow = true;
 
-  if (!canTap) return;
+   if (!canTap) return;
+
+if (flushTimer) clearTimeout(flushTimer);
+flushTimer = setTimeout(() => {
+  flushTapBuffer();
+}, 120);
+
 
   const touches = e.touches.length || 1;
 
-  tapBuffer += touches;
+  
 
   // 🔥 мгновенный UI
   animateCoinHit();
-  animatePlus(e, tapPower * touches);
+  animatePlus(e, tapPower * actualTaps);
 
-  balance += tapPower * touches;
-  energy = Math.max(0, energy - touches);
+  const actualTaps = Math.min(energy, touches);
+
+tapBuffer += actualTaps;
+balance += tapPower * actualTaps;
+energy -= actualTaps;
+
 
   updateUI();
   updateTapState();
 
-  flushTapBuffer();
 }, { passive: false });
 
 }
@@ -462,8 +473,9 @@ async function flushTapBuffer() {
       updateUI();
       updateTapState();
     } else {
-      balance = Number(data.balance);
-      energy = Number(data.energy);
+    // ❗ НИЧЕГО НЕ ДЕЛАЕМ
+// сервер только подтверждает, что всё ок
+
       updateUI();
       updateTapState();
     }
@@ -473,11 +485,10 @@ async function flushTapBuffer() {
   energy += amount;
   updateUI();
   updateTapState();
-  isTappingNow = false;
 }
 
   tapFlushInProgress = false;
-isTappingNow = false;
+  isTappingNow = false;
 }
 
 
