@@ -75,6 +75,11 @@ document
   tgUser = Telegram.WebApp.initDataUnsafe.user;
   userId = String(tgUser.id);
 
+  // 🔒 SUBSCRIBE GATE — старт проверки
+setTimeout(() => {
+  checkSubscribeAccess();
+}, 600);
+
   const myIdEl = document.getElementById("my-id");
   if (myIdEl) {
     myIdEl.textContent = "Your ID: " + userId;
@@ -154,10 +159,6 @@ checkSubscribeBtn.onclick = async () => {
   unlockGame();
 };
 
-// 🔒 проверяем при каждом входе
-document.addEventListener("DOMContentLoaded", () => {
-  setTimeout(checkSubscribeAccess, 600);
-});
 
 
 
