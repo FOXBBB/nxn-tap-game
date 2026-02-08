@@ -26,7 +26,6 @@ let tapFlushInProgress = false;
 let isTappingNow = false;
 let flushTimer = null;
 let hasLocalEnergyDelta = false;
-let predictedEnergy = null;
 
 
 
@@ -387,10 +386,7 @@ function updateUI() {
   }
 
   if (e) {
-    const shownEnergy =
-  predictedEnergy !== null ? predictedEnergy : energy;
-
-e.innerText = `Energy: ${shownEnergy} / ${maxEnergy}`;
+    e.innerText = `Energy: ${energy} / ${maxEnergy}`;
     if (energy <= 5) e.classList.add("energy-low");
     else e.classList.remove("energy-low");
   }
@@ -439,21 +435,18 @@ coin.addEventListener("touchstart", (e) => {
   animatePlus(e, tapPower * actualTaps);
 
   // 🧠 ЛОКАЛЬНО меняем состояние
-  tapBuffer += actualTaps;
-  balance += tapPower * actualTaps;
-
-if (predictedEnergy === null) {
-  predictedEnergy = energy;
-}
-
-predictedEnergy = Math.max(0, predictedEnergy - actualTaps);
 
 
-  hasLocalEnergyDelta = true; // 👈 КРИТИЧЕСКИ ВАЖНО
 
   updateUI();
   updateTapState();
 }, { passive: false });
+
+tapBuffer += actualTaps;
+balance += tapPower * actualTaps;
+energy -= actualTaps;        // 🔥 ВОТ ЧЕГО НЕ ХВАТАЛО
+hasLocalEnergyDelta = true;
+
 
 }
 
@@ -481,8 +474,9 @@ async function flushTapBuffer() {
 
     if (!data.ok) {
       // сервер отклонил — откат
-      balance -= tapPower * amount;
-      energy += amount;
+     
+
+
       updateUI();
       updateTapState();
     } else {
@@ -503,7 +497,6 @@ async function flushTapBuffer() {
   tapFlushInProgress = false;
 isTappingNow = false;
 hasLocalEnergyDelta = false; // 👈 ТЕПЕРЬ СЕРВЕРУ МОЖНО ВЕРИТЬ
-predictedEnergy = null;
 }
 
 
@@ -923,9 +916,8 @@ setInterval(async () => {
   balance = Number(data.balance) || balance;
 
   // ❗ ВАЖНО: сервер НЕ ТРОГАЕТ энергию, если есть локальные тапы
-  if (!hasLocalEnergyDelta) {
-    energy = Number(data.energy) || energy;
-  }
+energy = Number(data.energy) || energy;
+hasLocalEnergyDelta = false;
 
   maxEnergy = Number(data.maxEnergy) || maxEnergy;
 
@@ -937,10 +929,8 @@ setInterval(async () => {
 function updateTapState() {
   if (!coin) return;
 
-  const effectiveEnergy =
-    predictedEnergy !== null ? predictedEnergy : energy;
+  if (energy <= 0) {
 
-  if (effectiveEnergy <= 0) {
     coin.classList.add("coin-disabled");
     canTap = false;
   } else {
