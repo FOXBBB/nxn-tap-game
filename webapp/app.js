@@ -410,37 +410,37 @@ function animateCoinHit() {
 
 // ================= TAP =================
 if (coin) {
-coin.addEventListener("touchstart", (e) => {
-  e.preventDefault();
+  coin.addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    if (!canTap) return;
 
-  if (!canTap) return;
+    isTappingNow = true;
 
-  isTappingNow = true;
+    if (flushTimer) clearTimeout(flushTimer);
+    flushTimer = setTimeout(() => {
+      flushTapBuffer();
+    }, 120);
 
-  if (flushTimer) clearTimeout(flushTimer);
-  flushTimer = setTimeout(() => {
-    flushTapBuffer();
-  }, 120);
+    const touches = e.touches?.length || 1;
+    const actualTaps = Math.min(energy, touches);
+    if (actualTaps <= 0) return;
+
+    // 🎨 UI
+    animateCoinHit();
+    animatePlus(e, tapPower * actualTaps);
+
+    // ✅ ВОТ ТУТ, ВНУТРИ ОБРАБОТЧИКА
+    tapBuffer += actualTaps;
+    balance += tapPower * actualTaps;
+    energy -= actualTaps;
+    hasLocalEnergyDelta = true;
+
+    updateUI();
+    updateTapState();
+  }, { passive: false });
 
 
 
-  const touches = e.touches.length || 1;
-
-  // 🔴 СНАЧАЛА считаем, сколько реально можем потратить
-  const actualTaps = Math.min(energy, touches);
-  if (actualTaps <= 0) return;
-
-  // 🎨 UI
-  animateCoinHit();
-  animatePlus(e, tapPower * actualTaps);
-
-  // 🧠 ЛОКАЛЬНО меняем состояние
-
-
-
-  updateUI();
-  updateTapState();
-}, { passive: false });
 
 tapBuffer += actualTaps;
 balance += tapPower * actualTaps;
