@@ -243,55 +243,65 @@ function animateCoinHit() {
 
 
 // ================= TAP =================
-if (coin) {
-coin.onclick = async (e) => {
-    // ⛔ если энергия 0 — сразу стоп
-    if (!canTap) return;
+coin.addEventListener("touchstart", async (e) => {
+  e.preventDefault();
 
-    // ⛔ если уже идёт запрос — стоп
-    if (tapInProgress) return;
+  // ⛔ если энергия 0 — сразу стоп
+  if (!canTap) return;
 
-    tapInProgress = true;
+  // ⛔ если уже идёт запрос — стоп
+  if (tapInProgress) return;
 
-    let data;
+  // Получаем количество касаний
+  const touches = e.touches.length;
 
-    try {
-      const res = await fetch("/api/tap", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: userId })
-      });
+  // Если нет касаний, выходим
+  if (touches === 0) return;
 
-      data = await res.json();
-    } catch (err) {
-      console.error("tap error", err);
-      tapInProgress = false;
-      return;
-    }
+  tapInProgress = true;
 
-    // ⛔ сервер запретил тап (energy = 0)
-    if (!data.ok) {
-      energy = Number(data.energy) || 0;
-      updateUI();
-      updateTapState();
-      tapInProgress = false;
-      return;
-    }
+  let data;
 
-    // ✅ ТОЛЬКО ЗДЕСЬ АНИМАЦИЯ
-    animateCoinHit();
-    animatePlus(e, data.tapPower);
+  try {
+    const res = await fetch("/api/tap", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: userId })
+    });
 
-    balance = Number(data.balance);
-    energy = Number(data.energy);
-    tapPower = Number(data.tapPower);
+    data = await res.json();
+  } catch (err) {
+    console.error("tap error", err);
+    tapInProgress = false;
+    return;
+  }
 
+  // ⛔ сервер запретил тап (например, недостаточно энергии)
+  if (!data.ok) {
+    energy = Number(data.energy) || 0;
     updateUI();
     updateTapState();
-
     tapInProgress = false;
-};
-}
+    return;
+  }
+
+  // Расчет энергии для каждого таппа с учетом количества касаний
+  const actualTaps = Math.min(energy, touches); // Ограничиваем количеством энергии
+
+  // ✅ Анимация
+  animateCoinHit();
+  animatePlus(e, data.tapPower * actualTaps); // Умножаем на количество тапов
+
+  balance = Number(data.balance);
+  energy -= actualTaps; // Уменьшаем энергию на количество тапов
+  tapPower = Number(data.tapPower);
+
+  updateUI();
+  updateTapState();
+
+  tapInProgress = false;
+}, { passive: false });
+
 
 
 
