@@ -35,24 +35,32 @@ document
   .forEach(btn => {
     btn.onclick = () => {
       const val = btn.dataset.refAmount;
-      const input = document.getElementById("referral-stake-amount");
 
+      const balance = Number(
+        document.getElementById("referral-stake-balance").innerText.replace(/[^0-9]/g, "")
+      );
+
+      let amount;
       if (val === "max") {
-        const max = Number(
-          document.getElementById("referral-stake-balance").innerText.replace(/[^0-9]/g, "")
-        );
-        input.value = max;
+        amount = balance;
       } else {
-        input.value = Number(val);
+        amount = Number(val);
       }
 
-      document
-        .querySelectorAll("#referral-stake-modal .stake-amounts button")
-        .forEach(b => b.classList.remove("active"));
+      if (amount < 10000) {
+        showMinStackModal("Minimum referral stake is 10,000 NXN");
+        return;
+      }
 
-      btn.classList.add("active");
+      if (amount > balance) {
+        showMinStackModal("Not enough referral NXN");
+        return;
+      }
+
+      document.getElementById("referral-stake-amount").value = amount;
     };
   });
+
 
 
 
@@ -192,12 +200,16 @@ setTimeout(() => fly.remove(), 900);
     .classList.add("hidden");
 
   await refreshMe();
-// refresh referral data
-const res2 = await fetch(`/api/referral/me/${userId}`);
-const refData = await res2.json();
+// 🔄 instant referral balance update
+const refRes = await fetch(`/api/referral/me/${userId}`);
+const refData = await refRes.json();
 
 document.getElementById("ref-balance").innerText =
   formatNumber(refData.referralStackBalance);
+
+document.getElementById("referral-stake-balance").innerText =
+  formatNumber(refData.referralStackBalance);
+
 
 
 };
@@ -697,19 +709,29 @@ stakeBtn.onclick = async () => {
 
 document.querySelectorAll(".stake-amounts button").forEach(btn => {
   btn.onclick = () => {
-    const val = btn.dataset.amount;
+  const val = btn.dataset.amount;
 
-    if (val === "max") {
-      selectedStakeAmount = balance;
-    } else {
-      selectedStakeAmount = Number(val);
-    }
+  let amount;
+  if (val === "max") {
+    amount = balance;
+  } else {
+    amount = Number(val);
+  }
 
-    document.querySelectorAll(".stake-amounts button")
-      .forEach(b => b.classList.remove("active"));
+  // ❌ not enough balance
+  if (amount > balance) {
+    showMinStackModal("Not enough NXN to stake");
+    return;
+  }
 
-    btn.classList.add("active");
-  };
+  selectedStakeAmount = amount;
+
+  document
+    .querySelectorAll(".stake-amounts button")
+    .forEach(b => b.classList.remove("active"));
+
+  btn.classList.add("active");
+};
 });
 
 
@@ -1197,4 +1219,25 @@ if (claimBtn) {
     claimBtn.innerText = "Reward Claimed";
 
   };
+}
+// ================= MIN STAKE MODAL =================
+function showMinStackModal(
+  text = "Minimum stake is 10,000 NXN"
+) {
+  const modal = document.getElementById("stackModal");
+  if (!modal) return;
+
+  document.getElementById("modalTitle").innerText = "Stake Error";
+  document.getElementById("modalText").innerText = text;
+
+  modal.classList.remove("hidden");
+
+  // небольшая анимация
+  modal.querySelector(".modal-card")?.classList.remove("shake");
+  void modal.offsetWidth;
+  modal.querySelector(".modal-card")?.classList.add("shake");
+}
+
+function closeModal() {
+  document.getElementById("stackModal")?.classList.add("hidden");
 }
