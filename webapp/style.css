@@ -12,11 +12,8 @@ body {
 .bg {
   position: fixed;
   inset: 0;
-  background:
-    radial-gradient(circle at 70% 20%, #1a6aff55, transparent 40%),
-    radial-gradient(circle at 20% 80%, #00ffa255, transparent 45%),
-    linear-gradient(180deg, #050814, #02040a);
-  z-index: -2;
+  z-index: 0;
+  pointer-events: none;
 }
 
 .hidden {
@@ -604,9 +601,8 @@ button:disabled {
 #stars {
   position: fixed;
   inset: 0;
-  pointer-events: none;
-  z-index: -1;
-  overflow: hidden;
+  z-index: 1;
+  pointer-events: none; /* 🔑 ВОТ ЭТО КРИТИЧНО */
 }
 
 #stars span {
