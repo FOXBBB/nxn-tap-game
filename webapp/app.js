@@ -25,18 +25,86 @@ let tonConnectUI = null;
 
 // ================= INIT =================
 document.addEventListener("DOMContentLoaded", async () => {
- 
- document.getElementById("open-referral").onclick = async () => {
+  if (!window.Telegram || !Telegram.WebApp) {
+    alert("Open app from Telegram");
+    return;
+  }
+
+  Telegram.WebApp.ready();
+  Telegram.WebApp.expand();
+
+  tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+    manifestUrl: "https://nxn-tap-game.onrender.com/tonconnect-manifest.json"
+  });
+
+  tgUser = Telegram.WebApp.initDataUnsafe.user;
+  userId = String(tgUser.id);
+
+  const myIdEl = document.getElementById("my-id");
+  if (myIdEl) {
+    myIdEl.textContent = "Your ID: " + userId;
+    myIdEl.onclick = () => navigator.clipboard.writeText(userId);
+  }
+
+  await syncUser();
+  await refreshMe();
+  await loadRewardState();
+  updateUI();
+  initMenu();
+
+// ===== OPEN REFERRAL =====
+document.getElementById("open-referral").onclick = async () => {
   const res = await fetch(`/api/referral/me/${userId}`);
   const data = await res.json();
 
   showScreen("referral-screen");
 
   document.getElementById("ref-code").innerText = data.referralCode;
+  document.getElementById("ref-balance").innerText =
+    formatNumber(data.referralStackBalance);
+
   document.getElementById("ref-invited").innerText = data.stats.invited;
+  document.getElementById("ref-active").innerText = data.stats.active;
   document.getElementById("ref-earned").innerText =
     formatNumber(data.stats.totalEarned);
+
+  if (data.referredBy) {
+    const input = document.getElementById("ref-input");
+    input.value = "Bound";
+    input.disabled = true;
+    document.getElementById("bind-ref").disabled = true;
+  }
 };
+
+
+document.getElementById("copy-ref").onclick = () => {
+  navigator.clipboard.writeText(
+    document.getElementById("ref-code").innerText
+  );
+};
+
+document.getElementById("bind-ref").onclick = async () => {
+  const code = document.getElementById("ref-input").value.trim();
+  if (!code) return;
+
+  const res = await fetch("/api/referral/bind", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ userId, code })
+  });
+
+  const data = await res.json();
+  if (!data.ok) return alert(data.error);
+
+  document.getElementById("open-referral").click();
+};
+
+
+
+document.getElementById("back-from-ref").onclick = () => {
+  showScreen("stake-screen");
+};
+
 
 document.getElementById("stake-referral-btn").onclick = async () => {
   const res = await fetch(`/api/referral/me/${userId}`);
@@ -50,57 +118,39 @@ document.getElementById("stake-referral-btn").onclick = async () => {
     .classList.remove("hidden");
 };
 
-
 document.getElementById("cancel-referral-stake").onclick = () => {
   document
     .getElementById("referral-stake-modal")
     .classList.add("hidden");
 };
 
+document.getElementById("confirm-referral-stake").onclick = async () => {
+  const amount = Number(
+    document.getElementById("referral-stake-amount").value
+  );
 
- 
-  if (!window.Telegram || !Telegram.WebApp) {
-    alert("Open app from Telegram");
-    return;
-  }
+  if (amount < 10000) return alert("Minimum 10,000 NXN");
 
-  Telegram.WebApp.ready();
-  Telegram.WebApp.expand();
-  Telegram.WebApp.enableClosingConfirmation();
-  Telegram.WebApp.setHeaderColor("#02040a");
-  Telegram.WebApp.setBackgroundColor("#02040a");
-
-  tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-    manifestUrl: "https://nxn-tap-game.onrender.com/tonconnect-manifest.json"
+  const res = await fetch("/api/referral/stake", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ userId, amount })
   });
 
+  const data = await res.json();
+  if (!data.ok) return alert(data.error);
 
-  tgUser = Telegram.WebApp.initDataUnsafe.user;
-  userId = String(tgUser.id);
+  document
+    .getElementById("referral-stake-modal")
+    .classList.add("hidden");
 
-  // show my id
-  const myIdEl = document.getElementById("my-id");
-  if (myIdEl) {
-    myIdEl.textContent = "Your ID: " + userId;
-    myIdEl.onclick = () => {
-      navigator.clipboard.writeText(userId);
-      Telegram.WebApp.showPopup({
-        title: "Copied",
-        message: "Your ID copied"
-      });
-    };
-  }
+  await refreshMe();
+};
 
-
-
-
-  await syncUser();
-await refreshMe();
-await loadRewardState();
-updateUI();
-initMenu();
 
 });
+
+
 
 const stakeBackBtn = document.getElementById("stake-back");
 
