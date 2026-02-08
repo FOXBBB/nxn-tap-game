@@ -21,7 +21,8 @@ let tapPower = 1;
 let canTap = false;
 let tapInProgress = false;
 let tonConnectUI = null;
-
+let tapBuffer = 0;
+let tapFlushInProgress = false;
 
 
 // ================= INIT =================
@@ -403,58 +404,78 @@ function animateCoinHit() {
   }, 120);
 }
 
-
-
 // ================= TAP =================
 if (coin) {
-  coin.onclick = async (e) => {
-    // ⛔ если энергия 0 — сразу стоп
-    if (!canTap) return;
+ coin.addEventListener("touchstart", (e) => {
+  e.preventDefault();
 
-    // ⛔ если уже идёт запрос — стоп
-    if (tapInProgress) return;
+  if (!canTap) return;
 
-    tapInProgress = true;
+  const touches = e.touches.length || 1;
 
-    let data;
+  tapBuffer += touches;
 
-    try {
-      const res = await fetch("/api/tap", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: userId })
-      });
+  // 🔥 мгновенный UI
+  animateCoinHit();
+  animatePlus(e, tapPower * touches);
 
-      data = await res.json();
-    } catch (err) {
-      console.error("tap error", err);
-      tapInProgress = false;
-      return;
-    }
+  balance += tapPower * touches;
+  energy = Math.max(0, energy - touches);
 
-    // ⛔ сервер запретил тап (energy = 0)
+  updateUI();
+  updateTapState();
+
+  flushTapBuffer();
+}, { passive: false });
+
+}
+
+
+async function flushTapBuffer() {
+  if (tapFlushInProgress) return;
+  if (tapBuffer <= 0) return;
+
+  tapFlushInProgress = true;
+
+  const amount = tapBuffer;
+  tapBuffer = 0;
+
+  try {
+    const res = await fetch("/api/tap", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: userId,
+        taps: amount
+      })
+    });
+
+    const data = await res.json();
+
     if (!data.ok) {
-      energy = Number(data.energy) || 0;
+      // сервер отклонил — откат
+      balance -= tapPower * amount;
+      energy += amount;
       updateUI();
       updateTapState();
-      tapInProgress = false;
-      return;
+    } else {
+      balance = Number(data.balance);
+      energy = Number(data.energy);
+      updateUI();
+      updateTapState();
     }
 
-    // ✅ ТОЛЬКО ЗДЕСЬ АНИМАЦИЯ
-    animateCoinHit();
-    animatePlus(e, data.tapPower);
-
-    balance = Number(data.balance);
-    energy = Number(data.energy);
-    tapPower = Number(data.tapPower);
-
+  } catch (e) {
+    // сеть упала — откат
+    balance -= tapPower * amount;
+    energy += amount;
     updateUI();
     updateTapState();
+  }
 
-    tapInProgress = false;
-  };
+  tapFlushInProgress = false;
 }
+
 
 
 
