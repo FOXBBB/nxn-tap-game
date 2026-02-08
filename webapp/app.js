@@ -179,11 +179,27 @@ document.getElementById("confirm-referral-stake").onclick = async () => {
   const data = await res.json();
   if (!data.ok) return;
 
+  // fly animation
+const fly = document.createElement("div");
+fly.className = "stake-fly";
+fly.innerText = `-${formatNumber(amount)} NXN`;
+document.body.appendChild(fly);
+setTimeout(() => fly.remove(), 900);
+
+
   document
     .getElementById("referral-stake-modal")
     .classList.add("hidden");
 
   await refreshMe();
+// refresh referral data
+const res2 = await fetch(`/api/referral/me/${userId}`);
+const refData = await res2.json();
+
+document.getElementById("ref-balance").innerText =
+  formatNumber(refData.referralStackBalance);
+
+
 };
 
 
@@ -706,8 +722,8 @@ if (stakeConfirm) {
       return;
     }
 
-   if (selectedStakeAmount < 10000) {
-  showMinStakeModal();
+ if (!selectedStakeAmount || selectedStakeAmount < 10000) {
+  showMinStackModal();
   return;
 }
 
