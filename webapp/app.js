@@ -740,7 +740,7 @@ async function loadLeaderboard() {
   }
 
   
-  // TOP 4–100
+ // TOP 4–100
 const list = document.querySelector(".lb-list");
 list.innerHTML = "";
 
@@ -749,6 +749,12 @@ data.slice(3).forEach((u, i) => {
 
   const row = document.createElement("div");
   row.className = "row";
+
+  // 🔥 ВОТ ОНО — ПОДСВЕТКА ТОЛЬКО СЕБЯ
+  if (String(u.telegram_id) === String(userId)) {
+    row.classList.add("me");
+  }
+
   row.innerHTML = `
     <span>#${rank}</span>
     <img src="${u.avatar || placeholder}">

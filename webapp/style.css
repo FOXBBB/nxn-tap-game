@@ -2324,3 +2324,25 @@ body.locked {
   border-radius: 6px;
 }
 
+/* ===== CURRENT USER IN LEADERBOARD ===== */
+.lb-list .row.me {
+  background: linear-gradient(
+    90deg,
+    rgba(34,197,94,0.28),
+    rgba(34,197,94,0.08)
+  );
+  border: 1px solid rgba(34,197,94,0.9);
+  box-shadow: 0 0 16px rgba(34,197,94,0.55);
+  position: relative;
+}
+
+.lb-list .row.me::after {
+  content: "YOU";
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 11px;
+  font-weight: 900;
+  color: #22c55e;
+}
