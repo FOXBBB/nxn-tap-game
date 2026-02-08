@@ -914,16 +914,18 @@ setInterval(async () => {
   const data = await res.json();
 
   balance = Number(data.balance) || balance;
-
-  // ❗ ВАЖНО: сервер НЕ ТРОГАЕТ энергию, если есть локальные тапы
-energy = Number(data.energy) || energy;
-hasLocalEnergyDelta = false;
-
+  energy = Number(data.energy) || energy;
   maxEnergy = Number(data.maxEnergy) || maxEnergy;
+
+  // Добавляем логику для регенерации энергии на клиенте
+  if (energy < maxEnergy) {
+    energy += 1;  // Увеличиваем энергию на 1
+  }
 
   updateUI();
   updateTapState();
-}, 1000);
+}, 3000);  // 3 секунды
+
 
 
 function updateTapState() {
