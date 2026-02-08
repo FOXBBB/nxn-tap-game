@@ -101,6 +101,12 @@ async function checkSubscribeAccess() {
   const res = await fetch(`/api/subscribe/access/${userId}`);
   const data = await res.json();
 
+  if (!data.bonusClaimed) {
+  // ❗ показываем окно ВСЕМ, кто ещё не получал бонус
+  lockGame();
+  subscribeOverlay.classList.remove("hidden");
+} else {
+  // бонус уже получен → просто проверяем подписку
   if (!data.subscribed) {
     lockGame();
     subscribeOverlay.classList.remove("hidden");
@@ -108,6 +114,7 @@ async function checkSubscribeAccess() {
     unlockGame();
     subscribeOverlay.classList.add("hidden");
   }
+}
 }
 
 function lockGame() {
