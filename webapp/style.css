@@ -2227,3 +2227,86 @@ button:disabled {
   to { transform: scale(1); opacity: 1; }
 }
 
+/* ===== SUBSCRIBE BLOCK ===== */
+.subscribe-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.92);
+  backdrop-filter: blur(8px);
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.subscribe-overlay.hidden {
+  display: none;
+}
+
+.subscribe-modal {
+  width: 90%;
+  max-width: 360px;
+  background: linear-gradient(180deg, #02040a, #020617);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  border-radius: 18px;
+  padding: 22px;
+  text-align: center;
+  box-shadow: 0 0 40px rgba(34, 197, 94, 0.15);
+  animation: modalPop 0.35s ease;
+}
+
+@keyframes modalPop {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.subscribe-modal h2 {
+  margin-bottom: 10px;
+  color: #22c55e;
+}
+
+.subscribe-text {
+  font-size: 14px;
+  opacity: 0.85;
+  margin-bottom: 18px;
+}
+
+.subscribe-btn {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  cursor: pointer;
+  text-decoration: none;
+  border: none;
+}
+
+.subscribe-btn.primary {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #020617;
+}
+
+.subscribe-btn.success {
+  background: rgba(34, 197, 94, 0.15);
+  border: 1px solid #22c55e;
+  color: #22c55e;
+}
+
+.subscribe-note {
+  font-size: 12px;
+  opacity: 0.7;
+}
+body.locked {
+  overflow: hidden;
+}
+
+

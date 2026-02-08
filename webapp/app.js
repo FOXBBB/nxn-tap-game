@@ -87,6 +87,80 @@ document
   updateUI();
   initMenu();
 
+// ================= SUBSCRIBE GATE =================
+
+const subscribeOverlay = document.getElementById("subscribe-overlay");
+const checkSubscribeBtn = document.getElementById("check-subscribe-btn");
+
+async function checkSubscribeAccess() {
+  const res = await fetch(`/api/subscribe/access/${userId}`);
+  const data = await res.json();
+
+  if (!data.subscribed) {
+    lockGame();
+    subscribeOverlay.classList.remove("hidden");
+  } else {
+    unlockGame();
+    subscribeOverlay.classList.add("hidden");
+  }
+}
+
+function lockGame() {
+  document.body.classList.add("locked");
+
+  // блокируем все клики
+  document.querySelectorAll(".screen, .menu").forEach(el => {
+    el.style.pointerEvents = "none";
+  });
+}
+
+function unlockGame() {
+  document.body.classList.remove("locked");
+
+  document.querySelectorAll(".screen, .menu").forEach(el => {
+    el.style.pointerEvents = "";
+  });
+}
+
+checkSubscribeBtn.onclick = async () => {
+  const res = await fetch("/api/subscribe/confirm", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ userId })
+  });
+
+  const data = await res.json();
+
+  if (!data.ok) {
+    Telegram.WebApp.showPopup({
+      title: "❌ Not subscribed",
+      message: "Please subscribe to the channel first."
+    });
+    return;
+  }
+
+  if (data.bonus > 0) {
+    const toast = document.createElement("div");
+    toast.className = "transfer-toast success";
+    toast.innerText = `+${data.bonus} NXN BONUS`;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 1800);
+  }
+
+  await refreshMe();
+  updateUI();
+
+  subscribeOverlay.classList.add("hidden");
+  unlockGame();
+};
+
+// 🔒 проверяем при каждом входе
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(checkSubscribeAccess, 600);
+});
+
+
+
 // ===== OPEN REFERRAL =====
 document.getElementById("open-referral").onclick = async () => {
   const res = await fetch(`/api/referral/me/${userId}`);

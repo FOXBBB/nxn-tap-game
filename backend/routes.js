@@ -1,5 +1,6 @@
 import express from "express";
 import { query } from "./db.js";
+import { checkSubscription } from "./telegram.js";
 
 
 function generateReferralCode() {
@@ -1170,6 +1171,80 @@ if (!Number.isFinite(amount) || amount < MIN_REF_STAKE) {
 
   res.json({ ok: true });
 });
+
+
+// ================= SUBSCRIPTION CHECK =================
+
+router.get("/subscribe/access/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const user = await query(
+      "SELECT subscribe_bonus_claimed FROM users WHERE telegram_id = $1",
+      [userId]
+    );
+
+    if (!user.rows.length) {
+      return res.json({ subscribed: false });
+    }
+
+    // ❗ твоя функция проверки подписки
+    const subscribed = await checkSubscription(userId);
+
+    res.json({
+      subscribed,
+      bonusClaimed: user.rows[0].subscribe_bonus_claimed
+    });
+  } catch (e) {
+    console.error("SUB ACCESS ERROR", e);
+    res.json({ subscribed: false });
+  }
+});
+
+
+router.post("/subscribe/confirm", async (req, res) => {
+  try {
+    const { userId } = req.body;
+
+    const userRes = await query(
+      "SELECT balance, subscribe_bonus_claimed FROM users WHERE telegram_id = $1",
+      [userId]
+    );
+
+    if (!userRes.rows.length) {
+      return res.json({ ok: false });
+    }
+
+    const user = userRes.rows[0];
+
+    const subscribed = await checkSubscription(userId);
+
+    // ❌ если не подписан — не пускаем
+    if (!subscribed) {
+      return res.json({ ok: false });
+    }
+
+    // 🎁 бонус только ОДИН раз
+    if (!user.subscribe_bonus_claimed) {
+      await query(
+        `UPDATE users
+         SET balance = balance + 3000,
+             subscribe_bonus_claimed = true
+         WHERE telegram_id = $1`,
+        [userId]
+      );
+
+      return res.json({ ok: true, bonus: 3000 });
+    }
+
+    // подписан, но бонус уже получал
+    res.json({ ok: true, bonus: 0 });
+  } catch (e) {
+    console.error("SUB CONFIRM ERROR", e);
+    res.json({ ok: false });
+  }
+});
+
 
 
 
