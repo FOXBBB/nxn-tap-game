@@ -19,7 +19,6 @@ let energy = 0;
 let maxEnergy = 100;
 let tapPower = 1;
 let canTap = false;
-let tapInProgress = false;
 let tonConnectUI = null;
 
 
@@ -243,64 +242,32 @@ function animateCoinHit() {
 
 
 // ================= TAP =================
-coin.addEventListener("touchstart", async (e) => {
+coin.addEventListener("touchstart", (e) => {
   e.preventDefault();
-
-  // ⛔ если энергия 0 — сразу стоп
   if (!canTap) return;
 
-  // ⛔ если уже идёт запрос — стоп
-  if (tapInProgress) return;
-
-  // Получаем количество касаний
   const touches = e.touches.length;
+  const taps = Math.min(touches, energy);
+  if (taps <= 0) return;
 
-  // Если нет касаний, выходим
-  if (touches === 0) return;
-
-  tapInProgress = true;
-
-  let data;
-
-  try {
-    const res = await fetch("/api/tap", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: userId })
-    });
-
-    data = await res.json();
-  } catch (err) {
-    console.error("tap error", err);
-    tapInProgress = false;
-    return;
-  }
-
-  // ⛔ сервер запретил тап (например, недостаточно энергии)
-  if (!data.ok) {
-    energy = Number(data.energy) || 0;
-    updateUI();
-    updateTapState();
-    tapInProgress = false;
-    return;
-  }
-
-  // Расчет энергии для каждого таппа с учетом количества касаний
-  const actualTaps = Math.min(energy, touches); // Ограничиваем количеством энергии
-
-  // ✅ Анимация
+  // UI СРАЗУ
   animateCoinHit();
-  animatePlus(e, data.tapPower * actualTaps); // Умножаем на количество тапов
+  animatePlus(e, tapPower * taps);
 
-  balance = Number(data.balance);
-  energy -= actualTaps; // Уменьшаем энергию на количество тапов
-  tapPower = Number(data.tapPower);
+  balance += tapPower * taps;
+  energy -= taps;
 
   updateUI();
   updateTapState();
 
-  tapInProgress = false;
+  // сервер — БЕЗ await, не блокирует
+  fetch("/api/tap", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id: userId, taps })
+  });
 }, { passive: false });
+
 
 
 
@@ -344,17 +311,30 @@ async function loadHistory() {
 
 
 
-
-
 function animatePlus(e, value) {
   const plus = document.createElement("div");
   plus.className = "plus-one";
   plus.innerText = `+${value}`;
-  plus.style.left = e.clientX + "px";
-  plus.style.top = e.clientY - 10 + "px";
+
+  let x, y;
+
+  if (e.touches && e.touches[0]) {
+    x = e.touches[0].clientX;
+    y = e.touches[0].clientY;
+  } else {
+    x = e.clientX;
+    y = e.clientY;
+  }
+
+  plus.style.left = x + "px";
+  plus.style.top = (y - 20) + "px";
+
   document.body.appendChild(plus);
   setTimeout(() => plus.remove(), 800);
 }
+
+
+
 
 // ================= TRANSFER =================
 document.getElementById("send").onclick = async () => {
