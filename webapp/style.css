@@ -88,10 +88,15 @@ body {
 }
 
 .lb-top1 .score {
+  color: #3b2600; /* тёмно-золотой / коричневый */
+  font-weight: 900;
   min-width: 90px;
   text-align: center;        /* 👈 ЦЕНТР */
   font-weight: 900;
   white-space: nowrap;
+  text-shadow:
+    0 1px 0 rgba(255,255,255,0.6),
+    0 0 8px rgba(255,200,80,0.6);
 }
 
 .lb-top23 {
@@ -2354,6 +2359,14 @@ body.locked {
     0 0 18px rgba(220, 220, 220, 0.6),
     inset 0 0 12px rgba(255,255,255,0.45);
   overflow: hidden;
+}
+
+.lb-card.silver .score {
+  color: #1f2937; /* графитовый */
+  font-weight: 800;
+
+  text-shadow:
+    0 1px 0 rgba(255,255,255,0.7);
 }
 
 
