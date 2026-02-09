@@ -115,3 +115,22 @@
   50%  { box-shadow: 0 0 0 6px rgba(34,197,94,1),   0 0 45px rgba(34,197,94,1); }
   100% { box-shadow: 0 0 0 4px rgba(34,197,94,0.8), 0 0 20px rgba(34,197,94,0.8); }
 }
+/* overlay не перехватывает клики */
+.nxn-tutorial-overlay {
+  pointer-events: none;
+}
+
+/* карточка туториала кликабельна */
+.nxn-tutorial-card {
+  pointer-events: auto;
+}
+/* блокируем только экраны и меню */
+body.tutorial-active .screen,
+body.tutorial-active .menu {
+  pointer-events: none;
+}
+
+/* подсвеченный элемент снова кликабелен */
+body.tutorial-active .nxn-highlight {
+  pointer-events: auto !important;
+}

@@ -43,7 +43,7 @@
     const root = document.getElementById(rootId);
     if (!root) return;
 
-    document.body.classList.add("nxn-tutorial-lock");
+    document.body.classList.add("tutorial-active");
     clearHighlights();
 
     root.innerHTML = `
@@ -138,7 +138,7 @@
 
   function close() {
     clearHighlights();
-    document.body.classList.remove("nxn-tutorial-lock");
+   document.body.classList.remove("tutorial-active");
     const root = document.getElementById(rootId);
     if (root) root.innerHTML = "";
 
@@ -151,4 +151,5 @@
     tapDone = false;
     render();
   };
-})
+})();
+
