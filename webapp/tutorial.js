@@ -1,4 +1,4 @@
-/* ============== NXN GAME COMMENTARY ONBOARDING ============== */
+/* ============== NXN GAME STRICT COMMENTARY ONBOARDING ============== */
 
 (function () {
   const root = document.getElementById("nxn-tutorial-root");
@@ -13,31 +13,43 @@
       },
       energy: {
         title: "Энергия",
-        text: "Каждый тап тратит энергию. Когда энергия закончится — тапы остановятся."
+        text: "Каждый тап тратит энергию. Когда энергия закончится, тапы временно остановятся."
       },
       lbMenu: {
         title: "Лидерборд",
-        text: "Нажми сюда, чтобы открыть рейтинг игроков."
+        text: "Нажми на эту иконку, чтобы посмотреть рейтинг игроков."
       },
       lbScreen: {
-        title: "Лидерборд",
-        text: "Здесь отображаются лучшие игроки. Соревнуйся и поднимайся в рейтинге."
+        title: "Рейтинг игроков",
+        text: "Здесь ты видишь общий рейтинг всех игроков. Соревнуйся и поднимайся выше."
       },
-      transfer: {
+      transferMenu: {
         title: "Переводы",
-        text: "Здесь ты можешь отправлять NXN другим игрокам по ID."
+        text: "Нажми сюда, чтобы перейти к переводам NXN."
       },
-      shop: {
+      transferScreen: {
+        title: "Переводы NXN",
+        text: "Здесь ты можешь отправлять NXN другим игрокам по их ID."
+      },
+      shopMenu: {
         title: "Магазин",
-        text: "В магазине можно улучшать силу тапа, энергию и покупать автокликер."
+        text: "Нажми сюда, чтобы открыть магазин улучшений."
+      },
+      shopScreen: {
+        title: "Магазин",
+        text: "Улучшай силу тапа, энергию и покупай автокликер."
+      },
+      tapMenu: {
+        title: "Главный экран",
+        text: "Нажми сюда, чтобы вернуться к тапалке."
       },
       stakeBtn: {
         title: "Стейк",
-        text: "Нажми сюда, чтобы участвовать в наградных циклах и получать NXN."
+        text: "Нажми сюда, чтобы участвовать в наградных циклах."
       },
       stakeMain: {
         title: "Стейк NXN",
-        text: "Выбери сумму и застейкай NXN, чтобы участвовать в распределении наград."
+        text: "Выбери сумму и застейкай NXN для участия в наградном цикле."
       },
       stakeRef: {
         title: "Реферальный стейк",
@@ -45,195 +57,31 @@
       },
       stakeLB: {
         title: "Стейк-лидерборд",
-        text: "ТОП-участники получают награды на реальные кошельки каждый цикл."
+        text: "Нажми сюда, чтобы посмотреть ТОП участников стейка и награды."
+      },
+      referralMenu: {
+        title: "Рефералы",
+        text: "Нажми сюда, чтобы перейти в реферальный раздел."
+      },
+      referralScreen: {
+        title: "Реферальная программа",
+        text:
+          "Делитесь своим реферальным кодом и приглашайте друзей.\n\n" +
+          "Вы и ваш друг получите по 50 000 NXN, которые можно использовать для стейка."
       },
       finish: {
         title: "Готово",
-        text: "Теперь ты знаешь всё необходимое. Играй, стейкай и зарабатывай NXN!"
+        text: "Теперь ты готов. Играй, стейкай и зарабатывай NXN!"
       }
     }
   };
 
-  function showComment({ title, text }, target, next = true) {
-    root.innerHTML = "";
-
-    const box = document.createElement("div");
-    box.className = "nxn-comment big";
-    box.innerHTML = `
-      <div class="nxn-comment-title">${title}</div>
-      <div class="nxn-comment-text">${text}</div>
-      ${next ? `<div class="nxn-comment-actions"><button class="nxn-comment-btn">Next</button></div>` : ""}
-    `;
-
-    if (target) {
-      const el = document.querySelector(target);
-      if (el) {
-        const r = el.getBoundingClientRect();
-        box.style.top = `${r.top - 120}px`;
-        box.style.left = `${Math.max(12, r.left)}px`;
-      }
-    } else {
-      box.style.top = "20vh";
-      box.style.left = "50vw";
-      box.style.transform = "translateX(-50%)";
-    }
-
-    root.appendChild(box);
-
-    if (next) {
-      box.querySelector("button").onclick = nextStep;
-    }
+  function lock(target) {
+    document.body.classList.add("tutorial-lock");
+    if (target) target.classList.add("allow-click");
   }
 
-  function nextStep() {
-    step++;
-    run();
-  }
-
-  function run() {
-    const t = TEXT[lang];
-
-    switch (step) {
-      case -1:
-  root.innerHTML = `
-    <div class="nxn-comment nxn-lang-center">
-      <div class="nxn-comment-title">Choose language</div>
-      <div class="nxn-comment-text">
-        Select the language to start the game
-      </div>
-      <div class="nxn-comment-actions">
-        <button class="nxn-comment-btn" data-lang="RU">RU</button>
-        <button class="nxn-comment-btn" data-lang="EN">EN</button>
-        <button class="nxn-comment-btn" data-lang="TR">TR</button>
-      </div>
-    </div>
-  `;
-
-  document.querySelectorAll("[data-lang]").forEach(btn => {
-    btn.onclick = () => {
-      lang = btn.dataset.lang;
-      step = 0;
-      run();
-    };
-  });
-  break;
-
-      case 0:
-        showComment(t.tap, "#coin", false);
-        document.getElementById("coin").onclick = () => nextStep();
-        break;
-
-      case 1:
-        showComment(t.energy, "#energy", true);
-        break;
-
-      case 2:
-        showComment(t.lbMenu, '.menu [data-go="leaderboard"]', false);
-        document.querySelector('.menu [data-go="leaderboard"]').onclick = () => nextStep();
-        break;
-
-      case 3:
-        showComment(t.lbScreen, null, true);
-        break;
-
-      case 4:
-        showComment(t.transfer, null, true);
-        showScreen("transfer");
-        break;
-
-      case 5:
-        showComment(t.shop, null, true);
-        showScreen("shop");
-        break;
-
-      case 6:
-        showScreen("tap");
-        showComment(t.stakeBtn, "#stake-btn", false);
-        document.getElementById("stake-btn").onclick = () => nextStep();
-        break;
-
-      case 7:
-        showComment(t.stakeMain, "#stake-confirm", true);
-        break;
-
-      case 8:
-        showComment(t.stakeRef, "#stake-referral-btn", true);
-        break;
-
-      case 9:
-        showComment(t.stakeLB, null, true);
-        break;
-
-      case 10:
-        showComment(t.finish, null, false);
-        break;
-    }
-  }
-
-  window.startNXNTutorial = function () {
-    step = -1;
-    run();
-  };
-})();
-/* ============== NXN GAME COMMENTARY ONBOARDING (CONTROLLED) ============== */
-
-(function () {
-  const root = document.getElementById("nxn-tutorial-root");
-  let step = -1;
-  let lang = "RU";
-  let tapListener = null;
-
-  const TEXT = {
-    RU: {
-      tap: {
-        title: "Тап",
-        text: "Нажми на монету, чтобы заработать NXN. Попробуй сделать первый тап."
-      },
-      energy: {
-        title: "Энергия",
-        text: "Каждый тап тратит энергию. Когда энергия закончится — тапы временно остановятся."
-      },
-      lbMenu: {
-        title: "Лидерборд",
-        text: "Нажми на эту иконку, чтобы открыть рейтинг игроков."
-      },
-      lbScreen: {
-        title: "Лидерборд",
-        text: "Здесь ты видишь лучших игроков. Чем выше ты в рейтинге — тем круче награды."
-      },
-      transfer: {
-        title: "Переводы",
-        text: "Здесь можно отправлять NXN другим игрокам по их ID."
-      },
-      shop: {
-        title: "Магазин",
-        text: "В магазине ты можешь улучшать силу тапа, энергию и покупать автокликер."
-      },
-      stakeBtn: {
-        title: "Стейк",
-        text: "Нажми сюда, чтобы перейти к стейкингу и участию в наградных циклах."
-      },
-      stakeMain: {
-        title: "Стейк NXN",
-        text: "Выбери сумму и застейкай NXN, чтобы участвовать в распределении наград."
-      },
-      stakeRef: {
-        title: "Реферальный стейк",
-        text: "Реферальные NXN можно использовать только для стейка."
-      },
-      stakeLB: {
-        title: "Стейк-лидерборд",
-        text: "ТОП-участники получают награды на реальные кошельки каждый цикл."
-      },
-      finish: {
-        title: "Готово",
-        text: "Теперь ты знаешь всё необходимое. Играй, стейкай и зарабатывай NXN!"
-      }
-    }
-  };
-
-  function clear() {
-    root.innerHTML = "";
+  function unlock() {
     document.body.classList.remove("tutorial-lock");
     document.querySelectorAll(".allow-click").forEach(el =>
       el.classList.remove("allow-click")
@@ -241,13 +89,14 @@
   }
 
   function showComment({ title, text }, target, withNext) {
-    clear();
+    root.innerHTML = "";
+    unlock();
 
     const box = document.createElement("div");
     box.className = "nxn-comment big";
     box.innerHTML = `
       <div class="nxn-comment-title">${title}</div>
-      <div class="nxn-comment-text">${text}</div>
+      <div class="nxn-comment-text">${text.replace(/\n/g, "<br>")}</div>
       ${
         withNext
           ? `<div class="nxn-comment-actions">
@@ -258,16 +107,12 @@
     `;
 
     if (target) {
-      const el = document.querySelector(target);
-      if (el) {
-        el.classList.add("allow-click");
-        document.body.classList.add("tutorial-lock");
-
-        const r = el.getBoundingClientRect();
-        box.style.top = `${r.top - 130}px`;
-        box.style.left = `${Math.max(12, r.left)}px`;
-      }
+      lock(target);
+      const r = target.getBoundingClientRect();
+      box.style.top = `${r.top - 140}px`;
+      box.style.left = `${Math.max(12, r.left)}px`;
     } else {
+      lock();
       box.style.top = "20vh";
       box.style.left = "50vw";
       box.style.transform = "translateX(-50%)";
@@ -276,13 +121,11 @@
     root.appendChild(box);
 
     if (withNext) {
-      box.querySelector("button").onclick = nextStep;
+      box.querySelector("button").onclick = () => {
+        step++;
+        run();
+      };
     }
-  }
-
-  function nextStep() {
-    step++;
-    run();
   }
 
   function run() {
@@ -290,7 +133,7 @@
 
     switch (step) {
       case -1:
-        clear();
+        unlock();
         root.innerHTML = `
           <div class="nxn-comment nxn-lang-center">
             <div class="nxn-comment-title">Choose language</div>
@@ -302,6 +145,7 @@
             </div>
           </div>
         `;
+        lock();
         document.querySelectorAll("[data-lang]").forEach(b => {
           b.onclick = () => {
             lang = b.dataset.lang;
@@ -311,31 +155,27 @@
         });
         break;
 
-      case 0: { // TAP (no Next)
-        showComment(t.tap, "#coin", false);
+      case 0: {
         const coin = document.getElementById("coin");
-
-        tapListener = () => {
-          coin.removeEventListener("pointerdown", tapListener);
-          nextStep();
-        };
-
-        coin.addEventListener("pointerdown", tapListener, { once: true });
+        showComment(t.tap, coin, false);
+        coin.addEventListener("pointerdown", () => {
+          step = 1;
+          run();
+        }, { once: true });
         break;
       }
 
       case 1:
-        showComment(t.energy, "#energy", true);
+        showComment(t.energy, document.getElementById("energy"), true);
         break;
 
-      case 2: { // Leaderboard menu (no Next)
-        showComment(t.lbMenu, '.menu [data-go="leaderboard"]', false);
+      case 2: {
         const btn = document.querySelector('.menu [data-go="leaderboard"]');
-        btn.addEventListener(
-          "click",
-          () => nextStep(),
-          { once: true }
-        );
+        showComment(t.lbMenu, btn, false);
+        btn.addEventListener("click", () => {
+          step = 3;
+          run();
+        }, { once: true });
         break;
       }
 
@@ -343,41 +183,88 @@
         showComment(t.lbScreen, null, true);
         break;
 
-      case 4:
-        showScreen("transfer");
-        showComment(t.transfer, null, true);
+      case 4: {
+        const btn = document.querySelector('.menu [data-go="transfer"]');
+        showComment(t.transferMenu, btn, false);
+        btn.addEventListener("click", () => {
+          step = 5;
+          run();
+        }, { once: true });
         break;
+      }
 
       case 5:
-        showScreen("shop");
-        showComment(t.shop, null, true);
+        showComment(t.transferScreen, null, true);
         break;
 
-      case 6: { // Stake button (no Next)
-        showScreen("tap");
-        showComment(t.stakeBtn, "#stake-btn", false);
-        const btn = document.getElementById("stake-btn");
-        btn.addEventListener(
-          "click",
-          () => nextStep(),
-          { once: true }
-        );
+      case 6: {
+        const btn = document.querySelector('.menu [data-go="shop"]');
+        showComment(t.shopMenu, btn, false);
+        btn.addEventListener("click", () => {
+          step = 7;
+          run();
+        }, { once: true });
         break;
       }
 
       case 7:
-        showComment(t.stakeMain, "#stake-confirm", true);
+        showComment(t.shopScreen, null, true);
         break;
 
-      case 8:
-        showComment(t.stakeRef, "#stake-referral-btn", true);
+      case 8: {
+        const btn = document.querySelector('.menu [data-go="tap"]');
+        showComment(t.tapMenu, btn, false);
+        btn.addEventListener("click", () => {
+          step = 9;
+          run();
+        }, { once: true });
         break;
+      }
 
-      case 9:
-        showComment(t.stakeLB, null, true);
+      case 9: {
+        const btn = document.getElementById("stake-btn");
+        showComment(t.stakeBtn, btn, false);
+        btn.addEventListener("click", () => {
+          step = 10;
+          run();
+        }, { once: true });
         break;
+      }
 
       case 10:
+        showComment(t.stakeMain, document.getElementById("stake-confirm"), true);
+        break;
+
+      case 11:
+        showComment(t.stakeRef, document.getElementById("stake-referral-btn"), true);
+        break;
+
+      case 12: {
+        const btn = document.getElementById("open-stake-lb");
+        showComment(t.stakeLB, btn, false);
+        btn.addEventListener("click", () => {
+          step = 13;
+          run();
+        }, { once: true });
+        break;
+      }
+
+      case 13: {
+        const btn = document.getElementById("open-referral");
+        showComment(t.referralMenu, btn, false);
+        btn.addEventListener("click", () => {
+          step = 14;
+          run();
+        }, { once: true });
+        break;
+      }
+
+      case 14:
+        showComment(t.referralScreen, null, true);
+        break;
+
+      case 15:
+        showScreen("tap");
         showComment(t.finish, null, false);
         break;
     }
