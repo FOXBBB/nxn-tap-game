@@ -66,6 +66,7 @@ document
 
 
   Telegram.WebApp.ready();
+  startNXNTutorial();
   Telegram.WebApp.expand();
 
   tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
