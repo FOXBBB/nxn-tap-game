@@ -2466,8 +2466,8 @@ body.locked {
   content: "";
   position: absolute;
 
-  top: -14px;              /* 👈 корона НАД ГОЛОВОЙ */
-  left: 50%;
+  top: -17px;              /* 👈 корона НАД ГОЛОВОЙ */
+  left: 70%;
   transform: translateX(-50%);
 
   width: 52px;
