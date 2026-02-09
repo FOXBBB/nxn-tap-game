@@ -169,10 +169,11 @@ checkSubscribeBtn.onclick = async () => {
  subscribeOverlay.classList.add("hidden");
 unlockGame();
 
-// 🔥 ПРИНУДИТЕЛЬНО СТАРТУЕМ ONBOARDING
+// ✅ ПОСЛЕ УСПЕШНОЙ ПОДПИСКИ
 setTimeout(() => {
-  localStorage.removeItem("onboardingVersion");
+  startOnboarding(true); // ← принудительно
 }, 300);
+
 
 
 };
