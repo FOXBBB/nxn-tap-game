@@ -2344,16 +2344,6 @@ body.locked {
   animation: goldPulse 3s infinite;
 }
 
-.lb-top1::before {
-  content: "👑";
-  position: absolute;
-  top: -16px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 26px;
-  z-index: 5;
-  filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.9));
-}
 
 @keyframes goldPulse {
   0% { box-shadow: 0 0 18px rgba(255,200,50,0.5); }
@@ -2443,7 +2433,7 @@ body.locked {
   width: 42px;
   height: 28px;
 
-  background-image: url("crown.png");
+  background-image: url("/webapp/crown.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
