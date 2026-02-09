@@ -76,21 +76,38 @@
     }, 300);
   }
 
-  function positionComment(el, target) {
-    if (!target) {
-      el.style.top = "20%";
-      el.style.left = "50%";
-      el.style.transform = "translateX(-50%)";
-      return;
-    }
-
-    const t = document.querySelector(target);
-    if (!t) return;
-
-    const r = t.getBoundingClientRect();
-    el.style.top = `${r.bottom + 12}px`;
-    el.style.left = `${r.left}px`;
+ function positionComment(el, target) {
+  if (!target) {
+    el.style.top = "20vh";
+    el.style.left = "50vw";
+    el.style.transform = "translateX(-50%)";
+    return;
   }
+
+  const t = document.querySelector(target);
+  if (!t) return;
+
+  const r = t.getBoundingClientRect();
+
+  const margin = 12;
+
+  // по умолчанию — снизу элемента
+  let top = r.bottom + margin;
+  let left = r.left;
+
+  // если не влезает снизу — показываем сверху
+  if (top + 120 > window.innerHeight) {
+    top = r.top - 120 - margin;
+  }
+
+  // защита от выхода за экран
+  left = Math.max(12, Math.min(left, window.innerWidth - 280));
+
+  el.style.top = `${top}px`;
+  el.style.left = `${left}px`;
+  el.style.transform = "none";
+}
+
 
   function next() {
     step++;
