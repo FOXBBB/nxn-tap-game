@@ -112,13 +112,13 @@
       tap: { title: "Dokun", text: "NXN kazanmak için coin'e dokun." },
       energy: { title: "Enerji", text: "Her dokunuş enerji harcar." },
       lbMenu: { title: "Sıralama", text: "Sıralamayı görmek için dokun." },
-      lbScreen: { title: "Sıralama", text: "Oyuncu sıralaması burada." },
+      lbScreen: { title: "Sıralama", text: "Burada tüm oyuncuların genel puanı gösterilmektedir." },
       transferMenu: { title: "Transfer", text: "Transfer bölümüne git." },
-      transferScreen: { title: "NXN Transfer", text: "NXN gönder." },
+      transferScreen: { title: "NXN Transfer", text: "NXN'i oyuncuların kimlik numaralarını kullanarak diğer oyunculara gönderin." },
       shopMenu: { title: "Mağaza", text: "Mağazayı aç." },
-      shopScreen: { title: "Mağaza", text: "Gücü ve enerjiyi yükselt." },
+      shopScreen: { title: "Mağaza", text: "Dokunma gücünüzü ve enerjinizi artırın ve otomatik tıklama cihazı satın alın." },
       tapMenu: { title: "Ana Ekran", text: "Ana ekrana dön." },
-      stakeBtn: { title: "Stake", text: "Stake yap." },
+      stakeBtn: { title: "Stake", text: "Stake giriş yap." },
       stakeMain: { title: "NXN Stake", text: "Miktar seç ve stake et." },
       stakeRef: { title: "Referans Stake", text: "Referans NXN sadece stake içindir." },
       stakeLBExit: { title: "Stake Sıralaması", text: "Geri tuşuna basarak çık." },
@@ -127,7 +127,7 @@
         title: "Referans Programı",
         text: "Kodu paylaş.\n\nİkiniz de 50.000 NXN kazanırsınız."
       },
-      finish: { title: "Hazır", text: "İlk dokunuşunu yap ve başla." }
+      finish: { title: "Hazır", text: "İlk dokunuşunu yap ve başla bol şans." }
     }
   };
 
