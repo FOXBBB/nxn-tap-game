@@ -95,22 +95,28 @@
 
     switch (step) {
       case -1:
-        root.innerHTML = `
-          <div class="nxn-comment big center">
-            <div class="nxn-comment-title">Choose language</div>
-            <div class="nxn-comment-actions">
-              <button class="nxn-comment-btn" onclick="start('RU')">RU</button>
-              <button class="nxn-comment-btn" onclick="start('EN')">EN</button>
-              <button class="nxn-comment-btn" onclick="start('TR')">TR</button>
-            </div>
-          </div>
-        `;
-        window.start = l => {
-          lang = l;
-          step = 0;
-          run();
-        };
-        break;
+  root.innerHTML = `
+    <div class="nxn-comment nxn-lang-center">
+      <div class="nxn-comment-title">Choose language</div>
+      <div class="nxn-comment-text">
+        Select the language to start the game
+      </div>
+      <div class="nxn-comment-actions">
+        <button class="nxn-comment-btn" data-lang="RU">RU</button>
+        <button class="nxn-comment-btn" data-lang="EN">EN</button>
+        <button class="nxn-comment-btn" data-lang="TR">TR</button>
+      </div>
+    </div>
+  `;
+
+  document.querySelectorAll("[data-lang]").forEach(btn => {
+    btn.onclick = () => {
+      lang = btn.dataset.lang;
+      step = 0;
+      run();
+    };
+  });
+  break;
 
       case 0:
         showComment(t.tap, "#coin", false);
