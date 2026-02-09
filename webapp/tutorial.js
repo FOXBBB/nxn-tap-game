@@ -70,10 +70,10 @@
           "Вы и ваш друг получите по 50 000 NXN, которые можно использовать для стейка."
       },
       finish: {
-        title: "Готово",
-        text: "Теперь ты готов. Играй, стейкай и зарабатывай NXN!",
-        play: "ИГРАТЬ"
-      }
+  title: "Готово",
+  text: "Теперь ты готов. Сделай первый тап и начинай зарабатывать NXN."
+}
+
     },
 
     EN: {
@@ -140,10 +140,10 @@
           "You and your friend will receive 50,000 NXN each for staking."
       },
       finish: {
-        title: "All Set",
-        text: "You are ready. Play, stake and earn NXN!",
-        play: "PLAY"
-      }
+  title: "All Set",
+  text: "You are ready. Make your first tap and start earning NXN."
+}
+
     },
 
     TR: {
@@ -210,10 +210,10 @@
           "Sen ve arkadaşın stake için 50.000 NXN kazanırsınız."
       },
       finish: {
-        title: "Hazır",
-        text: "Artık hazırsın. Oyna ve kazan!",
-        play: "OYNA"
-      }
+  title: "Hazır",
+  text: "Hazırsın. İlk dokunuşunu yap ve NXN kazanmaya başla."
+}
+
     }
   };
 
@@ -237,7 +237,42 @@
   }
 
   window.startNXNTutorial = function () {
-    step = 15;
-    showCenter(TEXT[lang].finish);
-  };
+  const coin = document.getElementById("coin");
+  const root = document.getElementById("nxn-tutorial-root");
+
+  // показываем финальный комментарий над монетой
+  root.innerHTML = "";
+  document.body.classList.add("tutorial-lock");
+
+  coin.classList.add("allow-click");
+
+  const box = document.createElement("div");
+  box.className = "nxn-comment big";
+
+  box.innerHTML = `
+    <div class="nxn-comment-title">${TEXT[lang].finish.title}</div>
+    <div class="nxn-comment-text">
+      ${TEXT[lang].finish.text}
+    </div>
+  `;
+
+  const r = coin.getBoundingClientRect();
+  box.style.top = `${r.top - 140}px`;
+  box.style.left = `${Math.max(12, r.left)}px`;
+
+  root.appendChild(box);
+
+  // ждём финальный тап
+  coin.addEventListener(
+    "pointerdown",
+    () => {
+      // полностью закрываем туториал
+      document.body.classList.remove("tutorial-lock");
+      coin.classList.remove("allow-click");
+      root.innerHTML = "";
+    },
+    { once: true }
+  );
+};
+
 })();
