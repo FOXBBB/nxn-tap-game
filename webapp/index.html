@@ -19,8 +19,6 @@
 
 <body>
 
-
-
   <div class="bg"></div>
   <div id="stars"></div>
 
@@ -446,59 +444,36 @@
         }
       </script>
 
-      <!-- ================= SUBSCRIBE OVERLAY ================= -->
-<div id="subscribe-overlay" class="subscribe-overlay hidden">
-  <div class="subscribe-modal">
-    <h2>🚀 Join NeXoN Community</h2>
+      <!-- TELEGRAM & TON -->
+      <script src="https://telegram.org/js/telegram-web-app.js"></script>
+      <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
 
-    <p class="subscribe-text">
-      To enter the game, you must subscribe to our official channel.
-    </p>
+      <!-- MAIN APP LOGIC -->
+      <script src="app.js"></script>
 
-    <a href="https://t.me/NXN_NeXoN" target="_blank" class="subscribe-btn primary">
-      Subscribe to Channel
-    </a>
+      <!-- SUBSCRIBE MODAL -->
+      <div id="subscribe-overlay" class="subscribe-overlay hidden">
+        <div class="subscribe-modal">
+          <h2>🚀 Join NeXoN Community</h2>
 
-    <button id="check-subscribe-btn" class="subscribe-btn success">
-      Check Subscription
-    </button>
+          <p class="subscribe-text">
+            To enter the game, you must subscribe to our official channel.
+          </p>
 
-    <p class="subscribe-note">
-      🎁 Bonus: <b>3000 NXN</b> (one time only)
-    </p>
-  </div>
-</div>
+          <a href="https://t.me/NXN_NeXoN" target="_blank" class="subscribe-btn primary">
+            Subscribe to Channel
+          </a>
 
+          <button id="check-subscribe-btn" class="subscribe-btn success">
+            Check Subscription
+          </button>
 
-<!-- ONBOARDING -->
-<div id="onboarding-overlay" class="onboarding hidden">
-  <div class="onboarding-card">
+          <p class="subscribe-note">
+            🎁 Bonus: <b>3000 NXN</b> (one time only)
+          </p>
+        </div>
+      </div>
 
-    <div class="ob-progress">
-      <span id="ob-step"></span>
-    </div>
-
-    <div id="ob-lang-select" class="ob-lang">
-      <button data-lang="en">EN</button>
-      <button data-lang="ru">RU</button>
-      <button data-lang="tr">TR</button>
-    </div>
-
-    <h2 id="ob-title"></h2>
-    <p id="ob-text"></p>
-
-    <button id="ob-next" class="ob-btn primary">Next</button>
-    <button id="ob-skip" class="ob-btn secondary">Skip tutorial</button>
-
-  </div>
-</div>
-
-
-
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
-
-<script src="app.js"></script>
 
 </body>
 

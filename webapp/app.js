@@ -66,7 +66,6 @@ document
 
 
   Telegram.WebApp.ready();
-
   Telegram.WebApp.expand();
 
   tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
@@ -77,9 +76,9 @@ document
   userId = String(tgUser.id);
 
   // 🔒 SUBSCRIBE GATE — старт проверки
-// setTimeout(() => {
-//   checkSubscribeAccess();
-// }, 600);
+setTimeout(() => {
+  checkSubscribeAccess();
+}, 600);
 
   const myIdEl = document.getElementById("my-id");
   if (myIdEl) {
@@ -92,10 +91,6 @@ document
   await loadRewardState();
   updateUI();
   initMenu();
-
-
-
-
 
 // ================= SUBSCRIBE GATE =================
 
@@ -118,27 +113,26 @@ async function checkSubscribeAccess() {
   } else {
     unlockGame();
     subscribeOverlay.classList.add("hidden");
-
   }
 }
 }
 
-//function lockGame() {
- // document.body.classList.add("locked");
+function lockGame() {
+  document.body.classList.add("locked");
 
   // блокируем все клики
-  //document.querySelectorAll(".screen, .menu").forEach(el => {
-   // el.style.pointerEvents = "none";
-  //});
-//}
+  document.querySelectorAll(".screen, .menu").forEach(el => {
+    el.style.pointerEvents = "none";
+  });
+}
 
-//function unlockGame() {
-  //document.body.classList.remove("locked");
+function unlockGame() {
+  document.body.classList.remove("locked");
 
-  //document.querySelectorAll(".screen, .menu").forEach(el => {
-    //el.style.pointerEvents = "";
-  //});
-//}
+  document.querySelectorAll(".screen, .menu").forEach(el => {
+    el.style.pointerEvents = "";
+  });
+}
 
 checkSubscribeBtn.onclick = async () => {
   const res = await fetch("/api/subscribe/confirm", {
@@ -168,12 +162,9 @@ checkSubscribeBtn.onclick = async () => {
   await refreshMe();
   updateUI();
 
- subscribeOverlay.classList.add("hidden");
-unlockGame();
-
+  subscribeOverlay.classList.add("hidden");
+  unlockGame();
 };
-
-
 
 
 
@@ -1365,120 +1356,3 @@ function showMinStackModal(
 function closeModal() {
   document.getElementById("stackModal")?.classList.add("hidden");
 }
-// ================= ONBOARDING (FORCE DEBUG MODE) =================
-
-let obStep = 0;
-let obLang = "en";
-
-const OB_STEPS = [
-  {
-    screen: "tap",
-    t: {
-      en: ["Welcome to NeXoN", "Tap the coin to earn NXN"],
-      ru: ["Добро пожаловать", "Тапай монету и зарабатывай NXN"],
-      tr: ["NeXoN'a hoş geldin", "NXN kazanmak için dokun"]
-    }
-  },
-  {
-    screen: "tap",
-    t: {
-      en: ["Energy", "Energy limits your taps"],
-      ru: ["Энергия", "Энергия ограничивает тапы"],
-      tr: ["Enerji", "Dokunmaları sınırlar"]
-    }
-  },
-  {
-    screen: "shop",
-    t: {
-      en: ["Shop", "Buy upgrades to grow faster"],
-      ru: ["Магазин", "Покупай улучшения"],
-      tr: ["Mağaza", "Geliştirmeler al"]
-    }
-  },
-  {
-    screen: "stake-screen",
-    t: {
-      en: ["Stake", "Join reward cycles"],
-      ru: ["Стейк", "Участвуй в наградах"],
-      tr: ["Stake", "Ödül döngülerine katıl"]
-    }
-  },
-  {
-    screen: "leaderboard",
-    t: {
-      en: ["Leaderboard", "Top players get rewards"],
-      ru: ["Лидерборд", "Топ получают награды"],
-      tr: ["Sıralama", "En iyiler ödül alır"]
-    }
-  },
-  {
-    screen: "transfer",
-    t: {
-      en: ["Transfer", "Send NXN to other players"],
-      ru: ["Переводы", "Отправляй NXN"],
-      tr: ["Transfer", "NXN gönder"]
-    }
-  },
-  {
-    screen: "tap",
-    t: {
-      en: ["You’re ready", "Good luck!"],
-      ru: ["Ты готов", "Удачи!"],
-      tr: ["Hazırsın", "Bol şans!"]
-    }
-  }
-];
-
-function startOnboarding() {
-  obStep = 0;
-  document.getElementById("onboarding-overlay")?.classList.remove("hidden");
-  renderStep();
-}
-
-function renderStep() {
-  const step = OB_STEPS[obStep];
-  if (!step) return finishOnboarding();
-
-  showScreen(step.screen);
-
-  document.getElementById("ob-step").innerText =
-    `${obStep + 1} / ${OB_STEPS.length}`;
-
-  document.getElementById("ob-title").innerText =
-    step.t[obLang][0];
-
-  document.getElementById("ob-text").innerText =
-    step.t[obLang][1];
-}
-
-function nextStep() {
-  obStep++;
-  renderStep();
-}
-
-function finishOnboarding() {
-  document.getElementById("onboarding-overlay")?.classList.add("hidden");
-}
-
-// кнопки
-document.getElementById("ob-next").onclick = nextStep;
-document.getElementById("ob-skip").onclick = finishOnboarding;
-
-// языки
-document.querySelectorAll("#ob-lang-select button").forEach(btn => {
-  btn.onclick = () => {
-    obLang = btn.dataset.lang;
-    document
-      .querySelectorAll("#ob-lang-select button")
-      .forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    renderStep();
-  };
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-  setTimeout(() => {
-    startOnboarding();
-  }, 1000);
-});
-
