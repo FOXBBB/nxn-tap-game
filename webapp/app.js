@@ -92,15 +92,7 @@ setTimeout(() => {
   updateUI();
   initMenu();
 
-  // 🧠 ONBOARDING — строго после полной инициализации
-setTimeout(() => {
-  if (
-    typeof startOnboarding === "function" &&
-    !document.body.classList.contains("locked")
-  ) {
-    startOnboarding();
-  }
-}, 1200);
+
 
 
 
@@ -174,8 +166,14 @@ checkSubscribeBtn.onclick = async () => {
   await refreshMe();
   updateUI();
 
-  subscribeOverlay.classList.add("hidden");
-  unlockGame();
+ subscribeOverlay.classList.add("hidden");
+unlockGame();
+
+// 🔥 ПРИНУДИТЕЛЬНО СТАРТУЕМ ONBOARDING
+setTimeout(() => {
+  localStorage.removeItem("onboardingVersion");
+  startOnboarding();
+}, 300);
 
 
 };

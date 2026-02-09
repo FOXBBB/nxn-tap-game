@@ -130,3 +130,12 @@ document.querySelectorAll("#ob-lang-select button").forEach(btn => {
   };
 });
 window.startOnboarding = startOnboarding;
+// 🚀 АВТОСТАРТ ONBOARDING
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(() => {
+    // если нет subscribe overlay
+    if (!document.body.classList.contains("locked")) {
+      startOnboarding();
+    }
+  }, 500);
+});
