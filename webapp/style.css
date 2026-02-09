@@ -69,15 +69,13 @@ body {
 }
 
 .lb-top1 {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 18px;
-  margin: 14px auto;
+  position: relative;
+  overflow: visible !important; /* 🔑 ВАЖНО */
+  background: linear-gradient(135deg, #ffd54a, #ffb703);
+  box-shadow:
+    0 0 30px rgba(255, 200, 50, 0.65),
+    inset 0 0 18px rgba(255, 255, 255, 0.35);
   border-radius: 22px;
-  background: linear-gradient(135deg, #ffcf40, #ff9f00);
-  color: #1a1a1a;
-  max-width: 95%;
 }
 
 .lb-top1 .avatar {
@@ -2349,10 +2347,11 @@ body.locked {
 .lb-top1::before {
   content: "👑";
   position: absolute;
-  top: -22px;
+  top: -16px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 28px;
+  font-size: 26px;
+  z-index: 5;
   filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.9));
 }
 
@@ -2361,21 +2360,23 @@ body.locked {
   50% { box-shadow: 0 0 30px rgba(255,220,100,0.9); }
   100% { box-shadow: 0 0 18px rgba(255,200,50,0.5); }
 }
-.lb-card.top2 {
+
+.lb-card.silver {
+  position: relative;
   background: linear-gradient(
     135deg,
-    rgba(230, 230, 230, 0.9),
-    rgba(180, 180, 180, 0.7)
+    #f0f0f0,
+    #bfc3c7
   );
-  backdrop-filter: blur(10px);
+  color: #111;
   box-shadow:
-    0 0 18px rgba(200, 200, 200, 0.5),
-    inset 0 0 12px rgba(255,255,255,0.35);
-  border-radius: 20px;
-  position: relative;
+    0 0 18px rgba(220, 220, 220, 0.6),
+    inset 0 0 12px rgba(255,255,255,0.45);
+  overflow: hidden;
 }
 
-.lb-card.top2::after {
+
+.lb-card.silver::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -2385,43 +2386,85 @@ body.locked {
     rgba(255,255,255,0.35),
     transparent
   );
-  animation: silverShine 3s infinite;
+  animation: silverShine 3.5s infinite;
 }
 
 @keyframes silverShine {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+  0% { transform: translateX(-120%); }
+  100% { transform: translateX(120%); }
 }
-.lb-card.top3 {
+
+.lb-card.bronze {
+  position: relative;
   background: linear-gradient(
     135deg,
     #cd7f32,
-    #b87333,
-    #cd7f32
+    #a8652a
   );
+  color: #1a0f05;
   box-shadow:
-    0 0 15px rgba(205, 127, 50, 0.55),
+    0 0 14px rgba(205, 127, 50, 0.55),
     inset 0 0 10px rgba(255,200,150,0.25);
-  border-radius: 20px;
-  position: relative;
   overflow: hidden;
 }
 
-.lb-card.top3::after {
+
+.lb-card.bronze::after {
   content: "";
   position: absolute;
   inset: 0;
   background:
     repeating-linear-gradient(
       45deg,
-      rgba(255,255,255,0.05),
-      rgba(255,255,255,0.05) 6px,
+      rgba(255,255,255,0.04),
+      rgba(255,255,255,0.04) 6px,
       transparent 6px,
       transparent 12px
     );
   pointer-events: none;
 }
+
+/* ===== TOP 1 AVATAR CROWN ===== */
 .lb-top1 .avatar {
-  transform: scale(1.15);
-  border: 2px solid rgba(255,255,255,0.7);
+  position: relative;
+  z-index: 2;
+}
+
+/* корона */
+.lb-top1 .avatar::after {
+  content: "";
+  position: absolute;
+
+  /* позиция — будто надета */
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: 42px;
+  height: 28px;
+
+  background-image: url("crown.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+
+  pointer-events: none;
+  z-index: 3;
+
+  /* мягкий золотой glow */
+  filter:
+    drop-shadow(0 0 6px rgba(255, 215, 0, 0.8))
+    drop-shadow(0 0 12px rgba(255, 200, 50, 0.6));
+}
+.lb-top1 {
+  overflow: visible !important;
+}
+.lb-top1 .avatar::after {
+  animation: crownFloat 3s ease-in-out infinite;
+}
+
+@keyframes crownFloat {
+  0%   { transform: translateX(-50%) translateY(0); }
+  50%  { transform: translateX(-50%) translateY(-3px); }
+  100% { transform: translateX(-50%) translateY(0); }
 }
