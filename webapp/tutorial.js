@@ -1,12 +1,17 @@
-/* ============== NXN GAME STRICT COMMENTARY ONBOARDING (FINAL) ============== */
+/* ============== NXN GAME ONBOARDING (CLEAN FINAL) ============== */
 
 (function () {
   const root = document.getElementById("nxn-tutorial-root");
   let step = -1;
   let lang = "RU";
 
+  /* ================= TEXTS ================= */
+
   const TEXT = {
     RU: {
+      langTitle: "Выбор языка",
+      langText: "Выберите язык, чтобы начать игру",
+
       tap: {
         title: "Тап",
         text: "Нажимай на монету, чтобы зарабатывать NXN. Каждый тап приносит монеты."
@@ -21,7 +26,7 @@
       },
       lbScreen: {
         title: "Рейтинг игроков",
-        text: "Здесь ты видишь общий рейтинг всех игроков. Поднимайся выше, зарабатывая NXN."
+        text: "Здесь отображается общий рейтинг всех игроков."
       },
       transferMenu: {
         title: "Переводы",
@@ -36,7 +41,7 @@
         text: "Нажми сюда, чтобы открыть магазин улучшений."
       },
       shopScreen: {
-        title: "Магазин улучшений",
+        title: "Магазин",
         text: "Улучши силу тапа, энергию и покупай автокликер."
       },
       tapMenu: {
@@ -49,7 +54,7 @@
       },
       stakeMain: {
         title: "Стейк NXN",
-        text: "Выбери сумму и застейкай NXN для участия в наградном цикле."
+        text: "Выбери сумму и застейкай NXN для участия в цикле."
       },
       stakeRef: {
         title: "Реферальный стейк",
@@ -57,7 +62,7 @@
       },
       stakeLB: {
         title: "Стейк-лидерборд",
-        text: "Здесь отображается рейтинг участников стейка и награды текущего цикла."
+        text: "ТОП-500 участников получают награды каждый цикл."
       },
       referralMenu: {
         title: "Рефералы",
@@ -67,31 +72,33 @@
         title: "Реферальная программа",
         text:
           "Делитесь своим реферальным кодом и приглашайте друзей.\n\n" +
-          "Вы и ваш друг получите по 50 000 NXN, которые можно использовать для стейка."
+          "Вы и ваш друг получите по 50 000 NXN для стейка."
       },
       finish: {
-  title: "Готово",
-  text: "Теперь ты готов. Сделай первый тап и начинай зарабатывать NXN."
-}
-
+        title: "Готово",
+        text: "Теперь ты готов. Сделай первый тап и начинай зарабатывать NXN."
+      }
     },
 
     EN: {
+      langTitle: "Language",
+      langText: "Choose your language to start",
+
       tap: {
         title: "Tap",
         text: "Tap the coin to earn NXN. Each tap gives you coins."
       },
       energy: {
         title: "Energy",
-        text: "Each tap consumes energy. When energy runs out, taps will stop."
+        text: "Each tap consumes energy. When energy runs out, taps stop."
       },
       lbMenu: {
         title: "Leaderboard",
-        text: "Tap this icon to view the global leaderboard."
+        text: "Tap this icon to view the global ranking."
       },
       lbScreen: {
         title: "Global Ranking",
-        text: "This is the global ranking of all players. Compete and climb higher."
+        text: "This screen shows the global player ranking."
       },
       transferMenu: {
         title: "Transfers",
@@ -106,12 +113,12 @@
         text: "Tap here to open the upgrade shop."
       },
       shopScreen: {
-        title: "Upgrades Shop",
-        text: "Upgrade tap power, energy, and buy autoclicker."
+        title: "Shop",
+        text: "Upgrade tap power, energy and buy autoclicker."
       },
       tapMenu: {
         title: "Main Screen",
-        text: "Tap here to return to the main tap screen."
+        text: "Tap here to return to the tap screen."
       },
       stakeBtn: {
         title: "Stake",
@@ -119,7 +126,7 @@
       },
       stakeMain: {
         title: "NXN Staking",
-        text: "Choose an amount and stake NXN to join the reward cycle."
+        text: "Choose an amount and stake NXN to join the cycle."
       },
       stakeRef: {
         title: "Referral Stake",
@@ -127,7 +134,7 @@
       },
       stakeLB: {
         title: "Stake Leaderboard",
-        text: "This leaderboard shows top stakers and cycle rewards."
+        text: "Top 500 stakers receive rewards each cycle."
       },
       referralMenu: {
         title: "Referrals",
@@ -140,32 +147,34 @@
           "You and your friend will receive 50,000 NXN each for staking."
       },
       finish: {
-  title: "All Set",
-  text: "You are ready. Make your first tap and start earning NXN."
-}
-
+        title: "All Set",
+        text: "You are ready. Make your first tap and start earning NXN."
+      }
     },
 
     TR: {
+      langTitle: "Dil",
+      langText: "Başlamak için dil seçin",
+
       tap: {
         title: "Dokun",
         text: "NXN kazanmak için coin'e dokun."
       },
       energy: {
         title: "Enerji",
-        text: "Her dokunuş enerji harcar. Enerji bitince durur."
+        text: "Her dokunuş enerji harcar."
       },
       lbMenu: {
         title: "Sıralama",
-        text: "Genel sıralamayı görmek için buraya dokun."
+        text: "Oyuncu sıralamasını görmek için dokun."
       },
       lbScreen: {
         title: "Oyuncu Sıralaması",
-        text: "Tüm oyuncuların genel sıralaması burada gösterilir."
+        text: "Tüm oyuncuların genel sıralaması."
       },
       transferMenu: {
         title: "Transfer",
-        text: "Transfer bölümüne girmek için buraya dokun."
+        text: "Transfer bölümüne git."
       },
       transferScreen: {
         title: "NXN Transfer",
@@ -173,19 +182,19 @@
       },
       shopMenu: {
         title: "Mağaza",
-        text: "Yükseltme mağazasını aç."
+        text: "Mağazayı aç."
       },
       shopScreen: {
-        title: "Yükseltmeler",
-        text: "Dokunma gücünü ve enerjini yükselt."
+        title: "Mağaza",
+        text: "Güç ve enerjini yükselt."
       },
       tapMenu: {
         title: "Ana Ekran",
-        text: "Ana tap ekranına dönmek için buraya dokun."
+        text: "Ana ekrana dön."
       },
       stakeBtn: {
         title: "Stake",
-        text: "Ödül döngülerine katılmak için stake et."
+        text: "Ödül döngülerine katıl."
       },
       stakeMain: {
         title: "NXN Stake",
@@ -193,11 +202,11 @@
       },
       stakeRef: {
         title: "Referans Stake",
-        text: "Referans NXN sadece stake için kullanılabilir."
+        text: "Referans NXN sadece stake içindir."
       },
       stakeLB: {
         title: "Stake Sıralaması",
-        text: "En iyi stake yapan oyuncular burada gösterilir."
+        text: "En iyi 500 stake yapan ödül alır."
       },
       referralMenu: {
         title: "Referans",
@@ -206,73 +215,228 @@
       referralScreen: {
         title: "Referans Programı",
         text:
-          "Referans kodunu paylaş ve arkadaşlarını davet et.\n\n" +
+          "Referans kodunu paylaş.\n\n" +
           "Sen ve arkadaşın stake için 50.000 NXN kazanırsınız."
       },
       finish: {
-  title: "Hazır",
-  text: "Hazırsın. İlk dokunuşunu yap ve NXN kazanmaya başla."
-}
-
+        title: "Hazır",
+        text: "Hazırsın. İlk dokunuşunu yap ve NXN kazanmaya başla."
+      }
     }
   };
 
-  function unlockAll() {
-    document.body.classList.remove("tutorial-lock");
-    root.innerHTML = "";
+  /* ================= HELPERS ================= */
+
+  function lock(target) {
+    document.body.classList.add("tutorial-lock");
+    if (target) target.classList.add("allow-click");
   }
 
-  function showCenter({ title, text, play }) {
-    root.innerHTML = `
-      <div class="nxn-comment nxn-center">
-        <div class="nxn-comment-title">${title}</div>
-        <div class="nxn-comment-text">${text.replace(/\n/g, "<br>")}</div>
-        <div class="nxn-comment-actions">
-          <button class="nxn-comment-btn primary">${play}</button>
-        </div>
-      </div>
+  function unlock() {
+    document.body.classList.remove("tutorial-lock");
+    document.querySelectorAll(".allow-click").forEach(el =>
+      el.classList.remove("allow-click")
+    );
+  }
+
+  function showComment({ title, text }, target, withNext) {
+    root.innerHTML = "";
+    unlock();
+
+    const box = document.createElement("div");
+    box.className = "nxn-comment big";
+    box.innerHTML = `
+      <div class="nxn-comment-title">${title}</div>
+      <div class="nxn-comment-text">${text.replace(/\n/g, "<br>")}</div>
+      ${
+        withNext
+          ? `<div class="nxn-comment-actions">
+               <button class="nxn-comment-btn">Next</button>
+             </div>`
+          : ""
+      }
     `;
 
-    document.querySelector(".nxn-comment-btn").onclick = unlockAll;
+    if (target) {
+      lock(target);
+      const r = target.getBoundingClientRect();
+      box.style.top = `${r.top - 140}px`;
+      box.style.left = `${Math.max(12, r.left)}px`;
+    } else {
+      lock();
+      box.style.top = "20vh";
+      box.style.left = "50vw";
+      box.style.transform = "translateX(-50%)";
+    }
+
+    root.appendChild(box);
+
+    if (withNext) {
+      box.querySelector("button").onclick = () => {
+        step++;
+        run();
+      };
+    }
   }
 
+  /* ================= MAIN FLOW ================= */
+
+  function run() {
+    const t = TEXT[lang];
+
+    switch (step) {
+      case -1:
+        root.innerHTML = `
+          <div class="nxn-comment nxn-lang-center">
+            <div class="nxn-comment-title">${t.langTitle}</div>
+            <div class="nxn-comment-text">${t.langText}</div>
+            <div class="nxn-comment-actions">
+              <button class="nxn-comment-btn" data-lang="RU">RU</button>
+              <button class="nxn-comment-btn" data-lang="EN">EN</button>
+              <button class="nxn-comment-btn" data-lang="TR">TR</button>
+            </div>
+          </div>
+        `;
+        lock();
+        document.querySelectorAll("[data-lang]").forEach(b => {
+          b.onclick = () => {
+            lang = b.dataset.lang;
+            step = 0;
+            run();
+          };
+        });
+        break;
+
+      case 0: {
+        const coin = document.getElementById("coin");
+        showComment(t.tap, coin, false);
+        coin.addEventListener("pointerdown", () => {
+          step = 1;
+          run();
+        }, { once: true });
+        break;
+      }
+
+      case 1:
+        showComment(t.energy, document.getElementById("energy"), true);
+        break;
+
+      case 2: {
+        const btn = document.querySelector('.menu [data-go="leaderboard"]');
+        showComment(t.lbMenu, btn, false);
+        btn.addEventListener("click", () => {
+          step = 3;
+          run();
+        }, { once: true });
+        break;
+      }
+
+      case 3:
+        showComment(t.lbScreen, null, true);
+        break;
+
+      case 4: {
+        const btn = document.querySelector('.menu [data-go="transfer"]');
+        showComment(t.transferMenu, btn, false);
+        btn.addEventListener("click", () => {
+          step = 5;
+          run();
+        }, { once: true });
+        break;
+      }
+
+      case 5:
+        showComment(t.transferScreen, null, true);
+        break;
+
+      case 6: {
+        const btn = document.querySelector('.menu [data-go="shop"]');
+        showComment(t.shopMenu, btn, false);
+        btn.addEventListener("click", () => {
+          step = 7;
+          run();
+        }, { once: true });
+        break;
+      }
+
+      case 7:
+        showComment(t.shopScreen, null, true);
+        break;
+
+      case 8: {
+        const btn = document.querySelector('.menu [data-go="tap"]');
+        showComment(t.tapMenu, btn, false);
+        btn.addEventListener("click", () => {
+          step = 9;
+          run();
+        }, { once: true });
+        break;
+      }
+
+      case 9: {
+        const btn = document.getElementById("stake-btn");
+        showComment(t.stakeBtn, btn, false);
+        btn.addEventListener("click", () => {
+          step = 10;
+          run();
+        }, { once: true });
+        break;
+      }
+
+      case 10:
+        showComment(t.stakeMain, document.getElementById("stake-confirm"), true);
+        break;
+
+      case 11:
+        showComment(t.stakeRef, document.getElementById("stake-referral-btn"), true);
+        break;
+
+      case 12: {
+        const btn = document.getElementById("open-stake-lb");
+        showComment(t.stakeLB, btn, false);
+        btn.addEventListener("click", () => {
+          const back = document.getElementById("back-to-stake");
+          if (back) {
+            back.classList.add("allow-click");
+            back.addEventListener("click", () => {
+              step = 13;
+              run();
+            }, { once: true });
+          }
+        }, { once: true });
+        break;
+      }
+
+      case 13: {
+        const btn = document.getElementById("open-referral");
+        showComment(t.referralMenu, btn, false);
+        btn.addEventListener("click", () => {
+          step = 14;
+          run();
+        }, { once: true });
+        break;
+      }
+
+      case 14:
+        showComment(t.referralScreen, null, true);
+        break;
+
+      case 15: {
+        const coin = document.getElementById("coin");
+        showComment(t.finish, coin, false);
+        coin.addEventListener("pointerdown", () => {
+          unlock();
+          root.innerHTML = "";
+        }, { once: true });
+        break;
+      }
+    }
+  }
+
+  /* ================= START ================= */
+
   window.startNXNTutorial = function () {
-  const coin = document.getElementById("coin");
-  const root = document.getElementById("nxn-tutorial-root");
-
-  // показываем финальный комментарий над монетой
-  root.innerHTML = "";
-  document.body.classList.add("tutorial-lock");
-
-  coin.classList.add("allow-click");
-
-  const box = document.createElement("div");
-  box.className = "nxn-comment big";
-
-  box.innerHTML = `
-    <div class="nxn-comment-title">${TEXT[lang].finish.title}</div>
-    <div class="nxn-comment-text">
-      ${TEXT[lang].finish.text}
-    </div>
-  `;
-
-  const r = coin.getBoundingClientRect();
-  box.style.top = `${r.top - 140}px`;
-  box.style.left = `${Math.max(12, r.left)}px`;
-
-  root.appendChild(box);
-
-  // ждём финальный тап
-  coin.addEventListener(
-    "pointerdown",
-    () => {
-      // полностью закрываем туториал
-      document.body.classList.remove("tutorial-lock");
-      coin.classList.remove("allow-click");
-      root.innerHTML = "";
-    },
-    { once: true }
-  );
-};
-
+    step = -1;
+    run();
+  };
 })();
