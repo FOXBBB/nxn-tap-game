@@ -3,6 +3,9 @@
 let obStep = 0;
 let obLang = "en";
 
+const ONBOARDING_VERSION = "v1"; // 🔥 МЕНЯЕШЬ — показывается всем снова
+
+
 const OB_STEPS = [
   {
     screen: "tap",
@@ -71,12 +74,16 @@ const OB_STEPS = [
 ];
 
 function startOnboarding() {
-  if (localStorage.getItem("onboardingDone") === "1") return;
+  const savedVersion = localStorage.getItem("onboardingVersion");
+
+  // если уже проходил ЭТУ версию — не показываем
+  if (savedVersion === ONBOARDING_VERSION) return;
 
   obStep = 0;
   document.getElementById("onboarding-overlay").classList.remove("hidden");
   renderStep();
 }
+
 
 function renderStep() {
   const step = OB_STEPS[obStep];
@@ -100,10 +107,12 @@ function nextStep() {
 }
 
 function finishOnboarding() {
-  localStorage.setItem("onboardingDone", "1");
+  localStorage.setItem("onboardingVersion", ONBOARDING_VERSION);
   document.getElementById("onboarding-overlay").classList.add("hidden");
+
   fetch("/api/onboarding/complete", { method: "POST" });
 }
+
 
 // buttons
 document.getElementById("ob-next").onclick = nextStep;
