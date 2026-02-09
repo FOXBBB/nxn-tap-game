@@ -2,6 +2,7 @@
 
 let obStep = 0;
 let obLang = "en";
+alert("ONBOARDING JS LOADED");
 
 const ONBOARDING_VERSION = "v2"; // 🔥 МЕНЯЕШЬ — показывается всем снова
 
@@ -139,3 +140,19 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }, 500);
 });
+// 🔥 ЖЁСТКИЙ ГАРАНТИРОВАННЫЙ СТАРТ
+(function forceOnboarding() {
+  try {
+    const overlay = document.getElementById("onboarding-overlay");
+    if (!overlay) return;
+
+    const saved = localStorage.getItem("onboardingVersion");
+    if (saved === ONBOARDING_VERSION) return;
+
+    overlay.classList.remove("hidden");
+    obStep = 0;
+    renderStep();
+  } catch (e) {
+    console.error("ONBOARDING CRASH", e);
+  }
+})();

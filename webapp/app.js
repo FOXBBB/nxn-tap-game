@@ -172,7 +172,6 @@ unlockGame();
 // 🔥 ПРИНУДИТЕЛЬНО СТАРТУЕМ ONBOARDING
 setTimeout(() => {
   localStorage.removeItem("onboardingVersion");
-  startOnboarding();
 }, 300);
 
 
