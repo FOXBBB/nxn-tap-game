@@ -1,4 +1,8 @@
 // ================= ONBOARDING =================
+const dbg = document.getElementById("debug-bar");
+if (dbg) dbg.innerText = "DEBUG: ONBOARDING JS LOADED";
+
+
 
 let obStep = 0;
 let obLang = "en";
@@ -156,3 +160,8 @@ document.addEventListener("DOMContentLoaded", () => {
     console.error("ONBOARDING CRASH", e);
   }
 })();
+setTimeout(() => {
+  document.getElementById("onboarding-overlay")?.classList.remove("hidden");
+  const dbg = document.getElementById("debug-bar");
+  if (dbg) dbg.innerText = "DEBUG: ONBOARDING FORCED OPEN";
+}, 1000);
