@@ -77,9 +77,9 @@ document
   userId = String(tgUser.id);
 
   // 🔒 SUBSCRIBE GATE — старт проверки
-setTimeout(() => {
-  checkSubscribeAccess();
-}, 600);
+// setTimeout(() => {
+//   checkSubscribeAccess();
+// }, 600);
 
   const myIdEl = document.getElementById("my-id");
   if (myIdEl) {
@@ -123,22 +123,22 @@ async function checkSubscribeAccess() {
 }
 }
 
-function lockGame() {
-  document.body.classList.add("locked");
+//function lockGame() {
+ // document.body.classList.add("locked");
 
   // блокируем все клики
-  document.querySelectorAll(".screen, .menu").forEach(el => {
-    el.style.pointerEvents = "none";
-  });
-}
+  //document.querySelectorAll(".screen, .menu").forEach(el => {
+   // el.style.pointerEvents = "none";
+  //});
+//}
 
-function unlockGame() {
-  document.body.classList.remove("locked");
+//function unlockGame() {
+  //document.body.classList.remove("locked");
 
-  document.querySelectorAll(".screen, .menu").forEach(el => {
-    el.style.pointerEvents = "";
-  });
-}
+  //document.querySelectorAll(".screen, .menu").forEach(el => {
+    //el.style.pointerEvents = "";
+  //});
+//}
 
 checkSubscribeBtn.onclick = async () => {
   const res = await fetch("/api/subscribe/confirm", {
@@ -1476,7 +1476,9 @@ document.querySelectorAll("#ob-lang-select button").forEach(btn => {
   };
 });
 
-// 🔥 ПРИНУДИТЕЛЬНЫЙ ЗАПУСК — ВСЕГДА
-setTimeout(() => {
-  startOnboarding();
-}, 800);
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(() => {
+    startOnboarding();
+  }, 1000);
+});
+
