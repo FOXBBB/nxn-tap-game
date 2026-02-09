@@ -130,8 +130,3 @@ document.querySelectorAll("#ob-lang-select button").forEach(btn => {
   };
 });
 window.startOnboarding = startOnboarding;
-document.addEventListener("DOMContentLoaded", () => {
-  setTimeout(() => {
-    startOnboarding();
-  }, 800);
-});

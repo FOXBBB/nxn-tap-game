@@ -165,9 +165,14 @@ checkSubscribeBtn.onclick = async () => {
   subscribeOverlay.classList.add("hidden");
   unlockGame();
 
-startOnboarding();
+setTimeout(() => {
+  if (typeof startOnboarding === "function") {
+    startOnboarding();
+  }
+}, 300);
 
-}
+
+};
 
 
 
