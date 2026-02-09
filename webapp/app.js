@@ -66,6 +66,9 @@ document
 
 
   Telegram.WebApp.ready();
+  // ВРЕМЕННО, ДЛЯ ПРОВЕРКИ
+localStorage.removeItem("onboardingVersion");
+
   Telegram.WebApp.expand();
 
   tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
