@@ -91,12 +91,6 @@ setTimeout(() => {
   await loadRewardState();
   updateUI();
   initMenu();
-// ===== START ONBOARDING (GLOBAL) =====
-setTimeout(() => {
-  if (typeof startOnboarding === "function") {
-    startOnboarding();
-  }
-}, 800);
 
 // ================= SUBSCRIBE GATE =================
 

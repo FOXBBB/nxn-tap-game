@@ -3,7 +3,7 @@
 let obStep = 0;
 let obLang = "en";
 
-const ONBOARDING_VERSION = "v1"; // 🔥 МЕНЯЕШЬ — показывается всем снова
+const ONBOARDING_VERSION = "v2"; // 🔥 МЕНЯЕШЬ — показывается всем снова
 
 
 const OB_STEPS = [
@@ -130,3 +130,8 @@ document.querySelectorAll("#ob-lang-select button").forEach(btn => {
   };
 });
 window.startOnboarding = startOnboarding;
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(() => {
+    startOnboarding();
+  }, 800);
+});
