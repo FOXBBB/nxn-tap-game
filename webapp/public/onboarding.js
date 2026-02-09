@@ -129,3 +129,4 @@ document.querySelectorAll("#ob-lang-select button").forEach(btn => {
     renderStep();
   };
 });
+window.startOnboarding = startOnboarding;
