@@ -182,21 +182,27 @@
   /* ================= FLOW ================= */
 
   function run() {
-    const t = TEXT[lang];
+  // язык для всех шагов КРОМЕ выбора
+  const t = TEXT[lang];
 
-    switch (step) {
-      case -1:
+  switch (step) {
+
+
+      case -1: {
+        const t = TEXT.EN; // ← ВСЕГДА АНГЛИЙСКИЙ
+
         root.innerHTML = `
-          <div class="nxn-comment nxn-lang-center">
-            <div class="nxn-comment-title">${t.langTitle}</div>
-            <div class="nxn-comment-text">${t.langText}</div>
-            <div class="nxn-comment-actions">
-              <button class="nxn-comment-btn" data-lang="RU">RU</button>
-              <button class="nxn-comment-btn" data-lang="EN">EN</button>
-              <button class="nxn-comment-btn" data-lang="TR">TR</button>
-            </div>
-          </div>
-        `;
+    <div class="nxn-comment nxn-lang-center">
+      <div class="nxn-comment-title">${t.langTitle}</div>
+      <div class="nxn-comment-text">${t.langText}</div>
+      <div class="nxn-comment-actions">
+        <button class="nxn-comment-btn" data-lang="RU">RU</button>
+        <button class="nxn-comment-btn" data-lang="EN">EN</button>
+        <button class="nxn-comment-btn" data-lang="TR">TR</button>
+      </div>
+    </div>
+  `;
+      }
         lock();
         document.querySelectorAll("[data-lang]").forEach(b => {
           b.onclick = () => {
@@ -315,13 +321,13 @@
   /* ================= START ================= */
 
   window.startNXNTutorial = function () {
-  // если туториал уже пройден — ничего не делаем
-  if (localStorage.getItem("nxn_tutorial_done")) {
-    return;
-  }
+    // если туториал уже пройден — ничего не делаем
+    if (localStorage.getItem("nxn_tutorial_done")) {
+      return;
+    }
 
-  step = -1;
-  run();
-};
+    step = -1;
+    run();
+  };
 
 })();
