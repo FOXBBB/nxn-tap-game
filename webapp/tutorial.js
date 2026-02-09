@@ -240,14 +240,26 @@
         break;
 
       case 12: {
-        const btn = document.getElementById("open-stake-lb");
-        showComment(t.stakeLB, btn, false);
-        btn.addEventListener("click", () => {
+  const btn = document.getElementById("open-stake-lb");
+  showComment(t.stakeLB, btn, false);
+
+  btn.addEventListener("click", () => {
+    // разрешаем ТОЛЬКО кнопку выхода
+    setTimeout(() => {
+      const back = document.getElementById("back-to-stake");
+      if (back) {
+        back.classList.add("allow-click");
+        back.addEventListener("click", () => {
           step = 13;
           run();
         }, { once: true });
-        break;
       }
+    }, 400);
+  }, { once: true });
+
+  break;
+}
+
 
       case 13: {
         const btn = document.getElementById("open-referral");
