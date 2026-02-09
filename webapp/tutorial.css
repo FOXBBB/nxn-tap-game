@@ -1,136 +1,61 @@
-/* ================= NXN TUTORIAL ================= */
+/* ================= NXN COMMENTARY TUTORIAL ================= */
 
-.nxn-tutorial-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(2, 6, 23, 0.92);
-  backdrop-filter: blur(6px);
-  z-index: 9998;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: nxnFadeIn 0.25s ease;
+.nxn-comment {
+  position: absolute;
+  max-width: 260px;
+  background: rgba(2, 6, 23, 0.95);
+  border: 1px solid rgba(34,197,94,0.5);
+  border-radius: 16px;
+  padding: 14px 16px;
+  z-index: 10000;
+  box-shadow: 0 0 25px rgba(34,197,94,0.35);
+  animation: nxnCommentIn 0.25s ease;
 }
 
-.nxn-tutorial-card {
-  width: 90%;
-  max-width: 380px;
-  background: linear-gradient(180deg, #020617, #02040a);
-  border: 1px solid rgba(34,197,94,0.35);
-  border-radius: 20px;
-  padding: 24px;
-  text-align: center;
-  box-shadow: 0 0 40px rgba(34,197,94,0.25);
-  animation: nxnScaleIn 0.25s ease;
-}
-
-.nxn-tutorial-title {
-  font-size: 20px;
+.nxn-comment-title {
   font-weight: 900;
-  margin-bottom: 12px;
-  background: linear-gradient(180deg, #7affc6, #2cff9c);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.nxn-tutorial-text {
   font-size: 14px;
-  line-height: 1.45;
-  color: #cbd5f5;
-  margin-bottom: 22px;
-}
-
-.nxn-tutorial-actions {
-  display: flex;
-  gap: 12px;
-}
-
-.nxn-tutorial-btn {
-  flex: 1;
-  padding: 14px;
-  border-radius: 14px;
-  border: none;
-  font-size: 14px;
-  font-weight: 900;
-  letter-spacing: 1px;
-  cursor: pointer;
-}
-
-.nxn-tutorial-btn.primary {
-  background: linear-gradient(135deg, #2cff9c, #00c070);
-  color: #02140c;
-  box-shadow: 0 6px 0 #009a5a;
-}
-
-.nxn-tutorial-btn.secondary {
-  background: rgba(255,255,255,0.06);
-  color: #9affea;
-  border: 1px solid rgba(255,255,255,0.18);
-}
-
-.nxn-lang-select {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.nxn-lang-btn {
-  padding: 12px 0;
-  border-radius: 12px;
-  font-weight: 800;
-  border: 1px solid rgba(34,197,94,0.4);
-  background: rgba(34,197,94,0.12);
   color: #7affc6;
+  margin-bottom: 6px;
+}
+
+.nxn-comment-text {
+  font-size: 13px;
+  color: #cbd5f5;
+  line-height: 1.4;
+}
+
+.nxn-comment-actions {
+  margin-top: 10px;
+  text-align: right;
+}
+
+.nxn-comment-btn {
+  background: linear-gradient(135deg, #2cff9c, #00c070);
+  border: none;
+  border-radius: 10px;
+  padding: 6px 14px;
+  font-weight: 900;
+  font-size: 12px;
   cursor: pointer;
+  color: #02140c;
 }
 
-@keyframes nxnFadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+/* хвостик */
+.nxn-comment::after {
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: rgba(2, 6, 23, 0.95);
+  border-left: 1px solid rgba(34,197,94,0.5);
+  border-top: 1px solid rgba(34,197,94,0.5);
+  transform: rotate(45deg);
+  bottom: -6px;
+  left: 24px;
 }
 
-@keyframes nxnScaleIn {
-  from { transform: scale(0.9); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
-}
-/* ===== NXN TUTORIAL HIGHLIGHT SYSTEM ===== */
-
-.nxn-highlight {
-  position: relative !important;
-  z-index: 10001 !important;
-  pointer-events: auto !important;
-
-  box-shadow:
-    0 0 0 4px rgba(34,197,94,0.95),
-    0 0 35px rgba(34,197,94,0.9),
-    0 0 70px rgba(34,197,94,0.6);
-
-  border-radius: 18px;
-  animation: nxnPulse 1.2s infinite;
-}
-
-@keyframes nxnPulse {
-  0%   { box-shadow: 0 0 0 4px rgba(34,197,94,0.8), 0 0 20px rgba(34,197,94,0.8); }
-  50%  { box-shadow: 0 0 0 6px rgba(34,197,94,1),   0 0 45px rgba(34,197,94,1); }
-  100% { box-shadow: 0 0 0 4px rgba(34,197,94,0.8), 0 0 20px rgba(34,197,94,0.8); }
-}
-/* overlay не перехватывает клики */
-.nxn-tutorial-overlay {
-  pointer-events: none;
-}
-
-/* карточка туториала кликабельна */
-.nxn-tutorial-card {
-  pointer-events: auto;
-}
-/* блокируем только экраны и меню */
-body.tutorial-active .screen,
-body.tutorial-active .menu {
-  pointer-events: none;
-}
-
-/* подсвеченный элемент снова кликабелен */
-body.tutorial-active .nxn-highlight {
-  pointer-events: auto !important;
+@keyframes nxnCommentIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
