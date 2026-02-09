@@ -2336,13 +2336,3 @@ body.locked {
   position: relative;
 }
 
-.lb-list .row.me::after {
-  content: "YOU";
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 11px;
-  font-weight: 900;
-  color: #22c55e;
-}
