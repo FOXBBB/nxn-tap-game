@@ -7,7 +7,7 @@
 
   const steps = {
     EN: [
-      { screen: "main", title: "Tap", text: "Tap the coin to earn NXN.", target: "#coin" },
+      { screen: "tap", title: "Tap", text: "Tap the coin to earn NXN.", target: "#coin" },
       { screen: "main", title: "Energy", text: "Each tap consumes energy.", target: "#energy" },
       { screen: "leaderboard", title: "Leaderboard", text: "Compete with other players." },
       { screen: "transfer", title: "Transfer", text: "Send NXN to other players." },
@@ -35,6 +35,22 @@
     ]
   };
 
+function waitForScreen(id, cb) {
+  const screen = document.getElementById(id);
+  if (!screen) return;
+
+  const check = () => {
+    if (!screen.classList.contains("hidden")) {
+      cb();
+    } else {
+      requestAnimationFrame(check);
+    }
+  };
+
+  check();
+}
+
+
   function render() {
     const root = document.getElementById(rootId);
     if (!root) return;
@@ -58,22 +74,22 @@
     const s = steps[lang][step];
     if (window.showScreen) window.showScreen(s.screen);
 
-    setTimeout(() => {
-      const comment = document.createElement("div");
-      comment.className = "nxn-comment";
-      comment.innerHTML = `
-        <div class="nxn-comment-title">${s.title}</div>
-        <div class="nxn-comment-text">${s.text}</div>
-        <div class="nxn-comment-actions">
-          <button class="nxn-comment-btn">Next</button>
-        </div>
-      `;
+waitForScreen(s.screen, () => {
+  const comment = document.createElement("div");
+  comment.className = "nxn-comment";
+  comment.innerHTML = `
+    <div class="nxn-comment-title">${s.title}</div>
+    <div class="nxn-comment-text">${s.text}</div>
+    <div class="nxn-comment-actions">
+      <button class="nxn-comment-btn">Next</button>
+    </div>
+  `;
 
-      positionComment(comment, s.target);
-      root.appendChild(comment);
+  positionComment(comment, s.target);
+  root.appendChild(comment);
 
-      comment.querySelector("button").onclick = next;
-    }, 300);
+  comment.querySelector("button").onclick = next;
+});
   }
 
  function positionComment(el, target) {
