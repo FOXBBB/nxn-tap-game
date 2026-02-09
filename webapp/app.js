@@ -92,6 +92,18 @@ setTimeout(() => {
   updateUI();
   initMenu();
 
+  // 🧠 ONBOARDING — строго после полной инициализации
+setTimeout(() => {
+  if (
+    typeof startOnboarding === "function" &&
+    !document.body.classList.contains("locked")
+  ) {
+    startOnboarding();
+  }
+}, 1200);
+
+
+
 // ================= SUBSCRIBE GATE =================
 
 const subscribeOverlay = document.getElementById("subscribe-overlay");
@@ -164,12 +176,6 @@ checkSubscribeBtn.onclick = async () => {
 
   subscribeOverlay.classList.add("hidden");
   unlockGame();
-
-setTimeout(() => {
-  if (typeof startOnboarding === "function") {
-    startOnboarding();
-  }
-}, 300);
 
 
 };
