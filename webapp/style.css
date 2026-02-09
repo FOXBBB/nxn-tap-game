@@ -70,8 +70,11 @@ body {
 
 
 .lb-top1 .info {
-  flex: 1;
-  margin-left: 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  min-width: 0;              /* 🔑 важно для переполнения */
 }
 
 .lb-top1 .rank {
@@ -85,12 +88,10 @@ body {
 }
 
 .lb-top1 .score {
-  font-size: 22px;
-  font-weight: 900;
-
-  margin-right: 14px;
   min-width: 90px;
-  text-align: right;
+  text-align: center;        /* 👈 ЦЕНТР */
+  font-weight: 900;
+  white-space: nowrap;
 }
 
 .lb-top23 {
@@ -2435,11 +2436,20 @@ body.locked {
   position: relative;
 }
 
+/* ===== TOP 1 — FIXED LAYOUT (ALL DEVICES) ===== */
 .lb-top1 {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
+
   gap: 14px;
+  padding: 14px 16px;
+  margin-bottom: 18px;
+
+  border-radius: 22px;
+  overflow: visible;
 }
+
 .lb-top1 {
   margin-bottom: 18px;
 }
