@@ -82,3 +82,13 @@
   padding: 12px 0;
   font-size: 14px;
 }
+/* ===== TUTORIAL CONTROL ===== */
+
+body.tutorial-lock .menu,
+body.tutorial-lock .screen {
+  pointer-events: none;
+}
+
+body.tutorial-lock .allow-click {
+  pointer-events: auto !important;
+}
