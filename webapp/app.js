@@ -117,7 +117,6 @@ async function checkSubscribeAccess() {
   } else {
     unlockGame();
     subscribeOverlay.classList.add("hidden");
-    startOnboarding(true);
 
   }
 }

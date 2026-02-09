@@ -470,12 +470,12 @@
 </div>
 
 
-<!-- ================= ONBOARDING ================= -->
+<!-- ONBOARDING -->
 <div id="onboarding-overlay" class="onboarding hidden">
   <div class="onboarding-card">
 
     <div class="ob-progress">
-      <span id="ob-step">1 / 8</span>
+      <span id="ob-step"></span>
     </div>
 
     <div id="ob-lang-select" class="ob-lang">
@@ -493,76 +493,15 @@
   </div>
 </div>
 
+<link rel="stylesheet" href="onboarding.css">
+<script src="onboarding.js"></script>
 
-
-
-
-<style>
-.onboarding {
-  position: fixed;
-  inset: 0;
-  background: rgba(2,6,23,.94);
-  backdrop-filter: blur(10px);
-  z-index: 99999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.onboarding.hidden { display:none }
-</style>
-
-<script>
-console.log("ONBOARDING INLINE LOADED");
-
-let obStep = 0;
-let obLang = "en";
-const ONBOARDING_VERSION = "v2";
-
-const OB_STEPS = [
-  { screen:"tap", t:{ en:["Welcome","Tap to earn"], ru:["Добро пожаловать","Тапай"], tr:["Hoşgeldin","Dokun"] } },
-  { screen:"shop", t:{ en:["Shop","Boost progress"], ru:["Магазин","Улучшения"], tr:["Mağaza","Güçlendir"] } },
-  { screen:"tap", t:{ en:["Ready","Let’s go"], ru:["Готов","Поехали"], tr:["Hazır","Başla"] } },
-];
-
-function startOnboarding(){
-  localStorage.removeItem("onboardingVersion");
-  document.getElementById("onboarding-overlay").classList.remove("hidden");
-  renderStep();
-}
-
-function renderStep(){
-  const s = OB_STEPS[obStep];
-  if(!s) return finish();
-  document.getElementById("ob-title").innerText = s.t[obLang][0];
-  document.getElementById("ob-text").innerText = s.t[obLang][1];
-}
-
-function next(){
-  obStep++;
-  renderStep();
-}
-
-function finish(){
-  localStorage.setItem("onboardingVersion", ONBOARDING_VERSION);
-  document.getElementById("onboarding-overlay").classList.add("hidden");
-}
-
-document.addEventListener("DOMContentLoaded", ()=>{
-  document.getElementById("ob-next").onclick = next;
-  document.getElementById("ob-skip").onclick = finish;
-
-  setTimeout(()=>{
-    startOnboarding();
-  },1000);
-});
-</script>
 
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
 
 <script src="app.js"></script>
-<script src="onboarding.js"></script>
 
 </body>
 
