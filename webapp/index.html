@@ -40,13 +40,18 @@
 
         <!-- TOP 1 -->
         <div class="lb-top1">
-          <img class="avatar" src="">
+          <div class="avatar-wrap">
+            <img class="avatar" src="">
+          </div>
+
           <div class="info">
             <div class="rank gold">#1</div>
             <div class="name"></div>
           </div>
+
           <div class="score"></div>
         </div>
+
 
         <!-- TOP 2 / 3 -->
         <div class="lb-top23">
@@ -406,75 +411,69 @@
         </div>
       </div>
 
-<!-- MIN STACK MODAL -->
-<div id="stackModal" class="modal hidden">
-  <div class="modal-card">
-    <h3 id="modalTitle"></h3>
-    <p id="modalText"></p>
-    <button class="btn primary" onclick="closeModal()">Got it</button>
-  </div>
-</div>
+      <!-- MIN STACK MODAL -->
+      <div id="stackModal" class="modal hidden">
+        <div class="modal-card">
+          <h3 id="modalTitle"></h3>
+          <p id="modalText"></p>
+          <button class="btn primary" onclick="closeModal()">Got it</button>
+        </div>
+      </div>
 
-<script>
+      <script>
 
-/* ===== STACK MODAL ===== */
-function showMinStackModal() {
-  document.getElementById("modalTitle").innerText = "Minimum STACK Amount";
-  document.getElementById("modalText").innerText =
-    "The minimum STACK entry is 10,000 NXN. Increase the amount to participate in the cycle.";
-  document.getElementById("stackModal").classList.remove("hidden");
-}
+        /* ===== STACK MODAL ===== */
+        function showMinStackModal() {
+          document.getElementById("modalTitle").innerText = "Minimum STACK Amount";
+          document.getElementById("modalText").innerText =
+            "The minimum STACK entry is 10,000 NXN. Increase the amount to participate in the cycle.";
+          document.getElementById("stackModal").classList.remove("hidden");
+        }
 
-function closeModal() {
-  document.getElementById("stackModal").classList.add("hidden");
-}
+        function closeModal() {
+          document.getElementById("stackModal").classList.add("hidden");
+        }
 
-function tryStake(amount) {
-  if (amount < 10000) {
-    showMinStackModal();
-    return;
-  }
-  // continue stake logic
-}
-</script>
+        function tryStake(amount) {
+          if (amount < 10000) {
+            showMinStackModal();
+            return;
+          }
+          // continue stake logic
+        }
+      </script>
 
-<!-- TELEGRAM & TON -->
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+      <!-- TELEGRAM & TON -->
+      <script src="https://telegram.org/js/telegram-web-app.js"></script>
+      <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
 
-<!-- MAIN APP LOGIC -->
-<script src="app.js"></script>
+      <!-- MAIN APP LOGIC -->
+      <script src="app.js"></script>
 
-<!-- SUBSCRIBE MODAL -->
-<div id="subscribe-overlay" class="subscribe-overlay hidden">
-  <div class="subscribe-modal">
-    <h2>🚀 Join NeXoN Community</h2>
+      <!-- SUBSCRIBE MODAL -->
+      <div id="subscribe-overlay" class="subscribe-overlay hidden">
+        <div class="subscribe-modal">
+          <h2>🚀 Join NeXoN Community</h2>
 
-    <p class="subscribe-text">
-      To enter the game, you must subscribe to our official channel.
-    </p>
+          <p class="subscribe-text">
+            To enter the game, you must subscribe to our official channel.
+          </p>
 
-    <a
-      href="https://t.me/NXN_NeXoN"
-      target="_blank"
-      class="subscribe-btn primary"
-    >
-      Subscribe to Channel
-    </a>
+          <a href="https://t.me/NXN_NeXoN" target="_blank" class="subscribe-btn primary">
+            Subscribe to Channel
+          </a>
 
-    <button
-      id="check-subscribe-btn"
-      class="subscribe-btn success"
-    >
-      Check Subscription
-    </button>
+          <button id="check-subscribe-btn" class="subscribe-btn success">
+            Check Subscription
+          </button>
 
-    <p class="subscribe-note">
-      🎁 Bonus: <b>3000 NXN</b> (one time only)
-    </p>
-  </div>
-</div>
+          <p class="subscribe-note">
+            🎁 Bonus: <b>3000 NXN</b> (one time only)
+          </p>
+        </div>
+      </div>
 
 
 </body>
+
 </html>
