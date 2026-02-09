@@ -96,10 +96,6 @@
 }
 /* ===== NXN TUTORIAL HIGHLIGHT SYSTEM ===== */
 
-.nxn-tutorial-lock * {
-  pointer-events: none !important;
-}
-
 .nxn-highlight {
   position: relative !important;
   z-index: 10001 !important;
