@@ -301,9 +301,11 @@
           const coin = document.getElementById("coin");
           showComment(t.finish, coin, false);
           coin.addEventListener("pointerdown", () => {
+            localStorage.setItem("nxn_tutorial_done", "1"); // ← ВАЖНО
             unlock();
             root.innerHTML = "";
           }, { once: true });
+
         }, 300);
         break;
       }
@@ -313,7 +315,13 @@
   /* ================= START ================= */
 
   window.startNXNTutorial = function () {
-    step = -1;
-    run();
-  };
+  // если туториал уже пройден — ничего не делаем
+  if (localStorage.getItem("nxn_tutorial_done")) {
+    return;
+  }
+
+  step = -1;
+  run();
+};
+
 })();
