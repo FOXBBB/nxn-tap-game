@@ -2336,3 +2336,92 @@ body.locked {
   position: relative;
 }
 
+.lb-top1 {
+  position: relative;
+  background: linear-gradient(135deg, #ffd54a, #ffb703, #ffd54a);
+  box-shadow:
+    0 0 25px rgba(255, 200, 50, 0.6),
+    inset 0 0 20px rgba(255, 255, 255, 0.35);
+  border-radius: 22px;
+  animation: goldPulse 3s infinite;
+}
+
+.lb-top1::before {
+  content: "👑";
+  position: absolute;
+  top: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 28px;
+  filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.9));
+}
+
+@keyframes goldPulse {
+  0% { box-shadow: 0 0 18px rgba(255,200,50,0.5); }
+  50% { box-shadow: 0 0 30px rgba(255,220,100,0.9); }
+  100% { box-shadow: 0 0 18px rgba(255,200,50,0.5); }
+}
+.lb-card.top2 {
+  background: linear-gradient(
+    135deg,
+    rgba(230, 230, 230, 0.9),
+    rgba(180, 180, 180, 0.7)
+  );
+  backdrop-filter: blur(10px);
+  box-shadow:
+    0 0 18px rgba(200, 200, 200, 0.5),
+    inset 0 0 12px rgba(255,255,255,0.35);
+  border-radius: 20px;
+  position: relative;
+}
+
+.lb-card.top2::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255,255,255,0.35),
+    transparent
+  );
+  animation: silverShine 3s infinite;
+}
+
+@keyframes silverShine {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+.lb-card.top3 {
+  background: linear-gradient(
+    135deg,
+    #cd7f32,
+    #b87333,
+    #cd7f32
+  );
+  box-shadow:
+    0 0 15px rgba(205, 127, 50, 0.55),
+    inset 0 0 10px rgba(255,200,150,0.25);
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.lb-card.top3::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(
+      45deg,
+      rgba(255,255,255,0.05),
+      rgba(255,255,255,0.05) 6px,
+      transparent 6px,
+      transparent 12px
+    );
+  pointer-events: none;
+}
+.lb-top1 .avatar {
+  transform: scale(1.15);
+  border: 2px solid rgba(255,255,255,0.7);
+}
