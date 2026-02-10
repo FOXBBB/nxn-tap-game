@@ -60,6 +60,10 @@
         title: "Реферальный стейк",
         text: "Реферальные NXN можно использовать только для стейка."
       },
+      stakeLBEnter: {
+        title: "Стейк-лидерборд",
+        text: "Нажми сюда, чтобы открыть стейк-лидерборд."
+      },
       stakeLBExit: {
         title: "Стейк-лидерборд",
         text: "Нажми кнопку «Назад», чтобы выйти из стейк-лидерборда."
@@ -96,6 +100,10 @@
       stakeBtn: { title: "Stake", text: "Tap to participate in cycles." },
       stakeMain: { title: "NXN Staking", text: "Choose amount and stake NXN." },
       stakeRef: { title: "Referral Stake", text: "Referral NXN is for staking only." },
+      stakeLBEnter: {
+        title: "Stake-leaderboard",
+        text: "Click here to open the stake leaderboard."
+      },
       stakeLBExit: { title: "Stake Leaderboard", text: "Tap Back to exit stake leaderboard." },
       referralMenu: { title: "Referrals", text: "Open referral section." },
       referralScreen: {
@@ -121,6 +129,10 @@
       stakeBtn: { title: "Stake", text: "Stake giriş yap." },
       stakeMain: { title: "NXN Stake", text: "Miktar seç ve stake et." },
       stakeRef: { title: "Referans Stake", text: "Referans NXN sadece stake içindir." },
+      stakeLBEnter: {
+        title: "STAKE sıralamaya tıklayınız",
+        text: "STAKE sıralama tablosunu açmak için buraya tıklayın."
+      },
       stakeLBExit: { title: "Stake Sıralaması", text: "Geri tuşuna basarak çık." },
       referralMenu: { title: "Referans", text: "Referans bölümüne git." },
       referralScreen: {
@@ -144,7 +156,7 @@
       el.classList.remove("allow-click")
     );
   }
-
+root.querySelectorAll(".nxn-pointer").forEach(p => p.remove());
   function showComment({ title, text }, target, withNext) {
     root.innerHTML = "";
     unlock();
@@ -169,6 +181,13 @@
       box.style.transform = "translateX(-50%)";
     }
 
+    if (target) {
+  const tr = target.getBoundingClientRect();
+  pointer.style.left = tr.left + tr.width / 2 + "px";
+  pointer.style.top = tr.top + tr.height / 2 + "px";
+}
+
+
     root.appendChild(box);
 
     if (withNext) {
@@ -179,22 +198,27 @@
     }
   }
 
+  const pointer = document.createElement("div");
+pointer.className = "nxn-pointer";
+root.appendChild(pointer);
+
+
   /* ================= FLOW ================= */
 
   function run() {
-  // язык для всех шагов КРОМЕ выбора
-  const t = TEXT[lang];
+    // язык для всех шагов КРОМЕ выбора
+    const t = TEXT[lang];
 
-  switch (step) {
+    switch (step) {
 
 
       case -1: {
-        const t = TEXT.EN; // ← ВСЕГДА АНГЛИЙСКИЙ
+        const tLang = TEXT.EN; // всегда английский
 
         root.innerHTML = `
     <div class="nxn-comment nxn-lang-center">
-      <div class="nxn-comment-title">${t.langTitle}</div>
-      <div class="nxn-comment-text">${t.langText}</div>
+      <div class="nxn-comment-title">${tLang.langTitle}</div>
+      <div class="nxn-comment-text">${tLang.langText}</div>
       <div class="nxn-comment-actions">
         <button class="nxn-comment-btn" data-lang="RU">RU</button>
         <button class="nxn-comment-btn" data-lang="EN">EN</button>
@@ -202,8 +226,9 @@
       </div>
     </div>
   `;
-      }
+
         lock();
+
         document.querySelectorAll("[data-lang]").forEach(b => {
           b.onclick = () => {
             lang = b.dataset.lang;
@@ -211,7 +236,10 @@
             run();
           };
         });
+
         break;
+      }
+
 
       case 0: {
         const coin = document.getElementById("coin");
@@ -281,27 +309,36 @@
 
       case 12: {
         const btn = document.getElementById("open-stake-lb");
-        showComment(t.stakeLBExit, btn, false);
+        showComment(t.stakeLBEnter, btn, false);
+
         btn.addEventListener("click", () => {
-          const back = document.getElementById("back-to-stake");
-          back.classList.add("allow-click");
-          back.addEventListener("click", () => { step = 13; run(); }, { once: true });
+          step = 13;
+          run();
         }, { once: true });
+
         break;
       }
+
 
       case 13: {
-        const btn = document.getElementById("open-referral");
-        showComment(t.referralMenu, btn, false);
-        btn.addEventListener("click", () => { step = 14; run(); }, { once: true });
-        break;
-      }
+  const back = document.getElementById("back-to-stake");
+  showComment(t.stakeLBExit, back, false);
 
-      case 14:
+  back.classList.add("allow-click");
+  back.addEventListener("click", () => {
+    step = 14;
+    run();
+  }, { once: true });
+
+  break;
+}
+
+
+      case 15:
         showComment(t.referralScreen, null, true);
         break;
 
-      case 15: {
+      case 16: {
         if (window.showScreen) showScreen("tap");
         setTimeout(() => {
           const coin = document.getElementById("coin");
@@ -321,13 +358,9 @@
   /* ================= START ================= */
 
   window.startNXNTutorial = function () {
-    // если туториал уже пройден — ничего не делаем
-    if (localStorage.getItem("nxn_tutorial_done")) {
-      return;
-    }
-
     step = -1;
     run();
   };
+
 
 })();
