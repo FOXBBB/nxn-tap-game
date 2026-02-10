@@ -132,17 +132,26 @@ const subscribeOverlay = document.getElementById("subscribe-overlay");
 const checkSubscribeBtn = document.getElementById("check-subscribe-btn");
 
 async function checkSubscribeAccess() {
-  const res = await fetch(`/api/subscribe/access/${userId}`);
-  const data = await res.json();
+  let data;
 
- if (!data.subscribed) {
+  try {
+    const res = await fetch(`/api/subscribe/access/${userId}`);
+    data = await res.json();
+  } catch (e) {
+    console.error("SUB FETCH ERROR", e);
+    return;
+  }
+
+  console.log("SUB STATUS:", data);
+
+  if (!data.subscribed) {
     subscribeOverlay.classList.remove("hidden");
-    lockGame(); // 🔒 ВАЖНО
+    lockGame();
     return;
   }
 
   subscribeOverlay.classList.add("hidden");
-  unlockGame(); // 🔓
+  unlockGame();
 }
 
 
