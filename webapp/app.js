@@ -78,16 +78,27 @@ document
   userId = String(tgUser.id);
 
   // 🔒 SUBSCRIBE GATE — старт проверки
+function startSubscribeGate() {
+  // 🧯 страховка: вдруг туториал оставил лок
+  document.body.classList.remove("tutorial-lock");
+  document.body.classList.remove("tutorial-next-only");
+
+  // ⏳ даём браузеру один кадр
+  requestAnimationFrame(() => {
+    checkSubscribeAccess();
+  });
+}
+
 const tutorialDone = localStorage.getItem("nxn_tutorial_done");
 
 if (tutorialDone === "1") {
-  // туториал уже был → можно сразу проверять подписку
-  checkSubscribeAccess();
+  startSubscribeGate();
 } else {
-  // ждём окончания туториала
-  window.addEventListener("nxn:tutorial-finished", () => {
-    checkSubscribeAccess();
-  }, { once: true });
+  window.addEventListener(
+    "nxn:tutorial-finished",
+    startSubscribeGate,
+    { once: true }
+  );
 }
 
 
