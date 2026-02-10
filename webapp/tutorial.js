@@ -52,27 +52,27 @@
       langTitle: "Выбор языка",
       langText: "Выберите язык, чтобы начать игру",
 
-      tap: { title: "Тап", text: "Нажимай на монету, чтобы зарабатывать NXN." },
+      tap: { title: "Тап", text: "КЛИКНИ на монету, чтобы зарабатывать NXN." },
       energy: { title: "Энергия", text: "Каждый тап тратит энергию." },
 
       lbGo: { title: "Лидерборд", text: "Нажми на иконку лидерборда." },
-      lbInfo: { title: "Лидерборд", text: "Здесь показан общий рейтинг игроков." },
+      lbInfo: { title: "Лидерборд", text: "Здесь показан общий рейтинг игроков соревнуйся с лидерами из ТОП 100." },
 
       transferGo: { title: "Переводы", text: "Нажми «Переводы»." },
-      transferInfo: { title: "Переводы", text: "Отправляй NXN другим игрокам по ID." },
+      transferInfo: { title: "Переводы", text: "Отправляй и делись NXN своим друзьям по ID." },
 
       shopGo: { title: "Магазин", text: "Нажми «Магазин»." },
-      shopInfo: { title: "Магазин", text: "Покупай улучшения для ускорения прогресса." },
+      shopInfo: { title: "Магазин", text: "Покупай улучшения энергии и силу тапа для ускорения прогресса." },
 
       backTap: { title: "Главный экран", text: "Вернись на экран тапалки." },
 
-      stakeGo: { title: "Стейк", text: "Нажми «Стейк»." },
-      stakeInfo: { title: "Стейк", text: "Стейкай NXN для участия в наградах." },
-      stakeNXN: { title: "Стейк NXN", text: "Выбери сумму и подтверди стейк." },
-      stakeRef: { title: "Реферальный стейк", text: "Реферальные NXN доступны только для стейка." },
+      stakeGo: { title: "Стэк", text: "Нажми «Стэк»." },
+      stakeInfo: { title: "Стэк", text: "Стейкай NXN для участия в наградах настоящего NXN TOKEN." },
+      stakeNXN: { title: "Стэк NXN", text: "Выбери сумму и подтверди стэк." },
+      stakeRef: { title: "Реферальный стэк", text: "Реферальные NXN доступны только для стэка." },
 
-      stakeLBGo: { title: "Стейк-лидерборд", text: "Открой стейк-лидерборд." },
-      stakeLBInfo: { title: "Стейк-лидерборд", text: "Топ-участники получают награды." },
+      stakeLBGo: { title: "Стэк-лидерборд", text: "Открой стэк-лидерборд." },
+      stakeLBInfo: { title: "Стейк-лидерборд", text: "Топ 500 участников получают награды в настоящих Токенах NXN." },
       stakeLBBack: { title: "Назад", text: "Нажми «Назад», чтобы выйти." },
 
       referralGo: { title: "Рефералы", text: "Открой раздел рефералов." },
@@ -80,7 +80,7 @@
         title: "Рефералы",
         text:
           "Делись своим кодом.\n\n" +
-          "Ты и твой друг получите по 50 000 NXN для стейка."
+          "Ты и твой друг получите по 50 000 NXN для стэка."
       },
 
       finish: { title: "Готово", text: "Нажми на монету и начинай игру." }
@@ -94,13 +94,13 @@
       energy: { title: "Enerji", text: "Her dokunuş enerji harcar." },
 
       lbGo: { title: "Sıralama", text: "Sıralama ikonuna dokun." },
-      lbInfo: { title: "Sıralama", text: "Oyuncuların genel sıralaması." },
+      lbInfo: { title: "Sıralama", text: "Oyuncuların genel sıralaması TOP 100 kisiden biri sen ol." },
 
       transferGo: { title: "Transfer", text: "Transfer'e dokun." },
-      transferInfo: { title: "Transfer", text: "NXN'i diğer oyunculara gönder." },
+      transferInfo: { title: "Transfer", text: "NXN'i ID üzere diğer oyunculara gönder." },
 
       shopGo: { title: "Mağaza", text: "Mağazaya dokun." },
-      shopInfo: { title: "Mağaza", text: "Geliştirmeler satın al." },
+      shopInfo: { title: "Mağaza", text: "Geliştirmeler TAP gücünü ve enerjiyi satın ala bilirsiniz." },
 
       backTap: { title: "Ana ekran", text: "Ana tap ekranına dön." },
 
@@ -110,7 +110,7 @@
       stakeRef: { title: "Referans Stake", text: "Referans NXN sadece stake içindir." },
 
       stakeLBGo: { title: "Stake Sıralaması", text: "Stake sıralamasını aç." },
-      stakeLBInfo: { title: "Stake Sıralaması", text: "En iyi stake yapanlar ödül alır." },
+      stakeLBInfo: { title: "Stake Sıralaması", text: "En iyi TOP 500 kişi stake yapanlar gercek NXN TOKEN ödülünü alır." },
       stakeLBBack: { title: "Geri", text: "Geri tuşuna bas." },
 
       referralGo: { title: "Referans", text: "Referans bölümünü aç." },
@@ -118,7 +118,7 @@
         title: "Referans",
         text:
           "Kodunu paylaş.\n\n" +
-          "Sen ve arkadaşın 50.000 NXN kazanırsınız."
+          "Sen ve arkadaşın Stake için 50.000 NXN kazanırsınız."
       },
 
       finish: { title: "Hazır", text: "Coin'e dokun ve oyuna başla." }
