@@ -85,13 +85,15 @@
 /* ===== TUTORIAL CONTROL ===== */
 
 body.tutorial-lock .menu,
-body.tutorial-lock .screen {
+body.tutorial-lock {
   pointer-events: none;
 }
 
+body.tutorial-lock .nxn-comment,
 body.tutorial-lock .allow-click {
   pointer-events: auto !important;
 }
+
 .nxn-pointer {
   position: fixed;
   width: 14px;
