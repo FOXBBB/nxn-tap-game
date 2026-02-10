@@ -118,7 +118,9 @@
       lock(target);
       const r = target.getBoundingClientRect();
       box.style.top = Math.max(8, r.top - box.offsetHeight - 8) + "px";
-      box.style.left = Math.max(8, r.left + r.width / 2 - box.offsetWidth / 2) + "px";
+      const centerX = r.left + r.width / 2;
+      box.style.left = Math.max(8, centerX - box.offsetWidth / 2) + "px";
+
     } else {
       lock();
       box.style.top = "20vh";
@@ -166,19 +168,19 @@
       }
 
       case 0: {
-  const coin = document.getElementById("coin");
-  showComment(t.tap, coin, false);
+        const coin = document.getElementById("coin");
+        showComment(t.tap, coin, false);
 
-  coin.addEventListener(
-    "pointerdown",
-    () => {
-      step = 1;
-      run();
-    },
-    { once: true }
-  );
-  break;
-}
+        coin.addEventListener(
+          "pointerdown",
+          () => {
+            step = 1;
+            run();
+          },
+          { once: true }
+        );
+        break;
+      }
 
 
       case 1:
@@ -217,10 +219,27 @@
         document.querySelector('[data-go="tap"]').onclick = () => { step = 9; run(); };
         break;
 
-      case 9:
-        showComment(t.stakeBtn, document.getElementById("stake-btn"), false);
-        document.getElementById("stake-btn").onclick = () => { step = 10; run(); };
-        break;
+      case 9: {
+  const btn = document.getElementById("stake-btn");
+  showComment(t.stakeBtn, btn, false);
+
+  btn.addEventListener(
+    "click",
+    () => {
+      // 1️⃣ СНАЧАЛА реально переходим в стейк
+      if (window.showScreen) showScreen("stake");
+
+      // 2️⃣ ждём пока экран отрисуется
+      setTimeout(() => {
+        step = 10;
+        run();
+      }, 250);
+    },
+    { once: true }
+  );
+  break;
+}
+
 
       case 10:
         showComment(t.stakeMain, document.getElementById("stake-confirm"), true);
