@@ -519,10 +519,12 @@ case 14: {
     lockOnly(coin);
     showFinger(coin);
 
-    coin.addEventListener("pointerdown", () => {
-  document.body.classList.remove("tutorial-lock"); // 🔓 РАЗБЛОКИРОВАЛИ ИГРУ
+   coin.addEventListener("pointerdown", () => {
+  localStorage.setItem("nxn_tutorial_done", "1"); // ✅ ЗАПОМНИЛИ
+  document.body.classList.remove("tutorial-lock"); // 🔓 РАЗБЛОК
   clearUI();
 }, { once: true });
+
 
 
   }, 300);
@@ -532,8 +534,14 @@ case 14: {
     }
   }
 
-  window.startNXNTutorial = function () {
-    step = -1;
-    run();
-  };
+ window.startNXNTutorial = function () {
+  const finished = localStorage.getItem("nxn_tutorial_done");
+
+  // ❌ уже проходил — не показываем
+  if (finished === "1") return;
+
+  step = -1;
+  run();
+};
+
 })();
