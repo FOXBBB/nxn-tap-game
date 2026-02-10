@@ -165,10 +165,21 @@
         break;
       }
 
-      case 0:
-        showComment(t.tap, document.getElementById("coin"), false);
-        document.getElementById("coin").onclick = () => { step = 1; run(); };
-        break;
+      case 0: {
+  const coin = document.getElementById("coin");
+  showComment(t.tap, coin, false);
+
+  coin.addEventListener(
+    "pointerdown",
+    () => {
+      step = 1;
+      run();
+    },
+    { once: true }
+  );
+  break;
+}
+
 
       case 1:
         showComment(t.energy, document.getElementById("energy"), true);
