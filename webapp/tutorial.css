@@ -110,4 +110,19 @@ body.tutorial-lock .allow-click {
   z-index: 10002;
 }
 
+.nxn-finger {
+  position: fixed;
+  width: 36px;
+  height: 36px;
+  background: url("/img/finger.png") no-repeat center / contain;
+  z-index: 10005;
+  animation: fingerTap 1.2s infinite ease-in-out;
+  pointer-events: none;
+}
+
+@keyframes fingerTap {
+  0%   { transform: translateY(0) scale(1); opacity: 1; }
+  50%  { transform: translateY(6px) scale(0.95); opacity: 0.8; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
 
