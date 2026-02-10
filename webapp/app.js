@@ -131,27 +131,20 @@ Telegram.WebApp.ready();
 const subscribeOverlay = document.getElementById("subscribe-overlay");
 const checkSubscribeBtn = document.getElementById("check-subscribe-btn");
 
-// 2️⃣ ПОТОМ функции
-function startSubscribeGate() {
-  document.body.classList.remove("tutorial-lock");
-  document.body.classList.remove("tutorial-next-only");
-
-  requestAnimationFrame(() => {
-    checkSubscribeAccess();
-  });
-}
-
 async function checkSubscribeAccess() {
   const res = await fetch(`/api/subscribe/access/${userId}`);
   const data = await res.json();
 
   if (!data.subscribed || !data.bonusClaimed) {
     subscribeOverlay.classList.remove("hidden");
+    lockGame(); // 🔒 ВАЖНО
     return;
   }
 
   subscribeOverlay.classList.add("hidden");
+  unlockGame(); // 🔓
 }
+
 
 
 
