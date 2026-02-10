@@ -236,8 +236,16 @@ typeText(textEl, text);
     }
 
     box.style.top = top + "px";
-    box.style.left =
-      Math.max(8, r.left + r.width / 2 - box.offsetWidth / 2) + "px";
+    if (position === "below") {
+  // ⬇️ снизу, но ВСЕГДА по центру экрана
+  box.style.left = "50%";
+  box.style.transform = "translateX(-50%)";
+} else {
+  // ⬆️ над элементом — как раньше, привязка к кнопке
+  box.style.left =
+    Math.max(8, r.left + r.width / 2 - box.offsetWidth / 2) + "px";
+}
+
   } else {
   document.body.classList.add("tutorial-lock");
   box.classList.add("allow-click"); // 👈 ВАЖНО
