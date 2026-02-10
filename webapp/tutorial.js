@@ -138,10 +138,6 @@
     if (typingTimer) clearInterval(typingTimer);
   }
 
-  function clearStakeHighlights() {
-  removeHighlight(document.getElementById("stake-confirm"));
-  removeHighlight(document.getElementById("stake-referral-btn"));
-}
 function clearStakeHighlights() {
   const stakeMain = document.getElementById("stake-confirm");
   const stakeRef = document.getElementById("stake-referral-btn");
@@ -233,11 +229,11 @@ function unlockNextOnly() {
     box.style.left =
       Math.max(8, r.left + r.width / 2 - box.offsetWidth / 2) + "px";
   } else {
-    lockAll();
-    box.style.top = "16px";
-    box.style.left = "50%";
-    box.style.transform = "translateX(-50%)";
-  }
+  document.body.classList.add("tutorial-lock");
+  box.style.top = "16px";
+  box.style.left = "50%";
+  box.style.transform = "translateX(-50%)";
+}
 
   if (withNext) {
     box.querySelector(".nxn-comment-btn").onclick = () => {
@@ -290,8 +286,8 @@ function unlockNextOnly() {
       }
 
       case 1:
-        showComment(t.energy, true);
-        break;
+  showComment(t.energy, null, true);
+  break;
 
       case 2: {
         showComment(t.lbGo, false);
@@ -306,7 +302,7 @@ function unlockNextOnly() {
       }
 
       case 3:
-        showComment(t.lbInfo, true);
+        showComment(t.lbInfo, null, true);
         break;
 
       case 4: {
@@ -322,7 +318,7 @@ function unlockNextOnly() {
       }
 
       case 5:
-        showComment(t.transferInfo, true);
+        showComment(t.transferInfo, null, true);
         break;
 
       case 6: {
@@ -338,7 +334,7 @@ function unlockNextOnly() {
       }
 
       case 7:
-        showComment(t.shopInfo, true);
+        showComment(t.shopInfo, null, true);
         break;
 
       case 8: {
