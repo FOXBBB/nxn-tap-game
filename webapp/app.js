@@ -97,12 +97,18 @@ const tutorialDone = localStorage.getItem("nxn_tutorial_done");
 if (tutorialDone === "1") {
   startSubscribeGate();
 } else {
+  // страховка: если туториал не стартует
+  setTimeout(() => {
+    startSubscribeGate();
+  }, 0);
+
   window.addEventListener(
     "nxn:tutorial-finished",
     startSubscribeGate,
     { once: true }
   );
 }
+
 
 
   const myIdEl = document.getElementById("my-id");
@@ -119,30 +125,37 @@ if (tutorialDone === "1") {
 
 // ================= SUBSCRIBE GATE =================
 
+Telegram.WebApp.ready();
+
+// 1️⃣ СНАЧАЛА DOM-элементы
 const subscribeOverlay = document.getElementById("subscribe-overlay");
 const checkSubscribeBtn = document.getElementById("check-subscribe-btn");
+
+// 2️⃣ ПОТОМ функции
+function startSubscribeGate() {
+  document.body.classList.remove("tutorial-lock");
+  document.body.classList.remove("tutorial-next-only");
+
+  requestAnimationFrame(() => {
+    checkSubscribeAccess();
+  });
+}
 
 async function checkSubscribeAccess() {
   const res = await fetch(`/api/subscribe/access/${userId}`);
   const data = await res.json();
 
-  // ❌ НЕ подписан ИЛИ бонус не получен → БЛОК
- if (!data.subscribed || !data.bonusClaimed) {
-  subscribeOverlay.classList.remove("hidden");
+  if (!data.subscribed || !data.bonusClaimed) {
+    subscribeOverlay.classList.remove("hidden");
+    return;
+  }
 
-  // ⏳ один кадр — и только потом блок
-  requestAnimationFrame(() => {
-    lockGame();
-  });
-
-  return;
-}
-
-
-  // ✅ всё ок → разблок
   subscribeOverlay.classList.add("hidden");
-  unlockGame();
 }
+
+
+
+
 
 
 
