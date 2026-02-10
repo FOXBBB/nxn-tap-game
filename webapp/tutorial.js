@@ -127,16 +127,22 @@
 
   /* ================= HELPERS ================= */
 
-  function clearUI() {
-    root.innerHTML = "";
-    if (finger) finger.remove();
-    finger = null;
-    document.body.classList.remove("tutorial-lock");
-    document.querySelectorAll(".allow-click").forEach(e =>
-      e.classList.remove("allow-click")
-    );
-    if (typingTimer) clearInterval(typingTimer);
-  }
+ function clearUI() {
+  root.innerHTML = "";
+
+  if (finger) finger.remove();
+  finger = null;
+
+  // ❌ УБРАЛИ отсюда снятие tutorial-lock
+  // document.body.classList.remove("tutorial-lock");
+
+  document.querySelectorAll(".allow-click").forEach(e =>
+    e.classList.remove("allow-click")
+  );
+
+  if (typingTimer) clearInterval(typingTimer);
+}
+
 
 function clearStakeHighlights() {
   const stakeMain = document.getElementById("stake-confirm");
@@ -197,7 +203,7 @@ function unlockNextOnly() {
   box.className = "nxn-comment";
   box.innerHTML = `
     <div class="nxn-comment-title">${title}</div>
-    <div class="nxn-comment-text">${text.replace(/\n/g, "<br>")}</div>
+    <div class="nxn-comment-text"></div>
     ${
       withNext
         ? `<div class="nxn-comment-actions">
@@ -208,6 +214,10 @@ function unlockNextOnly() {
   `;
 
   root.appendChild(box);
+
+  const textEl = box.querySelector(".nxn-comment-text");
+typeText(textEl, text);
+
 
   if (target) {
     lockOnly(target);
@@ -238,11 +248,15 @@ function unlockNextOnly() {
 
 
   if (withNext) {
-    box.querySelector(".nxn-comment-btn").onclick = () => {
-      step++;
-      run();
-    };
-  }
+  const btn = box.querySelector(".nxn-comment-btn");
+  btn.classList.add("allow-click");
+
+  btn.onclick = () => {
+    step++;
+    run();
+  };
+}
+
 }
 
   /* ================= FLOW ================= */
@@ -297,9 +311,19 @@ function unlockNextOnly() {
         break;
       }
 
-      case 1:
+      case 1: {
   showComment(t.energy, null, true);
+
+  // 🔒 блокируем всё
+  document.body.classList.add("tutorial-lock");
+
+  // 🎯 разрешаем только Next
+  const nextBtn = document.querySelector(".nxn-comment-btn");
+  if (nextBtn) nextBtn.classList.add("allow-click");
+
   break;
+}
+
 
       case 2: {
         showComment(t.lbGo, false);
