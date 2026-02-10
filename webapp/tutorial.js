@@ -415,8 +415,25 @@ typeText(textEl, text);
   highlight(document.getElementById("stake-referral-btn"));
   break;
 
-
 case 13: {
+  // 👉 ПРОСИМ ПЕРЕЙТИ В STAKE LEADERBOARD
+  showComment(t.stakeLBGo, false);
+
+  const btn = document.getElementById("open-stake-lb");
+  lockOnly(btn);
+  showFinger(btn);
+
+  btn.addEventListener("click", () => {
+    step = 14;
+    run();
+  }, { once: true });
+
+  break;
+}
+
+
+
+case 14: {
   clearStakeHighlights();
 
   const back = document.getElementById("back-to-stake");
@@ -432,32 +449,20 @@ case 13: {
   showFinger(back);
 
   back.addEventListener("click", () => {
-    step = 14;
+    step = 15;
     run();
   }, { once: true });
 
   break;
 }
 
-      case 14:
+      case 15:
         showComment(t.stakeLBInfo, true);
         break;
 
-      case 15: {
+      case 16: {
         showComment(t.stakeLBBack, false);
         const btn = document.getElementById("back-to-stake");
-        lockOnly(btn);
-        showFinger(btn);
-        btn.addEventListener("click", () => {
-          step = 16;
-          run();
-        }, { once: true });
-        break;
-      }
-
-      case 16: {
-        showComment(t.referralGo, false);
-        const btn = document.getElementById("open-referral");
         lockOnly(btn);
         showFinger(btn);
         btn.addEventListener("click", () => {
@@ -467,11 +472,23 @@ case 13: {
         break;
       }
 
-      case 17:
+      case 17: {
+        showComment(t.referralGo, false);
+        const btn = document.getElementById("open-referral");
+        lockOnly(btn);
+        showFinger(btn);
+        btn.addEventListener("click", () => {
+          step = 18;
+          run();
+        }, { once: true });
+        break;
+      }
+
+      case 18:
         showComment(t.referralInfo, true);
         break;
 
-      case 18: {
+      case 19: {
         if (window.showScreen) showScreen("tap");
         setTimeout(() => {
           showComment(t.finish, false);
