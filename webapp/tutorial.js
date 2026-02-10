@@ -1,14 +1,14 @@
-/* ============== NXN TUTORIAL (STABLE FROM ZERO) ============== */
+/* ============== NXN TUTORIAL – STABLE CORE ============== */
 
 (function () {
   const root = document.getElementById("nxn-tutorial-root");
-  root.className = "nxn-tutorial-root";
+  if (!root) return;
 
   let step = -1;
   let lang = "EN";
   let finger = null;
 
-  /* ===== TEXTS ===== */
+  /* ===== TEXTS (ВНУТРИ, НЕ ТРОГАТЬ) ===== */
 
   const TEXT = {
     EN: {
@@ -17,7 +17,7 @@
       tap: "Tap the coin to earn NXN.",
       energy: "Each tap consumes energy.",
       lbGo: "Tap the leaderboard icon.",
-      lbInfo: "This is the global ranking of players.",
+      lbInfo: "This is the global player ranking.",
       transferGo: "Tap Transfer.",
       transferInfo: "Send NXN to other players by ID.",
       shopGo: "Tap Shop.",
@@ -54,41 +54,35 @@
 
   /* ===== HELPERS ===== */
 
+  function clearUI() {
+    root.innerHTML = "";
+    document.body.classList.remove("nxn-lock");
+    document.querySelectorAll(".nxn-allow").forEach(e =>
+      e.classList.remove("nxn-allow")
+    );
+    if (finger) finger.remove();
+    finger = null;
+  }
+
   function lock(target) {
     document.body.classList.add("nxn-lock");
     if (target) target.classList.add("nxn-allow");
   }
 
-  function unlock() {
-    document.body.classList.remove("nxn-lock");
-    document.querySelectorAll(".nxn-allow").forEach(e =>
-      e.classList.remove("nxn-allow")
-    );
-  }
-
-  function clear() {
-    root.innerHTML = "";
-    unlock();
-    if (finger) finger.remove();
-    finger = null;
-  }
-
-  function typeText(el, text, cb) {
+  function typeText(el, text, done) {
     el.textContent = "";
-    el.classList.add("nxn-typing");
     let i = 0;
-    const t = setInterval(() => {
+    const timer = setInterval(() => {
       el.textContent += text[i++];
       if (i >= text.length) {
-        clearInterval(t);
-        el.classList.remove("nxn-typing");
-        cb && cb();
+        clearInterval(timer);
+        done && done();
       }
     }, 22);
   }
 
   function showComment(title, text, withNext, onNext) {
-    clear();
+    clearUI();
 
     const box = document.createElement("div");
     box.className = "nxn-comment";
@@ -97,7 +91,6 @@
       <div class="nxn-comment-text"></div>
       ${withNext ? `<div class="nxn-comment-actions"><button class="nxn-comment-btn">Next</button></div>` : ""}
     `;
-
     root.appendChild(box);
 
     const textEl = box.querySelector(".nxn-comment-text");
@@ -124,25 +117,22 @@
 
     switch (step) {
 
-      case -1:
-        clear();
-        showComment(
-          TEXT.EN.langTitle,
-          TEXT.EN.langText,
-          false
-        );
-        root.querySelector(".nxn-comment-actions")?.remove();
+      case -1: {
+        clearUI();
 
-        const box = root.querySelector(".nxn-comment");
-        box.innerHTML += `
+        const box = document.createElement("div");
+        box.className = "nxn-comment";
+        box.innerHTML = `
+          <div class="nxn-comment-title">${TEXT.EN.langTitle}</div>
+          <div class="nxn-comment-text">${TEXT.EN.langText}</div>
           <div class="nxn-comment-actions">
             <button class="nxn-comment-btn" data-l="EN">EN</button>
             <button class="nxn-comment-btn" data-l="RU">RU</button>
             <button class="nxn-comment-btn" data-l="TR">TR</button>
           </div>
         `;
+        root.appendChild(box);
 
-        lock();
         box.querySelectorAll("button").forEach(b => {
           b.onclick = () => {
             lang = b.dataset.l;
@@ -151,6 +141,7 @@
           };
         });
         break;
+      }
 
       case 0: {
         const coin = document.getElementById("coin");
@@ -222,7 +213,7 @@
 
       case 7:
         showComment("Finish", t.finish, false);
-        unlock();
+        clearUI();
         break;
     }
   }
