@@ -123,16 +123,18 @@ async function checkSubscribeAccess() {
   const res = await fetch(`/api/subscribe/access/${userId}`);
   const data = await res.json();
 
-  // 🔓 СНАЧАЛА ВСЕГДА СНИМАЕМ БЛОК
-  unlockGame();
-  subscribeOverlay.classList.add("hidden");
-
-  // ❗ если нужен subscribe — включаем обратно
+  // ❌ НЕ подписан ИЛИ бонус не получен → БЛОК
   if (!data.subscribed || !data.bonusClaimed) {
     lockGame();
     subscribeOverlay.classList.remove("hidden");
+    return;
   }
+
+  // ✅ всё ок → разблок
+  subscribeOverlay.classList.add("hidden");
+  unlockGame();
 }
+
 
 
 function lockGame() {
