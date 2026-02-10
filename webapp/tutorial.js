@@ -153,40 +153,89 @@
     if (target) target.classList.add("allow-click");
   }
 
-  function showComment({ title, text }, target, withNext) {
-    clearUI();
+  function drawLineToTarget(target, box) {
+  const tr = target.getBoundingClientRect();
+  const br = box.getBoundingClientRect();
 
-    const box = document.createElement("div");
-    box.className = "nxn-comment";
-    box.innerHTML = `
-      <div class="nxn-comment-title">${title}</div>
-      <div class="nxn-comment-text">${text.replace(/\n/g, "<br>")}</div>
-      ${withNext ? `<div class="nxn-comment-actions"><button class="nxn-comment-btn">Next</button></div>` : ""}
-    `;
+  const tx = tr.left + tr.width / 2;
+  const ty = tr.top + tr.height / 2;
 
-    root.appendChild(box);
+  const bx = br.left + br.width / 2;
+  const by = br.bottom;
 
-    if (target) {
-      lock(target);
-      const r = target.getBoundingClientRect();
-      let top = r.top - 120;
-      if (top < 10) top = r.bottom + 12;
-      box.style.top = top + "px";
-      box.style.left = Math.max(12, r.left + r.width / 2 - 130) + "px";
-    } else {
-      lock();
-      box.style.top = "20vh";
+  const dx = tx - bx;
+  const dy = ty - by;
+  const len = Math.sqrt(dx * dx + dy * dy);
+
+  const line = document.createElement("div");
+  line.className = "nxn-line";
+  line.style.width = len + "px";
+  line.style.left = bx + "px";
+  line.style.top = by + "px";
+  line.style.transform = `rotate(${Math.atan2(dy, dx)}rad)`;
+
+  const pointer = document.createElement("div");
+  pointer.className = "nxn-pointer";
+  pointer.style.left = tx + "px";
+  pointer.style.top = ty + "px";
+
+  root.appendChild(line);
+  root.appendChild(pointer);
+}
+
+
+
+function showComment({ title, text }, target, withNext) {
+  clearUI();
+
+  const box = document.createElement("div");
+  box.className = "nxn-comment";
+  box.innerHTML = `
+    <div class="nxn-comment-title">${title}</div>
+    <div class="nxn-comment-text">${text.replace(/\n/g, "<br>")}</div>
+    ${withNext ? `<div class="nxn-comment-actions"><button class="nxn-comment-btn">Next</button></div>` : ""}
+  `;
+
+  root.appendChild(box);
+
+  if (target) {
+    lock(target);
+
+    const r = target.getBoundingClientRect();
+    const isBottom = r.top > window.innerHeight * 0.6;
+
+    if (isBottom) {
+      // комментарий выше, линия вниз
+      box.style.top = "30vh";
       box.style.left = "50%";
       box.style.transform = "translateX(-50%)";
-    }
 
-    if (withNext) {
-      box.querySelector(".nxn-comment-btn").onclick = () => {
-        step++;
-        run();
-      };
+      requestAnimationFrame(() => {
+        drawLineToTarget(target, box);
+      });
+    } else {
+      // обычный элемент
+      let top = r.top - 120;
+      if (top < 10) top = r.bottom + 12;
+
+      box.style.top = top + "px";
+      box.style.left = Math.max(12, r.left + r.width / 2 - 130) + "px";
     }
+  } else {
+    lock();
+    box.style.top = "20vh";
+    box.style.left = "50%";
+    box.style.transform = "translateX(-50%)";
   }
+
+  if (withNext) {
+    box.querySelector(".nxn-comment-btn").onclick = () => {
+      step++;
+      run();
+    };
+  }
+}
+
 
   /* ================= FLOW ================= */
 
