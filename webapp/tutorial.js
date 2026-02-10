@@ -498,8 +498,10 @@ case 14: {
     showFinger(coin);
 
     coin.addEventListener("pointerdown", () => {
-      clearUI();
-    }, { once: true });
+  document.body.classList.remove("tutorial-lock"); // 🔓 РАЗБЛОКИРОВАЛИ ИГРУ
+  clearUI();
+}, { once: true });
+
 
   }, 300);
 
