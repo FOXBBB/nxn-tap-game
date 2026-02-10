@@ -77,17 +77,20 @@ document
   tgUser = Telegram.WebApp.initDataUnsafe.user;
   userId = String(tgUser.id);
 
+
+
   // 🔒 SUBSCRIBE GATE — старт проверки
 function startSubscribeGate() {
-  // 🧯 страховка: вдруг туториал оставил лок
+  // 🧯 снимаем все tutorial-локи
   document.body.classList.remove("tutorial-lock");
   document.body.classList.remove("tutorial-next-only");
 
-  // ⏳ даём браузеру один кадр
+  // ⏳ даём браузеру кадр
   requestAnimationFrame(() => {
     checkSubscribeAccess();
   });
 }
+
 
 const tutorialDone = localStorage.getItem("nxn_tutorial_done");
 
@@ -124,11 +127,17 @@ async function checkSubscribeAccess() {
   const data = await res.json();
 
   // ❌ НЕ подписан ИЛИ бонус не получен → БЛОК
-  if (!data.subscribed || !data.bonusClaimed) {
+ if (!data.subscribed || !data.bonusClaimed) {
+  subscribeOverlay.classList.remove("hidden");
+
+  // ⏳ один кадр — и только потом блок
+  requestAnimationFrame(() => {
     lockGame();
-    subscribeOverlay.classList.remove("hidden");
-    return;
-  }
+  });
+
+  return;
+}
+
 
   // ✅ всё ок → разблок
   subscribeOverlay.classList.add("hidden");
@@ -140,11 +149,18 @@ async function checkSubscribeAccess() {
 function lockGame() {
   document.body.classList.add("locked");
 
-  // блокируем все клики
+  // 🔒 блокируем игру
   document.querySelectorAll(".screen, .menu").forEach(el => {
     el.style.pointerEvents = "none";
   });
+
+  // 🔓 РАЗРЕШАЕМ КЛИКИ ТОЛЬКО В SUBSCRIBE
+  const overlay = document.getElementById("subscribe-overlay");
+  if (overlay) {
+    overlay.style.pointerEvents = "auto";
+  }
 }
+
 
 function unlockGame() {
   document.body.classList.remove("locked");

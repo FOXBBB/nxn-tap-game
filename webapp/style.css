@@ -2516,3 +2516,12 @@ body.locked {
   50%  { transform: translateX(-50%) translateY(-3px); }
   100% { transform: translateX(-50%) translateY(0); }
 }
+/* 🔒 SUBSCRIBE OVERLAY MUST ALWAYS WORK */
+#subscribe-overlay {
+  pointer-events: auto !important;
+  z-index: 99999 !important;
+}
+
+#subscribe-overlay * {
+  pointer-events: auto !important;
+}
