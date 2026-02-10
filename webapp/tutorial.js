@@ -434,15 +434,13 @@ case 13: {
 
 
 case 14: {
-  clearStakeHighlights();
-
   const back = document.getElementById("back-to-stake");
 
   showComment(
-    t.stakeLBExit,
+    t.stakeLBBack,
     back,
     false,
-    "below" // 👈 ВАЖНО: комментарий СНИЗУ
+    "below" // ⬇️ ВАЖНО
   );
 
   lockOnly(back);
@@ -456,51 +454,49 @@ case 14: {
   break;
 }
 
-      case 15:
-        showComment(t.stakeLBInfo, true);
-        break;
 
-      case 16: {
-        showComment(t.stakeLBBack, false);
-        const btn = document.getElementById("back-to-stake");
-        lockOnly(btn);
-        showFinger(btn);
-        btn.addEventListener("click", () => {
-          step = 17;
-          run();
-        }, { once: true });
-        break;
-      }
+      case 15: {
+  showComment(t.referralGo, false);
+
+  const btn = document.getElementById("open-referral");
+  lockOnly(btn);
+  showFinger(btn);
+
+  btn.addEventListener("click", () => {
+    step = 16;
+    run();
+  }, { once: true });
+
+  break;
+}
+
+
+      case 16:
+  showComment(t.referralInfo, null, true);
+  break;
+
 
       case 17: {
-        showComment(t.referralGo, false);
-        const btn = document.getElementById("open-referral");
-        lockOnly(btn);
-        showFinger(btn);
-        btn.addEventListener("click", () => {
-          step = 18;
-          run();
-        }, { once: true });
-        break;
-      }
+  if (window.showScreen) showScreen("tap");
 
-      case 18:
-        showComment(t.referralInfo, true);
-        break;
+  setTimeout(() => {
+    showComment(
+      { title: t.finish.title, text: "You are ready to play.\nTap the coin and start farming NXN." },
+      false
+    );
 
-      case 19: {
-        if (window.showScreen) showScreen("tap");
-        setTimeout(() => {
-          showComment(t.finish, false);
-          const coin = document.getElementById("coin");
-          lockOnly(coin);
-          showFinger(coin);
-          coin.addEventListener("pointerdown", () => {
-            clearUI();
-          }, { once: true });
-        }, 250);
-        break;
-      }
+    const coin = document.getElementById("coin");
+    lockOnly(coin);
+    showFinger(coin);
+
+    coin.addEventListener("pointerdown", () => {
+      clearUI();
+    }, { once: true });
+
+  }, 300);
+
+  break;
+}
     }
   }
 
