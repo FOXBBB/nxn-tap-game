@@ -433,7 +433,7 @@ typeText(textEl, text);
 
       case 11:
   clearStakeHighlights(); // ← ВАЖНО
-  showComment(t.stakeMain, null, true);
+  showComment(t.stakeNXN, null, true);
   highlight(document.getElementById("stake-confirm"));
   break;
 
@@ -441,7 +441,7 @@ typeText(textEl, text);
 
       case 12:
   clearStakeHighlights(); // ← ВАЖНО
-  showComment(t.stakeRef, null, true);
+  showComment(t.stakeNXN, null, true);
   highlight(document.getElementById("stake-referral-btn"));
   break;
 
@@ -520,10 +520,19 @@ case 14: {
     showFinger(coin);
 
    coin.addEventListener("pointerdown", () => {
-  localStorage.setItem("nxn_tutorial_done", "1"); // ✅ ЗАПОМНИЛИ
-  document.body.classList.remove("tutorial-lock"); // 🔓 РАЗБЛОК
+  // ✅ помечаем, что туториал пройден
+  localStorage.setItem("nxn_tutorial_done", "1");
+
+  // 🔓 снимаем блок туториала
+  document.body.classList.remove("tutorial-lock");
+  document.body.classList.remove("tutorial-next-only");
+
   clearUI();
+
+  // 🔔 сообщаем app.js, что туториал закончен
+  window.dispatchEvent(new Event("nxn:tutorial-finished"));
 }, { once: true });
+
 
   }, 300);
 
@@ -532,28 +541,23 @@ case 14: {
     }
   }
 
-  coin.addEventListener("pointerdown", () => {
-  localStorage.setItem("nxn_tutorial_done", "1");
 
-  document.body.classList.remove("tutorial-lock");
-  document.body.classList.remove("tutorial-next-only");
-
-  clearUI();
-
-  // 🔥 СООБЩАЕМ app.js
-  window.dispatchEvent(new Event("nxn:tutorial-finished"));
-}, { once: true });
 
 
 
  window.startNXNTutorial = function () {
   const finished = localStorage.getItem("nxn_tutorial_done");
 
-  // ❌ уже проходил — не показываем
-  if (finished === "1") return;
+  if (finished === "1") {
+    // 🧯 страховка: если вдруг lock остался
+    document.body.classList.remove("tutorial-lock");
+    document.body.classList.remove("tutorial-next-only");
+    return;
+  }
 
   step = -1;
   run();
 };
+
 
 })();

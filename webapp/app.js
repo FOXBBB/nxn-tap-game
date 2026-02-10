@@ -20,6 +20,7 @@ let maxEnergy = 100;
 let tapPower = 1;
 let canTap = false;
 let tonConnectUI = null;
+window.__NXN_TUTORIAL_ACTIVE__ = false;
 
 
 
