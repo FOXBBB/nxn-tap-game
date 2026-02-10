@@ -130,8 +130,12 @@
  function clearUI() {
   root.innerHTML = "";
 
-  if (finger) finger.remove();
-  finger = null;
+  if (finger) {
+  if (finger._cleanup) finger._cleanup();
+  finger.remove();
+}
+finger = null;
+
 
   // ❌ УБРАЛИ отсюда снятие tutorial-lock
   // document.body.classList.remove("tutorial-lock");
@@ -177,14 +181,32 @@ function unlockNextOnly() {
 }
 
   function showFinger(target) {
-    if (!target) return;
+  if (!target) return;
+
+  if (finger) finger.remove();
+
+  finger = document.createElement("div");
+  finger.className = "nxn-finger";
+  document.body.appendChild(finger);
+
+  const updatePosition = () => {
     const r = target.getBoundingClientRect();
-    finger = document.createElement("div");
-    finger.className = "nxn-finger";
     finger.style.left = r.left + r.width / 2 - 22 + "px";
-    finger.style.top = r.top + r.height / 2 - 22 + "px";
-    document.body.appendChild(finger);
-  }
+    finger.style.top  = r.top  + r.height / 2 - 22 + "px";
+  };
+
+  updatePosition();
+
+  // 👇 КЛЮЧЕВОЕ
+  window.addEventListener("scroll", updatePosition, { passive: true });
+  window.addEventListener("resize", updatePosition);
+
+  finger._cleanup = () => {
+    window.removeEventListener("scroll", updatePosition);
+    window.removeEventListener("resize", updatePosition);
+  };
+}
+
 
   function typeText(el, text) {
     el.innerHTML = "";
