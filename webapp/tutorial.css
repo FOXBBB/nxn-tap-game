@@ -1,20 +1,31 @@
-/* ================= NXN COMMENTARY TUTORIAL ================= */
+/* ===== NXN TUTORIAL CORE ===== */
+
+.nxn-tutorial-root {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+/* ===== TOP COMMENT ===== */
 
 .nxn-comment {
   position: fixed;
-  max-width: 260px;
-  background: rgba(2, 6, 23, 0.95);
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(92%, 360px);
+  background: rgba(2, 6, 23, 0.96);
   border: 1px solid rgba(34,197,94,0.5);
   border-radius: 16px;
   padding: 14px 16px;
-  z-index: 10000;
   box-shadow: 0 0 25px rgba(34,197,94,0.35);
-  animation: nxnCommentIn 0.25s ease;
+  pointer-events: auto;
 }
 
 .nxn-comment-title {
-  font-weight: 900;
   font-size: 14px;
+  font-weight: 900;
   color: #7affc6;
   margin-bottom: 6px;
 }
@@ -22,7 +33,8 @@
 .nxn-comment-text {
   font-size: 13px;
   color: #cbd5f5;
-  line-height: 1.4;
+  line-height: 1.45;
+  min-height: 48px;
 }
 
 .nxn-comment-actions {
@@ -41,90 +53,42 @@
   color: #02140c;
 }
 
-/* хвостик */
-.nxn-comment::after {
-  content: "";
-  position: absolute;
-  width: 12px;
-  height: 12px;
-  background: rgba(2, 6, 23, 0.95);
-  border-left: 1px solid rgba(34,197,94,0.5);
-  border-top: 1px solid rgba(34,197,94,0.5);
-  transform: rotate(45deg);
-  bottom: -6px;
-  left: 24px;
+/* ===== TYPE ANIMATION ===== */
+
+.nxn-typing::after {
+  content: "▍";
+  animation: blink 1s infinite;
 }
 
-@keyframes nxnCommentIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-/* ===== LANGUAGE SELECT FIX ===== */
-
-.nxn-lang-center {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 10001;
-  width: 90%;
-  max-width: 340px;
+@keyframes blink {
+  50% { opacity: 0; }
 }
 
-.nxn-lang-center .nxn-comment-actions {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
+/* ===== LOCK SYSTEM ===== */
+
+body.nxn-lock * {
+  pointer-events: none !important;
 }
 
-.nxn-lang-center .nxn-comment-btn {
-  flex: 1;
-  padding: 12px 0;
-  font-size: 14px;
-}
-/* ===== TUTORIAL CONTROL ===== */
-
-body.tutorial-lock .menu,
-body.tutorial-lock {
-  pointer-events: none;
-}
-
-body.tutorial-lock .nxn-comment,
-body.tutorial-lock .allow-click {
+body.nxn-lock .nxn-comment,
+body.nxn-lock .nxn-allow {
   pointer-events: auto !important;
 }
 
-.nxn-pointer {
-  position: fixed;
-  width: 14px;
-  height: 14px;
-  background: #2cff9c;
-  border-radius: 50%;
-  box-shadow: 0 0 15px #2cff9c;
-  z-index: 10003;
-}
-
-.nxn-line {
-  position: fixed;
-  height: 2px;
-  background: linear-gradient(to right, #2cff9c, transparent);
-  transform-origin: left center;
-  z-index: 10002;
-}
+/* ===== FINGER ===== */
 
 .nxn-finger {
   position: fixed;
-  width: 36px;
-  height: 36px;
-  background: url("/img/finger.png") no-repeat center / contain;
-  z-index: 10005;
-  animation: fingerTap 1.2s infinite ease-in-out;
+  width: 44px;
+  height: 44px;
+  background: url("/webapp/finger.png") center/contain no-repeat;
+  z-index: 10000;
   pointer-events: none;
+  animation: fingerPulse 1.2s infinite;
 }
 
-@keyframes fingerTap {
-  0%   { transform: translateY(0) scale(1); opacity: 1; }
-  50%  { transform: translateY(6px) scale(0.95); opacity: 0.8; }
-  100% { transform: translateY(0) scale(1); opacity: 1; }
+@keyframes fingerPulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(0.9); opacity: 0.7; }
+  100% { transform: scale(1); opacity: 1; }
 }
-
