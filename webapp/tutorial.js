@@ -264,6 +264,7 @@ function unlockNextOnly() {
           </div>
         `;
         root.appendChild(langBox);
+        document.body.classList.add("tutorial-lock");
         document.querySelectorAll("[data-lang]").forEach(b => {
           b.onclick = () => {
             lang = b.dataset.lang;
@@ -362,7 +363,7 @@ function unlockNextOnly() {
       }
 
       case 10:
-        showComment(t.stakeInfo, true);
+         showComment(t.stakeInfo, null, true);
         break;
 
       case 11:
