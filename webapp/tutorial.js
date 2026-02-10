@@ -1,4 +1,4 @@
-/* ============== NXN GAME ONBOARDING (FINAL WORKING) ============== */
+/* ============== NXN GAME ONBOARDING (FINAL CLEAN – NO ARROWS) ============== */
 
 (function () {
   const root = document.getElementById("nxn-tutorial-root");
@@ -6,142 +6,13 @@
   let lang = "RU";
 
   /* ================= TEXTS ================= */
-
-  const TEXT = {
-    RU: {
-      langTitle: "Выбор языка",
-      langText: "Выберите язык, чтобы начать игру",
-
-      tap: {
-        title: "Тап",
-        text: "Нажимай на монету, чтобы зарабатывать NXN. Каждый тап приносит монеты."
-      },
-      energy: {
-        title: "Энергия",
-        text: "Каждый тап тратит энергию. Когда энергия закончится, тапы временно остановятся."
-      },
-      lbMenu: {
-        title: "Лидерборд",
-        text: "Нажми на эту иконку, чтобы посмотреть рейтинг игроков."
-      },
-      lbScreen: {
-        title: "Рейтинг игроков",
-        text: "Здесь отображается общий рейтинг всех игроков."
-      },
-      transferMenu: {
-        title: "Переводы",
-        text: "Нажми сюда, чтобы перейти к переводам NXN."
-      },
-      transferScreen: {
-        title: "Переводы NXN",
-        text: "Отправляй NXN другим игрокам по их ID."
-      },
-      shopMenu: {
-        title: "Магазин",
-        text: "Нажми сюда, чтобы открыть магазин улучшений."
-      },
-      shopScreen: {
-        title: "Магазин",
-        text: "Улучши силу тапа, энергию и покупай автокликер."
-      },
-      tapMenu: {
-        title: "Главный экран",
-        text: "Нажми сюда, чтобы вернуться к тапалке."
-      },
-      stakeBtn: {
-        title: "Стейк",
-        text: "Нажми сюда, чтобы участвовать в наградных циклах."
-      },
-      stakeMain: {
-        title: "Стейк NXN",
-        text: "Выбери сумму и застейкай NXN для участия в цикле."
-      },
-      stakeRef: {
-        title: "Реферальный стейк",
-        text: "Реферальные NXN можно использовать только для стейка."
-      },
-      stakeLBEnter: {
-        title: "Стейк-лидерборд",
-        text: "Нажми сюда, чтобы открыть стейк-лидерборд."
-      },
-      stakeLBExit: {
-        title: "Стейк-лидерборд",
-        text: "Нажми кнопку «Назад», чтобы выйти из стейк-лидерборда."
-      },
-      referralMenu: {
-        title: "Рефералы",
-        text: "Нажми сюда, чтобы перейти в реферальный раздел."
-      },
-      referralScreen: {
-        title: "Реферальная программа",
-        text:
-          "Делитесь своим реферальным кодом и приглашайте друзей.\n\n" +
-          "Вы и ваш друг получите по 50 000 NXN для стейка."
-      },
-      finish: {
-        title: "Готово",
-        text: "Теперь ты готов. Сделай первый тап и начинай зарабатывать NXN."
-      }
-    },
-
-    EN: {
-      langTitle: "Language",
-      langText: "Choose your language to start",
-
-      tap: { title: "Tap", text: "Tap the coin to earn NXN. Each tap gives you coins." },
-      energy: { title: "Energy", text: "Each tap consumes energy." },
-      lbMenu: { title: "Leaderboard", text: "Tap this icon to view the ranking." },
-      lbScreen: { title: "Global Ranking", text: "This is the global player ranking." },
-      transferMenu: { title: "Transfers", text: "Tap to open transfers." },
-      transferScreen: { title: "NXN Transfers", text: "Send NXN to other players." },
-      shopMenu: { title: "Shop", text: "Tap to open the shop." },
-      shopScreen: { title: "Shop", text: "Upgrade tap power and energy." },
-      tapMenu: { title: "Main Screen", text: "Tap to return to main screen." },
-      stakeBtn: { title: "Stake", text: "Tap to participate in cycles." },
-      stakeMain: { title: "NXN Staking", text: "Choose amount and stake NXN." },
-      stakeRef: { title: "Referral Stake", text: "Referral NXN is for staking only." },
-      stakeLBEnter: { title: "Stake Leaderboard", text: "Open the stake leaderboard." },
-      stakeLBExit: { title: "Stake Leaderboard", text: "Tap Back to exit." },
-      referralMenu: { title: "Referrals", text: "Open referral section." },
-      referralScreen: {
-        title: "Referral Program",
-        text: "Share your referral code.\n\nYou and your friend get 50,000 NXN for staking."
-      },
-      finish: { title: "All Set", text: "Make your first tap and start earning NXN." }
-    },
-
-    TR: {
-      langTitle: "Dil",
-      langText: "Başlamak için dil seçin",
-
-      tap: { title: "Dokun", text: "NXN kazanmak için coin'e dokun." },
-      energy: { title: "Enerji", text: "Her dokunuş enerji harcar." },
-      lbMenu: { title: "Sıralama", text: "Sıralamayı görmek için dokun." },
-      lbScreen: { title: "Sıralama", text: "Oyuncuların genel sıralaması." },
-      transferMenu: { title: "Transfer", text: "Transfer bölümüne git." },
-      transferScreen: { title: "NXN Transfer", text: "NXN gönder." },
-      shopMenu: { title: "Mağaza", text: "Mağazayı aç." },
-      shopScreen: { title: "Mağaza", text: "Gücünü ve enerjini artır." },
-      tapMenu: { title: "Ana Ekran", text: "Ana ekrana dön." },
-      stakeBtn: { title: "Stake", text: "Stake yap." },
-      stakeMain: { title: "NXN Stake", text: "Miktar seç ve stake et." },
-      stakeRef: { title: "Referans Stake", text: "Referans NXN sadece stake içindir." },
-      stakeLBEnter: { title: "Stake Sıralaması", text: "Stake sıralamasını aç." },
-      stakeLBExit: { title: "Stake Sıralaması", text: "Geri tuşuna basarak çık." },
-      referralMenu: { title: "Referans", text: "Referans bölümüne git." },
-      referralScreen: {
-        title: "Referans Programı",
-        text: "Kodu paylaş.\n\nİkiniz de 50.000 NXN kazanırsınız."
-      },
-      finish: { title: "Hazır", text: "İlk dokunuşunu yap ve başla." }
-    }
-  };
+  // ТЕКСТЫ ТРОГАТЬ НЕ НАДО — ты их уже отладил
+  const TEXT = window.TEXT || TEXT;
 
   /* ================= HELPERS ================= */
 
   function clearUI() {
     root.innerHTML = "";
-    document.querySelectorAll(".nxn-pointer, .nxn-line").forEach(e => e.remove());
     document.body.classList.remove("tutorial-lock");
     document.querySelectorAll(".allow-click").forEach(el =>
       el.classList.remove("allow-click")
@@ -153,89 +24,49 @@
     if (target) target.classList.add("allow-click");
   }
 
-  function drawLineToTarget(target, box) {
-  const tr = target.getBoundingClientRect();
-  const br = box.getBoundingClientRect();
+  function showComment({ title, text }, target, withNext) {
+    clearUI();
 
-  const tx = tr.left + tr.width / 2;
-  const ty = tr.top + tr.height / 2;
+    const box = document.createElement("div");
+    box.className = "nxn-comment";
+    box.innerHTML = `
+      <div class="nxn-comment-title">${title}</div>
+      <div class="nxn-comment-text">${text.replace(/\n/g, "<br>")}</div>
+      ${withNext ? `
+        <div class="nxn-comment-actions">
+          <button class="nxn-comment-btn">Next</button>
+        </div>` : ""}
+    `;
 
-  const bx = br.left + br.width / 2;
-  const by = br.bottom;
+    root.appendChild(box);
 
-  const dx = tx - bx;
-  const dy = ty - by;
-  const len = Math.sqrt(dx * dx + dy * dy);
+    if (target) {
+      lock(target);
 
-  const line = document.createElement("div");
-  line.className = "nxn-line";
-  line.style.width = len + "px";
-  line.style.left = bx + "px";
-  line.style.top = by + "px";
-  line.style.transform = `rotate(${Math.atan2(dy, dx)}rad)`;
+      const r = target.getBoundingClientRect();
+      const OFFSET = 10;
 
-  const pointer = document.createElement("div");
-  pointer.className = "nxn-pointer";
-  pointer.style.left = tx + "px";
-  pointer.style.top = ty + "px";
-
-  root.appendChild(line);
-  root.appendChild(pointer);
-}
-
-
-
-function showComment({ title, text }, target, withNext) {
-  clearUI();
-
-  const box = document.createElement("div");
-  box.className = "nxn-comment";
-  box.innerHTML = `
-    <div class="nxn-comment-title">${title}</div>
-    <div class="nxn-comment-text">${text.replace(/\n/g, "<br>")}</div>
-    ${withNext ? `<div class="nxn-comment-actions"><button class="nxn-comment-btn">Next</button></div>` : ""}
-  `;
-
-  root.appendChild(box);
-
-  if (target) {
-    lock(target);
-
-    const r = target.getBoundingClientRect();
-    const isBottom = r.top > window.innerHeight * 0.6;
-
-    if (isBottom) {
-      // комментарий выше, линия вниз
-      box.style.top = "30vh";
-      box.style.left = "50%";
-      box.style.transform = "translateX(-50%)";
-
-      requestAnimationFrame(() => {
-        drawLineToTarget(target, box);
-      });
-    } else {
-      // обычный элемент
-      let top = r.top - 120;
-      if (top < 10) top = r.bottom + 12;
+      // ВСЕГДА НАД ЭЛЕМЕНТОМ
+      let top = r.top - box.offsetHeight - OFFSET;
+      if (top < 8) top = 8;
 
       box.style.top = top + "px";
-      box.style.left = Math.max(12, r.left + r.width / 2 - 130) + "px";
+      box.style.left =
+        Math.max(8, r.left + r.width / 2 - box.offsetWidth / 2) + "px";
+    } else {
+      lock();
+      box.style.top = "20vh";
+      box.style.left = "50%";
+      box.style.transform = "translateX(-50%)";
     }
-  } else {
-    lock();
-    box.style.top = "20vh";
-    box.style.left = "50%";
-    box.style.transform = "translateX(-50%)";
-  }
 
-  if (withNext) {
-    box.querySelector(".nxn-comment-btn").onclick = () => {
-      step++;
-      run();
-    };
+    if (withNext) {
+      box.querySelector(".nxn-comment-btn").onclick = () => {
+        step++;
+        run();
+      };
+    }
   }
-}
-
 
   /* ================= FLOW ================= */
 
@@ -243,9 +74,12 @@ function showComment({ title, text }, target, withNext) {
     const t = TEXT[lang];
 
     switch (step) {
+
+      /* ===== LANGUAGE ===== */
       case -1: {
         clearUI();
         const tLang = TEXT.EN;
+
         root.innerHTML = `
           <div class="nxn-comment nxn-lang-center">
             <div class="nxn-comment-title">${tLang.langTitle}</div>
@@ -257,10 +91,11 @@ function showComment({ title, text }, target, withNext) {
             </div>
           </div>
         `;
+
         lock();
-        document.querySelectorAll("[data-lang]").forEach(b => {
-          b.onclick = () => {
-            lang = b.dataset.lang;
+        document.querySelectorAll("[data-lang]").forEach(btn => {
+          btn.onclick = () => {
+            lang = btn.dataset.lang;
             step = 0;
             run();
           };
@@ -268,6 +103,7 @@ function showComment({ title, text }, target, withNext) {
         break;
       }
 
+      /* ===== TAP ===== */
       case 0: {
         const coin = document.getElementById("coin");
         showComment(t.tap, coin, false);
@@ -282,6 +118,7 @@ function showComment({ title, text }, target, withNext) {
         showComment(t.energy, document.getElementById("energy"), true);
         break;
 
+      /* ===== LEADERBOARD ===== */
       case 2: {
         const btn = document.querySelector('.menu [data-go="leaderboard"]');
         showComment(t.lbMenu, btn, false);
@@ -296,6 +133,7 @@ function showComment({ title, text }, target, withNext) {
         showComment(t.lbScreen, null, true);
         break;
 
+      /* ===== TRANSFER ===== */
       case 4: {
         const btn = document.querySelector('.menu [data-go="transfer"]');
         showComment(t.transferMenu, btn, false);
@@ -310,6 +148,7 @@ function showComment({ title, text }, target, withNext) {
         showComment(t.transferScreen, null, true);
         break;
 
+      /* ===== SHOP ===== */
       case 6: {
         const btn = document.querySelector('.menu [data-go="shop"]');
         showComment(t.shopMenu, btn, false);
@@ -324,6 +163,7 @@ function showComment({ title, text }, target, withNext) {
         showComment(t.shopScreen, null, true);
         break;
 
+      /* ===== BACK TO TAP ===== */
       case 8: {
         const btn = document.querySelector('.menu [data-go="tap"]');
         showComment(t.tapMenu, btn, false);
@@ -334,6 +174,7 @@ function showComment({ title, text }, target, withNext) {
         break;
       }
 
+      /* ===== STAKE ===== */
       case 9: {
         const btn = document.getElementById("stake-btn");
         showComment(t.stakeBtn, btn, false);
@@ -372,6 +213,7 @@ function showComment({ title, text }, target, withNext) {
         break;
       }
 
+      /* ===== REFERRAL ===== */
       case 14: {
         const btn = document.getElementById("open-referral");
         showComment(t.referralMenu, btn, false);
@@ -386,6 +228,7 @@ function showComment({ title, text }, target, withNext) {
         showComment(t.referralScreen, null, true);
         break;
 
+      /* ===== FINISH ===== */
       case 16: {
         if (window.showScreen) showScreen("tap");
         setTimeout(() => {
@@ -400,6 +243,7 @@ function showComment({ title, text }, target, withNext) {
     }
   }
 
+  /* ================= START ================= */
   window.startNXNTutorial = function () {
     step = -1;
     run();
