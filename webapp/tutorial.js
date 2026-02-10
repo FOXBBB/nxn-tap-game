@@ -230,10 +230,12 @@ function unlockNextOnly() {
       Math.max(8, r.left + r.width / 2 - box.offsetWidth / 2) + "px";
   } else {
   document.body.classList.add("tutorial-lock");
+  box.classList.add("allow-click"); // 👈 ВАЖНО
   box.style.top = "16px";
   box.style.left = "50%";
   box.style.transform = "translateX(-50%)";
 }
+
 
   if (withNext) {
     box.querySelector(".nxn-comment-btn").onclick = () => {
@@ -250,29 +252,38 @@ function unlockNextOnly() {
 
     switch (step) {
 
-      case -1:
-        clearUI();
-        const langBox = document.createElement("div");
-        langBox.className = "nxn-comment nxn-lang-center";
-        langBox.innerHTML = `
-          <div class="nxn-comment-title">${TEXT.EN.langTitle}</div>
-          <div class="nxn-comment-text">${TEXT.EN.langText}</div>
-          <div class="nxn-comment-actions">
-            <button class="nxn-comment-btn" data-lang="EN">EN</button>
-            <button class="nxn-comment-btn" data-lang="RU">RU</button>
-            <button class="nxn-comment-btn" data-lang="TR">TR</button>
-          </div>
-        `;
-        root.appendChild(langBox);
-        document.body.classList.add("tutorial-lock");
-        document.querySelectorAll("[data-lang]").forEach(b => {
-          b.onclick = () => {
-            lang = b.dataset.lang;
-            step = 0;
-            run();
-          };
-        });
-        break;
+      case -1: {
+  clearUI();
+
+  const langBox = document.createElement("div");
+  langBox.className = "nxn-comment nxn-lang-center";
+  langBox.innerHTML = `
+    <div class="nxn-comment-title">${TEXT.EN.langTitle}</div>
+    <div class="nxn-comment-text">${TEXT.EN.langText}</div>
+    <div class="nxn-comment-actions">
+      <button class="nxn-comment-btn allow-click" data-lang="EN">EN</button>
+      <button class="nxn-comment-btn allow-click" data-lang="RU">RU</button>
+      <button class="nxn-comment-btn allow-click" data-lang="TR">TR</button>
+    </div>
+  `;
+
+  root.appendChild(langBox);
+
+  // 🔒 блокируем ВСЁ
+  document.body.classList.add("tutorial-lock");
+
+  // 🎯 но кнопки языка разрешаем
+  langBox.querySelectorAll("[data-lang]").forEach(b => {
+    b.onclick = () => {
+      lang = b.dataset.lang;
+      step = 0;
+      run();
+    };
+  });
+
+  break;
+}
+
 
       case 0: {
         showComment(t.tap, false);
