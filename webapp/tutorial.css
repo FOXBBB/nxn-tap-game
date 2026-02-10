@@ -1,47 +1,50 @@
-/* ================= NXN TUTORIAL UI ================= */
+/* ================= NXN TUTORIAL ================= */
 
 .nxn-comment {
   position: fixed;
-  top: 16px;
+  top: 14px;
   left: 50%;
   transform: translateX(-50%);
-  max-width: 360px;
   width: calc(100% - 24px);
+  max-width: 360px;
+
   background: rgba(2, 6, 23, 0.96);
-  border: 1px solid rgba(34,197,94,0.5);
-  border-radius: 16px;
-  padding: 16px 18px;
-  z-index: 30000;
-  box-shadow: 0 0 30px rgba(34,197,94,0.35);
+  border: 1px solid rgba(34,197,94,0.45);
+  border-radius: 14px;
+  padding: 14px 16px;
+
+  z-index: 10000;
+  box-shadow: 0 0 22px rgba(34,197,94,0.35);
 }
 
 .nxn-comment-title {
+  font-size: 14px;
   font-weight: 900;
-  font-size: 15px;
   color: #7affc6;
   margin-bottom: 6px;
 }
 
 .nxn-comment-text {
-  font-size: 14px;
-  color: #cbd5f5;
+  font-size: 13px;
   line-height: 1.45;
+  color: #cbd5f5;
+  min-height: 48px;
 }
 
 .nxn-comment-actions {
-  margin-top: 12px;
+  margin-top: 10px;
   text-align: right;
 }
 
 .nxn-comment-btn {
   background: linear-gradient(135deg, #2cff9c, #00c070);
   border: none;
-  border-radius: 12px;
-  padding: 8px 18px;
+  border-radius: 10px;
+  padding: 6px 16px;
   font-weight: 900;
-  font-size: 13px;
-  cursor: pointer;
+  font-size: 12px;
   color: #02140c;
+  cursor: pointer;
 }
 
 /* ===== Language ===== */
@@ -57,23 +60,24 @@
 
 .nxn-lang-center .nxn-comment-btn {
   flex: 1;
+  padding: 10px 0;
 }
 
 /* ===== Finger ===== */
 .nxn-finger {
   position: fixed;
-  width: 46px;
-  height: 46px;
+  width: 44px;
+  height: 44px;
   background: url("finger.png") no-repeat center center;
   background-size: contain;
-  z-index: 30010;
+  z-index: 10002;
   pointer-events: none;
   animation: nxnFingerTap 1.1s infinite;
 }
 
 @keyframes nxnFingerTap {
   0%   { transform: scale(1); }
-  40%  { transform: scale(0.85); }
+  45%  { transform: scale(0.82); }
   100% { transform: scale(1); }
 }
 
