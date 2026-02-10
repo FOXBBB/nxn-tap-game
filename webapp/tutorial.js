@@ -138,6 +138,19 @@
     if (typingTimer) clearInterval(typingTimer);
   }
 
+  function clearStakeHighlights() {
+  removeHighlight(document.getElementById("stake-confirm"));
+  removeHighlight(document.getElementById("stake-referral-btn"));
+}
+function clearStakeHighlights() {
+  const stakeMain = document.getElementById("stake-confirm");
+  const stakeRef = document.getElementById("stake-referral-btn");
+
+  if (stakeMain) stakeMain.classList.remove("nxn-highlight");
+  if (stakeRef) stakeRef.classList.remove("nxn-highlight");
+}
+
+
   function lockOnly(target) {
     document.body.classList.add("tutorial-lock");
     if (target) target.classList.add("allow-click");
@@ -181,35 +194,58 @@ function unlockNextOnly() {
     }, 18);
   }
 
-  function showComment({ title, text }, withNext) {
-    clearUI();
+  function showComment({ title, text }, target, withNext, position = "above") {
+  clearUI();
 
-    if (withNext) {
-  lockNextOnly();
-} else {
-  unlockNextOnly();
-}
-
-
-    const box = document.createElement("div");
-    box.className = "nxn-comment";
-    box.innerHTML = `
-      <div class="nxn-comment-title">${title}</div>
-      <div class="nxn-comment-text"></div>
-      ${withNext ? `<div class="nxn-comment-actions"><button class="nxn-comment-btn">Next</button></div>` : ""}
-    `;
-    root.appendChild(box);
-
-    typeText(box.querySelector(".nxn-comment-text"), text);
-
-    if (withNext) {
-      box.querySelector("button").onclick = () => {
-        unlockNextOnly();
-        step++;
-        run();
-      };
+  const box = document.createElement("div");
+  box.className = "nxn-comment";
+  box.innerHTML = `
+    <div class="nxn-comment-title">${title}</div>
+    <div class="nxn-comment-text">${text.replace(/\n/g, "<br>")}</div>
+    ${
+      withNext
+        ? `<div class="nxn-comment-actions">
+             <button class="nxn-comment-btn">Next</button>
+           </div>`
+        : ""
     }
+  `;
+
+  root.appendChild(box);
+
+  if (target) {
+    lockOnly(target);
+
+    const r = target.getBoundingClientRect();
+    const OFFSET = 10;
+    let top;
+
+    if (position === "below") {
+      // ⬇️ комментарий ПОД элементом
+      top = r.bottom + OFFSET;
+    } else {
+      // ⬆️ комментарий НАД элементом
+      top = r.top - box.offsetHeight - OFFSET;
+      if (top < 8) top = r.bottom + OFFSET;
+    }
+
+    box.style.top = top + "px";
+    box.style.left =
+      Math.max(8, r.left + r.width / 2 - box.offsetWidth / 2) + "px";
+  } else {
+    lockAll();
+    box.style.top = "16px";
+    box.style.left = "50%";
+    box.style.transform = "translateX(-50%)";
   }
+
+  if (withNext) {
+    box.querySelector(".nxn-comment-btn").onclick = () => {
+      step++;
+      run();
+    };
+  }
+}
 
   /* ================= FLOW ================= */
 
@@ -334,28 +370,42 @@ function unlockNextOnly() {
         break;
 
       case 11:
-  showComment(t.stakeNXN, true);
+  clearStakeHighlights(); // ← ВАЖНО
+  showComment(t.stakeMain, null, true);
   highlight(document.getElementById("stake-confirm"));
   break;
 
 
+
       case 12:
-  showComment(t.stakeRef, true);
+  clearStakeHighlights(); // ← ВАЖНО
+  showComment(t.stakeRef, null, true);
   highlight(document.getElementById("stake-referral-btn"));
   break;
 
 
-      case 13: {
-        showComment(t.stakeLBGo, false);
-        const btn = document.getElementById("open-stake-lb");
-        lockOnly(btn);
-        showFinger(btn);
-        btn.addEventListener("click", () => {
-          step = 14;
-          run();
-        }, { once: true });
-        break;
-      }
+case 13: {
+  clearStakeHighlights();
+
+  const back = document.getElementById("back-to-stake");
+
+  showComment(
+    t.stakeLBExit,
+    back,
+    false,
+    "below" // 👈 ВАЖНО: комментарий СНИЗУ
+  );
+
+  lockOnly(back);
+  showFinger(back);
+
+  back.addEventListener("click", () => {
+    step = 14;
+    run();
+  }, { once: true });
+
+  break;
+}
 
       case 14:
         showComment(t.stakeLBInfo, true);
