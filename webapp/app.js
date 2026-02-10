@@ -135,7 +135,7 @@ async function checkSubscribeAccess() {
   const res = await fetch(`/api/subscribe/access/${userId}`);
   const data = await res.json();
 
-  if (!data.subscribed || !data.bonusClaimed) {
+ if (!data.subscribed) {
     subscribeOverlay.classList.remove("hidden");
     lockGame(); // 🔒 ВАЖНО
     return;
