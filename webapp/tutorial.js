@@ -142,6 +142,24 @@
     document.body.classList.add("tutorial-lock");
     if (target) target.classList.add("allow-click");
   }
+function lockNextOnly() {
+  document.body.classList.add("tutorial-next-only");
+}
+
+function highlight(el) {
+  if (!el) return;
+  el.classList.add("nxn-highlight");
+}
+
+function removeHighlight(el) {
+  if (!el) return;
+  el.classList.remove("nxn-highlight");
+}
+
+
+function unlockNextOnly() {
+  document.body.classList.remove("tutorial-next-only");
+}
 
   function showFinger(target) {
     if (!target) return;
@@ -166,6 +184,13 @@
   function showComment({ title, text }, withNext) {
     clearUI();
 
+    if (withNext) {
+  lockNextOnly();
+} else {
+  unlockNextOnly();
+}
+
+
     const box = document.createElement("div");
     box.className = "nxn-comment";
     box.innerHTML = `
@@ -179,6 +204,7 @@
 
     if (withNext) {
       box.querySelector("button").onclick = () => {
+        unlockNextOnly();
         step++;
         run();
       };
@@ -308,12 +334,16 @@
         break;
 
       case 11:
-        showComment(t.stakeNXN, true);
-        break;
+  showComment(t.stakeNXN, true);
+  highlight(document.getElementById("stake-confirm"));
+  break;
+
 
       case 12:
-        showComment(t.stakeRef, true);
-        break;
+  showComment(t.stakeRef, true);
+  highlight(document.getElementById("stake-referral-btn"));
+  break;
+
 
       case 13: {
         showComment(t.stakeLBGo, false);
