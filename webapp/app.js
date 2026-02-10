@@ -77,9 +77,18 @@ document
   userId = String(tgUser.id);
 
   // 🔒 SUBSCRIBE GATE — старт проверки
-setTimeout(() => {
+const tutorialDone = localStorage.getItem("nxn_tutorial_done");
+
+if (tutorialDone === "1") {
+  // туториал уже был → можно сразу проверять подписку
   checkSubscribeAccess();
-}, 600);
+} else {
+  // ждём окончания туториала
+  window.addEventListener("nxn:tutorial-finished", () => {
+    checkSubscribeAccess();
+  }, { once: true });
+}
+
 
   const myIdEl = document.getElementById("my-id");
   if (myIdEl) {

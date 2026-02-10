@@ -525,14 +525,26 @@ case 14: {
   clearUI();
 }, { once: true });
 
-
-
   }, 300);
 
   break;
 }
     }
   }
+
+  coin.addEventListener("pointerdown", () => {
+  localStorage.setItem("nxn_tutorial_done", "1");
+
+  document.body.classList.remove("tutorial-lock");
+  document.body.classList.remove("tutorial-next-only");
+
+  clearUI();
+
+  // 🔥 СООБЩАЕМ app.js
+  window.dispatchEvent(new Event("nxn:tutorial-finished"));
+}, { once: true });
+
+
 
  window.startNXNTutorial = function () {
   const finished = localStorage.getItem("nxn_tutorial_done");
