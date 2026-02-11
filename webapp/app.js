@@ -73,8 +73,6 @@ Telegram.WebApp.expand();
 tgUser = Telegram.WebApp.initDataUnsafe.user;
 userId = String(tgUser.id);
 
-// 🔥 ВАЖНО: проверка подписки СРАЗУ
-checkSubscribeAccess();
 
 // ▶️ туториал — ПОСЛЕ
 startNXNTutorial();
@@ -84,8 +82,6 @@ startNXNTutorial();
     manifestUrl: "https://nxn-tap-game.onrender.com/tonconnect-manifest.json"
   });
 
-  tgUser = Telegram.WebApp.initDataUnsafe.user;
-  userId = String(tgUser.id);
 
 
 
@@ -109,6 +105,9 @@ Telegram.WebApp.ready();
 // 1️⃣ СНАЧАЛА DOM-элементы
 const subscribeOverlay = document.getElementById("subscribe-overlay");
 const checkSubscribeBtn = document.getElementById("check-subscribe-btn");
+// 🔥 ПЕРВАЯ ПРОВЕРКА ПОДПИСКИ (КОГДА DOM ГОТОВ)
+checkSubscribeAccess();
+
 
 async function checkSubscribeAccess() {
   let data;
