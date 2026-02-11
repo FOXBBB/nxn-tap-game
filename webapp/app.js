@@ -67,8 +67,18 @@ document
 
 
   Telegram.WebApp.ready();
-  startNXNTutorial();
-  Telegram.WebApp.expand();
+Telegram.WebApp.expand();
+
+// получаем пользователя СРАЗУ
+tgUser = Telegram.WebApp.initDataUnsafe.user;
+userId = String(tgUser.id);
+
+// 🔥 ВАЖНО: проверка подписки СРАЗУ
+checkSubscribeAccess();
+
+// ▶️ туториал — ПОСЛЕ
+startNXNTutorial();
+
 
   tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
     manifestUrl: "https://nxn-tap-game.onrender.com/tonconnect-manifest.json"
@@ -77,37 +87,6 @@ document
   tgUser = Telegram.WebApp.initDataUnsafe.user;
   userId = String(tgUser.id);
 
-
-
-  // 🔒 SUBSCRIBE GATE — старт проверки
-function startSubscribeGate() {
-  // 🧯 снимаем все tutorial-локи
-  document.body.classList.remove("tutorial-lock");
-  document.body.classList.remove("tutorial-next-only");
-
-  // ⏳ даём браузеру кадр
-  requestAnimationFrame(() => {
-    checkSubscribeAccess();
-  });
-}
-
-
-const tutorialDone = localStorage.getItem("nxn_tutorial_done");
-
-if (tutorialDone === "1") {
-  startSubscribeGate();
-} else {
-  // страховка: если туториал не стартует
-  setTimeout(() => {
-    startSubscribeGate();
-  }, 0);
-
-  window.addEventListener(
-    "nxn:tutorial-finished",
-    startSubscribeGate,
-    { once: true }
-  );
-}
 
 
 
@@ -155,6 +134,11 @@ async function checkSubscribeAccess() {
 }
 
 
+// 🔁 повторная проверка при возврате в WebApp
+Telegram.WebApp.onEvent("visibilityChanged", () => {
+  if (!userId) return;
+  checkSubscribeAccess();
+});
 
 
 
@@ -184,6 +168,13 @@ function unlockGame() {
     el.style.pointerEvents = "";
   });
 }
+
+
+
+
+
+
+
 
 checkSubscribeBtn.onclick = async () => {
   const res = await fetch("/api/subscribe/confirm", {
@@ -216,6 +207,9 @@ checkSubscribeBtn.onclick = async () => {
   subscribeOverlay.classList.add("hidden");
   unlockGame();
 };
+
+
+
 
 
 
