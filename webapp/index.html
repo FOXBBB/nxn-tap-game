@@ -299,6 +299,48 @@
         <img src="transfer.png" class="transfer-img">
       </section>
 
+      <section id="games" class="screen hidden">
+        <div class="title blue">GAMES</div>
+
+        <div class="glass game-card" id="open-pvp">
+          <h3>PvP Arena</h3>
+          <p>1 vs 1 • 20 seconds • Burn 10%</p>
+        </div>
+      </section>
+
+      <section id="pvp" class="screen hidden">
+  <div class="title blue">PvP ARENA</div>
+
+  <div class="glass pvp-box">
+    <div id="pvp-status">Choose stake</div>
+
+    <div class="stake-amounts">
+      <button data-pvp="1000">1K</button>
+      <button data-pvp="5000">5K</button>
+      <button data-pvp="10000">10K</button>
+      <button data-pvp="50000">50K</button>
+      <button data-pvp="100000">100K</button>
+    </div>
+
+    <button id="pvp-play">PLAY</button>
+
+    <div id="pvp-match" class="hidden">
+      <div class="pvp-timer" id="pvp-timer">20</div>
+
+      <div class="pvp-score">
+        <div>You: <span id="pvp-you">0</span></div>
+        <div>Opponent: <span id="pvp-opp">0</span></div>
+      </div>
+
+      <button id="pvp-tap">TAP</button>
+    </div>
+  </div>
+
+  <button id="pvp-back" class="stake-btn">← Back</button>
+</section>
+
+
+
       <!-- SHOP (НЕ ТРОГАЕМ) -->
       <section id="shop" class="screen hidden">
         <div class="title blue">SHOP</div>
@@ -371,6 +413,10 @@
 
         <div data-go="tap">
           <span><img src="menu-tap.png"></span>
+        </div>
+
+        <div data-go="games">
+          <span><img src="menu-games.png"></span>
         </div>
 
         <div data-go="shop">

@@ -2568,3 +2568,37 @@ body.locked {
   transform: scale(0.94);
 }
 
+.game-card {
+  padding: 20px;
+  margin: 15px 0;
+  cursor: pointer;
+  text-align: center;
+  transition: 0.2s;
+}
+
+.game-card:hover {
+  transform: scale(1.03);
+}
+
+.pvp-box {
+  padding: 20px;
+  text-align: center;
+}
+
+.pvp-timer {
+  font-size: 32px;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.pvp-score {
+  display: flex;
+  justify-content: space-between;
+  margin: 15px 0;
+  font-size: 18px;
+}
+
+#pvp-tap {
+  font-size: 22px;
+  padding: 15px 30px;
+}

@@ -32,9 +32,17 @@ app.get("*", (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
+import http from "http";
+import { initPvp } from "./pvp.js";
+
+const server = http.createServer(app);
+
+initPvp(server); // 🔥 подключаем PvP модуль
+
+server.listen(PORT, () => {
   console.log("NXN backend running on", PORT);
 });
+
 
 // reward cycle
 setInterval(() => {

@@ -21,6 +21,10 @@ let tapPower = 1;
 let canTap = false;
 let tonConnectUI = null;
 window.__NXN_TUTORIAL_ACTIVE__ = false;
+let pvpSocket = null;
+let pvpStake = 0;
+let pvpTimerInterval = null;
+
 
 
 
@@ -81,6 +85,7 @@ startNXNTutorial();
   tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
     manifestUrl: "https://nxn-tap-game.onrender.com/tonconnect-manifest.json"
   });
+
 
 
 
@@ -347,6 +352,33 @@ document.getElementById("stake-balance").innerText =
   formatNumber(balance);
 
 
+};
+document.getElementById("open-pvp").onclick = () => {
+  showScreen("pvp");
+};
+
+document.getElementById("pvp-back").onclick = () => {
+  showScreen("games");
+};
+
+document.querySelectorAll("[data-pvp]").forEach(btn => {
+  btn.onclick = () => {
+    pvpStake = Number(btn.dataset.pvp);
+
+    document.querySelectorAll("[data-pvp]")
+      .forEach(b => b.classList.remove("active"));
+
+    btn.classList.add("active");
+  };
+});
+
+document.getElementById("pvp-play").onclick = () => {
+  if (!pvpStake) return alert("Choose stake");
+  startPvpSearch();
+};
+document.getElementById("pvp-tap").onclick = () => {
+  if (!pvpSocket) return;
+  pvpSocket.send(JSON.stringify({ type: "tap" }));
 };
 
 
@@ -1410,3 +1442,78 @@ if (mainTransferBtn) {
   };
 }
 
+// ================= PvP FUNCTIONS =================
+
+function startPvpSearch() {
+
+  pvpSocket = new WebSocket(
+    (location.protocol === "https:" ? "wss://" : "ws://") +
+    location.host +
+    "/pvp"
+  );
+
+  pvpSocket.onopen = () => {
+    pvpSocket.send(JSON.stringify({
+      type: "search",
+      userId,
+      stake: pvpStake
+    }));
+
+    document.getElementById("pvp-status").innerText =
+      "Searching opponent...";
+  };
+
+  pvpSocket.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+
+    if (data.type === "start") {
+      document.getElementById("pvp-status").innerText = "FIGHT!";
+      document.getElementById("pvp-match")
+        .classList.remove("hidden");
+
+      startMatchTimer();
+    }
+
+    if (data.type === "score") {
+      document.getElementById("pvp-you").innerText = data.you;
+      document.getElementById("pvp-opp").innerText = data.opponent;
+    }
+
+    if (data.type === "end") {
+
+      clearInterval(pvpTimerInterval);
+
+      document.getElementById("pvp-status").innerText =
+        data.winner === userId
+          ? "YOU WIN!"
+          : "YOU LOSE";
+
+      document.getElementById("pvp-match")
+        .classList.add("hidden");
+
+      refreshMe();
+    }
+  };
+
+  pvpSocket.onclose = () => {
+    clearInterval(pvpTimerInterval);
+  };
+}
+
+
+function startMatchTimer() {
+
+  let time = 20;
+
+  document.getElementById("pvp-timer").innerText = time;
+
+  pvpTimerInterval = setInterval(() => {
+    time--;
+    document.getElementById("pvp-timer").innerText = time;
+
+    if (time <= 0) {
+      clearInterval(pvpTimerInterval);
+    }
+  }, 1000);
+
+}
