@@ -267,61 +267,52 @@ function startBotMatch(ws, stake) {
   ws.isActive = true;
   ws.send(JSON.stringify({ type: "start" }));
 
-  const botShouldWin = Math.random() < 0.6;
+  const botTarget = 240 + Math.floor(Math.random() * 180); // 240–420
 
-  // 🎯 Диапазон 240–340
-  let botTarget;
+  ws.botScore = 0;
 
-  if (botShouldWin) {
-    botTarget = 300 + Math.floor(Math.random() * 40); // 300–340
-  } else {
-    botTarget = 240 + Math.floor(Math.random() * 40); // 240–280
-  }
+  const tickRate = 100; // 100мс
+  const totalTicks = MATCH_DURATION / tickRate;
 
-  const ticks = MATCH_DURATION / 80; // сколько тиков за матч
-  const incrementPerTick = botTarget / ticks;
+  const baseSpeed = botTarget / totalTicks;
+
+  const matchStart = Date.now();
 
   const botInterval = setInterval(() => {
 
-  if (!ws.isActive) return;
+    if (!ws.isActive) return;
 
-  // базовая скорость
-  let speed = baseSpeed;
+    const elapsed = Date.now() - matchStart;
+    const timeLeft = MATCH_DURATION - elapsed;
 
-  // случайный разброс ±20%
-  speed *= (0.8 + Math.random() * 0.4);
+    let speed = baseSpeed;
 
-  // лёгкие паузы (живость)
-  if (Math.random() < 0.05) {
-    speed *= 0.3;
-  }
+    // рандом живости
+    speed *= (0.8 + Math.random() * 0.4);
 
-  // иногда бот делает финальный рывок
-if (timeLeft < 3000 && Math.random() < 0.4) {
-  ws.botScore += 3 + Math.random() * 5;
-}
+    // иногда микропауза
+    if (Math.random() < 0.05) {
+      speed *= 0.3;
+    }
 
+    // ускорение в конце
+    if (timeLeft < 5000) {
+      speed *= 1.3 + Math.random() * 0.3;
+    }
 
-  // ускорение в последние 5 секунд
-  if (timeLeft < 5000) {
-    speed *= 1.2 + Math.random() * 0.4;
-  }
+    ws.botScore += speed;
 
-  ws.botScore += speed;
+    if (ws.botScore > botTarget) {
+      ws.botScore = botTarget;
+    }
 
-  if (ws.botScore > botTarget) {
-    ws.botScore = botTarget;
-  }
+    ws.send(JSON.stringify({
+      type: "score",
+      you: ws.score,
+      opponent: Math.floor(ws.botScore)
+    }));
 
-  ws.send(JSON.stringify({
-    type: "score",
-    you: ws.score,
-    opponent: Math.floor(ws.botScore)
-  }));
-
-}, 100);
-
-
+  }, tickRate);
 
 
   setTimeout(async () => {
@@ -358,6 +349,7 @@ if (timeLeft < 3000 && Math.random() < 0.4) {
 
   }, MATCH_DURATION);
 }
+
 
 
 
