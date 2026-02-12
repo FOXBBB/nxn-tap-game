@@ -382,13 +382,19 @@ const pvpCoin = document.getElementById("pvp-tap-coin");
 
 if (pvpCoin) {
 
-  const sendTap = () => {
-    if (!pvpSocket) return;
-    pvpSocket.send(JSON.stringify({ type: "tap" }));
+ const sendTap = () => {
+  if (!pvpSocket) return;
 
-    pvpCoin.classList.add("hit");
-    setTimeout(() => pvpCoin.classList.remove("hit"), 80);
-  };
+  pvpSocket.send(JSON.stringify({ type: "tap" }));
+
+  if (Telegram?.WebApp?.HapticFeedback) {
+    Telegram.WebApp.HapticFeedback.impactOccurred("light");
+  }
+
+  pvpCoin.classList.add("hit");
+  setTimeout(() => pvpCoin.classList.remove("hit"), 80);
+};
+
 
   pvpCoin.addEventListener("touchstart", (e) => {
     e.preventDefault();
@@ -1502,6 +1508,19 @@ function startPvpSearch() {
     }
 
     if (data.type === "end") {
+
+      const status = document.getElementById("pvp-status");
+
+if (data.winner === userId) {
+  status.classList.add("pvp-win");
+} else {
+  status.classList.add("pvp-lose");
+}
+
+setTimeout(() => {
+  status.classList.remove("pvp-win", "pvp-lose");
+}, 800);
+
 
   clearInterval(pvpTimerInterval);
 
