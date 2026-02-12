@@ -1,9 +1,7 @@
 import { WebSocketServer } from "ws";
-import { query, pool } from "./db.js";
+import { query } from "./db.js";
 
 const MATCH_DURATION = 20000;
-
-
 let waitingQueue = new Map();
 
 export function initPvp(server) {
@@ -12,6 +10,8 @@ export function initPvp(server) {
   wss.on("connection", (ws) => {
 
     ws.isActive = false;
+    ws.score = 0;
+    ws.botScore = 0;
 
     ws.on("message", async (msg) => {
       try {
@@ -21,28 +21,24 @@ export function initPvp(server) {
           await handleSearch(ws, data);
         }
 
-       if (data.type === "tap") {
+        if (data.type === "tap") {
+          if (!ws.isActive) return;
 
-  if (!ws.isActive) return;
+          ws.score++;
 
-  ws.score++;
+          if (ws.opponent) {
+            sendScore(ws);
+            return;
+          }
 
-  // 🔥 РЕАЛЬНЫЙ ПРОТИВНИК
-  if (ws.opponent) {
-    sendScore(ws);
-    return;
-  }
-
-  // 🔥 БОТ
-  if (ws.matchId === "bot") {
-    ws.send(JSON.stringify({
-      type: "score",
-      you: ws.score,
-      opponent: Math.floor(ws.botScore || 0)
-    }));
-  }
-}
-
+          if (ws.matchId === "bot") {
+            ws.send(JSON.stringify({
+              type: "score",
+              you: ws.score,
+              opponent: Math.floor(ws.botScore)
+            }));
+          }
+        }
 
       } catch (e) {
         console.error("WS ERROR:", e);
@@ -103,21 +99,16 @@ async function createMatch(ws1, ws2, stake) {
   ws1.score = 0;
   ws2.score = 0;
 
-  ws1.send(JSON.stringify({
-  type: "opponent",
-  name: ws2.userId
-}));
+  ws1.opponent = ws2;
+  ws2.opponent = ws1;
 
-ws2.send(JSON.stringify({
-  type: "opponent",
-  name: ws1.userId
-}));
+  ws1.send(JSON.stringify({ type: "opponent", name: ws2.userId }));
+  ws2.send(JSON.stringify({ type: "opponent", name: ws1.userId }));
 
   startCountdown(ws1, ws2, stake);
 }
 
 function startCountdown(ws1, ws2, stake) {
-
   let count = 3;
 
   const interval = setInterval(() => {
@@ -151,16 +142,14 @@ function sendScore(ws) {
   ws.send(JSON.stringify({
     type: "score",
     you: ws.score,
-    opponent: ws.opponent?.score || 0
+    opponent: ws.opponent.score
   }));
 
-  if (ws.opponent) {
-    ws.opponent.send(JSON.stringify({
-      type: "score",
-      you: ws.opponent.score,
-      opponent: ws.score
-    }));
-  }
+  ws.opponent.send(JSON.stringify({
+    type: "score",
+    you: ws.opponent.score,
+    opponent: ws.score
+  }));
 }
 
 async function finishMatch(ws1, ws2, stake) {
@@ -208,12 +197,41 @@ async function createBotMatch(ws, stake) {
   ws.matchId = "bot";
   ws.score = 0;
   ws.botScore = 0;
+  ws.isActive = false;
+
+  ws.send(JSON.stringify({
+    type: "opponent",
+    name: "BOT NXN"
+  }));
+
+  startBotCountdown(ws, stake);
+}
+
+function startBotCountdown(ws, stake) {
+
+  let count = 3;
+
+  const interval = setInterval(() => {
+
+    ws.send(JSON.stringify({ type: "countdown", value: count }));
+
+    count--;
+
+    if (count < 0) {
+      clearInterval(interval);
+      startBotMatch(ws, stake);
+    }
+
+  }, 1000);
+}
+
+function startBotMatch(ws, stake) {
+
   ws.isActive = true;
 
-  // 🎯 60% шанс что бот выиграет
-  const botShouldWin = Math.random() < 0.6;
-
   ws.send(JSON.stringify({ type: "start" }));
+
+  const botShouldWin = Math.random() < 0.6;
 
   const startTime = Date.now();
 
@@ -226,13 +244,12 @@ async function createBotMatch(ws, stake) {
 
     if (progress >= 1) return;
 
-    // 🔥 бот адаптируется под твой счёт
-    const targetBase = ws.score + (botShouldWin ? 15 : -10);
+    const advantage = botShouldWin ? 12 : -8;
 
-    const dynamicSpeed =
-      (targetBase - ws.botScore) * 0.08;
+    const dynamic =
+      (ws.score + advantage - ws.botScore) * 0.08;
 
-    ws.botScore += Math.max(dynamicSpeed, 1);
+    ws.botScore += Math.max(dynamic, 1);
 
     ws.send(JSON.stringify({
       type: "score",
@@ -269,10 +286,6 @@ async function createBotMatch(ws, stake) {
 
   }, MATCH_DURATION);
 }
-
-
-
-
 
 function cleanup(ws) {
   if (ws.stake && waitingQueue.has(ws.stake)) {

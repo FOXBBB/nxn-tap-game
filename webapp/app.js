@@ -1531,6 +1531,16 @@ function startPvpSearch() {
   });
 }
 
+if (data.type === "countdown") {
+
+  document.getElementById("pvp-match")
+    .classList.remove("hidden");  // 🔥 раскрываем раньше
+
+  document.getElementById("pvp-status").innerText =
+    data.value > 0 ? data.value : "FIGHT!";
+}
+
+
 
     if (data.type === "score") {
       document.getElementById("pvp-you").innerText = data.you;
