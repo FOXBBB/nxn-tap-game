@@ -52,7 +52,13 @@ export function initPvp(server) {
 }
 
 async function handleSearch(ws, data) {
+
+  if (ws.searching || ws.isActive) return; // 🔥 ЗАЩИТА
+
+  ws.searching = true;
+
   const { userId, stake } = data;
+
 
   ws.userId = userId;
   ws.stake = stake;
@@ -62,10 +68,11 @@ async function handleSearch(ws, data) {
     [userId]
   );
 
-  if (!user.rows.length || user.rows[0].balance < stake) {
-    ws.send(JSON.stringify({ type: "error" }));
-    return;
-  }
+ if (!user.rows.length || user.rows[0].balance < stake) {
+  ws.searching = false; // 🔥 ВАЖНО
+  ws.send(JSON.stringify({ type: "error" }));
+  return;
+}
 
   const opponent = waitingQueue.get(stake);
 
@@ -75,9 +82,13 @@ async function handleSearch(ws, data) {
     await createMatch(opponent.ws, ws, stake);
   } else {
     const timeout = setTimeout(() => {
-      waitingQueue.delete(stake);
-      createBotMatch(ws, stake);
-    }, 8000);
+
+  if (ws.readyState !== 1) return; // 🔥 сокет закрыт
+
+  waitingQueue.delete(stake);
+  createBotMatch(ws, stake);
+
+}, 8000);
 
     waitingQueue.set(stake, { userId, ws, timeout });
     ws.send(JSON.stringify({ type: "searching" }));
@@ -106,6 +117,10 @@ async function createMatch(ws1, ws2, stake) {
   ws2.send(JSON.stringify({ type: "opponent", name: ws1.userId }));
 
   startCountdown(ws1, ws2, stake);
+
+  ws1.searching = false;
+ws2.searching = false;
+
 }
 
 function startCountdown(ws1, ws2, stake) {
@@ -185,6 +200,10 @@ async function finishMatch(ws1, ws2, stake) {
     you: ws2.score,
     opponent: ws1.score
   }));
+
+  ws1.searching = false;
+ws2.searching = false;
+
 }
 
 async function createBotMatch(ws, stake) {
@@ -205,6 +224,8 @@ async function createBotMatch(ws, stake) {
   }));
 
   startBotCountdown(ws, stake);
+  ws.searching = false;
+
 }
 
 function startBotCountdown(ws, stake) {
@@ -228,7 +249,6 @@ function startBotCountdown(ws, stake) {
 function startBotMatch(ws, stake) {
 
   ws.isActive = true;
-
   ws.send(JSON.stringify({ type: "start" }));
 
   const botShouldWin = Math.random() < 0.6;
@@ -244,12 +264,21 @@ function startBotMatch(ws, stake) {
 
     if (progress >= 1) return;
 
-    const advantage = botShouldWin ? 12 : -8;
+    let target;
 
-    const dynamic =
-      (ws.score + advantage - ws.botScore) * 0.08;
+    if (botShouldWin) {
+      // бот держится впереди на 15–25 очков
+      target = ws.score + 15 + Math.random() * 10;
+    } else {
+      // бот специально чуть слабее
+      target = ws.score - 10 + Math.random() * 5;
+    }
 
-    ws.botScore += Math.max(dynamic, 1);
+    const speed = (target - ws.botScore) * 0.15;
+
+    ws.botScore += speed;
+
+    if (ws.botScore < 0) ws.botScore = 0;
 
     ws.send(JSON.stringify({
       type: "score",
@@ -257,7 +286,7 @@ function startBotMatch(ws, stake) {
       opponent: Math.floor(ws.botScore)
     }));
 
-  }, 100);
+  }, 80);
 
   setTimeout(async () => {
 
@@ -286,6 +315,7 @@ function startBotMatch(ws, stake) {
 
   }, MATCH_DURATION);
 }
+
 
 function cleanup(ws) {
   if (ws.stake && waitingQueue.has(ws.stake)) {

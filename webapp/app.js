@@ -372,10 +372,19 @@ document.querySelectorAll("[data-pvp]").forEach(btn => {
   };
 });
 
-document.getElementById("pvp-play").onclick = () => {
+const pvpPlayBtn = document.getElementById("pvp-play");
+
+pvpPlayBtn.onclick = () => {
+
   if (!pvpStake) return alert("Choose stake");
+
+  if (pvpSocket) return; // 🔥 защита от повторного нажатия
+
+  pvpPlayBtn.disabled = true;
+
   startPvpSearch();
 };
+
 
 
 const pvpCoin = document.getElementById("pvp-tap-coin");
@@ -1590,6 +1599,8 @@ setTimeout(() => {
 
   pvpSocket.onclose = () => {
     clearInterval(pvpTimerInterval);
+    pvpPlayBtn.disabled = false;
+
   };
 }
 
