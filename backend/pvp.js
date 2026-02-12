@@ -267,7 +267,31 @@ function startBotMatch(ws, stake) {
   ws.isActive = true;
   ws.send(JSON.stringify({ type: "start" }));
 
-  const botTarget = 240 + Math.floor(Math.random() * 180); // 240–420
+  // ===== BOT DIFFICULTY LOGIC =====
+
+// 30% — АГРЕССИВНЫЙ (420–500)
+// 40% — СРЕДНИЙ (330–420)
+// 30% — ЛЁГКИЙ (250–330)
+
+const roll = Math.random();
+let botTarget;
+
+if (roll < 0.30) {
+  // 🔥 30% агрессивный
+  botTarget = 420 + Math.floor(Math.random() * 81); 
+  // 420–500
+} 
+else if (roll < 0.70) {
+  // ⚖️ 40% средний
+  botTarget = 330 + Math.floor(Math.random() * 91); 
+  // 330–420
+} 
+else {
+  // 🟢 30% лёгкий
+  botTarget = 250 + Math.floor(Math.random() * 81); 
+  // 250–330
+}
+
 
   ws.botScore = 0;
 
