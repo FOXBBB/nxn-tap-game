@@ -25,7 +25,18 @@ export function initPvp(server) {
         if (data.type === "tap") {
           if (!ws.isActive) return;
           ws.score++;
-          sendScore(ws);
+
+if (ws.opponent) {
+  sendScore(ws);
+} else {
+  // бот матч — отправляем только свой счёт
+  ws.send(JSON.stringify({
+    type: "score",
+    you: ws.score,
+    opponent: undefined
+  }));
+}
+
         }
 
       } catch (e) {
@@ -215,36 +226,49 @@ function startCountdownBot(ws, stake, botTarget) {
 function startBotMatch(ws, stake, botTarget) {
 
   ws.isActive = true;
-
   ws.send(JSON.stringify({ type: "start" }));
 
   let botScore = 0;
+
+  const startTime = Date.now();
+  const duration = MATCH_DURATION;
 
   const botInterval = setInterval(() => {
 
     if (!ws.isActive) return;
 
-    const remaining = botTarget - botScore;
+    const elapsed = Date.now() - startTime;
+    const progress = elapsed / duration;
 
-    if (remaining > 0) {
-      botScore += Math.min(
-        Math.floor(Math.random() * 6) + 3,
-        remaining
-      );
+    if (progress >= 1) return;
+
+    // 🔥 реальная скорость 8–16 cps
+    const cps = 8 + Math.random() * 8;
+
+    // сколько кликов за 100мс
+    const clicksThisTick = cps * 0.1;
+
+    botScore += clicksThisTick;
+
+    // не превышаем target
+    if (botScore > botTarget) {
+      botScore = botTarget;
     }
 
     ws.send(JSON.stringify({
       type: "score",
       you: ws.score,
-      opponent: botScore
+      opponent: Math.floor(botScore)
     }));
 
-  }, 150);
+  }, 100);
 
   setTimeout(async () => {
 
     ws.isActive = false;
     clearInterval(botInterval);
+
+    botScore = Math.floor(botScore);
 
     const total = stake * 2;
     const reward = Math.floor(total * 0.9);
@@ -267,6 +291,7 @@ function startBotMatch(ws, stake, botTarget) {
 
   }, MATCH_DURATION);
 }
+
 
 function cleanup(ws) {
   if (ws.stake && waitingQueue.has(ws.stake)) {
