@@ -839,13 +839,11 @@ ORDER BY total_stake DESC
 router.post("/reward/claim", async (req, res) => {
   const { id, wallet } = req.body;
 
-  // 1️⃣ проверяем цикл
   const cycle = await getCurrentRewardCycle();
   if (!cycle || cycle.state !== "CLAIM_ACTIVE") {
     return res.json({ ok: false, error: "Claim not active" });
   }
 
-  // 2️⃣ защита от двойного claim
   const already = await query(`
     SELECT 1
     FROM reward_event_claims
@@ -856,42 +854,38 @@ router.post("/reward/claim", async (req, res) => {
     return res.json({ ok: false, error: "Already claimed" });
   }
 
-  // 3️⃣ определяем ранг
+  // 🔥 считаем ранги
   const all = await query(`
     SELECT telegram_id, SUM(stake_amount) AS total
-FROM reward_event_stakes
-WHERE cycle_id = $1
-GROUP BY telegram_id
-ORDER BY total DESC
+    FROM reward_event_stakes
+    WHERE cycle_id = $1
+    GROUP BY telegram_id
+    ORDER BY total DESC
   `, [cycle.id]);
 
-  const rank =
-    all.rows.findIndex(r => r.telegram_id === id) + 1;
+  const rank = all.rows.findIndex(r => r.telegram_id === id) + 1;
 
-  if (rank === 0 || rank > 500) {
+  // ❗ ТОЛЬКО ТОП 100
+  if (rank === 0 || rank > 100) {
     return res.json({ ok: false, error: "Not eligible" });
   }
 
-  // 4️⃣ расчёт награды (ПО ТВОЕМУ ТЗ)
   let reward = 0;
 
-  if (rank <= 10) reward = 10;
-  else if (rank <= 50) reward = 5;
-  else if (rank <= 200) reward = 3;
-  else reward = 1;
+  if (rank <= 10) reward = 6000;
+  else if (rank <= 40) reward = 3000;
+  else if (rank <= 70) reward = 2000;
+  else reward = 1000;
 
-  // 5️⃣ сохраняем claim
   await query(`
-  INSERT INTO reward_event_claims
-    (cycle_id, telegram_id, wallet, reward_amount, status)
-  VALUES ($1, $2, $3, $4, 'PENDING')
-`, [cycle.id, id, wallet, reward]);
-
-
-  // ❗ здесь позже будет TON send
+    INSERT INTO reward_event_claims
+      (cycle_id, telegram_id, wallet, reward_amount, status)
+    VALUES ($1, $2, $3, $4, 'PENDING')
+  `, [cycle.id, id, wallet, reward]);
 
   res.json({ ok: true, reward });
 });
+
 
 
 router.get("/reward/claim-info/:userId", async (req, res) => {
@@ -902,55 +896,51 @@ router.get("/reward/claim-info/:userId", async (req, res) => {
     return res.json({ eligible: false });
   }
 
-  // уже клеймил?
   const claimed = await query(`
-    SELECT 1 FROM reward_event_claims
-    WHERE cycle_id = $1 AND telegram_id = $2::text
-  `, [cycle.id, userId]);
-
-  if (claimed.rowCount > 0) {
-    const info = await query(`
     SELECT wallet, reward_amount
     FROM reward_event_claims
     WHERE cycle_id = $1 AND telegram_id = $2::text
   `, [cycle.id, userId]);
 
+  if (claimed.rowCount > 0) {
     return res.json({
       eligible: true,
       claimed: true,
-      wallet: info.rows[0].wallet,
-      reward: info.rows[0].reward_amount
+      wallet: claimed.rows[0].wallet,
+      reward: claimed.rows[0].reward_amount
     });
   }
 
-  // определяем ранг
   const all = await query(`
-    SELECT telegram_id
+    SELECT telegram_id, SUM(stake_amount) AS total
     FROM reward_event_stakes
     WHERE cycle_id = $1
     GROUP BY telegram_id
-    ORDER BY SUM(stake_amount) DESC
+    ORDER BY total DESC
   `, [cycle.id]);
 
-  const rank =
-    all.rows.findIndex(r => r.telegram_id === userId) + 1;
+  const rank = all.rows.findIndex(r => r.telegram_id === userId) + 1;
 
-  if (rank === 0 || rank > 500) {
+  // ❗ ТОЛЬКО ТОП 100
+  if (rank === 0 || rank > 100) {
     return res.json({ eligible: false });
   }
 
   let reward = 0;
-  if (rank <= 10) reward = 10;
-  else if (rank <= 50) reward = 5;
-  else if (rank <= 200) reward = 3;
-  else reward = 1;
+
+  if (rank <= 10) reward = 6000;
+  else if (rank <= 40) reward = 3000;
+  else if (rank <= 70) reward = 2000;
+  else reward = 1000;
 
   res.json({
     eligible: true,
+    claimed: false,
     rank,
     reward
   });
 });
+
 
 
 // ================= REWARD CYCLE AUTO CHECK =================
@@ -975,7 +965,7 @@ async function checkRewardCycle() {
       NOW(),
       NOW() + INTERVAL '7 days',
       NOW() + INTERVAL '9 days',
-      1500,
+      240000,
       0
     )
   `);
@@ -1008,7 +998,7 @@ async function checkRewardCycle() {
     NOW(),
     NOW() + INTERVAL '7 days',
     NOW() + INTERVAL '9 days',
-    1500,
+    240000,
     0
   )
 `);

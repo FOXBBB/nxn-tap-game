@@ -1,13 +1,17 @@
 import { query } from "./db.js";
 
 function getTimeMultiplier() {
-  const hour = new Date().getHours();
+  const now = new Date();
 
-  if (hour >= 2 && hour < 8) return 0.05;
-  if (hour >= 8 && hour < 14) return 0.6;
-  if (hour >= 14 && hour < 22) return 1;
-  return 0.3;
+  // Азербайджан UTC+4
+  const hour = (now.getUTCHours() + 4) % 24;
+
+  if (hour >= 2 && hour < 8) return 0.05;  // почти спят
+  if (hour >= 8 && hour < 14) return 0.6;  // утро
+  if (hour >= 14 && hour < 22) return 1;   // пик активности
+  return 0.3; // поздний вечер
 }
+
 
 function getRandomStakeAmount(balance) {
   const options = [10000, 20000, 30000, 40000, 50000];
