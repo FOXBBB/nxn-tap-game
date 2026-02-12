@@ -1539,8 +1539,6 @@ function startPvpSearch() {
 
 
 
-if (data.type === "countdown") {
-
   document.getElementById("pvp-match")
     .classList.remove("hidden");  // 🔥 раскрываем раньше
 
@@ -1554,51 +1552,47 @@ if (data.type === "countdown") {
       document.getElementById("pvp-you").innerText = data.you;
       document.getElementById("pvp-opp").innerText = data.opponent;
     }
-
-    if (data.type === "end") {
-
-      if (pvpSocket) {
-  pvpSocket.close();
-  pvpSocket = null;
-}
-pvpPlayBtn.disabled = false; // 🔥 РАЗБЛОКИРОВАТЬ ИГРУ
-
-      const status = document.getElementById("pvp-status");
-
-if (data.winner === userId) {
-  status.classList.add("pvp-win");
-} else {
-  status.classList.add("pvp-lose");
-}
-
-setTimeout(() => {
-  status.classList.remove("pvp-win", "pvp-lose");
-}, 800);
-
+if (data.type === "end") {
 
   clearInterval(pvpTimerInterval);
-
   document.getElementById("pvp-timer").innerText = 0;
 
-  // 🔥 ОТКЛЮЧАЕМ СОКЕТ
+  const status = document.getElementById("pvp-status");
+
+  // 🔥 ВАЖНО — сравнение строк
+  if (String(data.winner) === String(userId)) {
+    status.innerText = "YOU WIN!";
+    status.classList.add("pvp-win");
+  } else {
+    status.innerText = "YOU LOSE";
+    status.classList.add("pvp-lose");
+  }
+
+  setTimeout(() => {
+    status.classList.remove("pvp-win", "pvp-lose");
+  }, 1000);
+
+  // 🔥 Закрываем сокет
   if (pvpSocket) {
     pvpSocket.close();
     pvpSocket = null;
   }
 
-  document.getElementById("pvp-status").innerText =
-    data.winner === userId
-      ? "YOU WIN!"
-      : "YOU LOSE";
+  // 🔥 Разрешаем снова играть
+  const pvpPlayBtn = document.getElementById("pvp-play");
+  if (pvpPlayBtn) {
+    pvpPlayBtn.disabled = false;
+  }
 
-  document.getElementById("pvp-match")
-    .classList.add("pvp-shake");
-
+  // 🔥 Сбрасываем экран
   setTimeout(() => {
-    document.getElementById("pvp-match")
-      .classList.remove("pvp-shake");
-  }, 150);
+    document.getElementById("pvp-match").classList.add("hidden");
+    document.getElementById("pvp-you").innerText = 0;
+    document.getElementById("pvp-opp").innerText = 0;
+    document.getElementById("pvp-status").innerText = "Choose your stake";
+  }, 1500);
 }
+
 
   };
 
@@ -1607,7 +1601,7 @@ setTimeout(() => {
     pvpPlayBtn.disabled = false;
 
   };
-}
+
 
 
 function startMatchTimer() {

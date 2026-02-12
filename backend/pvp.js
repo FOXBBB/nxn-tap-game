@@ -263,33 +263,54 @@ function startBotMatch(ws, stake) {
   const startTime = Date.now();
   const botShouldWin = Math.random() < 0.6;
 
-  // 🔥 Реалистичный CPS
-  // Игрок максимум ~16 CPS
+  // 🔥 Реальный максимум игрока ≈ 380
+  // делаем бота в адекватном диапазоне
+
   let botCPS;
 
   if (botShouldWin) {
-    botCPS = 14 + Math.random() * 3; // 14–17 cps
+    botCPS = 16 + Math.random() * 2; // 16–18 cps
   } else {
-    botCPS = 11 + Math.random() * 3; // 11–14 cps
+    botCPS = 14 + Math.random() * 2; // 14–16 cps
   }
+
+  let acceleration = 0;
+  const maxScoreCap = 395; // потолок
 
   const botInterval = setInterval(() => {
 
     if (!ws.isActive) return;
 
     const elapsed = Date.now() - startTime;
+    const progress = elapsed / MATCH_DURATION;
 
-    if (elapsed >= MATCH_DURATION) return;
+    if (progress >= 1) return;
 
-    // 🔥 равномерные клики
-    const clicksThisTick = botCPS / 12.5; // 80ms = ~12.5 раз в секунду
+    // 🔥 Плавный старт (первые 2 секунды)
+    if (progress < 0.1) {
+      acceleration += 0.3;
+    }
 
-    // лёгкий рандом чтобы не робот
-    const variation = (Math.random() - 0.5) * 0.6;
+    let cpsNow = botCPS + acceleration;
 
-    ws.botScore += clicksThisTick + variation;
+    // 🔥 Лёгкая адаптация (чтобы было живо)
+    if (ws.score > ws.botScore + 15) {
+      cpsNow += 1.5;
+    }
 
-    if (ws.botScore < 0) ws.botScore = 0;
+    if (ws.score < ws.botScore - 25) {
+      cpsNow -= 1;
+    }
+
+    // тики 80ms
+    const clicksThisTick = cpsNow / 12.5;
+
+    ws.botScore += clicksThisTick;
+
+    // ограничиваем максимум
+    if (ws.botScore > maxScoreCap) {
+      ws.botScore = maxScoreCap;
+    }
 
     ws.send(JSON.stringify({
       type: "score",
@@ -325,7 +346,7 @@ function startBotMatch(ws, stake) {
       opponent: finalBot
     }));
 
-    // 🔥 Очистка состояния
+    // очистка
     ws.matchId = null;
     ws.opponent = null;
     ws.score = 0;
@@ -334,6 +355,7 @@ function startBotMatch(ws, stake) {
 
   }, MATCH_DURATION);
 }
+
 
 
 
