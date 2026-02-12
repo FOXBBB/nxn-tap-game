@@ -2531,7 +2531,7 @@ body.locked {
 
 .main-transfer-btn {
   position: absolute;
-  top: 120px;        /* регулируй если нужно */
+  top: 180px;        /* регулируй если нужно */
   right: 20px;
   width: 64px;      /* увеличили */
   height: 64px;
