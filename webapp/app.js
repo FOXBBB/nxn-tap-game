@@ -1497,40 +1497,45 @@ function startPvpSearch() {
 pvpSocket.onmessage = (event) => {
   const data = JSON.parse(event.data);
 
-  // OPPONENT
   if (data.type === "opponent") {
     document.getElementById("pvp-opp-name").innerText = data.name;
   }
 
-  // COUNTDOWN
-  if (data.type === "countdown") {
-    const overlay = document.getElementById("pvp-countdown-overlay");
-    const number = document.getElementById("pvp-countdown-number");
+ if (data.type === "countdown") {
+
+  document.getElementById("pvp-match").classList.remove("hidden");
+
+  const overlay = document.getElementById("pvp-countdown-overlay");
+  const number = document.getElementById("pvp-countdown-number");
 
     overlay.classList.remove("hidden");
 
-    if (data.value > 0) {
-      number.innerText = data.value;
-    } else {
-      number.innerText = "FIGHT!";
-      setTimeout(() => overlay.classList.add("hidden"), 600);
-    }
+   if (data.value > 0) {
+  number.innerText = data.value;
+} else if (data.value === 0) {
+  number.innerText = "FIGHT!";
+  setTimeout(() => overlay.classList.add("hidden"), 600);
+}
+
   }
 
-  // START
-  if (data.type === "start") {
-    document.getElementById("pvp-match").classList.remove("hidden");
-    document.getElementById("pvp-status").innerText = "FIGHT!";
-    startMatchTimer();
-  }
+ if (data.type === "start") {
 
-  // SCORE
+  const overlay = document.getElementById("pvp-countdown-overlay");
+  if (overlay) overlay.classList.add("hidden");
+
+  document.getElementById("pvp-match").classList.remove("hidden");
+  document.getElementById("pvp-status").innerText = "FIGHT!";
+
+  startMatchTimer();
+}
+
+
   if (data.type === "score") {
     document.getElementById("pvp-you").innerText = data.you;
     document.getElementById("pvp-opp").innerText = data.opponent;
   }
 
-  // END
   if (data.type === "end") {
 
     clearInterval(pvpTimerInterval);
@@ -1569,73 +1574,11 @@ pvpSocket.onmessage = (event) => {
 
 
 
-
-  if (data.type === "start") {
-
-  document.getElementById("pvp-match")
-    .classList.remove("hidden");
-
-  document.getElementById("pvp-status").innerText = "FIGHT!";
-
-  startMatchTimer();
-}
-
-}
-
-
-
-    if (data.type === "score") {
-      document.getElementById("pvp-you").innerText = data.you;
-      document.getElementById("pvp-opp").innerText = data.opponent;
-    }
-if (data.type === "end") {
-
-  clearInterval(pvpTimerInterval);
-  document.getElementById("pvp-timer").innerText = 0;
-
-  const status = document.getElementById("pvp-status");
-
-  // 🔥 ВАЖНО — сравнение строк
-  if (String(data.winner) === String(userId)) {
-    status.innerText = "YOU WIN!";
-    status.classList.add("pvp-win");
-  } else {
-    status.innerText = "YOU LOSE";
-    status.classList.add("pvp-lose");
-  }
-
-  setTimeout(() => {
-    status.classList.remove("pvp-win", "pvp-lose");
-  }, 1000);
-
-  // 🔥 Закрываем сокет
-  if (pvpSocket) {
-    pvpSocket.close();
-    pvpSocket = null;
-  }
-
-  // 🔥 Разрешаем снова играть
-  const pvpPlayBtn = document.getElementById("pvp-play");
-  if (pvpPlayBtn) {
-    pvpPlayBtn.disabled = false;
-  }
-
-  // 🔥 Сбрасываем экран
-  setTimeout(() => {
-    document.getElementById("pvp-match").classList.add("hidden");
-    document.getElementById("pvp-you").innerText = 0;
-    document.getElementById("pvp-opp").innerText = 0;
-    document.getElementById("pvp-status").innerText = "Choose your stake";
-  }, 1500);
-}
-
-
   pvpSocket.onclose = () => {
     clearInterval(pvpTimerInterval);
     pvpPlayBtn.disabled = false;
 
   };
-
 
 
 function startMatchTimer() {
@@ -1652,11 +1595,9 @@ function startMatchTimer() {
       return;
     }
 
-    const remaining = Math.floor(diff / 1000);
+    const remaining = Math.ceil(diff / 1000);
 
     document.getElementById("pvp-timer").innerText = remaining;
 
-  }, 100);
-}
-
-
+  }, 1000);
+} }
