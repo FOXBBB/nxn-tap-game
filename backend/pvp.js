@@ -203,6 +203,15 @@ async function finishMatch(ws1, ws2, stake) {
 
   ws1.searching = false;
 ws2.searching = false;
+ws1.opponent = null;
+ws2.opponent = null;
+
+ws1.matchId = null;
+ws2.matchId = null;
+
+ws1.score = 0;
+ws2.score = 0;
+
 
 }
 
@@ -251,42 +260,49 @@ function startBotMatch(ws, stake) {
   ws.isActive = true;
   ws.send(JSON.stringify({ type: "start" }));
 
-  const botShouldWin = Math.random() < 0.6;
-
   const startTime = Date.now();
 
-  const botInterval = setInterval(() => {
+ const botShouldWin = Math.random() < 0.6;
 
-    if (!ws.isActive) return;
+let botBaseSpeed = 8 + Math.random() * 4; // базовая скорость
+let aggression = botShouldWin ? 1.2 : 0.85;
 
-    const elapsed = Date.now() - startTime;
-    const progress = elapsed / MATCH_DURATION;
+const botInterval = setInterval(() => {
 
-    if (progress >= 1) return;
+  if (!ws.isActive) return;
 
-    let target;
+  const elapsed = Date.now() - startTime;
+  const progress = elapsed / MATCH_DURATION;
 
-    if (botShouldWin) {
-      // бот держится впереди на 15–25 очков
-      target = ws.score + 15 + Math.random() * 10;
-    } else {
-      // бот специально чуть слабее
-      target = ws.score - 10 + Math.random() * 5;
-    }
+  if (progress >= 1) return;
 
-    const speed = (target - ws.botScore) * 0.15;
+  // базовая скорость
+  let dynamicSpeed = botBaseSpeed;
 
-    ws.botScore += speed;
+  // 🔥 60% шанс — бот реально сильнее
+  if (botShouldWin) {
+    dynamicSpeed *= 1.3;
+  }
 
-    if (ws.botScore < 0) ws.botScore = 0;
+  // если игрок резко ускорился — бот реагирует
+  if (ws.score > ws.botScore - 15) {
+    dynamicSpeed += 6;
+  }
 
-    ws.send(JSON.stringify({
-      type: "score",
-      you: ws.score,
-      opponent: Math.floor(ws.botScore)
-    }));
+  // небольшая рандомизация
+  dynamicSpeed += Math.random() * 2;
 
-  }, 80);
+  ws.botScore += dynamicSpeed;
+
+  ws.send(JSON.stringify({
+    type: "score",
+    you: ws.score,
+    opponent: Math.floor(ws.botScore)
+  }));
+
+}, 80);
+
+
 
   setTimeout(async () => {
 
@@ -312,13 +328,26 @@ function startBotMatch(ws, stake) {
       you: ws.score,
       opponent: finalBot
     }));
+    // 🔥 ЧИСТИМ СОСТОЯНИЕ
+ws.matchId = null;
+ws.opponent = null;
+ws.score = 0;
+ws.botScore = 0;
+ws.searching = false;
+
 
   }, MATCH_DURATION);
 }
 
 
 function cleanup(ws) {
+
   if (ws.stake && waitingQueue.has(ws.stake)) {
     waitingQueue.delete(ws.stake);
   }
+
+  ws.isActive = false;
+  ws.searching = false;
+  ws.opponent = null;
+  ws.matchId = null;
 }
