@@ -1482,6 +1482,12 @@ function startPvpSearch() {
   pvpSocket.onmessage = (event) => {
     const data = JSON.parse(event.data);
 
+    if (data.type === "countdown") {
+  document.getElementById("pvp-status").innerText =
+    data.value > 0 ? data.value : "FIGHT!";
+}
+
+
     if (data.type === "start") {
       document.getElementById("pvp-status").innerText = "FIGHT!";
       document.getElementById("pvp-match")
@@ -1522,17 +1528,19 @@ setTimeout(() => {
 
 function startMatchTimer() {
 
-  let time = 20;
-
-  document.getElementById("pvp-timer").innerText = time;
+  const endTime = Date.now() + 20000;
 
   pvpTimerInterval = setInterval(() => {
-    time--;
-    document.getElementById("pvp-timer").innerText = time;
 
-    if (time <= 0) {
+    const remaining = Math.ceil((endTime - Date.now()) / 1000);
+
+    document.getElementById("pvp-timer").innerText =
+      remaining > 0 ? remaining : 0;
+
+    if (remaining <= 0) {
       clearInterval(pvpTimerInterval);
     }
-  }, 1000);
 
+  }, 200);
 }
+

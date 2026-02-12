@@ -1,17 +1,19 @@
 import { WebSocketServer } from "ws";
 import { query, pool } from "./db.js";
-import { v4 as uuidv4 } from "uuid";
 
-const MATCH_DURATION = 20000; // 20 сек
+const MATCH_DURATION = 20000;
 const BOT_SCORE_MIN = 280;
 const BOT_SCORE_MAX = 420;
 
-let waitingQueue = new Map(); // stake -> { playerId, ws, timeout }
+let waitingQueue = new Map();
 
 export function initPvp(server) {
   const wss = new WebSocketServer({ server, path: "/pvp" });
 
   wss.on("connection", (ws) => {
+
+    ws.isActive = false;
+
     ws.on("message", async (msg) => {
       try {
         const data = JSON.parse(msg);
@@ -21,7 +23,9 @@ export function initPvp(server) {
         }
 
         if (data.type === "tap") {
-          await handleTap(ws);
+          if (!ws.isActive) return;
+          ws.score++;
+          sendScore(ws);
         }
 
       } catch (e) {
@@ -29,9 +33,7 @@ export function initPvp(server) {
       }
     });
 
-    ws.on("close", () => {
-      cleanup(ws);
-    });
+    ws.on("close", () => cleanup(ws));
   });
 
   console.log("🔥 PvP WebSocket ready");
@@ -40,29 +42,24 @@ export function initPvp(server) {
 async function handleSearch(ws, data) {
   const { userId, stake } = data;
 
-  if (stake < 1000 || stake > 100000) return;
-
   ws.userId = userId;
   ws.stake = stake;
 
-  // проверка баланса
   const user = await query(
     "SELECT balance FROM users WHERE telegram_id = $1",
     [userId]
   );
 
   if (!user.rows.length || user.rows[0].balance < stake) {
-    ws.send(JSON.stringify({ type: "error", message: "Not enough NXN" }));
+    ws.send(JSON.stringify({ type: "error" }));
     return;
   }
 
-  // ищем соперника
   const opponent = waitingQueue.get(stake);
 
   if (opponent && opponent.userId !== userId) {
     waitingQueue.delete(stake);
     clearTimeout(opponent.timeout);
-
     await createMatch(opponent.ws, ws, stake);
   } else {
     const timeout = setTimeout(() => {
@@ -71,50 +68,21 @@ async function handleSearch(ws, data) {
     }, 8000);
 
     waitingQueue.set(stake, { userId, ws, timeout });
-
     ws.send(JSON.stringify({ type: "searching" }));
   }
 }
 
 async function createMatch(ws1, ws2, stake) {
-  const client = await pool.connect();
-  try {
-    await client.query("BEGIN");
 
-    await client.query(
-      "UPDATE users SET balance = balance - $1 WHERE telegram_id = $2",
-      [stake, ws1.userId]
-    );
-    await client.query(
-      "UPDATE users SET balance = balance - $1 WHERE telegram_id = $2",
-      [stake, ws2.userId]
-    );
+  await query(
+    "UPDATE users SET balance = balance - $1 WHERE telegram_id = $2",
+    [stake, ws1.userId]
+  );
 
-    const res = await client.query(
-      `INSERT INTO pvp_matches 
-       (player1_id, player2_id, stake, status)
-       VALUES ($1,$2,$3,'active')
-       RETURNING id`,
-      [ws1.userId, ws2.userId, stake]
-    );
-
-    await client.query("COMMIT");
-
-    const matchId = res.rows[0].id;
-
-    startMatch(matchId, ws1, ws2, stake);
-
-  } catch (e) {
-    await client.query("ROLLBACK");
-    console.error(e);
-  } finally {
-    client.release();
-  }
-}
-
-function startMatch(matchId, ws1, ws2, stake) {
-  ws1.matchId = matchId;
-  ws2.matchId = matchId;
+  await query(
+    "UPDATE users SET balance = balance - $1 WHERE telegram_id = $2",
+    [stake, ws2.userId]
+  );
 
   ws1.score = 0;
   ws2.score = 0;
@@ -122,30 +90,41 @@ function startMatch(matchId, ws1, ws2, stake) {
   ws1.opponent = ws2;
   ws2.opponent = ws1;
 
-  ws1.send(JSON.stringify({ type: "start", duration: 20 }));
-  ws2.send(JSON.stringify({ type: "start", duration: 20 }));
-
-  setTimeout(() => {
-    finishMatch(matchId, ws1, ws2, stake);
-  }, MATCH_DURATION);
+  startCountdown(ws1, ws2, stake);
 }
 
-async function handleTap(ws) {
-  if (!ws.matchId) return;
+function startCountdown(ws1, ws2, stake) {
 
-  ws.score++;
+  let count = 3;
 
-  // 🔥 если это матч против бота
-  if (ws.matchId === "bot") {
-    ws.send(JSON.stringify({
-      type: "score",
-      you: ws.score,
-      opponent: ws.botScore || 0
-    }));
-    return;
-  }
+  const interval = setInterval(() => {
 
-  // 🔥 если это реальный матч
+    ws1.send(JSON.stringify({ type: "countdown", value: count }));
+    ws2.send(JSON.stringify({ type: "countdown", value: count }));
+
+    count--;
+
+    if (count < 0) {
+      clearInterval(interval);
+      startMatch(ws1, ws2, stake);
+    }
+
+  }, 1000);
+}
+
+function startMatch(ws1, ws2, stake) {
+
+  ws1.isActive = true;
+  ws2.isActive = true;
+
+  ws1.send(JSON.stringify({ type: "start" }));
+  ws2.send(JSON.stringify({ type: "start" }));
+
+  setTimeout(() => finishMatch(ws1, ws2, stake), MATCH_DURATION);
+}
+
+function sendScore(ws) {
+
   ws.send(JSON.stringify({
     type: "score",
     you: ws.score,
@@ -161,72 +140,40 @@ async function handleTap(ws) {
   }
 }
 
+async function finishMatch(ws1, ws2, stake) {
 
+  ws1.isActive = false;
+  ws2.isActive = false;
 
-async function finishMatch(matchId, ws1, ws2, stake) {
   const total = stake * 2;
-  const winnerReward = Math.floor(total * 0.9);
-  const burn = total - winnerReward;
+  const reward = Math.floor(total * 0.9);
 
   let winner = null;
 
   if (ws1.score > ws2.score) winner = ws1;
   else if (ws2.score > ws1.score) winner = ws2;
 
-  const client = await pool.connect();
-
-  try {
-    await client.query("BEGIN");
-
-    if (winner) {
-      await client.query(
-        "UPDATE users SET balance = balance + $1 WHERE telegram_id = $2",
-        [winnerReward, winner.userId]
-      );
-    }
-
-    await client.query(
-      `UPDATE pvp_matches
-       SET status='finished',
-           player1_score=$1,
-           player2_score=$2,
-           winner_id=$3,
-           burn_amount=$4
-       WHERE id=$5`,
-      [
-        ws1.score,
-        ws2.score,
-        winner ? winner.userId : null,
-        burn,
-        matchId
-      ]
+  if (winner) {
+    await query(
+      "UPDATE users SET balance = balance + $1 WHERE telegram_id = $2",
+      [reward, winner.userId]
     );
-
-    await client.query("COMMIT");
-
-  } catch (e) {
-    await client.query("ROLLBACK");
-    console.error(e);
-  } finally {
-    client.release();
   }
 
   ws1.send(JSON.stringify({
-  type: "end",
-  winner: winner?.userId,
-  you: ws1.score,
-  opponent: ws2.score
-}));
+    type: "end",
+    winner: winner?.userId,
+    you: ws1.score,
+    opponent: ws2.score
+  }));
 
-ws2.send(JSON.stringify({
-  type: "end",
-  winner: winner?.userId,
-  you: ws2.score,
-  opponent: ws1.score
-}));
-
+  ws2.send(JSON.stringify({
+    type: "end",
+    winner: winner?.userId,
+    you: ws2.score,
+    opponent: ws1.score
+  }));
 }
-
 
 async function createBotMatch(ws, stake) {
 
@@ -235,45 +182,79 @@ async function createBotMatch(ws, stake) {
     [stake, ws.userId]
   );
 
-  ws.matchId = "bot";   // 🔥 ВОТ ЭТО ОБЯЗАТЕЛЬНО
-
   ws.score = 0;
+  ws.isActive = false;
 
+  const botTarget =
+    Math.floor(Math.random() * (BOT_SCORE_MAX - BOT_SCORE_MIN)) +
+    BOT_SCORE_MIN;
 
-  ws.send(JSON.stringify({ type: "start", duration: 20 }));
+  let botScore = 0;
 
-  let botCurrent = 0;
+  startCountdownBot(ws, stake, botTarget);
+}
+
+function startCountdownBot(ws, stake, botTarget) {
+
+  let count = 3;
+
+  const interval = setInterval(() => {
+
+    ws.send(JSON.stringify({ type: "countdown", value: count }));
+
+    count--;
+
+    if (count < 0) {
+      clearInterval(interval);
+      startBotMatch(ws, stake, botTarget);
+    }
+
+  }, 1000);
+}
+
+function startBotMatch(ws, stake, botTarget) {
+
+  ws.isActive = true;
+
+  ws.send(JSON.stringify({ type: "start" }));
+
+  let botScore = 0;
 
   const botInterval = setInterval(() => {
 
-  if (botCurrent < 420) {
-  botCurrent += Math.floor(Math.random() * 3) + 1;
-}
+    if (!ws.isActive) return;
 
-ws.botScore = botCurrent;  // 🔥 ВАЖНО
+    const remaining = botTarget - botScore;
 
-  ws.send(JSON.stringify({
-    type: "score",
-    you: ws.score,
-    opponent: botCurrent
-  }));
+    if (remaining > 0) {
+      botScore += Math.min(
+        Math.floor(Math.random() * 6) + 3,
+        remaining
+      );
+    }
 
-}, 400);
+    ws.send(JSON.stringify({
+      type: "score",
+      you: ws.score,
+      opponent: botScore
+    }));
 
+  }, 150);
 
   setTimeout(async () => {
 
+    ws.isActive = false;
     clearInterval(botInterval);
 
     const total = stake * 2;
-    const winnerReward = Math.floor(total * 0.9);
+    const reward = Math.floor(total * 0.9);
 
-    const playerWins = ws.score > botCurrent;
+    const playerWins = ws.score > botScore;
 
     if (playerWins) {
       await query(
         "UPDATE users SET balance = balance + $1 WHERE telegram_id = $2",
-        [winnerReward, ws.userId]
+        [reward, ws.userId]
       );
     }
 
@@ -281,13 +262,11 @@ ws.botScore = botCurrent;  // 🔥 ВАЖНО
       type: "end",
       winner: playerWins ? ws.userId : "bot",
       you: ws.score,
-      opponent: botCurrent
+      opponent: botScore
     }));
 
   }, MATCH_DURATION);
 }
-
-
 
 function cleanup(ws) {
   if (ws.stake && waitingQueue.has(ws.stake)) {
