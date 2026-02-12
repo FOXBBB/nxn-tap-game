@@ -1489,9 +1489,28 @@ function startPvpSearch() {
     const data = JSON.parse(event.data);
 
     if (data.type === "countdown") {
-  document.getElementById("pvp-status").innerText =
-    data.value > 0 ? data.value : "FIGHT!";
+
+  const overlay = document.getElementById("pvp-countdown-overlay");
+  const number = document.getElementById("pvp-countdown-number");
+
+  overlay.classList.remove("hidden");
+
+  if (data.value > 0) {
+    number.innerText = data.value;
+    number.style.animation = "none";
+    void number.offsetWidth;
+    number.style.animation = "countdownPop .8s ease";
+  } else {
+    number.innerText = "FIGHT!";
+  }
+
+  if (data.value <= 0) {
+    setTimeout(() => {
+      overlay.classList.add("hidden");
+    }, 600);
+  }
 }
+
 
 
     if (data.type === "start") {

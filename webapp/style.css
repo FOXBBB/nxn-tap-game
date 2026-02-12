@@ -2580,16 +2580,14 @@ body.locked {
   transform: scale(1.03);
 }
 
-.pvp-box {
-  padding: 20px;
-  text-align: center;
-}
-
 .pvp-timer {
   font-size: 32px;
-  font-weight: bold;
+  font-weight: 900;
+  color: #ff3c3c;
+  text-shadow: 0 0 20px rgba(255,0,0,.8);
   margin: 10px 0;
 }
+
 
 
 
@@ -2650,10 +2648,12 @@ body.locked {
 }
 
 .pvp-scoreboard {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
+  margin-bottom: 10px;
 }
+
 
 .pvp-player {
   text-align: center;
@@ -2671,24 +2671,37 @@ body.locked {
 }
 
 .pvp-hud {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  font-size: 26px;
-  font-weight: bold;
-  padding: 12px 20px;
+  margin: 15px 0;
+}
+
+.pvp-side {
+  text-align: center;
+}
+
+.pvp-label {
+  font-size: 11px;
+  opacity: 0.5;
+  letter-spacing: 1px;
 }
 
 .pvp-score {
-  font-size: 32px;
-  text-shadow: 0 0 15px rgba(0,255,200,.8);
+  font-size: 28px;
+  font-weight: 900;
+  color: #00ffc8;
+  text-shadow: 0 0 20px rgba(0,255,200,.8);
 }
 
 .pvp-vs {
-  font-size: 22px;
-  opacity: .6;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  opacity: 0.7;
   animation: vsPulse 1.5s infinite;
 }
+
 
 @keyframes vsPulse {
   0% { transform: scale(1); }
@@ -2696,13 +2709,6 @@ body.locked {
   100% { transform: scale(1); }
 }
 
-
-.pvp-timer {
-  font-size: 30px;
-  font-weight: bold;
-  margin: 15px 0;
-  color: #00ff88;
-}
 
 .pvp-coin-box {
   display: flex;
@@ -2730,15 +2736,7 @@ body.locked {
   animation: fadeIn 0.3s ease;
 }
 
-.pvp-win {
-  color: #00ff88;
-  text-shadow: 0 0 20px #00ff88;
-}
 
-.pvp-lose {
-  color: #ff4d4d;
-  text-shadow: 0 0 20px #ff0000;
-}
 
 @keyframes fadeIn {
   from { opacity: 0 }
@@ -2756,7 +2754,6 @@ body.locked {
   100% { transform: translateX(0) }
 }
 /* ===== PVP ARENA ===== */
-
 #pvp {
   background: radial-gradient(circle at 50% 20%, #102030, #05080f 70%);
   position: relative;
@@ -2800,14 +2797,23 @@ body.locked {
 #pvp-tap-coin.hit {
   transform: scale(0.9) rotate(-5deg);
 }
-#pvp-tap-coin::after {
+.pvp-coin-box {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.pvp-coin-box::after {
   content: "";
   position: absolute;
-  inset: -20px;
+  width: 220px;
+  height: 220px;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(0,255,200,.4), transparent 70%);
   animation: coinAura 2s infinite;
+  pointer-events: none;
 }
+
 
 @keyframes coinAura {
   0% { transform: scale(1); opacity: .5; }
@@ -2850,3 +2856,34 @@ body.locked {
   75% { transform: translateX(-5px); }
   100% { transform: translateX(0); }
 }
+/* ===== PVP COUNTDOWN ===== */
+
+.pvp-countdown {
+  position: absolute;
+  pointer-events: none;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(0,255,200,.15), rgba(0,0,0,.9));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.pvp-countdown.hidden {
+  display: none;
+}
+
+#pvp-countdown-number {
+  font-size: 90px;
+  font-weight: 900;
+  color: #00ffc8;
+  text-shadow: 0 0 40px rgba(0,255,200,1);
+  animation: countdownPop .8s ease;
+}
+
+@keyframes countdownPop {
+  0% { transform: scale(.3); opacity: 0; }
+  50% { transform: scale(1.4); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
