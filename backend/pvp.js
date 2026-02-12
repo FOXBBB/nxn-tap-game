@@ -283,25 +283,31 @@ function startBotMatch(ws, stake) {
 
   const botInterval = setInterval(() => {
 
-    if (!ws.isActive) return;
+  if (!ws.isActive) return;
 
-    // 🔥 Плавный равномерный рост
-    ws.botScore += incrementPerTick;
+  const playerScore = ws.score;
 
-    // лёгкий рандом, чтобы не робот
-    ws.botScore += (Math.random() - 0.5) * 0.4;
+  let target;
 
-    if (ws.botScore > botTarget) {
-      ws.botScore = botTarget;
-    }
+  if (ws.botShouldWin) {
+    target = playerScore + 10 + Math.random() * 15; // бот немного выше
+  } else {
+    target = playerScore - 5 - Math.random() * 10; // бот немного ниже
+  }
 
-    ws.send(JSON.stringify({
-      type: "score",
-      you: ws.score,
-      opponent: Math.floor(ws.botScore)
-    }));
+  // плавное движение к цели
+  ws.botScore += (target - ws.botScore) * 0.08;
 
-  }, 80);
+  if (ws.botScore < 0) ws.botScore = 0;
+
+  ws.send(JSON.stringify({
+    type: "score",
+    you: ws.score,
+    opponent: Math.floor(ws.botScore)
+  }));
+
+}, 80);
+
 
 
   setTimeout(async () => {
