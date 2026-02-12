@@ -376,10 +376,19 @@ document.getElementById("pvp-play").onclick = () => {
   if (!pvpStake) return alert("Choose stake");
   startPvpSearch();
 };
-document.getElementById("pvp-tap").onclick = () => {
-  if (!pvpSocket) return;
-  pvpSocket.send(JSON.stringify({ type: "tap" }));
-};
+const pvpCoin = document.getElementById("pvp-tap-coin");
+
+if (pvpCoin) {
+  pvpCoin.addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    if (!pvpSocket) return;
+
+    pvpCoin.classList.add("hit");
+    setTimeout(() => pvpCoin.classList.remove("hit"), 100);
+
+    pvpSocket.send(JSON.stringify({ type: "tap" }));
+  }, { passive: false });
+}
 
 
 });

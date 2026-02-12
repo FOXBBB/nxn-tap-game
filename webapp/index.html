@@ -308,35 +308,62 @@
         </div>
       </section>
 
-      <section id="pvp" class="screen hidden">
-  <div class="title blue">PvP ARENA</div>
+
+      
+     <section id="pvp" class="screen hidden">
+
+  <div class="pvp-header">
+    <button id="pvp-back" class="pvp-back">❮</button>
+    <div class="title blue">PvP ARENA</div>
+  </div>
 
   <div class="glass pvp-box">
-    <div id="pvp-status">Choose stake</div>
 
-    <div class="stake-amounts">
+    <div id="pvp-status" class="pvp-status">
+      Choose your stake
+    </div>
+
+    <div class="stake-amounts pvp-stakes">
       <button data-pvp="1000">1K</button>
       <button data-pvp="5000">5K</button>
       <button data-pvp="10000">10K</button>
+      <button data-pvp="20000">20K</button>
+      <button data-pvp="30000">30K</button>
+      <button data-pvp="40000">40K</button>
       <button data-pvp="50000">50K</button>
       <button data-pvp="100000">100K</button>
     </div>
 
-    <button id="pvp-play">PLAY</button>
+    <button id="pvp-play" class="pvp-play">
+      ENTER ARENA
+    </button>
 
-    <div id="pvp-match" class="hidden">
-      <div class="pvp-timer" id="pvp-timer">20</div>
+    <div id="pvp-match" class="pvp-match hidden">
 
-      <div class="pvp-score">
-        <div>You: <span id="pvp-you">0</span></div>
-        <div>Opponent: <span id="pvp-opp">0</span></div>
+      <div class="pvp-scoreboard">
+        <div class="pvp-player">
+          <div class="label">YOU</div>
+          <div id="pvp-you" class="score">0</div>
+        </div>
+
+        <div class="pvp-vs">VS</div>
+
+        <div class="pvp-player">
+          <div class="label">OPPONENT</div>
+          <div id="pvp-opp" class="score">0</div>
+        </div>
       </div>
 
-      <button id="pvp-tap">TAP</button>
-    </div>
-  </div>
+      <div class="pvp-timer" id="pvp-timer">20</div>
 
-  <button id="pvp-back" class="stake-btn">← Back</button>
+      <!-- MONET TAP BUTTON -->
+      <div class="pvp-coin-box">
+        <img src="coin.png" id="pvp-tap-coin">
+      </div>
+
+    </div>
+
+  </div>
 </section>
 
 

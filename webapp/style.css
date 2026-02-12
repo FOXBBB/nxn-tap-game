@@ -2602,3 +2602,102 @@ body.locked {
   font-size: 22px;
   padding: 15px 30px;
 }
+/* ===== PvP ARENA ===== */
+
+.pvp-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.pvp-back {
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: #00ff88;
+}
+
+.pvp-box {
+  padding: 20px;
+  text-align: center;
+  margin-top: 15px;
+}
+
+.pvp-status {
+  margin-bottom: 15px;
+  font-size: 16px;
+  opacity: 0.8;
+}
+
+.pvp-stakes button {
+  min-width: 70px;
+}
+
+.pvp-play {
+  margin-top: 15px;
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: bold;
+  background: linear-gradient(90deg,#00ff88,#00c66a);
+  border: none;
+  border-radius: 16px;
+  color: #000;
+  transition: 0.2s;
+}
+
+.pvp-play:active {
+  transform: scale(0.95);
+}
+
+.pvp-match {
+  margin-top: 20px;
+}
+
+.pvp-scoreboard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pvp-player {
+  text-align: center;
+}
+
+.pvp-player .label {
+  font-size: 12px;
+  opacity: 0.6;
+}
+
+.pvp-player .score {
+  font-size: 26px;
+  font-weight: bold;
+  color: #00ff88;
+}
+
+.pvp-vs {
+  font-size: 20px;
+  font-weight: bold;
+  opacity: 0.5;
+}
+
+.pvp-timer {
+  font-size: 30px;
+  font-weight: bold;
+  margin: 15px 0;
+  color: #00ff88;
+}
+
+.pvp-coin-box {
+  display: flex;
+  justify-content: center;
+}
+
+#pvp-tap-coin {
+  width: 140px;
+  transition: 0.1s;
+}
+
+#pvp-tap-coin:active {
+  transform: scale(0.9);
+}
