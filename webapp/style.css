@@ -2904,9 +2904,10 @@ body.locked {
 
 /* иконка */
 .tap-action-card img {
-  width: 22px;
-  height: 22px;
+  width: 40px;
+  height: 40px;
   object-fit: contain;
+  filter: drop-shadow(0 0 12px rgba(0,255,180,0.6));
 }
 
 /* stake цвет */
@@ -2927,4 +2928,72 @@ body.locked {
     rgba(26,106,255,0.18)
   );
   border: 1px solid rgba(108,240,255,0.6);
+}
+/* ===== GAMES CARDS ===== */
+
+.game-card {
+  position: relative;
+  height: 160px;
+  margin: 20px 0;
+  border-radius: 22px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.game-card:hover {
+  transform: scale(1.03);
+}
+
+/* фон PvP */
+.pvp-card {
+  background-image: url("pvp-card.jpg");
+  background-size: cover;
+  background-position: center;
+}
+
+/* фон Coming Soon */
+.coming-card {
+  background-image: url("coming-bg.jpg");
+  background-size: cover;
+  background-position: center;
+  cursor: default;
+}
+
+/* затемнение */
+.game-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0,0,0,0.85),
+    rgba(0,0,0,0.4)
+  );
+}
+
+.game-card-overlay.blur {
+  backdrop-filter: blur(6px);
+  background: rgba(0,0,0,0.6);
+}
+
+/* контент */
+.game-card-content {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  z-index: 2;
+}
+
+.game-card h3 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 900;
+  color: #00ffc8;
+  text-shadow: 0 0 12px rgba(0,255,200,0.8);
+}
+
+.game-card p {
+  margin: 6px 0 0;
+  font-size: 14px;
+  opacity: 0.85;
 }

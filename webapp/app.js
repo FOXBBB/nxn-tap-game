@@ -67,6 +67,13 @@ document
     };
   });
 
+  const pvpBackBtn = document.getElementById("pvp-back");
+
+pvpBackBtn?.addEventListener("click", () => {
+  document.getElementById("pvp").classList.add("hidden");
+  document.getElementById("games").classList.remove("hidden");
+});
+
 
 
 
