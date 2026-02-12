@@ -135,7 +135,17 @@ async function handleTap(ws) {
 
   ws.score++;
 
-  // отправляем обновление обоим игрокам
+  // 🔥 если это матч против бота
+  if (ws.matchId === "bot") {
+    ws.send(JSON.stringify({
+      type: "score",
+      you: ws.score,
+      opponent: ws.botScore || 0
+    }));
+    return;
+  }
+
+  // 🔥 если это реальный матч
   ws.send(JSON.stringify({
     type: "score",
     you: ws.score,
@@ -150,6 +160,7 @@ async function handleTap(ws) {
     }));
   }
 }
+
 
 
 async function finishMatch(matchId, ws1, ws2, stake) {
@@ -219,13 +230,15 @@ ws2.send(JSON.stringify({
 
 async function createBotMatch(ws, stake) {
 
-  // 🔥 списываем ставку
   await query(
     "UPDATE users SET balance = balance - $1 WHERE telegram_id = $2",
     [stake, ws.userId]
   );
 
+  ws.matchId = "bot";   // 🔥 ВОТ ЭТО ОБЯЗАТЕЛЬНО
+
   ws.score = 0;
+
 
   ws.send(JSON.stringify({ type: "start", duration: 20 }));
 
@@ -233,17 +246,20 @@ async function createBotMatch(ws, stake) {
 
   const botInterval = setInterval(() => {
 
-    botCurrent += Math.floor(Math.random() * 4) + 2;
+  if (botCurrent < 420) {
+  botCurrent += Math.floor(Math.random() * 3) + 1;
+}
 
-    if (botCurrent > 420) botCurrent = 420;
+ws.botScore = botCurrent;  // 🔥 ВАЖНО
 
-    ws.send(JSON.stringify({
-      type: "score",
-      you: ws.score,
-      opponent: botCurrent
-    }));
+  ws.send(JSON.stringify({
+    type: "score",
+    you: ws.score,
+    opponent: botCurrent
+  }));
 
-  }, 300);
+}, 400);
+
 
   setTimeout(async () => {
 
