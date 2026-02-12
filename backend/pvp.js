@@ -261,16 +261,16 @@ function startBotMatch(ws, stake) {
   ws.send(JSON.stringify({ type: "start" }));
 
   const startTime = Date.now();
-
   const botShouldWin = Math.random() < 0.6;
 
-  // 🔥 ЦЕЛЕВОЙ СЧЁТ БОТА
-  let botTarget;
+  // 🔥 Реалистичный CPS
+  // Игрок максимум ~16 CPS
+  let botCPS;
 
   if (botShouldWin) {
-    botTarget = 300 + Math.floor(Math.random() * 40); // 300–340
+    botCPS = 14 + Math.random() * 3; // 14–17 cps
   } else {
-    botTarget = 250 + Math.floor(Math.random() * 30); // 250–280
+    botCPS = 11 + Math.random() * 3; // 11–14 cps
   }
 
   const botInterval = setInterval(() => {
@@ -278,14 +278,18 @@ function startBotMatch(ws, stake) {
     if (!ws.isActive) return;
 
     const elapsed = Date.now() - startTime;
-    const progress = elapsed / MATCH_DURATION;
 
-    if (progress >= 1) return;
+    if (elapsed >= MATCH_DURATION) return;
 
-    // 🔥 Плавное движение к цели
-    const remaining = botTarget - ws.botScore;
+    // 🔥 равномерные клики
+    const clicksThisTick = botCPS / 12.5; // 80ms = ~12.5 раз в секунду
 
-    ws.botScore += remaining * 0.04; // плавный рост
+    // лёгкий рандом чтобы не робот
+    const variation = (Math.random() - 0.5) * 0.6;
+
+    ws.botScore += clicksThisTick + variation;
+
+    if (ws.botScore < 0) ws.botScore = 0;
 
     ws.send(JSON.stringify({
       type: "score",
@@ -321,7 +325,7 @@ function startBotMatch(ws, stake) {
       opponent: finalBot
     }));
 
-    // 🔥 ОЧИСТКА
+    // 🔥 Очистка состояния
     ws.matchId = null;
     ws.opponent = null;
     ws.score = 0;
@@ -330,6 +334,7 @@ function startBotMatch(ws, stake) {
 
   }, MATCH_DURATION);
 }
+
 
 
 
