@@ -262,46 +262,38 @@ function startBotMatch(ws, stake) {
 
   const startTime = Date.now();
 
- const botShouldWin = Math.random() < 0.6;
+  const botShouldWin = Math.random() < 0.6;
 
-let botBaseSpeed = 8 + Math.random() * 4; // базовая скорость
-let aggression = botShouldWin ? 1.2 : 0.85;
+  // 🔥 ЦЕЛЕВОЙ СЧЁТ БОТА
+  let botTarget;
 
-const botInterval = setInterval(() => {
-
-  if (!ws.isActive) return;
-
-  const elapsed = Date.now() - startTime;
-  const progress = elapsed / MATCH_DURATION;
-
-  if (progress >= 1) return;
-
-  // базовая скорость
-  let dynamicSpeed = botBaseSpeed;
-
-  // 🔥 60% шанс — бот реально сильнее
   if (botShouldWin) {
-    dynamicSpeed *= 1.3;
+    botTarget = 300 + Math.floor(Math.random() * 40); // 300–340
+  } else {
+    botTarget = 250 + Math.floor(Math.random() * 30); // 250–280
   }
 
-  // если игрок резко ускорился — бот реагирует
-  if (ws.score > ws.botScore - 15) {
-    dynamicSpeed += 6;
-  }
+  const botInterval = setInterval(() => {
 
-  // небольшая рандомизация
-  dynamicSpeed += Math.random() * 2;
+    if (!ws.isActive) return;
 
-  ws.botScore += dynamicSpeed;
+    const elapsed = Date.now() - startTime;
+    const progress = elapsed / MATCH_DURATION;
 
-  ws.send(JSON.stringify({
-    type: "score",
-    you: ws.score,
-    opponent: Math.floor(ws.botScore)
-  }));
+    if (progress >= 1) return;
 
-}, 80);
+    // 🔥 Плавное движение к цели
+    const remaining = botTarget - ws.botScore;
 
+    ws.botScore += remaining * 0.04; // плавный рост
+
+    ws.send(JSON.stringify({
+      type: "score",
+      you: ws.score,
+      opponent: Math.floor(ws.botScore)
+    }));
+
+  }, 80);
 
 
   setTimeout(async () => {
@@ -328,16 +320,17 @@ const botInterval = setInterval(() => {
       you: ws.score,
       opponent: finalBot
     }));
-    // 🔥 ЧИСТИМ СОСТОЯНИЕ
-ws.matchId = null;
-ws.opponent = null;
-ws.score = 0;
-ws.botScore = 0;
-ws.searching = false;
 
+    // 🔥 ОЧИСТКА
+    ws.matchId = null;
+    ws.opponent = null;
+    ws.score = 0;
+    ws.botScore = 0;
+    ws.searching = false;
 
   }, MATCH_DURATION);
 }
+
 
 
 function cleanup(ws) {

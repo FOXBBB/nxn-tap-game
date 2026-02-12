@@ -1558,6 +1558,12 @@ if (data.type === "countdown") {
 
     if (data.type === "end") {
 
+      if (pvpSocket) {
+  pvpSocket.close();
+  pvpSocket = null;
+}
+pvpPlayBtn.disabled = false; // 🔥 РАЗБЛОКИРОВАТЬ ИГРУ
+
       const status = document.getElementById("pvp-status");
 
 if (data.winner === userId) {
