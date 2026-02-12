@@ -1503,21 +1503,30 @@ function startPvpSearch() {
 
     if (data.type === "end") {
 
-      clearInterval(pvpTimerInterval);
+  clearInterval(pvpTimerInterval);
 
-      document.getElementById("pvp-status").innerText =
-        data.winner === userId
-          ? "YOU WIN!"
-          : "YOU LOSE";
+  document.getElementById("pvp-timer").innerText = 0;
 
-      document.getElementById("pvp-match")
-  .classList.add("pvp-shake");
+  // 🔥 ОТКЛЮЧАЕМ СОКЕТ
+  if (pvpSocket) {
+    pvpSocket.close();
+    pvpSocket = null;
+  }
 
-setTimeout(() => {
+  document.getElementById("pvp-status").innerText =
+    data.winner === userId
+      ? "YOU WIN!"
+      : "YOU LOSE";
+
   document.getElementById("pvp-match")
-    .classList.remove("pvp-shake");
-}, 150);
-    }
+    .classList.add("pvp-shake");
+
+  setTimeout(() => {
+    document.getElementById("pvp-match")
+      .classList.remove("pvp-shake");
+  }, 150);
+}
+
   };
 
   pvpSocket.onclose = () => {
@@ -1532,15 +1541,18 @@ function startMatchTimer() {
 
   pvpTimerInterval = setInterval(() => {
 
-    const remaining = Math.ceil((endTime - Date.now()) / 1000);
+    const diff = endTime - Date.now();
 
-    document.getElementById("pvp-timer").innerText =
-      remaining > 0 ? remaining : 0;
-
-    if (remaining <= 0) {
+    if (diff <= 0) {
+      document.getElementById("pvp-timer").innerText = 0;
       clearInterval(pvpTimerInterval);
+      return;
     }
 
-  }, 200);
+    const remaining = Math.floor(diff / 1000);
+
+    document.getElementById("pvp-timer").innerText = remaining;
+
+  }, 100);
 }
 
