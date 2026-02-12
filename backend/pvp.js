@@ -285,20 +285,33 @@ function startBotMatch(ws, stake) {
 
   if (!ws.isActive) return;
 
-  const playerScore = ws.score;
+  // базовая скорость
+  let speed = baseSpeed;
 
-  let target;
+  // случайный разброс ±20%
+  speed *= (0.8 + Math.random() * 0.4);
 
-  if (ws.botShouldWin) {
-    target = playerScore + 10 + Math.random() * 15; // бот немного выше
-  } else {
-    target = playerScore - 5 - Math.random() * 10; // бот немного ниже
+  // лёгкие паузы (живость)
+  if (Math.random() < 0.05) {
+    speed *= 0.3;
   }
 
-  // плавное движение к цели
-  ws.botScore += (target - ws.botScore) * 0.08;
+  // иногда бот делает финальный рывок
+if (timeLeft < 3000 && Math.random() < 0.4) {
+  ws.botScore += 3 + Math.random() * 5;
+}
 
-  if (ws.botScore < 0) ws.botScore = 0;
+
+  // ускорение в последние 5 секунд
+  if (timeLeft < 5000) {
+    speed *= 1.2 + Math.random() * 0.4;
+  }
+
+  ws.botScore += speed;
+
+  if (ws.botScore > botTarget) {
+    ws.botScore = botTarget;
+  }
 
   ws.send(JSON.stringify({
     type: "score",
@@ -306,7 +319,8 @@ function startBotMatch(ws, stake) {
     opponent: Math.floor(ws.botScore)
   }));
 
-}, 80);
+}, 100);
+
 
 
 
