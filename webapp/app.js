@@ -1529,16 +1529,15 @@ function startPvpSearch() {
 
   if (data.type === "start") {
 
-  // Сначала показываем матч
   document.getElementById("pvp-match")
     .classList.remove("hidden");
 
-  // Запускаем красивый countdown overlay
-  showPvpCountdown(() => {
-    document.getElementById("pvp-status").innerText = "FIGHT!";
-    startMatchTimer();
-  });
+  document.getElementById("pvp-status").innerText = "FIGHT!";
+
+  startMatchTimer();
 }
+
+
 
 if (data.type === "countdown") {
 
@@ -1632,37 +1631,4 @@ function startMatchTimer() {
   }, 100);
 }
 
-function showPvpCountdown(callback) {
 
-  let overlay = document.getElementById("pvp-countdown-overlay");
-
-  if (!overlay) {
-    overlay = document.createElement("div");
-    overlay.id = "pvp-countdown-overlay";
-    overlay.className = "pvp-countdown";
-    overlay.innerHTML = `<div id="pvp-countdown-number">3</div>`;
-    document.getElementById("pvp").appendChild(overlay);
-  }
-
-  overlay.classList.remove("hidden");
-
-  const numberEl = document.getElementById("pvp-countdown-number");
-
-  let count = 3;
-
-  const interval = setInterval(() => {
-    numberEl.innerText = count;
-    numberEl.style.animation = "none";
-    void numberEl.offsetWidth;
-    numberEl.style.animation = "countdownPop .6s ease";
-
-    count--;
-
-    if (count < 0) {
-      clearInterval(interval);
-      overlay.classList.add("hidden");
-      callback();
-    }
-
-  }, 1000);
-}
