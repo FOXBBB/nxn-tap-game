@@ -1400,3 +1400,13 @@ function showMinStackModal(
 function closeModal() {
   document.getElementById("stackModal")?.classList.add("hidden");
 }
+// ================= MAIN TRANSFER BUTTON =================
+const mainTransferBtn = document.getElementById("main-transfer-btn");
+
+if (mainTransferBtn) {
+  mainTransferBtn.onclick = () => {
+    showScreen("transfer");
+    loadHistory(); // чтобы сразу загрузилась история
+  };
+}
+
