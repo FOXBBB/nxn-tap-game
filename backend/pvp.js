@@ -103,8 +103,15 @@ async function createMatch(ws1, ws2, stake) {
   ws1.score = 0;
   ws2.score = 0;
 
-  ws1.opponent = ws2;
-  ws2.opponent = ws1;
+  ws1.send(JSON.stringify({
+  type: "opponent",
+  name: ws2.userId
+}));
+
+ws2.send(JSON.stringify({
+  type: "opponent",
+  name: ws1.userId
+}));
 
   startCountdown(ws1, ws2, stake);
 }
@@ -193,7 +200,6 @@ async function finishMatch(ws1, ws2, stake) {
 
 async function createBotMatch(ws, stake) {
 
-  // списываем ставку
   await query(
     "UPDATE users SET balance = balance - $1 WHERE telegram_id = $2",
     [stake, ws.userId]
@@ -202,107 +208,68 @@ async function createBotMatch(ws, stake) {
   ws.matchId = "bot";
   ws.score = 0;
   ws.botScore = 0;
-  ws.isActive = false;
+  ws.isActive = true;
 
-  // 🎯 60% шанс проигрыша
-  const playerShouldLose = Math.random() < 0.6;
+  // 🎯 60% шанс что бот выиграет
+  const botShouldWin = Math.random() < 0.6;
 
-  // динамический target
-  let botTarget;
+  ws.send(JSON.stringify({ type: "start" }));
 
-  if (playerShouldLose) {
-    // бот должен выиграть
-    botTarget = 260 + Math.floor(Math.random() * 40); // 260–300
-  } else {
-    // бот должен проиграть
-    botTarget = 180 + Math.floor(Math.random() * 40); // 180–220
-  }
+  const startTime = Date.now();
 
-  // 🔥 КРАСИВЫЙ ОБРАТНЫЙ ОТСЧЁТ
-  let count = 3;
+  const botInterval = setInterval(() => {
 
-  const countdownInterval = setInterval(() => {
+    if (!ws.isActive) return;
 
-    ws.send(JSON.stringify({ type: "countdown", value: count }));
+    const elapsed = Date.now() - startTime;
+    const progress = elapsed / MATCH_DURATION;
 
-    count--;
+    if (progress >= 1) return;
 
-    if (count < 0) {
-      clearInterval(countdownInterval);
-      startBotMatch();
+    // 🔥 бот адаптируется под твой счёт
+    const targetBase = ws.score + (botShouldWin ? 15 : -10);
+
+    const dynamicSpeed =
+      (targetBase - ws.botScore) * 0.08;
+
+    ws.botScore += Math.max(dynamicSpeed, 1);
+
+    ws.send(JSON.stringify({
+      type: "score",
+      you: ws.score,
+      opponent: Math.floor(ws.botScore)
+    }));
+
+  }, 100);
+
+  setTimeout(async () => {
+
+    ws.isActive = false;
+    clearInterval(botInterval);
+
+    const finalBot = Math.floor(ws.botScore);
+    const total = stake * 2;
+    const reward = Math.floor(total * 0.9);
+
+    const playerWins = ws.score > finalBot;
+
+    if (playerWins) {
+      await query(
+        "UPDATE users SET balance = balance + $1 WHERE telegram_id = $2",
+        [reward, ws.userId]
+      );
     }
 
-  }, 1000);
+    ws.send(JSON.stringify({
+      type: "end",
+      winner: playerWins ? ws.userId : "bot",
+      you: ws.score,
+      opponent: finalBot
+    }));
 
-
-  function startBotMatch() {
-
-    ws.isActive = true;
-    ws.send(JSON.stringify({ type: "start" }));
-
-    const startTime = Date.now();
-
-    const botInterval = setInterval(() => {
-
-      if (!ws.isActive) return;
-
-      const elapsed = Date.now() - startTime;
-      const timeLeft = MATCH_DURATION - elapsed;
-
-      if (timeLeft <= 0) return;
-
-      const secondsLeft = timeLeft / 1000;
-
-      const remainingClicks = botTarget - ws.botScore;
-
-      // динамический cps чтобы прийти к target
-      const cps = remainingClicks / secondsLeft;
-
-      const randomFactor = (Math.random() - 0.5) * 4;
-
-      ws.botScore += (cps + randomFactor) * 0.1;
-
-      if (ws.botScore > botTarget) {
-        ws.botScore = botTarget;
-      }
-
-      ws.send(JSON.stringify({
-        type: "score",
-        you: ws.score,
-        opponent: Math.floor(ws.botScore)
-      }));
-
-    }, 100);
-
-
-    setTimeout(async () => {
-
-      ws.isActive = false;
-      clearInterval(botInterval);
-
-      const finalBot = Math.floor(ws.botScore);
-      const total = stake * 2;
-      const reward = Math.floor(total * 0.9);
-
-      const playerWins = ws.score > finalBot;
-
-      if (playerWins) {
-        await query(
-          "UPDATE users SET balance = balance + $1 WHERE telegram_id = $2",
-          [reward, ws.userId]
-        );
-      }
-
-      ws.send(JSON.stringify({
-        type: "end",
-        winner: playerWins ? ws.userId : "bot",
-        you: ws.score,
-        opponent: finalBot
-      }));
-
-    }, MATCH_DURATION);
-  }
+  }, MATCH_DURATION);
 }
+
 
 
 
