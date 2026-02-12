@@ -201,12 +201,10 @@ async function createBotMatch(ws, stake) {
 
   
 
-  ws.matchId = "bot";
-  ws1.matchId = "real";
-ws2.matchId = "real";
-  ws.isActive = true;
-  ws.score = 0;
-  ws.botScore = 0;
+ ws.matchId = "bot";
+ws.isActive = true;
+ws.score = 0;
+ws.botScore = 0;
 
   const botTarget =
     Math.floor(Math.random() * (BOT_SCORE_MAX - BOT_SCORE_MIN)) +
