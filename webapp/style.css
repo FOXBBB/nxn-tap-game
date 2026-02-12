@@ -935,10 +935,8 @@ input {
 
 /* ================= TAP SCREEN FINAL VERTICAL SHIFT ================= */
 
-/* общий контейнер тапа — опускаем всё сразу */
 #tap {
-  padding-top: 80px;
-  /* БЫЛО ~40 → ДЕЛАЕМ ЗАМЕТНО НИЖЕ */
+  padding-top: 30px;
 }
 
 /* баланс */
@@ -963,7 +961,7 @@ body {
 
 /* Telegram iOS header compensation */
 .screen {
-  padding-top: 24px;
+  padding-top: 10px;
 }
 
 html,
@@ -2529,44 +2527,8 @@ body.locked {
   position: relative;
 }
 
-.main-transfer-btn {
-  position: absolute;
-  top: 270px;
-  right: 20px;
 
-  width: 74px;
-  height: 84px; /* увеличили высоту */
 
-  background: rgba(0, 255, 120, 0.08);
-  border: 1px solid rgba(0, 255, 120, 0.3);
-  border-radius: 18px;
-  backdrop-filter: blur(8px);
-
-  display: flex;
-  flex-direction: column; /* иконка сверху, текст снизу */
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-
-  transition: 0.2s ease;
-}
-
-.main-transfer-btn img {
-  width: 34px;
-  height: 34px;
-}
-
-.transfer-label {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 1px;
-  color: #00ff88;
-  opacity: 0.9;
-}
-
-.main-transfer-btn:active {
-  transform: scale(0.94);
-}
 
 .game-card {
   padding: 20px;
@@ -2887,3 +2849,82 @@ body.locked {
   100% { transform: scale(1); }
 }
 
+/* ===== SHOP ICON BIGGER ===== */
+.menu div[data-go="shop"] img {
+  width: 52px;
+  height: 52px;
+}
+
+.menu div[data-go="shop"].active img {
+  width: 56px;
+}
+/* ===== TAP ACTIONS (STAKE + TRANSFER INLINE) ===== */
+
+.tap-actions {
+  max-width: 420px;
+  margin: 14px auto 6px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ОБЩИЙ СТИЛЬ КАРТОЧЕК */
+.tap-action-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  padding: 16px;
+  border-radius: 18px;
+
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(0,255,170,0.35);
+
+  backdrop-filter: blur(10px);
+
+  font-weight: 800;
+  letter-spacing: 1px;
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+/* hover */
+.tap-action-card:hover {
+  background: rgba(0,255,170,0.12);
+  transform: translateY(-2px);
+}
+
+/* active press */
+.tap-action-card:active {
+  transform: scale(0.96);
+}
+
+/* иконка */
+.tap-action-card img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+
+/* stake цвет */
+.tap-action-card.stake {
+  background: linear-gradient(
+    135deg,
+    rgba(160,255,122,0.25),
+    rgba(0,255,98,0.18)
+  );
+  border: 1px solid rgba(0,255,120,0.6);
+}
+
+/* transfer цвет (чуть холоднее) */
+.tap-action-card.transfer {
+  background: linear-gradient(
+    135deg,
+    rgba(108,240,255,0.25),
+    rgba(26,106,255,0.18)
+  );
+  border: 1px solid rgba(108,240,255,0.6);
+}
