@@ -1494,17 +1494,16 @@ function startPvpSearch() {
       "Searching opponent...";
   };
 
-  pvpSocket.onmessage = (event) => {
+pvpSocket.onmessage = (event) => {
   const data = JSON.parse(event.data);
 
-  // ОППОНЕНТ
+  // OPPONENT
   if (data.type === "opponent") {
     document.getElementById("pvp-opp-name").innerText = data.name;
   }
 
   // COUNTDOWN
   if (data.type === "countdown") {
-
     const overlay = document.getElementById("pvp-countdown-overlay");
     const number = document.getElementById("pvp-countdown-number");
 
@@ -1570,6 +1569,7 @@ function startPvpSearch() {
 
 
 
+
   if (data.type === "start") {
 
   document.getElementById("pvp-match")
@@ -1580,13 +1580,6 @@ function startPvpSearch() {
   startMatchTimer();
 }
 
-
-
-  document.getElementById("pvp-match")
-    .classList.remove("hidden");  // 🔥 раскрываем раньше
-
-  document.getElementById("pvp-status").innerText =
-    data.value > 0 ? data.value : "FIGHT!";
 }
 
 
