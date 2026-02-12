@@ -135,8 +135,22 @@ async function handleTap(ws) {
 
   ws.score++;
 
-  ws.send(JSON.stringify({ type: "score", you: ws.score }));
+  // отправляем обновление обоим игрокам
+  ws.send(JSON.stringify({
+    type: "score",
+    you: ws.score,
+    opponent: ws.opponent?.score || 0
+  }));
+
+  if (ws.opponent) {
+    ws.opponent.send(JSON.stringify({
+      type: "score",
+      you: ws.opponent.score,
+      opponent: ws.score
+    }));
+  }
 }
+
 
 async function finishMatch(matchId, ws1, ws2, stake) {
   const total = stake * 2;
@@ -186,25 +200,59 @@ async function finishMatch(matchId, ws1, ws2, stake) {
     client.release();
   }
 
-  ws1.send(JSON.stringify({ type: "end", winner: winner?.userId }));
-  ws2.send(JSON.stringify({ type: "end", winner: winner?.userId }));
+  ws1.send(JSON.stringify({
+  type: "end",
+  winner: winner?.userId,
+  you: ws1.score,
+  opponent: ws2.score
+}));
+
+ws2.send(JSON.stringify({
+  type: "end",
+  winner: winner?.userId,
+  you: ws2.score,
+  opponent: ws1.score
+}));
+
 }
 
-function createBotMatch(ws, stake) {
-  const botScore =
-    Math.floor(Math.random() * (BOT_SCORE_MAX - BOT_SCORE_MIN)) +
-    BOT_SCORE_MIN;
+
+async function createBotMatch(ws, stake) {
+
+  // 🔥 списываем ставку
+  await query(
+    "UPDATE users SET balance = balance - $1 WHERE telegram_id = $2",
+    [stake, ws.userId]
+  );
 
   ws.score = 0;
 
   ws.send(JSON.stringify({ type: "start", duration: 20 }));
 
+  let botCurrent = 0;
+
+  const botInterval = setInterval(() => {
+
+    botCurrent += Math.floor(Math.random() * 4) + 2;
+
+    if (botCurrent > 420) botCurrent = 420;
+
+    ws.send(JSON.stringify({
+      type: "score",
+      you: ws.score,
+      opponent: botCurrent
+    }));
+
+  }, 300);
+
   setTimeout(async () => {
+
+    clearInterval(botInterval);
+
     const total = stake * 2;
     const winnerReward = Math.floor(total * 0.9);
-    const burn = total - winnerReward;
 
-    const playerWins = ws.score > botScore;
+    const playerWins = ws.score > botCurrent;
 
     if (playerWins) {
       await query(
@@ -216,11 +264,14 @@ function createBotMatch(ws, stake) {
     ws.send(JSON.stringify({
       type: "end",
       winner: playerWins ? ws.userId : "bot",
-      botScore
+      you: ws.score,
+      opponent: botCurrent
     }));
 
   }, MATCH_DURATION);
 }
+
+
 
 function cleanup(ws) {
   if (ws.stake && waitingQueue.has(ws.stake)) {

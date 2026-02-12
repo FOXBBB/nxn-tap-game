@@ -2701,3 +2701,41 @@ body.locked {
 #pvp-tap-coin:active {
   transform: scale(0.9);
 }
+.pvp-result {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 36px;
+  font-weight: bold;
+  z-index: 999;
+  animation: fadeIn 0.3s ease;
+}
+
+.pvp-win {
+  color: #00ff88;
+  text-shadow: 0 0 20px #00ff88;
+}
+
+.pvp-lose {
+  color: #ff4d4d;
+  text-shadow: 0 0 20px #ff0000;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0 }
+  to { opacity: 1 }
+}
+.pvp-shake {
+  animation: shake 0.15s;
+}
+
+@keyframes shake {
+  0% { transform: translateX(0) }
+  25% { transform: translateX(-3px) }
+  50% { transform: translateX(3px) }
+  75% { transform: translateX(-3px) }
+  100% { transform: translateX(0) }
+}

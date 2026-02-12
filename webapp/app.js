@@ -376,20 +376,27 @@ document.getElementById("pvp-play").onclick = () => {
   if (!pvpStake) return alert("Choose stake");
   startPvpSearch();
 };
+
+
 const pvpCoin = document.getElementById("pvp-tap-coin");
 
 if (pvpCoin) {
-  pvpCoin.addEventListener("touchstart", (e) => {
-    e.preventDefault();
+
+  const sendTap = () => {
     if (!pvpSocket) return;
+    pvpSocket.send(JSON.stringify({ type: "tap" }));
 
     pvpCoin.classList.add("hit");
-    setTimeout(() => pvpCoin.classList.remove("hit"), 100);
+    setTimeout(() => pvpCoin.classList.remove("hit"), 80);
+  };
 
-    pvpSocket.send(JSON.stringify({ type: "tap" }));
+  pvpCoin.addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    sendTap();
   }, { passive: false });
-}
 
+  pvpCoin.addEventListener("click", sendTap);
+}
 
 });
 
@@ -1498,9 +1505,12 @@ function startPvpSearch() {
           : "YOU LOSE";
 
       document.getElementById("pvp-match")
-        .classList.add("hidden");
+  .classList.add("pvp-shake");
 
-      refreshMe();
+setTimeout(() => {
+  document.getElementById("pvp-match")
+    .classList.remove("pvp-shake");
+}, 150);
     }
   };
 
