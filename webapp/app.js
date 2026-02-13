@@ -35,61 +35,57 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-document
-  .querySelectorAll("#referral-stake-modal .stake-amounts button")
-  .forEach(btn => {
-    btn.onclick = () => {
-      const val = btn.dataset.refAmount;
+  document
+    .querySelectorAll("#referral-stake-modal .stake-amounts button")
+    .forEach(btn => {
+      btn.onclick = () => {
+        const val = btn.dataset.refAmount;
 
-      const balance = parseFormattedNumber(
-  document.getElementById("referral-stake-balance").innerText
-);
+        const balance = parseFormattedNumber(
+          document.getElementById("referral-stake-balance").innerText
+        );
 
 
-      let amount;
-      if (val === "max") {
-        amount = balance;
-      } else {
-        amount = Number(val);
-      }
+        let amount;
+        if (val === "max") {
+          amount = balance;
+        } else {
+          amount = Number(val);
+        }
 
-      if (amount < 10000) {
-        showMinStackModal("Minimum referral stake is 10,000 NXN");
-        return;
-      }
+        if (amount < 10000) {
+          showMinStackModal("Minimum referral stake is 10,000 NXN");
+          return;
+        }
 
-      if (amount > balance) {
-        showMinStackModal("Not enough referral NXN");
-        return;
-      }
+        if (amount > balance) {
+          showMinStackModal("Not enough referral NXN");
+          return;
+        }
 
-      document.getElementById("referral-stake-amount").value = amount;
-    };
-  });
+        document.getElementById("referral-stake-amount").value = amount;
+      };
+    });
 
   const pvpBackBtn = document.getElementById("pvp-back");
 
-pvpBackBtn?.addEventListener("click", () => {
-  document.getElementById("pvp").classList.add("hidden");
-  document.getElementById("games").classList.remove("hidden");
-});
-
-if (timeLeft <= 5) {
-  document.getElementById("pvp-timer").classList.add("low");
-}
+  pvpBackBtn?.addEventListener("click", () => {
+    document.getElementById("pvp").classList.add("hidden");
+    document.getElementById("games").classList.remove("hidden");
+  });
 
 
 
   Telegram.WebApp.ready();
-Telegram.WebApp.expand();
+  Telegram.WebApp.expand();
 
-// получаем пользователя СРАЗУ
-tgUser = Telegram.WebApp.initDataUnsafe.user;
-userId = String(tgUser.id);
+  // получаем пользователя СРАЗУ
+  tgUser = Telegram.WebApp.initDataUnsafe.user;
+  userId = String(tgUser.id);
 
 
-// ▶️ туториал — ПОСЛЕ
-startNXNTutorial();
+  // ▶️ туториал — ПОСЛЕ
+  startNXNTutorial();
 
 
   tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
@@ -113,114 +109,76 @@ startNXNTutorial();
   updateUI();
   initMenu();
 
-// ================= SUBSCRIBE GATE =================
+  // ================= SUBSCRIBE GATE =================
 
-Telegram.WebApp.ready();
+  Telegram.WebApp.ready();
 
-// 1️⃣ СНАЧАЛА DOM-элементы
-const subscribeOverlay = document.getElementById("subscribe-overlay");
-const checkSubscribeBtn = document.getElementById("check-subscribe-btn");
-// 🔥 ПЕРВАЯ ПРОВЕРКА ПОДПИСКИ (КОГДА DOM ГОТОВ)
-checkSubscribeAccess();
-
-
-async function checkSubscribeAccess() {
-  let data;
-
-  try {
-    const res = await fetch(`/api/subscribe/access/${userId}`);
-    data = await res.json();
-  } catch (e) {
-    console.error("SUB FETCH ERROR", e);
-    return;
-  }
-
-  console.log("SUB STATUS:", data);
-
-  if (!data.subscribed) {
-    subscribeOverlay.classList.remove("hidden");
-    lockGame();
-    return;
-  }
-
-  subscribeOverlay.classList.add("hidden");
-  unlockGame();
-}
-
-
-// 🔁 повторная проверка при возврате в WebApp
-Telegram.WebApp.onEvent("visibilityChanged", () => {
-  if (!userId) return;
+  // 1️⃣ СНАЧАЛА DOM-элементы
+  const subscribeOverlay = document.getElementById("subscribe-overlay");
+  const checkSubscribeBtn = document.getElementById("check-subscribe-btn");
+  // 🔥 ПЕРВАЯ ПРОВЕРКА ПОДПИСКИ (КОГДА DOM ГОТОВ)
   checkSubscribeAccess();
-});
 
 
+  async function checkSubscribeAccess() {
+    let data;
 
+    try {
+      const res = await fetch(`/api/subscribe/access/${userId}`);
+      data = await res.json();
+    } catch (e) {
+      console.error("SUB FETCH ERROR", e);
+      return;
+    }
 
+    console.log("SUB STATUS:", data);
 
+    if (!data.subscribed) {
+      subscribeOverlay.classList.remove("hidden");
+      lockGame();
+      return;
+    }
 
-function lockGame() {
-  document.body.classList.add("locked");
-
-  // 🔒 блокируем игру
-  document.querySelectorAll(".screen, .menu").forEach(el => {
-    el.style.pointerEvents = "none";
-  });
-
-  // 🔓 РАЗРЕШАЕМ КЛИКИ ТОЛЬКО В SUBSCRIBE
-  const overlay = document.getElementById("subscribe-overlay");
-  if (overlay) {
-    overlay.style.pointerEvents = "auto";
+    subscribeOverlay.classList.add("hidden");
+    unlockGame();
   }
-}
 
 
-function unlockGame() {
-  document.body.classList.remove("locked");
-
-  document.querySelectorAll(".screen, .menu").forEach(el => {
-    el.style.pointerEvents = "";
-  });
-}
-
-
-
-
-
-
-
-
-checkSubscribeBtn.onclick = async () => {
-  const res = await fetch("/api/subscribe/confirm", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ userId })
+  // 🔁 повторная проверка при возврате в WebApp
+  Telegram.WebApp.onEvent("visibilityChanged", () => {
+    if (!userId) return;
+    checkSubscribeAccess();
   });
 
-  const data = await res.json();
 
-  if (!data.ok) {
-    Telegram.WebApp.showPopup({
-      title: "❌ Not subscribed",
-      message: "Please subscribe to the channel first."
+
+
+
+
+  function lockGame() {
+    document.body.classList.add("locked");
+
+    // 🔒 блокируем игру
+    document.querySelectorAll(".screen, .menu").forEach(el => {
+      el.style.pointerEvents = "none";
     });
-    return;
+
+    // 🔓 РАЗРЕШАЕМ КЛИКИ ТОЛЬКО В SUBSCRIBE
+    const overlay = document.getElementById("subscribe-overlay");
+    if (overlay) {
+      overlay.style.pointerEvents = "auto";
+    }
   }
 
-  if (data.bonus > 0) {
-    const toast = document.createElement("div");
-    toast.className = "transfer-toast success";
-    toast.innerText = `+${data.bonus} NXN BONUS`;
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 1800);
+
+  function unlockGame() {
+    document.body.classList.remove("locked");
+
+    document.querySelectorAll(".screen, .menu").forEach(el => {
+      el.style.pointerEvents = "";
+    });
   }
 
-  await refreshMe();
-  updateUI();
-
-  subscribeOverlay.classList.add("hidden");
-  unlockGame();
-};
 
 
 
@@ -228,200 +186,238 @@ checkSubscribeBtn.onclick = async () => {
 
 
 
-// ===== OPEN REFERRAL =====
-document.getElementById("open-referral").onclick = async () => {
-  const res = await fetch(`/api/referral/me/${userId}`);
-  const data = await res.json();
+  checkSubscribeBtn.onclick = async () => {
+    const res = await fetch("/api/subscribe/confirm", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId })
+    });
 
-  showScreen("referral-screen");
+    const data = await res.json();
 
-  document.getElementById("ref-code").innerText = data.referralCode;
-  document.getElementById("ref-balance").innerText =
-    formatNumber(data.referralStackBalance);
+    if (!data.ok) {
+      Telegram.WebApp.showPopup({
+        title: "❌ Not subscribed",
+        message: "Please subscribe to the channel first."
+      });
+      return;
+    }
 
-  document.getElementById("ref-invited").innerText = data.stats.invited;
-  document.getElementById("ref-active").innerText = data.stats.active;
-  document.getElementById("ref-earned").innerText =
-    formatNumber(data.stats.totalEarned);
+    if (data.bonus > 0) {
+      const toast = document.createElement("div");
+      toast.className = "transfer-toast success";
+      toast.innerText = `+${data.bonus} NXN BONUS`;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 1800);
+    }
 
-  if (data.referredBy) {
-    const input = document.getElementById("ref-input");
-    input.value = "Bound";
-    input.disabled = true;
-    document.getElementById("bind-ref").disabled = true;
-  }
-};
+    await refreshMe();
+    updateUI();
 
-
-document.getElementById("copy-ref").onclick = () => {
-  const code = document.getElementById("ref-code").innerText;
-  navigator.clipboard.writeText(code);
-
-  const toast = document.createElement("div");
-  toast.className = "transfer-toast";
-  toast.style.background = "#0f172a";
-  toast.style.border = "1px solid #22c55e";
-  toast.style.color = "#22c55e";
-  toast.innerText = "Referral code copied";
-  document.body.appendChild(toast);
-
-  setTimeout(() => toast.remove(), 1500);
-};
-
-
-document.getElementById("bind-ref").onclick = async () => {
-  const code = document.getElementById("ref-input").value.trim();
-  if (!code) return;
-
-  const res = await fetch("/api/referral/bind", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ userId, code })
-  });
-
-  const data = await res.json();
-  if (!data.ok) return alert(data.error);
-
-  document.getElementById("open-referral").click();
-};
-
-
-
-document.getElementById("back-from-ref").onclick = () => {
-  showScreen("stake-screen");
-};
-
-
-document.getElementById("stake-referral-btn").onclick = async () => {
-  const res = await fetch(`/api/referral/me/${userId}`);
-  const data = await res.json();
-
-  document.getElementById("referral-stake-balance").innerText =
-    formatNumber(data.referralStackBalance);
-
-  document
-    .getElementById("referral-stake-modal")
-    .classList.remove("hidden");
-};
-
-document.getElementById("cancel-referral-stake").onclick = () => {
-  document
-    .getElementById("referral-stake-modal")
-    .classList.add("hidden");
-};
-
-document.getElementById("confirm-referral-stake").onclick = async () => {
-  const amount = Number(
-    document.getElementById("referral-stake-amount").value
-  );
-
-  if (amount < 10000) {
-    showMinStackModal();
-    return;
-  }
-
-  const res = await fetch("/api/referral/stake", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ userId, amount })
-  });
-
-  const data = await res.json();
-  if (!data.ok) return;
-
-  // fly animation
-const fly = document.createElement("div");
-fly.className = "stake-fly";
-fly.innerText = `-${formatNumber(amount)} NXN`;
-document.body.appendChild(fly);
-setTimeout(() => fly.remove(), 900);
-
-
-  document
-    .getElementById("referral-stake-modal")
-    .classList.add("hidden");
-
-
-// 🔄 обновляем ВСЁ состояние
-await refreshMe();
-await loadRewardState();
-
-// 🔄 обновляем referral данные
-const refRes = await fetch(`/api/referral/me/${userId}`);
-const refData = await refRes.json();
-
-// referral balances
-document.getElementById("ref-balance").innerText =
-  formatNumber(refData.referralStackBalance);
-
-document.getElementById("referral-stake-balance").innerText =
-  formatNumber(refData.referralStackBalance);
-
-// 🔥 ОБЯЗАТЕЛЬНО обновляем stake экран
-document.getElementById("stake-balance").innerText =
-  formatNumber(balance);
-
-
-};
-document.getElementById("open-pvp").onclick = () => {
-  showScreen("pvp");
-};
-
-document.getElementById("pvp-back").onclick = () => {
-  showScreen("games");
-};
-
-document.querySelectorAll("[data-pvp]").forEach(btn => {
-  btn.onclick = () => {
-    pvpStake = Number(btn.dataset.pvp);
-
-    document.querySelectorAll("[data-pvp]")
-      .forEach(b => b.classList.remove("active"));
-
-    btn.classList.add("active");
+    subscribeOverlay.classList.add("hidden");
+    unlockGame();
   };
-});
-
-const pvpPlayBtn = document.getElementById("pvp-play");
-
-pvpPlayBtn.onclick = () => {
-
-  if (!pvpStake) return alert("Choose stake");
-
-  if (pvpSocket) return; // 🔥 защита от повторного нажатия
-
-  pvpPlayBtn.disabled = true;
-
-  startPvpSearch();
-};
 
 
 
-const pvpCoin = document.getElementById("pvp-tap-coin");
 
-if (pvpCoin) {
 
- const sendTap = () => {
-  if (!pvpSocket) return;
 
-  pvpSocket.send(JSON.stringify({ type: "tap" }));
 
-  if (Telegram?.WebApp?.HapticFeedback) {
-    Telegram.WebApp.HapticFeedback.impactOccurred("light");
+  // ===== OPEN REFERRAL =====
+  document.getElementById("open-referral").onclick = async () => {
+    const res = await fetch(`/api/referral/me/${userId}`);
+    const data = await res.json();
+
+    showScreen("referral-screen");
+
+    document.getElementById("ref-code").innerText = data.referralCode;
+    document.getElementById("ref-balance").innerText =
+      formatNumber(data.referralStackBalance);
+
+    document.getElementById("ref-invited").innerText = data.stats.invited;
+    document.getElementById("ref-active").innerText = data.stats.active;
+    document.getElementById("ref-earned").innerText =
+      formatNumber(data.stats.totalEarned);
+
+    if (data.referredBy) {
+      const input = document.getElementById("ref-input");
+      input.value = "Bound";
+      input.disabled = true;
+      document.getElementById("bind-ref").disabled = true;
+    }
+  };
+
+
+  document.getElementById("copy-ref").onclick = () => {
+    const code = document.getElementById("ref-code").innerText;
+    navigator.clipboard.writeText(code);
+
+    const toast = document.createElement("div");
+    toast.className = "transfer-toast";
+    toast.style.background = "#0f172a";
+    toast.style.border = "1px solid #22c55e";
+    toast.style.color = "#22c55e";
+    toast.innerText = "Referral code copied";
+    document.body.appendChild(toast);
+
+    setTimeout(() => toast.remove(), 1500);
+  };
+
+
+  document.getElementById("bind-ref").onclick = async () => {
+    const code = document.getElementById("ref-input").value.trim();
+    if (!code) return;
+
+    const res = await fetch("/api/referral/bind", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId, code })
+    });
+
+    const data = await res.json();
+    if (!data.ok) return alert(data.error);
+
+    document.getElementById("open-referral").click();
+  };
+
+
+
+  document.getElementById("back-from-ref").onclick = () => {
+    showScreen("stake-screen");
+  };
+
+
+  document.getElementById("stake-referral-btn").onclick = async () => {
+    const res = await fetch(`/api/referral/me/${userId}`);
+    const data = await res.json();
+
+    document.getElementById("referral-stake-balance").innerText =
+      formatNumber(data.referralStackBalance);
+
+    document
+      .getElementById("referral-stake-modal")
+      .classList.remove("hidden");
+  };
+
+  document.getElementById("cancel-referral-stake").onclick = () => {
+    document
+      .getElementById("referral-stake-modal")
+      .classList.add("hidden");
+  };
+
+  document.getElementById("confirm-referral-stake").onclick = async () => {
+    const amount = Number(
+      document.getElementById("referral-stake-amount").value
+    );
+
+    if (amount < 10000) {
+      showMinStackModal();
+      return;
+    }
+
+    const res = await fetch("/api/referral/stake", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId, amount })
+    });
+
+    const data = await res.json();
+    if (!data.ok) return;
+
+    // fly animation
+    const fly = document.createElement("div");
+    fly.className = "stake-fly";
+    fly.innerText = `-${formatNumber(amount)} NXN`;
+    document.body.appendChild(fly);
+    setTimeout(() => fly.remove(), 900);
+
+
+    document
+      .getElementById("referral-stake-modal")
+      .classList.add("hidden");
+
+
+    // 🔄 обновляем ВСЁ состояние
+    await refreshMe();
+    await loadRewardState();
+
+    // 🔄 обновляем referral данные
+    const refRes = await fetch(`/api/referral/me/${userId}`);
+    const refData = await refRes.json();
+
+    // referral balances
+    document.getElementById("ref-balance").innerText =
+      formatNumber(refData.referralStackBalance);
+
+    document.getElementById("referral-stake-balance").innerText =
+      formatNumber(refData.referralStackBalance);
+
+    // 🔥 ОБЯЗАТЕЛЬНО обновляем stake экран
+    document.getElementById("stake-balance").innerText =
+      formatNumber(balance);
+
+
+  };
+  document.getElementById("open-pvp").onclick = () => {
+    showScreen("pvp");
+  };
+
+  document.getElementById("pvp-back").onclick = () => {
+    showScreen("games");
+  };
+
+  document.querySelectorAll("[data-pvp]").forEach(btn => {
+    btn.onclick = () => {
+      pvpStake = Number(btn.dataset.pvp);
+
+      document.querySelectorAll("[data-pvp]")
+        .forEach(b => b.classList.remove("active"));
+
+      btn.classList.add("active");
+    };
+  });
+
+  const pvpPlayBtn = document.getElementById("pvp-play");
+
+  pvpPlayBtn.onclick = () => {
+
+    if (!pvpStake) return alert("Choose stake");
+
+    if (pvpSocket) return; // 🔥 защита от повторного нажатия
+
+    pvpPlayBtn.disabled = true;
+
+    startPvpSearch();
+  };
+
+
+
+  const pvpCoin = document.getElementById("pvp-tap-coin");
+
+  if (pvpCoin) {
+
+    const sendTap = () => {
+      if (!pvpSocket) return;
+
+      pvpSocket.send(JSON.stringify({ type: "tap" }));
+
+      if (Telegram?.WebApp?.HapticFeedback) {
+        Telegram.WebApp.HapticFeedback.impactOccurred("light");
+      }
+
+      pvpCoin.classList.add("hit");
+      setTimeout(() => pvpCoin.classList.remove("hit"), 80);
+    };
+
+
+    pvpCoin.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      sendTap();
+    }, { passive: false });
+
+    pvpCoin.addEventListener("click", sendTap);
   }
-
-  pvpCoin.classList.add("hit");
-  setTimeout(() => pvpCoin.classList.remove("hit"), 80);
-};
-
-
-  pvpCoin.addEventListener("touchstart", (e) => {
-    e.preventDefault();
-    sendTap();
-  }, { passive: false });
-
-  pvpCoin.addEventListener("click", sendTap);
-}
 
 });
 
@@ -431,8 +427,8 @@ const stakeBackBtn = document.getElementById("stake-back");
 
 if (stakeBackBtn) {
   stakeBackBtn.onclick = () => {
-  showScreen("tap");
-};
+    showScreen("tap");
+  };
 }
 
 async function loadClaimInfo() {
@@ -528,31 +524,31 @@ async function loadRewardState() {
   const data = await res.json();
 
 
- if (!data.state) {
-  rewardState = null;
-  return;
-}
+  if (!data.state) {
+    rewardState = null;
+    return;
+  }
 
 
   rewardState = data.state;
 
-rewardStakeEndsAt = new Date(data.stakeEndsAt);
-rewardClaimEndsAt = new Date(data.claimEndsAt);
-currentStake = Number(data.userStake || 0);
+  rewardStakeEndsAt = new Date(data.stakeEndsAt);
+  rewardClaimEndsAt = new Date(data.claimEndsAt);
+  currentStake = Number(data.userStake || 0);
 
-document.getElementById("stake-balance").innerText =
-  formatNumber(balance);
+  document.getElementById("stake-balance").innerText =
+    formatNumber(balance);
 
-document.getElementById("stake-current").innerText =
-  formatNumber(currentStake);
+  document.getElementById("stake-current").innerText =
+    formatNumber(currentStake);
 
-updateStakeButton();
-updateRewardTimer();
+  updateStakeButton();
+  updateRewardTimer();
 
-// 👇 ЕДИНСТВЕННЫЙ ВЫЗОВ
-if (rewardState === "CLAIM_ACTIVE") {
-  loadClaimInfo();
-}
+  // 👇 ЕДИНСТВЕННЫЙ ВЫЗОВ
+  if (rewardState === "CLAIM_ACTIVE") {
+    loadClaimInfo();
+  }
 }
 
 
@@ -856,31 +852,31 @@ async function loadLeaderboard() {
       data[2].avatar || placeholder;
   }
 
-  
- // TOP 4–100
-const list = document.querySelector(".lb-list");
-list.innerHTML = "";
 
-data.slice(3).forEach((u, i) => {
-  const rank = i + 4;
+  // TOP 4–100
+  const list = document.querySelector(".lb-list");
+  list.innerHTML = "";
 
-  const row = document.createElement("div");
-  row.className = "row";
+  data.slice(3).forEach((u, i) => {
+    const rank = i + 4;
 
-  // 🔥 ВОТ ОНО — ПОДСВЕТКА ТОЛЬКО СЕБЯ
-  if (String(u.telegram_id) === String(userId)) {
-    row.classList.add("me");
-  }
+    const row = document.createElement("div");
+    row.className = "row";
 
-  row.innerHTML = `
+    // 🔥 ВОТ ОНО — ПОДСВЕТКА ТОЛЬКО СЕБЯ
+    if (String(u.telegram_id) === String(userId)) {
+      row.classList.add("me");
+    }
+
+    row.innerHTML = `
     <span>#${rank}</span>
     <img src="${u.avatar || placeholder}">
     <b>${u.name}</b>
     <i>${formatNumber(u.balance)}</i>
   `;
 
-  list.appendChild(row);
-});
+    list.appendChild(row);
+  });
 }
 
 // ================= MENU =================
@@ -927,29 +923,29 @@ stakeBtn.onclick = async () => {
 
 document.querySelectorAll(".stake-amounts button").forEach(btn => {
   btn.onclick = () => {
-  const val = btn.dataset.amount;
+    const val = btn.dataset.amount;
 
-  let amount;
-  if (val === "max") {
-    amount = balance;
-  } else {
-    amount = Number(val);
-  }
+    let amount;
+    if (val === "max") {
+      amount = balance;
+    } else {
+      amount = Number(val);
+    }
 
-  // ❌ not enough balance
-  if (amount > balance) {
-    showMinStackModal("Not enough NXN to stake");
-    return;
-  }
+    // ❌ not enough balance
+    if (amount > balance) {
+      showMinStackModal("Not enough NXN to stake");
+      return;
+    }
 
-  selectedStakeAmount = amount;
+    selectedStakeAmount = amount;
 
-  document
-    .querySelectorAll(".stake-amounts button")
-    .forEach(b => b.classList.remove("active"));
+    document
+      .querySelectorAll(".stake-amounts button")
+      .forEach(b => b.classList.remove("active"));
 
-  btn.classList.add("active");
-};
+    btn.classList.add("active");
+  };
 });
 
 
@@ -962,10 +958,10 @@ if (stakeConfirm) {
       return;
     }
 
- if (!selectedStakeAmount || selectedStakeAmount < 10000) {
-  showMinStackModal();
-  return;
-}
+    if (!selectedStakeAmount || selectedStakeAmount < 10000) {
+      showMinStackModal();
+      return;
+    }
 
 
     const res = await fetch("/api/reward/stake", {
@@ -982,16 +978,16 @@ if (stakeConfirm) {
     if (!data.ok) {
 
       const fly = document.createElement("div");
-fly.className = "stake-fly";
-fly.innerText = `-${formatNumber(selectedStakeAmount)} NXN`;
-document.body.appendChild(fly);
-setTimeout(() => fly.remove(), 900);
+      fly.className = "stake-fly";
+      fly.innerText = `-${formatNumber(selectedStakeAmount)} NXN`;
+      document.body.appendChild(fly);
+      setTimeout(() => fly.remove(), 900);
 
-const toast = document.createElement("div");
-toast.className = "transfer-toast success";
-toast.innerText = "Stake successful ✓";
-document.body.appendChild(toast);
-setTimeout(() => toast.remove(), 1600);
+      const toast = document.createElement("div");
+      toast.className = "transfer-toast success";
+      toast.innerText = "Stake successful ✓";
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 1600);
 
 
 
@@ -1495,91 +1491,92 @@ function startPvpSearch() {
 
   pvpSocket.onopen = () => {
     pvpSocket.send(JSON.stringify({
-      type: "search",
-      userId,
-      stake: pvpStake
-    }));
+  type: "search",
+  userId,
+  username: tgUser.username || tgUser.first_name || "Player",
+  stake: pvpStake
+}));
 
     document.getElementById("pvp-status").innerText =
       "Searching opponent...";
   };
 
-pvpSocket.onmessage = (event) => {
-  const data = JSON.parse(event.data);
+  pvpSocket.onmessage = (event) => {
+    const data = JSON.parse(event.data);
 
-  if (data.type === "opponent") {
-    document.getElementById("pvp-opp-name").innerText = data.name;
-  }
-
- if (data.type === "countdown") {
-
-  document.getElementById("pvp-match").classList.remove("hidden");
-
-  const overlay = document.getElementById("pvp-countdown-overlay");
-  const number = document.getElementById("pvp-countdown-number");
-
-    overlay.classList.remove("hidden");
-
-   if (data.value > 0) {
-  number.innerText = data.value;
-} else if (data.value === 0) {
-  number.innerText = "FIGHT!";
-  setTimeout(() => overlay.classList.add("hidden"), 600);
-}
-
-  }
-
- if (data.type === "start") {
-
-  const overlay = document.getElementById("pvp-countdown-overlay");
-  if (overlay) overlay.classList.add("hidden");
-
-  document.getElementById("pvp-match").classList.remove("hidden");
-  document.getElementById("pvp-status").innerText = "FIGHT!";
-
-  startMatchTimer();
-}
-
-
-  if (data.type === "score") {
-    document.getElementById("pvp-you").innerText = data.you;
-    document.getElementById("pvp-opp").innerText = data.opponent;
-  }
-
-  if (data.type === "end") {
-
-    clearInterval(pvpTimerInterval);
-    document.getElementById("pvp-timer").innerText = 0;
-
-    const status = document.getElementById("pvp-status");
-
-    if (String(data.winner) === String(userId)) {
-      status.innerText = "YOU WIN!";
-      status.classList.add("pvp-win");
-    } else {
-      status.innerText = "YOU LOSE";
-      status.classList.add("pvp-lose");
+    if (data.type === "opponent") {
+      document.getElementById("pvp-opp-name").innerText = data.name;
     }
 
-    setTimeout(() => {
-      status.classList.remove("pvp-win", "pvp-lose");
-    }, 1000);
+    if (data.type === "countdown") {
 
-    if (pvpSocket) {
-      pvpSocket.close();
-      pvpSocket = null;
+      document.getElementById("pvp-match").classList.remove("hidden");
+
+      const overlay = document.getElementById("pvp-countdown-overlay");
+      const number = document.getElementById("pvp-countdown-number");
+
+      overlay.classList.remove("hidden");
+
+      if (data.value > 0) {
+        number.innerText = data.value;
+      } else if (data.value === 0) {
+        number.innerText = "FIGHT!";
+        setTimeout(() => overlay.classList.add("hidden"), 600);
+      }
+
     }
 
-    document.getElementById("pvp-play").disabled = false;
+    if (data.type === "start") {
 
-    setTimeout(() => {
-      document.getElementById("pvp-match").classList.add("hidden");
-      document.getElementById("pvp-you").innerText = 0;
-      document.getElementById("pvp-opp").innerText = 0;
-      document.getElementById("pvp-status").innerText = "Choose your stake";
-    }, 1500);
-  }
-};
+      const overlay = document.getElementById("pvp-countdown-overlay");
+      if (overlay) overlay.classList.add("hidden");
+
+      document.getElementById("pvp-match").classList.remove("hidden");
+      document.getElementById("pvp-status").innerText = "FIGHT!";
+
+      startMatchTimer();
+    }
+
+
+    if (data.type === "score") {
+      document.getElementById("pvp-you").innerText = data.you;
+      document.getElementById("pvp-opp").innerText = data.opponent;
+    }
+
+    if (data.type === "end") {
+
+      clearInterval(pvpTimerInterval);
+      document.getElementById("pvp-timer").innerText = 0;
+
+      const status = document.getElementById("pvp-status");
+
+      if (String(data.winner) === String(userId)) {
+        status.innerText = "YOU WIN!";
+        status.classList.add("pvp-win");
+      } else {
+        status.innerText = "YOU LOSE";
+        status.classList.add("pvp-lose");
+      }
+
+      setTimeout(() => {
+        status.classList.remove("pvp-win", "pvp-lose");
+      }, 1000);
+
+      if (pvpSocket) {
+        pvpSocket.close();
+        pvpSocket = null;
+      }
+
+      document.getElementById("pvp-play").disabled = false;
+
+      setTimeout(() => {
+        document.getElementById("pvp-match").classList.add("hidden");
+        document.getElementById("pvp-you").innerText = 0;
+        document.getElementById("pvp-opp").innerText = 0;
+        document.getElementById("pvp-status").innerText = "Choose your stake";
+      }, 1500);
+    }
+  };
 
 
 
@@ -1591,23 +1588,30 @@ pvpSocket.onmessage = (event) => {
   };
 
 
-function startMatchTimer() {
+  function startMatchTimer() {
 
-  const endTime = Date.now() + 20000;
+    const endTime = Date.now() + 20000;
 
-  pvpTimerInterval = setInterval(() => {
+    pvpTimerInterval = setInterval(() => {
 
-    const diff = endTime - Date.now();
+      const diff = endTime - Date.now();
 
-    if (diff <= 0) {
-      document.getElementById("pvp-timer").innerText = 0;
-      clearInterval(pvpTimerInterval);
-      return;
-    }
+      if (diff <= 0) {
+        document.getElementById("pvp-timer").innerText = 0;
+        clearInterval(pvpTimerInterval);
+        return;
+      }
 
-    const remaining = Math.ceil(diff / 1000);
+      const remaining = Math.ceil(diff / 1000);
 
-    document.getElementById("pvp-timer").innerText = remaining;
+      document.getElementById("pvp-timer").innerText = remaining;
 
-  }, 1000);
-} }
+      if (remaining <= 5) {
+        document.getElementById("pvp-timer").classList.add("low");
+      } else {
+        document.getElementById("pvp-timer").classList.remove("low");
+      }
+
+    }, 1000);
+  }
+}

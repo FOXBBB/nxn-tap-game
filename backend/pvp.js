@@ -57,9 +57,9 @@ async function handleSearch(ws, data) {
 
   ws.searching = true;
 
-  const { userId, stake } = data;
+  const { userId, stake, username } = data;
 
-
+  ws.username = username || "Player";
   ws.userId = userId;
   ws.stake = stake;
 
@@ -113,8 +113,8 @@ async function createMatch(ws1, ws2, stake) {
   ws1.opponent = ws2;
   ws2.opponent = ws1;
 
-  ws1.send(JSON.stringify({ type: "opponent", name: ws2.userId }));
-  ws2.send(JSON.stringify({ type: "opponent", name: ws1.userId }));
+ ws1.send(JSON.stringify({ type: "opponent", name: ws2.username }));
+ws2.send(JSON.stringify({ type: "opponent", name: ws1.username }));
 
   startCountdown(ws1, ws2, stake);
 

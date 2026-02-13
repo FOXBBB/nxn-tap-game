@@ -3076,3 +3076,18 @@ body.locked {
   text-shadow: 0 0 25px rgba(0,255,200,0.8);
   animation: vsPulse 1.2s infinite;
 }
+.pvp-name {
+  font-size: 16px;
+  font-weight: 800;
+  margin-bottom: 6px;
+  background: linear-gradient(90deg,#00ffc8,#00aaff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 15px rgba(0,255,200,0.7);
+}
+.pvp-side:last-child .pvp-name {
+  background: linear-gradient(90deg,#ff4d4d,#ff8800);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 15px rgba(176, 58, 244, 0.8);
+}

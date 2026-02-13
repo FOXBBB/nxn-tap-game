@@ -360,11 +360,6 @@
       ENTER ARENA
     </button>
 
-    <div class="bar">
-  <div class="fill" id="pvp-you-bar"></div>
-</div>
-
-
     <div id="pvp-match" class="pvp-match hidden">
 
 <div id="pvp-countdown-overlay" class="pvp-countdown hidden">
@@ -375,15 +370,19 @@
       <div class="pvp-hud">
 
   <div class="pvp-side">
-    <div class="pvp-label">YOU</div>
-    <div id="pvp-you" class="pvp-score">0</div>
+  <div class="pvp-name">YOU</div>
+  <div id="pvp-you" class="pvp-score">0</div>
   </div>
 
   <div class="pvp-vs">VS</div>
 
   <div class="pvp-side">
-  <div class="pvp-label" id="pvp-opp-name">OPPONENT</div>
+  <div id="pvp-opp-name" class="pvp-name">OPPONENT</div>
   <div id="pvp-opp" class="pvp-score">0</div>
+
+  <div class="bar">
+      <div class="fill" id="pvp-opp-bar"></div>
+    </div>
 </div>
 
 
