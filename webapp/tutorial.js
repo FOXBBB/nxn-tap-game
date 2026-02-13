@@ -329,224 +329,247 @@ typeText(textEl, text);
 }
 
 
-      case 0: {
-        showComment(t.tap, false);
-        const coin = document.getElementById("coin");
-        lockOnly(coin);
-        showFinger(coin);
-        coin.addEventListener("pointerdown", () => {
-          step = 1;
-          run();
-        }, { once: true });
-        break;
-      }
+/* ================= 0 TAP ================= */
+case 0: {
+  showComment(t.tap, false);
+  const coin = document.getElementById("coin");
+  lockOnly(coin);
+  showFinger(coin);
 
-      case 1: {
-  showComment(t.energy, null, true);
-
-  // 🔒 блокируем всё
-  document.body.classList.add("tutorial-lock");
-
-  // 🎯 разрешаем только Next
-  const nextBtn = document.querySelector(".nxn-comment-btn");
-  if (nextBtn) nextBtn.classList.add("allow-click");
+  coin.addEventListener("pointerdown", () => {
+    step = 1;
+    run();
+  }, { once: true });
 
   break;
 }
 
+/* ================= 1 ENERGY ================= */
+case 1:
+  showComment(t.energy, null, true);
+  break;
 
-      case 2: {
-        showComment(t.lbGo, false);
-        const btn = document.querySelector('[data-go="leaderboard"]');
-        lockOnly(btn);
-        showFinger(btn);
-        btn.addEventListener("click", () => {
-          step = 3;
-          run();
-        }, { once: true });
-        break;
-      }
+/* ================= 2 LEADERBOARD ================= */
+case 2: {
+  showComment(t.lbGo, false);
+  const btn = document.querySelector('[data-go="leaderboard"]');
+  lockOnly(btn);
+  showFinger(btn);
 
-      case 3:
-        showComment(t.lbInfo, null, true);
-        break;
+  btn.addEventListener("click", () => {
+    step = 3;
+    run();
+  }, { once: true });
 
-      case 4: {
-        showComment(t.transferGo, false);
-        const btn = document.querySelector('[data-go="transfer"]');
-        lockOnly(btn);
-        showFinger(btn);
-        btn.addEventListener("click", () => {
-          step = 5;
-          run();
-        }, { once: true });
-        break;
-      }
+  break;
+}
 
-      case 5:
-        showComment(t.transferInfo, null, true);
-        break;
+/* ================= 3 LEADERBOARD INFO ================= */
+case 3:
+  showComment(t.lbInfo, null, true);
+  break;
 
-      case 6: {
-        showComment(t.shopGo, false);
-        const btn = document.querySelector('[data-go="shop"]');
-        lockOnly(btn);
-        showFinger(btn);
-        btn.addEventListener("click", () => {
-          step = 7;
-          run();
-        }, { once: true });
-        break;
-      }
+/* ================= 4 GAMES ================= */
+case 4: {
+  showComment({ title: "Games", text: "Open the Games section." }, false);
+  const btn = document.querySelector('[data-go="games"]');
+  lockOnly(btn);
+  showFinger(btn);
 
-      case 7:
-        showComment(t.shopInfo, null, true);
-        break;
+  btn.addEventListener("click", () => {
+    step = 5;
+    run();
+  }, { once: true });
 
-      case 8: {
-        showComment(t.backTap, false);
-        const btn = document.querySelector('[data-go="tap"]');
-        lockOnly(btn);
-        showFinger(btn);
-        btn.addEventListener("click", () => {
-          step = 9;
-          run();
-        }, { once: true });
-        break;
-      }
+  break;
+}
 
-      case 9: {
-        showComment(t.stakeGo, false);
-        const btn = document.getElementById("stake-btn");
-        lockOnly(btn);
-        showFinger(btn);
-        btn.addEventListener("click", () => {
-          step = 10;
-          run();
-        }, { once: true });
-        break;
-      }
+/* ================= 5 GAMES INFO ================= */
+case 5:
+  showComment({ title: "Games", text: "Here you can play mini games." }, null, true);
+  break;
 
-      case 10:
-         showComment(t.stakeInfo, null, true);
-        break;
+/* ================= 6 SHOP ================= */
+case 6: {
+  showComment(t.shopGo, false);
+  const btn = document.querySelector('[data-go="shop"]');
+  lockOnly(btn);
+  showFinger(btn);
 
-      case 11:
-  clearStakeHighlights(); // ← ВАЖНО
+  btn.addEventListener("click", () => {
+    step = 7;
+    run();
+  }, { once: true });
+
+  break;
+}
+
+/* ================= 7 SHOP INFO ================= */
+case 7:
+  showComment(t.shopInfo, null, true);
+  break;
+
+/* ================= 8 BACK TO TAP ================= */
+case 8: {
+  showComment(t.backTap, false);
+  const btn = document.querySelector('[data-go="tap"]');
+  lockOnly(btn);
+  showFinger(btn);
+
+  btn.addEventListener("click", () => {
+    step = 9;
+    run();
+  }, { once: true });
+
+  break;
+}
+
+/* ================= 9 TRANSFER ================= */
+case 9: {
+  showComment(t.transferGo, false);
+  const btn = document.getElementById("main-transfer-btn");
+  lockOnly(btn);
+  showFinger(btn);
+
+  btn.addEventListener("click", () => {
+    step = 10;
+    run();
+  }, { once: true });
+
+  break;
+}
+
+/* ================= 10 TRANSFER INFO ================= */
+case 10:
+  showComment(t.transferInfo, null, true);
+  break;
+
+/* ================= 11 NEXT → TAP ================= */
+case 11:
+  showScreen("tap");
+  step = 12;
+  run();
+  break;
+
+/* ================= 12 STAKE ================= */
+case 12: {
+  showComment(t.stakeGo, false);
+  const btn = document.getElementById("stake-btn");
+  lockOnly(btn);
+  showFinger(btn);
+
+  btn.addEventListener("click", () => {
+    step = 13;
+    run();
+  }, { once: true });
+
+  break;
+}
+
+/* ================= 13 STAKE INFO ================= */
+case 13:
+  showComment(t.stakeInfo, null, true);
+  break;
+
+/* ================= 14 STAKE NXN INFO ================= */
+case 14:
+  clearStakeHighlights();
   showComment(t.stakeNXN, null, true);
   highlight(document.getElementById("stake-confirm"));
   break;
 
-
-
-      case 12:
-  clearStakeHighlights(); // ← ВАЖНО
-  showComment(t.stakeNXN, null, true);
+/* ================= 15 REFERRAL STAKE INFO ================= */
+case 15:
+  clearStakeHighlights();
+  showComment(t.stakeRef, null, true);
   highlight(document.getElementById("stake-referral-btn"));
   break;
 
-case 13: {
-  // 👉 ПРОСИМ ПЕРЕЙТИ В STAKE LEADERBOARD
+/* ================= 16 STAKE LEADERBOARD ================= */
+case 16: {
   showComment(t.stakeLBGo, false);
-
   const btn = document.getElementById("open-stake-lb");
   lockOnly(btn);
   showFinger(btn);
 
   btn.addEventListener("click", () => {
-    step = 14;
+    step = 17;
     run();
   }, { once: true });
 
   break;
 }
 
+/* ================= 17 STAKE LEADERBOARD INFO ================= */
+case 17:
+  showComment(t.stakeLBInfo, null, true);
+  break;
 
+/* ================= 18 BACK ================= */
+case 18: {
+  showComment(t.stakeLBBack, false);
+  const btn = document.getElementById("back-to-stake");
+  lockOnly(btn);
+  showFinger(btn);
 
-case 14: {
-  const back = document.getElementById("back-to-stake");
-
-  showComment(
-    t.stakeLBBack,
-    back,
-    false,
-    "below" // ⬇️ ВАЖНО
-  );
-
-  lockOnly(back);
-  showFinger(back);
-
-  back.addEventListener("click", () => {
-    step = 15;
+  btn.addEventListener("click", () => {
+    step = 19;
     run();
   }, { once: true });
 
   break;
 }
 
-
-      case 15: {
+/* ================= 19 REFERRAL ================= */
+case 19: {
   showComment(t.referralGo, false);
-
   const btn = document.getElementById("open-referral");
   lockOnly(btn);
   showFinger(btn);
 
   btn.addEventListener("click", () => {
-    step = 16;
+    step = 20;
     run();
   }, { once: true });
 
   break;
 }
 
-
-      case 16:
+/* ================= 20 REFERRAL INFO ================= */
+case 20:
   showComment(t.referralInfo, null, true);
   break;
 
-
-      case 17: {
-  if (window.showScreen) showScreen("tap");
+/* ================= 21 FINISH ================= */
+case 21: {
+  showScreen("tap");
 
   setTimeout(() => {
-    showComment(
-      { title: t.finish.title, text: "You are ready to play.\nTap the coin and start farming NXN." },
-      false
-    );
+    showComment(t.finish, false);
 
     const coin = document.getElementById("coin");
     lockOnly(coin);
     showFinger(coin);
 
-   coin.addEventListener("pointerdown", () => {
-  // ✅ помечаем, что туториал пройден
-  localStorage.setItem("nxn_tutorial_done", "1");
-
-  // 🔓 снимаем блок туториала
-  document.body.classList.remove("tutorial-lock");
-  document.body.classList.remove("tutorial-next-only");
-
-  clearUI();
-
-  // 🔔 сообщаем app.js, что туториал закончен
-  window.dispatchEvent(new Event("nxn:tutorial-finished"));
-}, { once: true });
-
+    coin.addEventListener("pointerdown", () => {
+      localStorage.setItem("nxn_tutorial_done", "1");
+      document.body.classList.remove("tutorial-lock");
+      clearUI();
+    }, { once: true });
 
   }, 300);
 
   break;
 }
-    }
-  }
 
+}
 
+  } 
 
 
 
  window.startNXNTutorial = function () {
-  const finished = localStorage.getItem("nxn_tutorial_done");
+  const finished = null;
 
   if (finished === "1") {
     // 🧯 страховка: если вдруг lock остался
