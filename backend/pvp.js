@@ -1,6 +1,8 @@
 import { WebSocketServer } from "ws";
 import { query } from "./db.js";
 
+export const onlineUsers = new Map();
+
 const MATCH_DURATION = 20000;
 let waitingQueue = new Map();
 
@@ -87,6 +89,9 @@ async function handleSearch(ws, data) {
   ws.searching = true;
 
   const { userId, stake, username } = data;
+
+  onlineUsers.set(String(userId), ws);
+
 
   ws.username = username || "Player";
   ws.userId = userId;
@@ -413,6 +418,11 @@ function startBotMatch(ws, stake) {
 
 function cleanup(ws) {
 
+  if (ws.userId) {
+  onlineUsers.delete(String(ws.userId));
+}
+
+
   if (ws.stake && waitingQueue.has(ws.stake)) {
     waitingQueue.delete(ws.stake);
   }
@@ -422,4 +432,3 @@ function cleanup(ws) {
   ws.opponent = null;
   ws.matchId = null;
 }
-export { onlineUsers };
