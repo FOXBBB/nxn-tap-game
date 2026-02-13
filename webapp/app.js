@@ -359,21 +359,37 @@ document.addEventListener("DOMContentLoaded", async () => {
 };
 
   document.getElementById("open-pvp").onclick = () => {
+
   showScreen("pvp");
 
-  // 🔥 СБРОС РЕЗУЛЬТАТА
-  document.getElementById("pvp-result-screen")
-    ?.classList.add("hidden");
+  const resultScreen = document.getElementById("pvp-result-screen");
+  const resultText = document.getElementById("pvp-result-text");
+  const finalScore = document.getElementById("pvp-final-score");
 
-  document.getElementById("pvp-match")
-    ?.classList.add("hidden");
+  // 🔥 ПОЛНЫЙ СБРОС UI
+  resultScreen.classList.add("hidden");
+
+  resultText.innerText = "";
+  resultText.classList.remove("win", "lose");
+
+  finalScore.innerText = "";
+
+  document.getElementById("pvp-match").classList.add("hidden");
 
   document.getElementById("pvp-you").innerText = 0;
   document.getElementById("pvp-opp").innerText = 0;
 
   document.getElementById("pvp-status").innerText =
     "Choose your stake";
+
+  document.getElementById("pvp-play").disabled = false;
+
+  if (pvpSocket) {
+    pvpSocket.close();
+    pvpSocket = null;
+  }
 };
+
 
 
   document.getElementById("pvp-back").onclick = () => {
@@ -1635,13 +1651,16 @@ const againBtn = document.getElementById("pvp-again");
 if (againBtn) {
   againBtn.onclick = () => {
 
-    if (pvpSocket) {
-      pvpSocket.close();
-      pvpSocket = null;
-    }
+    const resultScreen = document.getElementById("pvp-result-screen");
+    const resultText = document.getElementById("pvp-result-text");
+    const finalScore = document.getElementById("pvp-final-score");
 
-    document.getElementById("pvp-result-screen")
-      .classList.add("hidden");
+    resultScreen.classList.add("hidden");
+
+    resultText.innerText = "";
+    resultText.classList.remove("win", "lose");
+
+    finalScore.innerText = "";
 
     document.getElementById("pvp-match")
       .classList.add("hidden");
@@ -1653,6 +1672,12 @@ if (againBtn) {
       "Choose your stake";
 
     document.getElementById("pvp-play").disabled = false;
+
+    if (pvpSocket) {
+      pvpSocket.close();
+      pvpSocket = null;
+    }
+
   };
 }
 
