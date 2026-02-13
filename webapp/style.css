@@ -2575,6 +2575,8 @@ body.locked {
 .pvp-box {
   padding: 20px;
   text-align: center;
+  position: relative;
+  z-index: 2;
   margin-top: 15px;
 }
 
@@ -2725,6 +2727,7 @@ body.locked {
 #pvp::before {
   content: "";
   position: absolute;
+  pointer-events: none;
   inset: 0;
   background: radial-gradient(circle at center, rgba(0,255,180,0.15), transparent 60%);
   animation: arenaPulse 3s infinite ease-in-out;
@@ -3035,6 +3038,7 @@ body.locked {
 #pvp::after {
   content: "";
   position: absolute;
+    pointer-events: none;
   inset: 0;
   background: 
     repeating-linear-gradient(
@@ -3283,4 +3287,13 @@ body.locked {
   50% { transform: translateX(10px); }
   75% { transform: translateX(-5px); }
   100% { transform: translateX(0); }
+}
+#pvp::before,
+#pvp::after {
+  pointer-events: none;
+}
+
+.pvp-box {
+  position: relative;
+  z-index: 2;
 }
