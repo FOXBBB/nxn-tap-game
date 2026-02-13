@@ -5,6 +5,9 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { checkRewardCycle, runAutoclickers } from "./routes.js";
 import { initPvp, onlineUsers } from "./pvp.js";
+import http from "http";
+import { runAutoSendNXN } from "./runAutoSend.js";
+
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -33,9 +36,6 @@ app.get("*", (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-
-import http from "http";
-import { initPvp } from "./pvp.js";
 
 const server = http.createServer(app);
 
@@ -74,7 +74,6 @@ setInterval(() => {
 }, 2000); // ⬅️ КАЖДУЮ СЕКУНДУ
 
 
-import { runAutoSendNXN } from "./runAutoSend.js";
 
 console.log("🔥 AutoSend interval INIT");
 
