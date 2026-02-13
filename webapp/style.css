@@ -2997,22 +2997,7 @@ body.locked {
   font-size: 14px;
   opacity: 0.85;
 }
-.pvp-result {
-  position: fixed;
-  inset: 0;
-  background: radial-gradient(circle at center,
-      rgba(0,0,0,0.8),
-      rgba(0,0,0,0.95));
 
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  font-size: 48px;
-  font-weight: 900;
-
-  z-index: 9999;
-}
 .pvp-win {
   color: #00ff99;
   text-shadow: 0 0 35px rgba(0,255,150,1);
@@ -3168,19 +3153,11 @@ body.locked {
 #pvp-result-screen.show {
   display: flex;
 }
-#pvp {
-  padding-top: 0 !important;
-}
 
 .pvp-header {
   text-align: center;
   margin-top: 0;
   margin-bottom: 18px;
-}
-#pvp {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
 
