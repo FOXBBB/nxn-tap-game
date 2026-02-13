@@ -25,6 +25,7 @@ let pvpSocket = null;
 let pvpStake = 0;
 let pvpTimerInterval = null;
 let pvpInGame = false;
+let pvpSearchInterval = null;
 
 
 
@@ -416,7 +417,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // 🔥 ВОТ ЭТО ДОБАВИЛИ
   document.getElementById("pvp-search-ui").classList.remove("hidden");
-  document.getElementById("pvp-status").innerText = "";
+
+const statusEl = document.getElementById("pvp-status");
+
+let dots = 0;
+
+pvpSearchInterval = setInterval(() => {
+  dots = (dots + 1) % 4; // 0-3
+  statusEl.innerText = "Searching opponent" + ".".repeat(dots);
+}, 600);
 
   startPvpSearch();
 };
@@ -1090,7 +1099,11 @@ setInterval(() => {
 }, 5000);
 // ================= ENERGY SYNC TICK =================
 setInterval(async () => {
+
   if (!userId) return;
+
+  // ❌ НЕ СИНХРОНИЗИРУЕМ во время PvP
+  if (pvpInGame) return;
 
   const res = await fetch(`/api/me/${userId}`);
   const data = await res.json();
@@ -1101,7 +1114,9 @@ setInterval(async () => {
 
   updateUI();
   updateTapState();
-}, 1000); // 🔥 каждую секунду
+
+}, 5000); // было 1000
+
 
 function updateTapState() {
   if (!coin) return;
@@ -1141,7 +1156,7 @@ function showScreen(id) {
 const stars = document.getElementById("stars");
 
 if (stars) {
-  for (let i = 0; i < 60; i++) {
+  for (let i = 0; i < 25; i++) {
     const s = document.createElement("span");
 
     const size = Math.random() * 2 + 1;
@@ -1528,8 +1543,6 @@ function startPvpSearch() {
       stake: pvpStake
     }));
 
-    document.getElementById("pvp-status").innerText =
-      "Searching opponent...";
   };
 
   pvpSocket.onmessage = (event) => {
@@ -1555,6 +1568,8 @@ function startPvpSearch() {
         setTimeout(() => overlay.classList.add("hidden"), 600);
       }
     }
+
+  
 
     if (data.type === "start") {
 
@@ -1616,6 +1631,12 @@ function startPvpSearch() {
       });
     }
   };
+
+  if (pvpSearchInterval) {
+  clearInterval(pvpSearchInterval);
+  pvpSearchInterval = null;
+}
+
 
   pvpSocket.onclose = () => {
     clearInterval(pvpTimerInterval);
