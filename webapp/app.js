@@ -1601,7 +1601,7 @@ function startPvpSearch() {
     resultText.classList.add("lose");
   }
 
-  resultScreen.classList.remove("hidden");
+  resultScreen.classList.add("show");
 
   if (pvpSocket) {
     pvpSocket.close();
@@ -1655,7 +1655,8 @@ if (againBtn) {
     const resultText = document.getElementById("pvp-result-text");
     const finalScore = document.getElementById("pvp-final-score");
 
-    resultScreen.classList.add("hidden");
+    resultScreen.classList.remove("show");
+
 
     resultText.innerText = "";
     resultText.classList.remove("win", "lose");

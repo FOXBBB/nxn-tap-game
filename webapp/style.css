@@ -24,7 +24,7 @@ body {
 }
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 .title.blue {
@@ -3160,4 +3160,11 @@ body.locked {
 
 .pvp-again-btn:hover {
   transform: scale(1.05);
+}
+#pvp-result-screen {
+  display: none;
+}
+
+#pvp-result-screen.show {
+  display: flex;
 }
