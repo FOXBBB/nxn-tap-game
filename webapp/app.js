@@ -389,12 +389,18 @@ document.addEventListener("DOMContentLoaded", async () => {
 
  document.getElementById("pvp-back").onclick = () => {
 
-  if (pvpInGame) return; // нельзя выйти во время боя
+  if (pvpInGame) return; // нельзя выйти во время игры
 
   if (pvpSocket) {
     pvpSocket.close();
     pvpSocket = null;
   }
+
+  // 🔓 гарантированная разблокировка
+  document.querySelectorAll(".menu div").forEach(b => {
+    b.style.pointerEvents = "";
+    b.style.opacity = "";
+  });
 
   showScreen("games");
 };
@@ -415,14 +421,22 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   pvpPlayBtn.onclick = () => {
 
-    if (!pvpStake) return alert("Choose stake");
+  if (!pvpStake) return alert("Choose stake");
+  if (pvpSocket) return;
 
-    if (pvpSocket) return; // 🔥 защита от повторного нажатия
+  // 🔒 СРАЗУ блокируем игру
+  pvpInGame = true;
 
-    pvpPlayBtn.disabled = true;
+  document.querySelectorAll(".menu div").forEach(b => {
+    b.style.pointerEvents = "none";
+    b.style.opacity = "0.4";
+  });
 
-    startPvpSearch();
-  };
+  pvpPlayBtn.disabled = true;
+
+  startPvpSearch();
+};
+
 
 
 
@@ -1560,12 +1574,6 @@ function startPvpSearch() {
 
     if (data.type === "start") {
 
-      pvpInGame = true;
-
-      document.querySelectorAll(".menu div").forEach(b => {
-        b.style.pointerEvents = "none";
-        b.style.opacity = "0.5";
-      });
 
       const overlay = document.getElementById("pvp-countdown-overlay");
       if (overlay) overlay.classList.add("hidden");
