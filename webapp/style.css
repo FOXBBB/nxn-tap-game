@@ -3091,3 +3091,73 @@ body.locked {
   -webkit-text-fill-color: transparent;
   text-shadow: 0 0 15px rgba(176, 58, 244, 0.8);
 }
+/* ===== RESULT SCREEN ===== */
+
+.pvp-result-screen {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center,
+    rgba(0,0,0,0.75),
+    rgba(0,0,0,0.95));
+  backdrop-filter: blur(6px);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 999;
+  animation: fadeInResult 0.4s ease forwards;
+}
+
+@keyframes fadeInResult {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.pvp-result-box {
+  text-align: center;
+  animation: popResult 0.4s ease;
+}
+
+@keyframes popResult {
+  from { transform: scale(0.7); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.pvp-result-text {
+  font-size: 40px;
+  font-weight: 900;
+  margin-bottom: 15px;
+}
+
+.pvp-result-text.win {
+  color: #00ff99;
+  text-shadow: 0 0 35px rgba(0,255,150,1);
+}
+
+.pvp-result-text.lose {
+  color: #ff4444;
+  text-shadow: 0 0 35px rgba(255,0,0,1);
+}
+
+.pvp-final-score {
+  font-size: 22px;
+  opacity: 0.9;
+  margin-bottom: 25px;
+}
+
+.pvp-again-btn {
+  padding: 12px 30px;
+  border-radius: 16px;
+  border: none;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  background: linear-gradient(90deg,#00ffc8,#0099ff);
+  color: #000;
+  transition: 0.3s;
+}
+
+.pvp-again-btn:hover {
+  transform: scale(1.05);
+}
