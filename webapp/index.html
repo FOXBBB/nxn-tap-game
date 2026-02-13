@@ -337,13 +337,17 @@
   <div class="pvp-header">
 
   </div>
+<div class="glass pvp-box">
 
-  <div class="glass pvp-box">
+  <div id="pvp-status" class="pvp-status"></div>
 
-    <div id="pvp-status" class="pvp-status"></div>
-
+  <div id="pvp-search-ui" class="pvp-search hidden">
+    <span id="pvp-search-text">Searching player</span>
+    <div class="search-spinner"></div>
+  </div>
 
 </div>
+
 
     <div class="stake-amounts pvp-stakes">
       <button data-pvp="1000">1K</button>
@@ -356,10 +360,6 @@
       <button data-pvp="100000">100K</button>
     </div>
 
-    <div id="pvp-search-ui" class="pvp-search hidden">
-  <div class="search-spinner"></div>
-  <div id="pvp-search-text" class="search-text"></div>
-</div>
 
 
     <button id="pvp-play" class="pvp-play">
