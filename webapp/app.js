@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       };
     });
 
-  
+
 
 
 
@@ -351,39 +351,39 @@ document.addEventListener("DOMContentLoaded", async () => {
     // 🔥 ОБЯЗАТЕЛЬНО обновляем stake экран
     document.getElementById("stake-balance").innerText =
       formatNumber(balance);
-};
+  };
 
   document.getElementById("open-pvp").onclick = () => {
 
-  showScreen("pvp");
+    showScreen("pvp");
 
-  const resultScreen = document.getElementById("pvp-result-screen");
-  const resultText = document.getElementById("pvp-result-text");
-  const finalScore = document.getElementById("pvp-final-score");
+    const resultScreen = document.getElementById("pvp-result-screen");
+    const resultText = document.getElementById("pvp-result-text");
+    const finalScore = document.getElementById("pvp-final-score");
 
-  // 🔥 ПОЛНЫЙ СБРОС UI
-  resultScreen.classList.add("hidden");
+    // 🔥 ПОЛНЫЙ СБРОС UI
+    resultScreen.classList.add("hidden");
 
-  resultText.innerText = "";
-  resultText.classList.remove("win", "lose");
+    resultText.innerText = "";
+    resultText.classList.remove("win", "lose");
 
-  finalScore.innerText = "";
+    finalScore.innerText = "";
 
-  document.getElementById("pvp-match").classList.add("hidden");
+    document.getElementById("pvp-match").classList.add("hidden");
 
-  document.getElementById("pvp-you").innerText = 0;
-  document.getElementById("pvp-opp").innerText = 0;
+    document.getElementById("pvp-you").innerText = 0;
+    document.getElementById("pvp-opp").innerText = 0;
 
-  document.getElementById("pvp-status").innerText =
-    "Choose your stake";
+    document.getElementById("pvp-status").innerText =
+      "Choose your stake";
 
-  document.getElementById("pvp-play").disabled = false;
+    document.getElementById("pvp-play").disabled = false;
 
-  if (pvpSocket) {
-    pvpSocket.close();
-    pvpSocket = null;
-  }
-};
+    if (pvpSocket) {
+      pvpSocket.close();
+      pvpSocket = null;
+    }
+  };
 
 
 
@@ -405,7 +405,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (!pvpStake) return alert("Choose stake");
   if (pvpSocket) return;
 
-  // 🔒 СРАЗУ блокируем игру
   pvpInGame = true;
 
   document.querySelectorAll(".menu div").forEach(b => {
@@ -414,6 +413,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   pvpPlayBtn.disabled = true;
+
+  // 🔥 ВОТ ЭТО ДОБАВИЛИ
+  document.getElementById("pvp-search-ui").classList.remove("hidden");
+  document.getElementById("pvp-status").innerText = "";
 
   startPvpSearch();
 };
@@ -1555,7 +1558,7 @@ function startPvpSearch() {
 
     if (data.type === "start") {
 
-
+      document.getElementById("pvp-search-ui").classList.add("hidden");
       const overlay = document.getElementById("pvp-countdown-overlay");
       if (overlay) overlay.classList.add("hidden");
 
@@ -1576,22 +1579,24 @@ function startPvpSearch() {
       document.getElementById("pvp-timer").innerText = 0;
 
       const resultScreen = document.getElementById("pvp-result-screen");
-      const resultText = document.getElementById("pvp-result-text");
       const finalScore = document.getElementById("pvp-final-score");
 
       const you = data.you;
       const opp = data.opponent;
 
       finalScore.innerText = `${you} : ${opp}`;
+      const resultText = document.getElementById("pvp-result-text");
 
-      if (String(data.winner) === String(userId)) {
+      const playerWins = data.winner === tgUser.id; // или твоя логика
+
+      if (playerWins) {
         resultText.innerText = "YOU WIN";
-        resultText.classList.remove("lose");
         resultText.classList.add("win");
+        resultText.classList.remove("lose");
       } else {
         resultText.innerText = "YOU LOSE";
-        resultText.classList.remove("win");
         resultText.classList.add("lose");
+        resultText.classList.remove("win");
       }
 
       resultScreen.classList.add("show");

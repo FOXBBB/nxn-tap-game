@@ -3211,3 +3211,99 @@ body.locked {
   0% { background-position: 0% center; }
   100% { background-position: 200% center; }
 }
+/* ===== SEARCHING OPPONENT ===== */
+
+.pvp-searching {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+
+  background: linear-gradient(90deg,#00ffc8,#0099ff,#00ffc8);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  animation: searchGlow 3s linear infinite;
+}
+
+@keyframes searchGlow {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+/* spinning ring */
+.pvp-loader {
+  width: 60px;
+  height: 60px;
+  margin: 18px auto;
+  border-radius: 50%;
+  border: 4px solid rgba(0,255,200,0.15);
+  border-top: 4px solid #00ffc8;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* animated dots */
+.search-dots::after {
+  content: "";
+  animation: dots 1.5s infinite steps(3);
+}
+
+@keyframes dots {
+  0% { content: ""; }
+  33% { content: "."; }
+  66% { content: ".."; }
+  100% { content: "..."; }
+}
+/* ===== RESULT IMPACT ===== */
+
+.pvp-result-text {
+  font-size: 48px;
+  font-weight: 900;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  animation: resultPop .4s ease;
+}
+
+@keyframes resultPop {
+  0% { transform: scale(0.5); opacity: 0; }
+  70% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+/* WIN */
+.pvp-result-text.win {
+  color: #00ff99;
+  text-shadow:
+    0 0 20px rgba(0,255,150,1),
+    0 0 50px rgba(0,255,150,0.9),
+    0 0 90px rgba(0,255,150,0.7);
+  animation: winPulse .8s ease;
+}
+
+@keyframes winPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+
+/* LOSE */
+.pvp-result-text.lose {
+  color: #ff4444;
+  text-shadow:
+    0 0 20px rgba(255,0,0,1),
+    0 0 50px rgba(255,0,0,0.9);
+  animation: loseShake .6s ease;
+}
+
+@keyframes loseShake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  50% { transform: translateX(10px); }
+  75% { transform: translateX(-5px); }
+  100% { transform: translateX(0); }
+}

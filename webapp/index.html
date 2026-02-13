@@ -341,9 +341,14 @@
 
   <div class="glass pvp-box">
 
-    <div id="pvp-status" class="pvp-status">
-      Choose your stake
-    </div>
+    <div id="pvp-status" class="pvp-status"></div>
+
+<div id="pvp-search-ui" class="hidden">
+  <div class="pvp-loader"></div>
+  <div class="pvp-searching search-dots">
+    Searching Opponent
+  </div>
+</div>
 
     <div class="stake-amounts pvp-stakes">
       <button data-pvp="1000">1K</button>
@@ -355,6 +360,12 @@
       <button data-pvp="50000">50K</button>
       <button data-pvp="100000">100K</button>
     </div>
+
+    <div id="pvp-search-ui" class="pvp-search hidden">
+  <div class="search-spinner"></div>
+  <div class="search-text">Searching opponent...</div>
+</div>
+
 
     <button id="pvp-play" class="pvp-play">
       ENTER ARENA
