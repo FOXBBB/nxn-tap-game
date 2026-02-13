@@ -387,25 +387,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 
- document.getElementById("pvp-back").onclick = () => {
-
-  if (pvpInGame) return; // нельзя выйти во время игры
-
-  if (pvpSocket) {
-    pvpSocket.close();
-    pvpSocket = null;
-  }
-
-  // 🔓 гарантированная разблокировка
-  document.querySelectorAll(".menu div").forEach(b => {
-    b.style.pointerEvents = "";
-    b.style.opacity = "";
-  });
-
-  showScreen("games");
-};
-
-
   document.querySelectorAll("[data-pvp]").forEach(btn => {
     btn.onclick = () => {
       pvpStake = Number(btn.dataset.pvp);

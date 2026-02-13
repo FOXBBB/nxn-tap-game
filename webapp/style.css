@@ -3168,3 +3168,40 @@ body.locked {
 #pvp-result-screen.show {
   display: flex;
 }
+.pvp-header {
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 25px;
+}
+
+.pvp-header h2 {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  background: linear-gradient(90deg, #22c55e, #00ffcc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.pvp-header {
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 25px;
+}
+
+.pvp-title {
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-align: center;
+  background: linear-gradient(90deg, #00ffcc, #22c55e, #00ffcc);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: pvpGlow 4s linear infinite;
+}
+
+@keyframes pvpGlow {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
