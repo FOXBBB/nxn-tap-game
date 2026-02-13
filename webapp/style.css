@@ -3242,20 +3242,18 @@ body.locked {
 /* ===== CHOOSE YOUR STAKE TITLE ===== */
 
 .pvp-status {
-  font-size: 18px;
-  font-weight: 800;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  margin-bottom: 16px;
-
-  background: linear-gradient(90deg,#00ffc8,#22c55e,#00ffc8);
-  background-size: 200% auto;
-
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-
-  animation: stakeGlow 4s linear infinite;
+  width: 100%;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin: 20px 0;
+  color: #22c55e;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
+
 
 @keyframes stakeGlow {
   0% { background-position: 0% center; }
@@ -3331,4 +3329,104 @@ body.locked {
   box-shadow:
     0 2px 0 #0066aa,
     0 8px 15px rgba(0,255,200,0.4);
+}
+.pvp-search {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 0;
+}
+
+.search-spinner {
+  width: 38px;
+  height: 38px;
+  border: 4px solid rgba(255,255,255,0.1);
+  border-top: 4px solid #22c55e;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.search-text {
+  font-size: 15px;
+  color: #22c55e;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.pvp-result {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.3s ease;
+}
+
+.pvp-result.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.pvp-result-box {
+  text-align: center;
+  transform: scale(0.8);
+  animation: resultPop 0.4s ease forwards;
+}
+
+@keyframes resultPop {
+  to {
+    transform: scale(1);
+  }
+}
+
+.pvp-result-text {
+  font-size: 38px;
+  font-weight: 800;
+  margin-bottom: 10px;
+  letter-spacing: 2px;
+}
+
+.pvp-result-text.win {
+  color: #22c55e;
+  text-shadow: 0 0 20px rgba(34,197,94,0.7);
+}
+
+.pvp-result-text.lose {
+  color: #ef4444;
+  text-shadow: 0 0 20px rgba(239,68,68,0.7);
+}
+
+.pvp-final-score {
+  font-size: 20px;
+  margin-bottom: 20px;
+  opacity: 0.8;
+}
+
+.pvp-again-btn {
+  padding: 10px 24px;
+  border-radius: 8px;
+  border: none;
+  background: #111;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+.pvp-status.fight {
+  font-size: 28px;
+  color: #22c55e;
+  text-shadow: 0 0 20px rgba(34,197,94,0.7);
+  animation: fightPulse 0.5s ease;
+}
+
+@keyframes fightPulse {
+  0% { transform: scale(0.8); }
+  100% { transform: scale(1); }
 }

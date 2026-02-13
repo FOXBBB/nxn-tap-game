@@ -375,7 +375,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("pvp-you").innerText = 0;
     document.getElementById("pvp-opp").innerText = 0;
 
-    document.getElementById("pvp-status").innerText =
+    const status = document.getElementById("pvp-status");
+status.innerText = "Choose your stake";
+status.classList.remove("fight");
+
       "Choose your stake";
 
     document.getElementById("pvp-play").disabled = false;
@@ -418,14 +421,22 @@ document.addEventListener("DOMContentLoaded", async () => {
   // 🔥 ВОТ ЭТО ДОБАВИЛИ
   document.getElementById("pvp-search-ui").classList.remove("hidden");
 
-const statusEl = document.getElementById("pvp-status");
+const searchText = document.getElementById("pvp-search-text");
 
-let dots = 0;
+const frames = [
+  "Searching opponent",
+  "Searching opponent.",
+  "Searching opponent..",
+  "Searching opponent..."
+];
+
+let frame = 0;
 
 pvpSearchInterval = setInterval(() => {
-  dots = (dots + 1) % 4; // 0-3
-  statusEl.innerText = "Searching opponent" + ".".repeat(dots);
-}, 600);
+  searchText.innerText = frames[frame];
+  frame = (frame + 1) % frames.length;
+}, 500);
+
 
   startPvpSearch();
 };
@@ -1578,7 +1589,10 @@ function startPvpSearch() {
       if (overlay) overlay.classList.add("hidden");
 
       document.getElementById("pvp-match").classList.remove("hidden");
-      document.getElementById("pvp-status").innerText = "FIGHT!";
+      const status = document.getElementById("pvp-status");
+status.innerText = "FIGHT!";
+status.classList.add("fight");
+
 
       startMatchTimer();
     }
@@ -1685,8 +1699,9 @@ if (againBtn) {
 
     document.getElementById("pvp-you").innerText = 0;
     document.getElementById("pvp-opp").innerText = 0;
-    document.getElementById("pvp-status").innerText =
-      "Choose your stake";
+    const status = document.getElementById("pvp-status");
+status.innerText = "Choose your stake";
+status.classList.remove("fight");
   };
 }
 
