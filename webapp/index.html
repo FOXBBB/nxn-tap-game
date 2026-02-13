@@ -399,7 +399,7 @@
     </div>
 
   </div>
-  <div id="pvp-result-screen" class="pvp-result-screen hidden">
+  <div id="pvp-result-screen" class="pvp-result hidden">
   <div class="pvp-result-box">
     <div id="pvp-result-text" class="pvp-result-text">YOU WIN</div>
     <div id="pvp-final-score" class="pvp-final-score">0 : 0</div>
@@ -540,29 +540,6 @@
           <button class="btn primary" onclick="closeModal()">Got it</button>
         </div>
       </div>
-
-      <script>
-
-        /* ===== STACK MODAL ===== */
-        function showMinStackModal() {
-          document.getElementById("modalTitle").innerText = "Minimum STACK Amount";
-          document.getElementById("modalText").innerText =
-            "The minimum STACK entry is 10,000 NXN. Increase the amount to participate in the cycle.";
-          document.getElementById("stackModal").classList.remove("hidden");
-        }
-
-        function closeModal() {
-          document.getElementById("stackModal").classList.add("hidden");
-        }
-
-        function tryStake(amount) {
-          if (amount < 10000) {
-            showMinStackModal();
-            return;
-          }
-          // continue stake logic
-        }
-      </script>
 
       <!-- TELEGRAM & TON -->
       <script src="https://telegram.org/js/telegram-web-app.js"></script>

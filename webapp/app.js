@@ -356,12 +356,25 @@ document.addEventListener("DOMContentLoaded", async () => {
     // 🔥 ОБЯЗАТЕЛЬНО обновляем stake экран
     document.getElementById("stake-balance").innerText =
       formatNumber(balance);
+};
 
-
-  };
   document.getElementById("open-pvp").onclick = () => {
-    showScreen("pvp");
-  };
+  showScreen("pvp");
+
+  // 🔥 СБРОС РЕЗУЛЬТАТА
+  document.getElementById("pvp-result-screen")
+    ?.classList.add("hidden");
+
+  document.getElementById("pvp-match")
+    ?.classList.add("hidden");
+
+  document.getElementById("pvp-you").innerText = 0;
+  document.getElementById("pvp-opp").innerText = 0;
+
+  document.getElementById("pvp-status").innerText =
+    "Choose your stake";
+};
+
 
   document.getElementById("pvp-back").onclick = () => {
     showScreen("games");
@@ -1555,7 +1568,12 @@ function startPvpSearch() {
   const you = data.you;
   const opp = data.opponent;
 
+  if (you > 0 || opp > 0) {
   finalScore.innerText = `${you} : ${opp}`;
+} else {
+  finalScore.innerText = "";
+}
+
 
   if (String(data.winner) === String(userId)) {
     resultText.innerText = "YOU WIN";
@@ -1617,6 +1635,11 @@ const againBtn = document.getElementById("pvp-again");
 if (againBtn) {
   againBtn.onclick = () => {
 
+    if (pvpSocket) {
+      pvpSocket.close();
+      pvpSocket = null;
+    }
+
     document.getElementById("pvp-result-screen")
       .classList.add("hidden");
 
@@ -1625,7 +1648,11 @@ if (againBtn) {
 
     document.getElementById("pvp-you").innerText = 0;
     document.getElementById("pvp-opp").innerText = 0;
+
     document.getElementById("pvp-status").innerText =
       "Choose your stake";
+
+    document.getElementById("pvp-play").disabled = false;
   };
 }
+
