@@ -592,7 +592,7 @@
 
 
   window.startNXNTutorial = function () {
-    const finished = null;
+  const finished = localStorage.getItem("nxn_tutorial_done");
 
     if (finished === "1") {
       // 🧯 страховка: если вдруг lock остался
