@@ -26,6 +26,9 @@ let pvpStake = 0;
 let pvpTimerInterval = null;
 let pvpInGame = false;
 let pvpSearchInterval = null;
+let pendingInvite = null;
+let inviteCooldown = false;
+
 
 
 
@@ -376,10 +379,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("pvp-opp").innerText = 0;
 
     const status = document.getElementById("pvp-status");
-status.innerText = "Choose your stake";
-status.classList.remove("fight");
+    status.innerText = "Choose your stake";
+    status.classList.remove("fight");
 
-      "Choose your stake";
 
     document.getElementById("pvp-play").disabled = false;
 
@@ -406,40 +408,40 @@ status.classList.remove("fight");
 
   pvpPlayBtn.onclick = () => {
 
-  if (!pvpStake) return alert("Choose stake");
-  if (pvpSocket) return;
+    if (!pvpStake) return alert("Choose stake");
+    if (pvpSocket) return;
 
-  pvpInGame = true;
+    pvpInGame = true;
 
-  document.querySelectorAll(".menu div").forEach(b => {
-    b.style.pointerEvents = "none";
-    b.style.opacity = "0.4";
-  });
+    document.querySelectorAll(".menu div").forEach(b => {
+      b.style.pointerEvents = "none";
+      b.style.opacity = "0.4";
+    });
 
-  pvpPlayBtn.disabled = true;
+    pvpPlayBtn.disabled = true;
 
-  // 🔥 ВОТ ЭТО ДОБАВИЛИ
-  document.getElementById("pvp-search-ui").classList.remove("hidden");
+    // 🔥 ВОТ ЭТО ДОБАВИЛИ
+    document.getElementById("pvp-search-ui").classList.remove("hidden");
 
-const searchText = document.getElementById("pvp-search-text");
+    const searchText = document.getElementById("pvp-search-text");
 
-const frames = [
-  "Searching opponent",
-  "Searching opponent.",
-  "Searching opponent..",
-  "Searching opponent..."
-];
+    const frames = [
+      "Searching opponent",
+      "Searching opponent.",
+      "Searching opponent..",
+      "Searching opponent..."
+    ];
 
-let frame = 0;
+    let frame = 0;
 
-pvpSearchInterval = setInterval(() => {
-  searchText.innerText = frames[frame];
-  frame = (frame + 1) % frames.length;
-}, 500);
+    pvpSearchInterval = setInterval(() => {
+      searchText.innerText = frames[frame];
+      frame = (frame + 1) % frames.length;
+    }, 500);
 
 
-  startPvpSearch();
-};
+    startPvpSearch();
+  };
 
 
 
@@ -1536,6 +1538,22 @@ if (mainTransferBtn) {
   };
 }
 
+
+function lockMenu() {
+  document.querySelectorAll(".menu div").forEach(b => {
+    b.style.pointerEvents = "none";
+    b.style.opacity = "0.4";
+  });
+}
+
+function unlockMenu() {
+  document.querySelectorAll(".menu div").forEach(b => {
+    b.style.pointerEvents = "";
+    b.style.opacity = "";
+  });
+}
+
+
 // ================= PvP FUNCTIONS =================
 
 function startPvpSearch() {
@@ -1556,8 +1574,53 @@ function startPvpSearch() {
 
   };
 
+
+
   pvpSocket.onmessage = (event) => {
     const data = JSON.parse(event.data);
+
+    if (data.type === "invite") {
+
+      pendingInvite = data;
+
+      lockMenu();
+
+      document.getElementById("invite-from").innerText =
+        data.fromName + " invites you";
+
+      document.getElementById("invite-stake").innerText =
+        "Stake: " + data.stake + " NXN";
+
+      const popup = document.getElementById("pvp-invite-popup");
+      popup.classList.remove("hidden");
+
+      let timeLeft = 15;
+
+      const timerEl = document.getElementById("invite-timer");
+      if (timerEl) {
+        timerEl.innerText = "Expires in 15s";
+      }
+
+      const inviteInterval = setInterval(() => {
+        timeLeft--;
+
+        if (timerEl) {
+          timerEl.innerText = "Expires in " + timeLeft + "s";
+        }
+
+        if (timeLeft <= 0) {
+          clearInterval(inviteInterval);
+          popup.classList.add("hidden");
+          unlockMenu();
+          pendingInvite = null;
+        }
+      }, 1000);
+
+      return;
+    }
+
+
+
 
     if (data.type === "opponent") {
       document.getElementById("pvp-opp-name").innerText = data.name;
@@ -1580,7 +1643,7 @@ function startPvpSearch() {
       }
     }
 
-  
+
 
     if (data.type === "start") {
 
@@ -1590,8 +1653,8 @@ function startPvpSearch() {
 
       document.getElementById("pvp-match").classList.remove("hidden");
       const status = document.getElementById("pvp-status");
-status.innerText = "FIGHT!";
-status.classList.add("fight");
+      status.innerText = "FIGHT!";
+      status.classList.add("fight");
 
 
       startMatchTimer();
@@ -1647,9 +1710,9 @@ status.classList.add("fight");
   };
 
   if (pvpSearchInterval) {
-  clearInterval(pvpSearchInterval);
-  pvpSearchInterval = null;
-}
+    clearInterval(pvpSearchInterval);
+    pvpSearchInterval = null;
+  }
 
 
   pvpSocket.onclose = () => {
@@ -1700,8 +1763,80 @@ if (againBtn) {
     document.getElementById("pvp-you").innerText = 0;
     document.getElementById("pvp-opp").innerText = 0;
     const status = document.getElementById("pvp-status");
-status.innerText = "Choose your stake";
-status.classList.remove("fight");
+    status.innerText = "Choose your stake";
+    status.classList.remove("fight");
+  };
+}
+
+function sendInvite(targetId) {
+
+  if (inviteCooldown) return;
+
+  inviteCooldown = true;
+
+  setTimeout(() => {
+    inviteCooldown = false;
+  }, 5000);
+
+  if (!pvpSocket) {
+    startPvpSearch();
+  }
+
+  setTimeout(() => {
+    if (pvpSocket && pvpSocket.readyState === 1) {
+      pvpSocket.send(JSON.stringify({
+        type: "invite",
+        targetId,
+        stake: pvpStake
+      }));
+    }
+  }, 300);
+
+}
+
+// ===== INVITE BUTTONS =====
+
+const inviteAccept = document.getElementById("invite-accept");
+const inviteDecline = document.getElementById("invite-decline");
+
+if (inviteAccept) {
+  inviteAccept.onclick = () => {
+
+    if (!pendingInvite) return;
+
+    document.getElementById("pvp-invite-popup")
+      .classList.add("hidden");
+
+    if (!pvpSocket) {
+      startPvpSearch();
+    }
+
+    setTimeout(() => {
+      if (pvpSocket && pvpSocket.readyState === 1) {
+        pvpSocket.send(JSON.stringify({
+          type: "accept_invite",
+          fromId: pendingInvite.fromId,
+          stake: pendingInvite.stake
+        }));
+      }
+    }, 300);
+
+    unlockMenu();
+
+    pendingInvite = null;
+  };
+}
+
+if (inviteDecline) {
+  inviteDecline.onclick = () => {
+
+    document.getElementById("pvp-invite-popup")
+      .classList.add("hidden");
+
+    unlockMenu();
+
+
+    pendingInvite = null;
   };
 }
 

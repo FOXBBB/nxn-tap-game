@@ -4,6 +4,8 @@ import routes from "./routes.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import { checkRewardCycle, runAutoclickers } from "./routes.js";
+import { initPvp, onlineUsers } from "./pvp.js";
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -42,6 +44,21 @@ initPvp(server); // 🔥 подключаем PvP модуль
 server.listen(PORT, () => {
   console.log("NXN backend running on", PORT);
 });
+
+// 🔥 ONLINE LIST API
+app.get("/api/online", (req, res) => {
+  const list = [];
+
+  for (const [id, socket] of onlineUsers) {
+    list.push({
+      id,
+      username: socket.username || "Player"
+    });
+  }
+
+  res.json(list);
+});
+
 
 
 // reward cycle

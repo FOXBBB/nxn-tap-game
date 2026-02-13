@@ -366,6 +366,20 @@
       ENTER ARENA
     </button>
 
+    <button id="pvp-invite-btn" class="pvp-play" style="margin-top:10px;">
+  INVITE PLAYER
+</button>
+
+<div id="pvp-online-panel" class="pvp-online hidden">
+  <div class="online-header">
+    <span>ONLINE PLAYERS</span>
+    <button id="close-online">✕</button>
+  </div>
+  <div id="online-list" class="online-list"></div>
+</div>
+
+
+
     <div id="pvp-match" class="pvp-match hidden">
 
 <div id="pvp-countdown-overlay" class="pvp-countdown hidden">
@@ -576,6 +590,21 @@
           </p>
         </div>
       </div>
+
+      <!-- 🔥 PvP INVITE POPUP -->
+<div id="pvp-invite-popup" class="pvp-invite hidden">
+  <div class="pvp-invite-box">
+    <div class="invite-title">PvP Arena Invitation</div>
+    <div id="invite-from" class="invite-from"></div>
+    <div id="invite-stake" class="invite-stake"></div>
+
+    <div class="invite-actions">
+      <button id="invite-accept" class="invite-accept">ACCEPT</button>
+      <button id="invite-decline" class="invite-decline">DECLINE</button>
+    </div>
+  </div>
+</div>
+
 
 
       <div id="nxn-tutorial-root"></div>

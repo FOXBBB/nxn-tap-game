@@ -13,6 +13,14 @@ export function initPvp(server) {
     ws.score = 0;
     ws.botScore = 0;
 
+    ws.on("close", () => {
+      if (ws.userId) {
+        onlineUsers.delete(ws.userId);
+      }
+      cleanup(ws);
+    });
+
+
     ws.on("message", async (msg) => {
       try {
         const data = JSON.parse(msg);
@@ -20,6 +28,29 @@ export function initPvp(server) {
         if (data.type === "search") {
           await handleSearch(ws, data);
         }
+        // 🔥 SEND INVITE
+if (data.type === "invite") {
+  const target = onlineUsers.get(data.targetId);
+
+  if (target && target.readyState === 1) {
+    target.send(JSON.stringify({
+      type: "invite",
+      fromId: ws.userId,
+      fromName: ws.username,
+      stake: data.stake
+    }));
+  }
+}
+
+// 🔥 ACCEPT INVITE
+if (data.type === "accept_invite") {
+  const inviter = onlineUsers.get(data.fromId);
+
+  if (inviter && inviter.readyState === 1) {
+    await createMatch(inviter, ws, data.stake);
+  }
+}
+
 
         if (data.type === "tap") {
           if (!ws.isActive) return;
@@ -44,8 +75,6 @@ export function initPvp(server) {
         console.error("WS ERROR:", e);
       }
     });
-
-    ws.on("close", () => cleanup(ws));
   });
 
   console.log("🔥 PvP WebSocket ready");
@@ -62,17 +91,20 @@ async function handleSearch(ws, data) {
   ws.username = username || "Player";
   ws.userId = userId;
   ws.stake = stake;
+  // добавляем в онлайн
+onlineUsers.set(userId, ws);
+
 
   const user = await query(
     "SELECT balance FROM users WHERE telegram_id = $1",
     [userId]
   );
 
- if (!user.rows.length || user.rows[0].balance < stake) {
-  ws.searching = false; // 🔥 ВАЖНО
-  ws.send(JSON.stringify({ type: "error" }));
-  return;
-}
+  if (!user.rows.length || user.rows[0].balance < stake) {
+    ws.searching = false; // 🔥 ВАЖНО
+    ws.send(JSON.stringify({ type: "error" }));
+    return;
+  }
 
   const opponent = waitingQueue.get(stake);
 
@@ -83,12 +115,12 @@ async function handleSearch(ws, data) {
   } else {
     const timeout = setTimeout(() => {
 
-  if (ws.readyState !== 1) return; // 🔥 сокет закрыт
+      if (ws.readyState !== 1) return; // 🔥 сокет закрыт
 
-  waitingQueue.delete(stake);
-  createBotMatch(ws, stake);
+      waitingQueue.delete(stake);
+      createBotMatch(ws, stake);
 
-}, 8000);
+    }, 8000);
 
     waitingQueue.set(stake, { userId, ws, timeout });
     ws.send(JSON.stringify({ type: "searching" }));
@@ -113,13 +145,13 @@ async function createMatch(ws1, ws2, stake) {
   ws1.opponent = ws2;
   ws2.opponent = ws1;
 
- ws1.send(JSON.stringify({ type: "opponent", name: ws2.username }));
-ws2.send(JSON.stringify({ type: "opponent", name: ws1.username }));
+  ws1.send(JSON.stringify({ type: "opponent", name: ws2.username }));
+  ws2.send(JSON.stringify({ type: "opponent", name: ws1.username }));
 
   startCountdown(ws1, ws2, stake);
 
   ws1.searching = false;
-ws2.searching = false;
+  ws2.searching = false;
 
 }
 
@@ -206,15 +238,15 @@ async function finishMatch(ws1, ws2, stake) {
   }));
 
   ws1.searching = false;
-ws2.searching = false;
-ws1.opponent = null;
-ws2.opponent = null;
+  ws2.searching = false;
+  ws1.opponent = null;
+  ws2.opponent = null;
 
-ws1.matchId = null;
-ws2.matchId = null;
+  ws1.matchId = null;
+  ws2.matchId = null;
 
-ws1.score = 0;
-ws2.score = 0;
+  ws1.score = 0;
+  ws2.score = 0;
 
 
 }
@@ -269,28 +301,28 @@ function startBotMatch(ws, stake) {
 
   // ===== BOT DIFFICULTY LOGIC =====
 
-// 30% — АГРЕССИВНЫЙ (420–500)
-// 40% — СРЕДНИЙ (330–420)
-// 30% — ЛЁГКИЙ (250–330)
+  // 30% — АГРЕССИВНЫЙ (420–500)
+  // 40% — СРЕДНИЙ (330–420)
+  // 30% — ЛЁГКИЙ (250–330)
 
-const roll = Math.random();
-let botTarget;
+  const roll = Math.random();
+  let botTarget;
 
-if (roll < 0.30) {
-  // 🔥 30% агрессивный
-  botTarget = 420 + Math.floor(Math.random() * 81); 
-  // 420–500
-} 
-else if (roll < 0.70) {
-  // ⚖️ 40% средний
-  botTarget = 330 + Math.floor(Math.random() * 91); 
-  // 330–420
-} 
-else {
-  // 🟢 30% лёгкий
-  botTarget = 250 + Math.floor(Math.random() * 81); 
-  // 250–330
-}
+  if (roll < 0.30) {
+    // 🔥 30% агрессивный
+    botTarget = 420 + Math.floor(Math.random() * 81);
+    // 420–500
+  }
+  else if (roll < 0.70) {
+    // ⚖️ 40% средний
+    botTarget = 330 + Math.floor(Math.random() * 91);
+    // 330–420
+  }
+  else {
+    // 🟢 30% лёгкий
+    botTarget = 250 + Math.floor(Math.random() * 81);
+    // 250–330
+  }
 
 
   ws.botScore = 0;
@@ -390,3 +422,4 @@ function cleanup(ws) {
   ws.opponent = null;
   ws.matchId = null;
 }
+export { onlineUsers };
