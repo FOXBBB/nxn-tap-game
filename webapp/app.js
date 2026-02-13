@@ -24,7 +24,7 @@ window.__NXN_TUTORIAL_ACTIVE__ = false;
 let pvpSocket = null;
 let pvpStake = 0;
 let pvpTimerInterval = null;
-
+let pvpInGame = false;
 
 
 
@@ -67,12 +67,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       };
     });
 
-  const pvpBackBtn = document.getElementById("pvp-back");
-
-  pvpBackBtn?.addEventListener("click", () => {
-    document.getElementById("pvp").classList.add("hidden");
-    document.getElementById("games").classList.remove("hidden");
-  });
+  
 
 
 
@@ -392,9 +387,18 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 
-  document.getElementById("pvp-back").onclick = () => {
-    showScreen("games");
-  };
+ document.getElementById("pvp-back").onclick = () => {
+
+  if (pvpInGame) return; // нельзя выйти во время боя
+
+  if (pvpSocket) {
+    pvpSocket.close();
+    pvpSocket = null;
+  }
+
+  showScreen("games");
+};
+
 
   document.querySelectorAll("[data-pvp]").forEach(btn => {
     btn.onclick = () => {
@@ -1557,14 +1561,22 @@ function startPvpSearch() {
 
     if (data.type === "start") {
 
-      const overlay = document.getElementById("pvp-countdown-overlay");
-      if (overlay) overlay.classList.add("hidden");
+  pvpInGame = true;
 
-      document.getElementById("pvp-match").classList.remove("hidden");
-      document.getElementById("pvp-status").innerText = "FIGHT!";
+  document.querySelectorAll(".menu div").forEach(b => {
+    b.style.pointerEvents = "none";
+    b.style.opacity = "0.5";
+  });
 
-      startMatchTimer();
-    }
+  const overlay = document.getElementById("pvp-countdown-overlay");
+  if (overlay) overlay.classList.add("hidden");
+
+  document.getElementById("pvp-match").classList.remove("hidden");
+  document.getElementById("pvp-status").innerText = "FIGHT!";
+
+  startMatchTimer();
+}
+
 
 
     if (data.type === "score") {
@@ -1585,11 +1597,10 @@ function startPvpSearch() {
   const opp = data.opponent;
 
   if (you > 0 || opp > 0) {
-  finalScore.innerText = `${you} : ${opp}`;
-} else {
-  finalScore.innerText = "";
-}
-
+    finalScore.innerText = `${you} : ${opp}`;
+  } else {
+    finalScore.innerText = "";
+  }
 
   if (String(data.winner) === String(userId)) {
     resultText.innerText = "YOU WIN";
@@ -1609,8 +1620,17 @@ function startPvpSearch() {
   }
 
   document.getElementById("pvp-play").disabled = false;
+
+  // 🔓 ВОТ СЮДА ДОБАВИТЬ
+  pvpInGame = false;
+
+  document.querySelectorAll(".menu div").forEach(b => {
+    b.style.pointerEvents = "";
+    b.style.opacity = "";
+  });
 }
-};
+
+
 
   pvpSocket.onclose = () => {
     clearInterval(pvpTimerInterval);
@@ -1645,6 +1665,7 @@ function startPvpSearch() {
 
     }, 1000);
   }
+}
 }
 const againBtn = document.getElementById("pvp-again");
 
