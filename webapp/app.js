@@ -74,6 +74,9 @@ pvpBackBtn?.addEventListener("click", () => {
   document.getElementById("games").classList.remove("hidden");
 });
 
+if (timeLeft <= 5) {
+  document.getElementById("pvp-timer").classList.add("low");
+}
 
 
 
