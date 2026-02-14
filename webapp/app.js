@@ -411,25 +411,6 @@ onlineInterval = setInterval(() => {
   };
 
 
-  // 🔥 подключаем сокет и регистрируем онлайн
-  if (!pvpSocket) {
-    pvpSocket = new WebSocket(
-      (location.protocol === "https:" ? "wss://" : "ws://") +
-      location.host +
-      "/pvp"
-    );
-
-    pvpSocket.onopen = () => {
-      pvpSocket.send(JSON.stringify({
-        type: "register",
-        userId,
-        username: tgUser.username || tgUser.first_name || "Player",
-        avatar: tgUser.photo_url || ""
-      }));
-    };
-  }
-
-
 
   document.querySelectorAll("[data-pvp]").forEach(btn => {
     btn.onclick = () => {
@@ -447,7 +428,6 @@ onlineInterval = setInterval(() => {
   pvpPlayBtn.onclick = () => {
 
     if (!pvpStake) return alert("Choose stake");
-    if (pvpSocket) return;
 
     pvpInGame = true;
 
@@ -1603,14 +1583,25 @@ function startPvpSearch() {
   );
 
   pvpSocket.onopen = () => {
-    pvpSocket.send(JSON.stringify({
-      type: "search",
-      userId,
-      username: tgUser.username || tgUser.first_name || "Player",
-      stake: pvpStake
-    }));
 
-  };
+  // 🔥 СНАЧАЛА REGISTER
+  pvpSocket.send(JSON.stringify({
+    type: "register",
+    userId,
+    username: tgUser.username || tgUser.first_name || "Player",
+    avatar: tgUser.photo_url || ""
+  }));
+
+  // 🔥 ПОТОМ SEARCH
+  pvpSocket.send(JSON.stringify({
+    type: "search",
+    userId,
+    username: tgUser.username || tgUser.first_name || "Player",
+    stake: pvpStake
+  }));
+
+};
+
 
 
 
