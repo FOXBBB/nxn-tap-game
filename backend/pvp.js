@@ -11,7 +11,9 @@ export function initPvp(server) {
 
 
 
-  wss.on("connection", (ws) => {
+  wss.on("connection", (ws, req) => {
+  console.log("NEW WS CONNECTION:", req.url);
+
 
     ws.isActive = false;
     ws.score = 0;

@@ -41,6 +41,12 @@ const server = http.createServer(app);
 
 initPvp(server); // 🔥 подключаем PvP модуль
 
+// ===== DEBUG WS =====
+server.on("upgrade", (req) => {
+  console.log("WS UPGRADE:", req.url);
+});
+
+
 server.listen(PORT, () => {
   console.log("NXN backend running on", PORT);
 });

@@ -390,6 +390,8 @@ document.addEventListener("DOMContentLoaded", async () => {
  // 🔥 ВСЕГДА ПЕРЕСОЗДАЁМ СОКЕТ ПРИ ВХОДЕ В PvP
 
 if (pvpSocket) {
+  pvpSocket.removeEventListener("message", handlePvpMessage);
+  pvpSocket.removeEventListener("close", handleClose);
   try { pvpSocket.close(); } catch {}
   pvpSocket = null;
 }
@@ -401,7 +403,6 @@ pvpSocket = new WebSocket(
 );
 
 pvpSocket.addEventListener("open", () => {
-
   console.log("PVP CONNECTED");
 
   pvpSocket.send(JSON.stringify({
@@ -410,13 +411,19 @@ pvpSocket.addEventListener("open", () => {
     username: tgUser.username || tgUser.first_name || "Player",
     avatar: tgUser.photo_url || ""
   }));
-
 });
 
 pvpSocket.addEventListener("message", handlePvpMessage);
-pvpSocket.addEventListener("close", handleClose);
 
-}
+pvpSocket.addEventListener("error", (e) => {
+  console.log("PVP SOCKET ERROR:", e);
+});
+
+pvpSocket.addEventListener("close", () => {
+  console.log("PVP SOCKET CLOSED");
+  handleClose();
+});
+
 
 
 
@@ -497,8 +504,10 @@ pvpSocket.addEventListener("close", handleClose);
       sendTap();
     }, { passive: false });
 
-    pvpCoin.addEventListener("click", sendTap);
+     pvpCoin.addEventListener("click", sendTap);
   }
+
+  };
 
 });
 
@@ -660,7 +669,6 @@ function updateUI() {
 }
 
 
-
 const coin = document.getElementById("coin");
 
 function animateCoinHit() {
@@ -676,34 +684,32 @@ function animateCoinHit() {
 }
 
 
-
 // ================= TAP =================
-coin.addEventListener("touchstart", (e) => {
-  e.preventDefault();
-  if (!canTap) return;
+if (coin) {
+  coin.addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    if (!canTap) return;
 
-  const touches = e.touches.length;
-  const taps = Math.min(touches, energy);
-  if (taps <= 0) return;
+    const touches = e.touches.length;
+    const taps = Math.min(touches, energy);
+    if (taps <= 0) return;
 
-  // UI СРАЗУ
-  animateCoinHit();
-  animatePlus(e, tapPower * taps);
+    animateCoinHit();
+    animatePlus(e, tapPower * taps);
 
-  balance += tapPower * taps;
-  energy -= taps;
+    balance += tapPower * taps;
+    energy -= taps;
 
-  updateUI();
-  updateTapState();
+    updateUI();
+    updateTapState();
 
-  // сервер — БЕЗ await, не блокирует
-  fetch("/api/tap", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id: userId, taps })
-  });
-}, { passive: false });
-
+    fetch("/api/tap", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: userId, taps })
+    });
+  }, { passive: false });
+}
 
 
 
@@ -1659,7 +1665,6 @@ if (data.type === "error") {
   list.appendChild(row);
 });
 
-
     return;
   }
 
@@ -1917,5 +1922,3 @@ if (inviteDecline) {
     pendingInvite = null;
   };
 }
-
-
