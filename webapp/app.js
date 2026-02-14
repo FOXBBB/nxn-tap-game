@@ -28,6 +28,8 @@ let pvpInGame = false;
 let pvpSearchInterval = null;
 let pendingInvite = null;
 let inviteCooldown = false;
+let onlineInterval = null;
+let lastInviterId = null;
 
 
 
@@ -373,6 +375,14 @@ document.addEventListener("DOMContentLoaded", async () => {
           return;
         }
         openOnlineList();
+
+if (onlineInterval) clearInterval(onlineInterval);
+
+onlineInterval = setInterval(() => {
+  if (document.getElementById("pvp")?.classList.contains("hidden")) return;
+  openOnlineList();
+}, 5000);
+
       };
     }
 
@@ -396,6 +406,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     document.getElementById("pvp-play").disabled = false;
 
+    openOnlineList();
     
   };
 
@@ -1606,45 +1617,49 @@ function startPvpSearch() {
   pvpSocket.onmessage = (event) => {
     const data = JSON.parse(event.data);
 
-    if (data.type === "invite") {
+   if (data.type === "invite") {
 
-      pendingInvite = data;
+  lastInviterId = data.fromId;
+  pendingInvite = data;
 
-      lockMenu();
+  openOnlineList();
+  lockMenu();
 
-      document.getElementById("invite-from").innerText =
-        data.fromName + " invites you";
+  const popup = document.getElementById("pvp-invite-popup");
+  popup.classList.remove("hidden");
 
-      document.getElementById("invite-stake").innerText =
-        "Stake: " + data.stake + " NXN";
+  document.getElementById("invite-from").innerText =
+    data.fromName + " invites you";
 
-      const popup = document.getElementById("pvp-invite-popup");
-      popup.classList.remove("hidden");
+  document.getElementById("invite-stake").innerText =
+    "Stake: " + data.stake + " NXN";
 
-      let timeLeft = 15;
+  let timeLeft = 15;
+  const timerEl = document.getElementById("invite-timer");
+  timerEl.innerText = "Expires in 15s";
 
-      const timerEl = document.getElementById("invite-timer");
-      if (timerEl) {
-        timerEl.innerText = "Expires in 15s";
-      }
+  const inviteInterval = setInterval(() => {
 
-      const inviteInterval = setInterval(() => {
-        timeLeft--;
+    timeLeft--;
+    timerEl.innerText = "Expires in " + timeLeft + "s";
 
-        if (timerEl) {
-          timerEl.innerText = "Expires in " + timeLeft + "s";
-        }
+    if (timeLeft <= 0) {
+      clearInterval(inviteInterval);
 
-        if (timeLeft <= 0) {
-          clearInterval(inviteInterval);
-          popup.classList.add("hidden");
-          unlockMenu();
-          pendingInvite = null;
-        }
-      }, 1000);
+      popup.classList.add("hidden");
+      unlockMenu();
 
-      return;
+      pendingInvite = null;
+      lastInviterId = null;
+
+      openOnlineList(); // 🔥 убираем подсветку
     }
+
+  }, 1000);
+
+  return;
+}
+
 
 
 
@@ -1860,6 +1875,8 @@ if (inviteDecline) {
     document.getElementById("pvp-invite-popup")
       .classList.add("hidden");
 
+      lastInviterId = null;
+openOnlineList();
     unlockMenu();
 
 
@@ -1869,16 +1886,21 @@ if (inviteDecline) {
 
 async function openOnlineList() {
 
-  const popup = document.getElementById("online-popup");
   const list = document.getElementById("online-list");
-
-  list.innerHTML = "Loading...";
-
-  popup.classList.remove("hidden");
-  lockMenu();
+  if (!list) return;
 
   const res = await fetch("/api/online");
   const users = await res.json();
+
+  // сортировка — пригласивший сверху
+if (lastInviterId) {
+  users.sort((a, b) => {
+    if (String(a.id) === String(lastInviterId)) return -1;
+    if (String(b.id) === String(lastInviterId)) return 1;
+    return 0;
+  });
+}
+
 
   list.innerHTML = "";
 
@@ -1887,25 +1909,77 @@ async function openOnlineList() {
     return;
   }
 
-  users.forEach(u => {
+  users.forEach((u, index) => {
 
     if (String(u.id) === String(userId)) return;
 
     const row = document.createElement("div");
     row.className = "online-row";
 
+    const isInviter = String(u.id) === String(lastInviterId);
+
+    if (isInviter) {
+       row.querySelector(".online-dot")?.classList.add("pulse");
+      row.style.border = "1px solid #22c55e";
+      row.style.boxShadow = "0 0 14px rgba(34,197,94,0.6)";
+      row.style.background = "rgba(34,197,94,0.08)";
+    }
+
     row.innerHTML = `
-      <img src="${u.avatar || 'avatar.png'}">
-      <span>${u.username}</span>
-      <button>Invite</button>
+      <div class="online-user">
+        <img src="${u.avatar || 'avatar.png'}">
+        <div class="online-dot"></div>
+        <span>${u.username}</span>
+      </div>
+      <button class="${isInviter ? 'accept-btn' : ''}">
+        ${isInviter ? "Accept" : "Invite"}
+      </button>
     `;
 
-    row.querySelector("button").onclick = () => {
-      sendInvite(u.id);
-      popup.classList.add("hidden");
-      unlockMenu();
-    };
+    const btn = row.querySelector("button");
+
+    if (isInviter) {
+      btn.onclick = () => {
+        if (!pendingInvite) return;
+
+        document.getElementById("pvp-invite-popup")
+          .classList.add("hidden");
+
+        if (!pvpSocket) startPvpSearch();
+
+        setTimeout(() => {
+          if (pvpSocket && pvpSocket.readyState === 1) {
+            pvpSocket.send(JSON.stringify({
+              type: "accept_invite",
+              fromId: u.id,
+              stake: pendingInvite.stake
+            }));
+          }
+        }, 300);
+
+        unlockMenu();
+        pendingInvite = null;
+        lastInviterId = null;
+        openOnlineList();
+      };
+
+    } else {
+
+      btn.onclick = () => {
+        if (!pvpStake) {
+          alert("Choose stake first");
+          return;
+        }
+        sendInvite(u.id);
+      };
+
+    }
 
     list.appendChild(row);
+
+    setTimeout(() => {
+      row.classList.add("show");
+    }, index * 60);
+
   });
 }
