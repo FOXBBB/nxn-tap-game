@@ -538,13 +538,18 @@ function broadcastOnlineList() {
 
   const players = [];
 
-  onlineUsers.forEach((ws, id) => {
-    players.push({
-      id,
-      name: ws.username,
-      avatar: ws.avatar || ""
-    });
+ onlineUsers.forEach((ws, id) => {
+
+  if (ws.isActive || ws.searching) return;
+
+  players.push({
+    id,
+    name: ws.username,
+    avatar: ws.avatar || ""
   });
+});
+
+
 
   const payload = JSON.stringify({
     type: "online_list",

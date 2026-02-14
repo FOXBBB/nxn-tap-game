@@ -3800,3 +3800,40 @@ body.locked {
   border-radius: 50%;
   animation: dotPulse 1.4s infinite;
 }
+.pvp-error-toast {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-20px);
+  opacity: 0;
+  z-index: 9999;
+  transition: all 0.3s ease;
+}
+
+.pvp-error-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.pvp-error-card {
+  background: linear-gradient(135deg, #0f172a, #111827);
+  border: 1px solid rgba(34,197,94,0.4);
+  padding: 16px 22px;
+  border-radius: 14px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 0 20px rgba(34,197,94,0.2);
+  text-align: center;
+}
+
+.pvp-error-title {
+  color: #22c55e;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+
+.pvp-error-sub {
+  color: #94a3b8;
+  font-size: 12px;
+  margin-top: 4px;
+}

@@ -1600,10 +1600,26 @@ if (data.type === "error") {
 
   unlockMenu();
 
-  alert("Not enough NXN balance for this stake");
+  // 🔥 Красивый Web3 toast
+  const toast = document.createElement("div");
+  toast.className = "pvp-error-toast";
+  toast.innerHTML = `
+    <div class="pvp-error-card">
+      <div class="pvp-error-title">INSUFFICIENT BALANCE</div>
+      <div class="pvp-error-sub">Not enough NXN for this stake</div>
+    </div>
+  `;
+  document.body.appendChild(toast);
+
+  setTimeout(() => toast.classList.add("show"), 10);
+  setTimeout(() => {
+    toast.classList.remove("show");
+    setTimeout(() => toast.remove(), 300);
+  }, 2000);
 
   return;
 }
+
 
 
   // ================= ONLINE LIST =================
@@ -1764,8 +1780,17 @@ function handleClose() {
 
   unlockMenu();
 
-  // 🔥 ВАЖНО — обнуляем сокет
   pvpSocket = null;
+
+// 🔥 авто реконнект если экран PvP открыт
+if (document.getElementById("pvp") &&
+    !document.getElementById("pvp").classList.contains("hidden")) {
+
+  setTimeout(() => {
+    document.getElementById("open-pvp").click();
+  }, 500);
+}
+
 }
 
 
