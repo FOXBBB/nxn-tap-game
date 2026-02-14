@@ -28,7 +28,6 @@ let pvpInGame = false;
 let pvpSearchInterval = null;
 let pendingInvite = null;
 let inviteCooldown = false;
-let onlineSocket = null;
 
 
 
@@ -104,7 +103,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   await syncUser();
-  startOnlineSocket();
   await refreshMe();
   await loadRewardState();
   updateUI();
@@ -1567,14 +1565,25 @@ function startPvpSearch() {
   );
 
   pvpSocket.onopen = () => {
-    pvpSocket.send(JSON.stringify({
-      type: "search",
-      userId,
-      username: tgUser.username || tgUser.first_name || "Player",
-      stake: pvpStake
-    }));
 
-  };
+  // 🔥 REGISTER ONLINE
+  pvpSocket.send(JSON.stringify({
+    type: "register",
+    userId,
+    username: tgUser.username || tgUser.first_name || "Player",
+    avatar: tgUser.photo_url || ""
+  }));
+
+  // 🔥 СРАЗУ SEARCH
+  pvpSocket.send(JSON.stringify({
+    type: "search",
+    userId,
+    username: tgUser.username || tgUser.first_name || "Player",
+    stake: pvpStake
+  }));
+
+};
+
 
 
 
@@ -1842,24 +1851,4 @@ if (inviteDecline) {
   };
 }
 
-function startOnlineSocket() {
 
-  onlineSocket = new WebSocket(
-    (location.protocol === "https:" ? "wss://" : "ws://") +
-    location.host +
-    "/pvp"
-  );
-
-  onlineSocket.onopen = () => {
-    onlineSocket.send(JSON.stringify({
-      type: "register",
-      userId,
-      username: tgUser.username || tgUser.first_name || "Player",
-      avatar: tgUser.photo_url || ""
-    }));
-  };
-
-  onlineSocket.onclose = () => {
-    setTimeout(startOnlineSocket, 3000);
-  };
-}
