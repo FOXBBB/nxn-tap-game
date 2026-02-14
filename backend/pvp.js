@@ -151,12 +151,23 @@ async function handleSearch(ws, data) {
 
     waitingQueue.set(stake, { ws, timeout });
 
-    ws.send(JSON.stringify({ type: "searching" }));
+    if (ws.readyState === 1) {
+  ws.send(JSON.stringify({ type: "searching" }));
+}
+
   }
 }
 
 
 async function createMatch(ws1, ws2, stake) {
+
+  if (
+  !ws1 || !ws2 ||
+  ws1.readyState !== 1 ||
+  ws2.readyState !== 1
+) {
+  return;
+}
 
   await query(
     "UPDATE users SET balance = balance - $1 WHERE telegram_id = $2",
@@ -174,8 +185,19 @@ async function createMatch(ws1, ws2, stake) {
   ws1.opponent = ws2;
   ws2.opponent = ws1;
 
-  ws1.send(JSON.stringify({ type: "opponent", name: ws2.username }));
-  ws2.send(JSON.stringify({ type: "opponent", name: ws1.username }));
+  if (ws1.readyState === 1) {
+  ws1.send(JSON.stringify({
+    type: "opponent",
+    name: ws2.username
+  }));
+}
+
+if (ws2.readyState === 1) {
+  ws2.send(JSON.stringify({
+    type: "opponent",
+    name: ws1.username
+  }));
+}
 
   startCountdown(ws1, ws2, stake);
 
@@ -189,8 +211,19 @@ function startCountdown(ws1, ws2, stake) {
 
   const interval = setInterval(() => {
 
-    ws1.send(JSON.stringify({ type: "countdown", value: count }));
-    ws2.send(JSON.stringify({ type: "countdown", value: count }));
+    if (ws1.readyState === 1) {
+      ws1.send(JSON.stringify({
+        type: "countdown",
+        value: count
+      }));
+    }
+
+    if (ws2.readyState === 1) {
+      ws2.send(JSON.stringify({
+        type: "countdown",
+        value: count
+      }));
+    }
 
     count--;
 
@@ -206,31 +239,41 @@ function startCountdown(ws1, ws2, stake) {
 }
 
 
+
 function startMatch(ws1, ws2, stake) {
 
   ws1.isActive = true;
   ws2.isActive = true;
 
+  if (ws1.readyState === 1)
   ws1.send(JSON.stringify({ type: "start" }));
-  ws2.send(JSON.stringify({ type: "start" }));
 
+if (ws2.readyState === 1)
+  ws2.send(JSON.stringify({ type: "start" }));
   setTimeout(() => finishMatch(ws1, ws2, stake), MATCH_DURATION);
 }
 
 function sendScore(ws) {
 
-  ws.send(JSON.stringify({
-    type: "score",
-    you: ws.score,
-    opponent: ws.opponent.score
-  }));
+  if (!ws.opponent) return;
 
-  ws.opponent.send(JSON.stringify({
-    type: "score",
-    you: ws.opponent.score,
-    opponent: ws.score
-  }));
+  if (ws.readyState === 1) {
+    ws.send(JSON.stringify({
+      type: "score",
+      you: ws.score,
+      opponent: ws.opponent.score
+    }));
+  }
+
+  if (ws.opponent.readyState === 1) {
+    ws.opponent.send(JSON.stringify({
+      type: "score",
+      you: ws.opponent.score,
+      opponent: ws.score
+    }));
+  }
 }
+
 
 async function finishMatch(ws1, ws2, stake) {
 
@@ -252,19 +295,24 @@ async function finishMatch(ws1, ws2, stake) {
     );
   }
 
+  if (ws1.readyState === 1) {
   ws1.send(JSON.stringify({
     type: "end",
     winner: winner?.userId,
     you: ws1.score,
     opponent: ws2.score
   }));
+}
 
+if (ws2.readyState === 1) {
   ws2.send(JSON.stringify({
     type: "end",
     winner: winner?.userId,
     you: ws2.score,
     opponent: ws1.score
   }));
+}
+
 
   ws1.searching = false;
   ws2.searching = false;
@@ -293,10 +341,13 @@ async function createBotMatch(ws, stake) {
   ws.botScore = 0;
   ws.matchId = "bot";
 
+  if (ws.readyState === 1) {
   ws.send(JSON.stringify({
     type: "opponent",
     name: "BOT NXN"
   }));
+}
+
 
   startBotCountdown(ws, stake);
 }
@@ -311,7 +362,13 @@ function startBotCountdown(ws, stake) {
 
   const interval = setInterval(() => {
 
-    ws.send(JSON.stringify({ type: "countdown", value: count }));
+    if (ws.readyState === 1) {
+  ws.send(JSON.stringify({
+    type: "countdown",
+    value: count
+  }));
+}
+
 
     count--;
 
@@ -329,7 +386,10 @@ function startBotCountdown(ws, stake) {
 function startBotMatch(ws, stake) {
 
   ws.isActive = true;
+  if (ws.readyState === 1) {
   ws.send(JSON.stringify({ type: "start" }));
+}
+
 
   // ===== BOT DIFFICULTY LOGIC =====
 
@@ -394,11 +454,13 @@ function startBotMatch(ws, stake) {
       ws.botScore = botTarget;
     }
 
-    ws.send(JSON.stringify({
-      type: "score",
-      you: ws.score,
-      opponent: Math.floor(ws.botScore)
-    }));
+    if (ws.readyState === 1) {
+  ws.send(JSON.stringify({
+    type: "score",
+    you: ws.score,
+    opponent: Math.floor(ws.botScore)
+  }));
+}
 
   }, tickRate);
 
@@ -421,12 +483,15 @@ function startBotMatch(ws, stake) {
       );
     }
 
-    ws.send(JSON.stringify({
-      type: "end",
-      winner: playerWins ? ws.userId : "bot",
-      you: ws.score,
-      opponent: finalBot
-    }));
+    if (ws.readyState === 1) {
+  ws.send(JSON.stringify({
+    type: "end",
+    winner: playerWins ? ws.userId : "bot",
+    you: ws.score,
+    opponent: finalBot
+  }));
+}
+
 
     // очистка
     ws.matchId = null;
@@ -461,16 +526,21 @@ function cleanup(ws) {
 }
 function broadcastOnlineList() {
 
+  // 🔥 ОЧИЩАЕМ мёртвые сокеты
+  onlineUsers.forEach((ws, id) => {
+    if (!ws || ws.readyState !== 1) {
+      onlineUsers.delete(id);
+    }
+  });
+
   const players = [];
 
   onlineUsers.forEach((ws, id) => {
-    if (ws.readyState === 1) {
-      players.push({
-        id,
-        name: ws.username,
-        avatar: ws.avatar || ""
-      });
-    }
+    players.push({
+      id,
+      name: ws.username,
+      avatar: ws.avatar || ""
+    });
   });
 
   const payload = JSON.stringify({
@@ -484,4 +554,5 @@ function broadcastOnlineList() {
     }
   });
 }
+
 
