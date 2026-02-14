@@ -1596,24 +1596,54 @@ function handlePvpMessage(event) {
 
     list.innerHTML = "";
 
-    data.players.forEach(p => {
+   data.players.forEach(p => {
 
-      if (String(p.id) === String(userId)) return;
+  if (String(p.id) === String(userId)) return;
 
-      const row = document.createElement("div");
-      row.className = "pvp-online-row";
+  const row = document.createElement("div");
+  row.className = "online-row";
 
-      row.innerHTML = `
-        <img src="${p.avatar || 'avatar.png'}">
-        <span>${p.name}</span>
-        <button onclick="sendInvite('${p.id}')">Invite</button>
-      `;
+  row.innerHTML = `
+    <div class="online-avatar">
+      <img src="${p.avatar || 'avatar.png'}">
+      <div class="online-dot pulse"></div>
+    </div>
 
-      list.appendChild(row);
-    });
+    <div class="online-name">${p.name}</div>
+
+    <button class="invite-btn" data-id="${p.id}">
+      Invite
+    </button>
+  `;
+
+  const btn = row.querySelector("button");
+
+  btn.onclick = () => sendInvite(p.id, btn);
+
+  list.appendChild(row);
+});
+
 
     return;
   }
+
+  // ================= INVITE RECEIVED =================
+if (data.type === "invite_received") {
+
+  pendingInvite = data;
+
+  const popup = document.getElementById("pvp-invite-popup");
+  popup.classList.remove("hidden");
+
+  document.getElementById("invite-from").innerText =
+    "From: " + data.fromName;
+
+  document.getElementById("invite-stake").innerText =
+    "Stake: " + data.stake + " NXN";
+
+  return;
+}
+
 
   // ================= OPPONENT =================
   if (data.type === "opponent") {
@@ -1778,31 +1808,36 @@ if (againBtn) {
   };
 }
 
-function sendInvite(targetId) {
+function sendInvite(targetId, buttonEl) {
 
-  if (inviteCooldown) return;
+  if (!pvpSocket || pvpSocket.readyState !== 1) return;
 
-  inviteCooldown = true;
-
-  setTimeout(() => {
-    inviteCooldown = false;
-  }, 5000);
-
-  if (!pvpSocket) {
-    startPvpSearch();
+  // визуально блокируем кнопку
+  if (buttonEl) {
+    buttonEl.innerText = "Invited...";
+    buttonEl.classList.add("disabled");
+    buttonEl.disabled = true;
   }
 
-  setTimeout(() => {
-    if (pvpSocket && pvpSocket.readyState === 1) {
-      pvpSocket.send(JSON.stringify({
-        type: "invite",
-        targetId,
-        stake: pvpStake
-      }));
-    }
-  }, 300);
+  pvpSocket.send(JSON.stringify({
+    type: "invite",
+    targetId,
+    stake: pvpStake
+  }));
 
+  // кулдаун 20 секунд
+  if (buttonEl) {
+    setTimeout(() => {
+      buttonEl.innerText = "Invite";
+      buttonEl.classList.remove("disabled");
+      buttonEl.disabled = false;
+    }, 20000);
+  }
 }
+
+
+
+
 
 // ===== INVITE BUTTONS =====
 

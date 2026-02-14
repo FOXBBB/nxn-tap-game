@@ -3599,12 +3599,6 @@ body.locked {
   border-radius: 10px;
 }
 
-.online-row img {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-}
-
 .online-row span {
   flex: 1;
   margin-left: 10px;
@@ -3678,4 +3672,131 @@ body.locked {
   0%   { box-shadow: 0 0 0 0 rgba(34,197,94,0.7); }
   70%  { box-shadow: 0 0 0 6px rgba(34,197,94,0); }
   100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
+}
+/* ===== PREMIUM ONLINE LIST ===== */
+
+.pvp-online-table {
+  margin-top: 18px;
+  background: rgba(15, 23, 42, 0.55);
+  border-radius: 18px;
+  padding: 14px;
+  border: 1px solid rgba(34,197,94,0.25);
+  box-shadow: 0 0 30px rgba(34,197,94,0.12);
+}
+
+/* список в одну линию */
+.online-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* строка игрока */
+.online-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 10px 14px;
+  border-radius: 14px;
+
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(255,255,255,0.05);
+
+  transition: 0.2s ease;
+}
+
+.online-row:hover {
+  background: rgba(34,197,94,0.12);
+}
+
+/* аватар */
+.online-avatar {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.online-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* зеленая точка */
+.online-avatar .online-dot {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 9px;
+  height: 9px;
+  background: #22c55e;
+  border-radius: 50%;
+}
+
+.online-avatar .online-dot.pulse {
+  animation: dotPulse 1.4s infinite;
+}
+
+@keyframes dotPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(34,197,94,0.7); }
+  70%  { box-shadow: 0 0 0 6px rgba(34,197,94,0); }
+  100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
+}
+
+/* имя */
+.online-name {
+  flex: 1;
+  margin-left: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #e5e7eb;
+}
+
+/* INVITE кнопка */
+.invite-btn {
+  background: linear-gradient(135deg,#22c55e,#16a34a);
+  border: none;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: 0.2s;
+  color: #02140c;
+}
+
+.invite-btn:hover {
+  transform: scale(1.05);
+}
+
+.invite-btn.disabled {
+  background: #1f2937;
+  color: #64748b;
+  cursor: default;
+}
+
+/* ACCEPT кнопка */
+.accept-btn {
+  background: linear-gradient(135deg,#00ffc8,#0099ff);
+  color: #000;
+}
+.online-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #22c55e;
+}
+
+.online-indicator::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  background: #22c55e;
+  border-radius: 50%;
+  animation: dotPulse 1.4s infinite;
 }
