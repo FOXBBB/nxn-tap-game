@@ -111,6 +111,8 @@ async function handleSearch(ws, data) {
 
   ws.searching = true;
 
+  broadcastOnlineList();
+
   const { userId, stake, username } = data;
 
   ws.username = username || "Player";
@@ -125,6 +127,9 @@ async function handleSearch(ws, data) {
   if (!user.rows.length || user.rows[0].balance < stake) {
     ws.searching = false;
     ws.send(JSON.stringify({ type: "error" }));
+
+     broadcastOnlineList();
+
     return;
   }
 
@@ -204,6 +209,8 @@ if (ws2.readyState === 1) {
   ws1.searching = false;
   ws2.searching = false;
 
+  broadcastOnlineList(); 
+
 }
 
 function startCountdown(ws1, ws2, stake) {
@@ -244,6 +251,8 @@ function startMatch(ws1, ws2, stake) {
 
   ws1.isActive = true;
   ws2.isActive = true;
+
+   broadcastOnlineList(); 
 
   if (ws1.readyState === 1)
   ws1.send(JSON.stringify({ type: "start" }));
@@ -387,6 +396,9 @@ function startBotCountdown(ws, stake) {
 function startBotMatch(ws, stake) {
 
   ws.isActive = true;
+
+  broadcastOnlineList();
+
   if (ws.readyState === 1) {
   ws.send(JSON.stringify({ type: "start" }));
 }
@@ -529,7 +541,6 @@ function cleanup(ws) {
 }
 function broadcastOnlineList() {
 
-  // 🔥 ОЧИЩАЕМ мёртвые сокеты
   onlineUsers.forEach((ws, id) => {
     if (!ws || ws.readyState !== 1) {
       onlineUsers.delete(id);
@@ -538,18 +549,16 @@ function broadcastOnlineList() {
 
   const players = [];
 
- onlineUsers.forEach((ws, id) => {
+  onlineUsers.forEach((ws, id) => {
 
-  if (ws.isActive || ws.searching) return;
+    if (ws.isActive) return; // 🔥 ТОЛЬКО В МАТЧЕ скрываем
 
-  players.push({
-    id,
-    name: ws.username,
-    avatar: ws.avatar || ""
+    players.push({
+      id,
+      name: ws.username,
+      avatar: ws.avatar || ""
+    });
   });
-});
-
-
 
   const payload = JSON.stringify({
     type: "online_list",

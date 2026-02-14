@@ -1756,9 +1756,6 @@ if (data.type === "invite_received") {
     pvpInGame = false;
     unlockMenu();
   
-  if (pvpSocket) {
-  try { pvpSocket.close(); } catch {}
-}
   }
 
 }
