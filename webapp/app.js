@@ -386,6 +386,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("pvp-play").disabled = false;
 
     if (pvpSocket) {
+      startPvpSearch(false);
       pvpSocket.close();
       pvpSocket = null;
     }
@@ -1556,7 +1557,7 @@ function unlockMenu() {
 
 // ================= PvP FUNCTIONS =================
 
-function startPvpSearch() {
+function startPvpSearch(startSearch = true) {
 
   pvpSocket = new WebSocket(
     (location.protocol === "https:" ? "wss://" : "ws://") +
@@ -1566,7 +1567,7 @@ function startPvpSearch() {
 
   pvpSocket.onopen = () => {
 
-  // 🔥 REGISTER ONLINE
+  // REGISTER
   pvpSocket.send(JSON.stringify({
     type: "register",
     userId,
@@ -1574,21 +1575,59 @@ function startPvpSearch() {
     avatar: tgUser.photo_url || ""
   }));
 
-  // 🔥 СРАЗУ SEARCH
-  pvpSocket.send(JSON.stringify({
-    type: "search",
-    userId,
-    username: tgUser.username || tgUser.first_name || "Player",
-    stake: pvpStake
-  }));
-
+  // SEARCH ТОЛЬКО ЕСЛИ НУЖНО
+  if (startSearch) {
+    pvpSocket.send(JSON.stringify({
+      type: "search",
+      userId,
+      username: tgUser.username || tgUser.first_name || "Player",
+      stake: pvpStake
+    }));
+  }
 };
+
 
 
 
 
   pvpSocket.onmessage = (event) => {
     const data = JSON.parse(event.data);
+
+    // 🔥 ONLINE LIST UPDATE
+if (data.type === "online_list") {
+
+  const list = document.getElementById("online-list");
+  if (!list) return;
+
+  list.innerHTML = "";
+
+  data.players.forEach(p => {
+
+    // не показываем себя
+    if (String(p.id) === String(userId)) return;
+
+    const row = document.createElement("div");
+    row.className = "online-row";
+
+    row.innerHTML = `
+      <div class="online-left">
+        <img src="${p.avatar || 'avatar.png'}" class="online-avatar">
+        <span>${p.name}</span>
+      </div>
+      <button class="online-invite">Invite</button>
+    `;
+
+    row.querySelector(".online-invite").onclick = () => {
+      pvpStake = pvpStake || 1000; // если не выбрана ставка
+      sendInvite(p.id);
+    };
+
+    list.appendChild(row);
+  });
+
+  return;
+}
+
 
     if (data.type === "invite") {
 

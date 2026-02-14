@@ -18,11 +18,13 @@ export function initPvp(server) {
     ws.botScore = 0;
 
     ws.on("close", () => {
-      if (ws.userId) {
-        onlineUsers.delete(ws.userId);
-      }
-      cleanup(ws);
-    });
+  if (ws.userId) {
+    onlineUsers.delete(ws.userId);
+    broadcastOnlineList(); // 🔥 обновляем список
+  }
+  cleanup(ws);
+});
+
 
   
 
@@ -39,8 +41,12 @@ if (data.type === "register") {
   ws.avatar = data.avatar || null;
 
   onlineUsers.set(ws.userId, ws);
+
+  broadcastOnlineList(); // 🔥 ВОТ ЭТО ГЛАВНОЕ
+
   return;
 }
+
 
 
         if (data.type === "search") {
@@ -451,4 +457,29 @@ function cleanup(ws) {
   ws.searching = false;
   ws.opponent = null;
   ws.matchId = null;
+}
+function broadcastOnlineList() {
+
+  const players = [];
+
+  onlineUsers.forEach((ws, id) => {
+    if (ws.readyState === 1) {
+      players.push({
+        id,
+        name: ws.username,
+        avatar: ws.avatar || ""
+      });
+    }
+  });
+
+  const payload = JSON.stringify({
+    type: "online_list",
+    players
+  });
+
+  onlineUsers.forEach(ws => {
+    if (ws.readyState === 1) {
+      ws.send(payload);
+    }
+  });
 }
