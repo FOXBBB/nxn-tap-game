@@ -1779,15 +1779,6 @@ function handleClose() {
 
   pvpSocket = null;
 
-// 🔥 авто реконнект если экран PvP открыт
-if (document.getElementById("pvp") &&
-    !document.getElementById("pvp").classList.contains("hidden")) {
-
-  setTimeout(() => {
-    document.getElementById("open-pvp").click();
-  }, 500);
-}
-
 }
 
 
