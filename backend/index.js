@@ -49,7 +49,7 @@ server.listen(PORT, () => {
 app.get("/api/online", (req, res) => {
   const list = [];
 
-  for (const [id, socket] of onlineUsers) {
+  for (const [id, socket] of onlineUsers.entries()) {
     list.push({
       id,
       username: socket.username || "Player"

@@ -100,51 +100,54 @@ if (data.type === "accept_invite") {
 
 async function handleSearch(ws, data) {
 
-  if (ws.searching || ws.isActive) return; // 🔥 ЗАЩИТА
+  if (ws.searching || ws.isActive) return;
 
   ws.searching = true;
 
   const { userId, stake, username } = data;
 
-  onlineUsers.set(String(userId), ws);
-
-
   ws.username = username || "Player";
-  ws.userId = userId;
+  ws.userId = String(userId);
   ws.stake = stake;
-
 
   const user = await query(
     "SELECT balance FROM users WHERE telegram_id = $1",
-    [userId]
+    [ws.userId]
   );
 
   if (!user.rows.length || user.rows[0].balance < stake) {
-    ws.searching = false; // 🔥 ВАЖНО
+    ws.searching = false;
     ws.send(JSON.stringify({ type: "error" }));
     return;
   }
 
   const opponent = waitingQueue.get(stake);
 
-  if (opponent && opponent.userId !== userId) {
+  if (opponent && opponent.ws !== ws) {
+
     waitingQueue.delete(stake);
     clearTimeout(opponent.timeout);
+
     await createMatch(opponent.ws, ws, stake);
+
   } else {
+
     const timeout = setTimeout(() => {
 
-      if (ws.readyState !== 1) return; // 🔥 сокет закрыт
+      if (ws.readyState !== 1) return;
 
       waitingQueue.delete(stake);
+
       createBotMatch(ws, stake);
 
-    }, 8000);
+    }, 5000); // 🔥 делаем 5 сек для теста
 
-    waitingQueue.set(stake, { userId, ws, timeout });
+    waitingQueue.set(stake, { ws, timeout });
+
     ws.send(JSON.stringify({ type: "searching" }));
   }
 }
+
 
 async function createMatch(ws1, ws2, stake) {
 
@@ -272,15 +275,16 @@ async function finishMatch(ws1, ws2, stake) {
 
 async function createBotMatch(ws, stake) {
 
+  if (!ws || ws.readyState !== 1) return;
+
   await query(
     "UPDATE users SET balance = balance - $1 WHERE telegram_id = $2",
     [stake, ws.userId]
   );
 
-  ws.matchId = "bot";
   ws.score = 0;
   ws.botScore = 0;
-  ws.isActive = false;
+  ws.matchId = "bot";
 
   ws.send(JSON.stringify({
     type: "opponent",
@@ -288,9 +292,11 @@ async function createBotMatch(ws, stake) {
   }));
 
   startBotCountdown(ws, stake);
-  ws.searching = false;
-
 }
+
+
+
+
 
 function startBotCountdown(ws, stake) {
 
