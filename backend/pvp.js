@@ -325,6 +325,7 @@ if (ws2.readyState === 1) {
   ws1.score = 0;
   ws2.score = 0;
 
+  broadcastOnlineList();
 
 }
 
@@ -499,6 +500,8 @@ function startBotMatch(ws, stake) {
     ws.score = 0;
     ws.botScore = 0;
     ws.searching = false;
+
+      broadcastOnlineList();
 
   }, MATCH_DURATION);
 }

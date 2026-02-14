@@ -1573,6 +1573,14 @@ function lockMenu() {
   });
 }
 
+function unlockMenu() {
+  document.querySelectorAll(".menu div").forEach(b => {
+    b.style.pointerEvents = "";
+    b.style.opacity = "";
+  });
+}
+
+
 // ================= PvP HANDLERS =================
 
 function handlePvpMessage(event) {
@@ -1582,7 +1590,8 @@ function handlePvpMessage(event) {
   // ================= ONLINE LIST =================
   if (data.type === "online_list") {
 
-    const list = document.getElementById("pvp-online-list");
+    const list = document.getElementById("online-list");
+
     if (!list) return;
 
     list.innerHTML = "";
@@ -1681,6 +1690,10 @@ function handlePvpMessage(event) {
 
     pvpInGame = false;
     unlockMenu();
+  
+  if (pvpSocket) {
+  try { pvpSocket.close(); } catch {}
+}
   }
 
 }
