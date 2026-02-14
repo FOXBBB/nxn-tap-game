@@ -420,6 +420,7 @@ if (!pvpSocket || pvpSocket.readyState !== 1) {
   );
 
   pvpSocket.onopen = () => {
+    openOnlineList();
 
     pvpSocket.send(JSON.stringify({
       type: "register",
@@ -1598,10 +1599,8 @@ function unlockMenu() {
 
 
 // ================= PvP FUNCTIONS =================
-
 function startPvpSearch() {
 
-  // если сокета нет — создаём
   if (!pvpSocket || pvpSocket.readyState !== 1) {
 
     pvpSocket = new WebSocket(
@@ -1612,7 +1611,6 @@ function startPvpSearch() {
 
     pvpSocket.onopen = () => {
 
-      // REGISTER
       pvpSocket.send(JSON.stringify({
         type: "register",
         userId,
@@ -1620,29 +1618,70 @@ function startPvpSearch() {
         avatar: tgUser.photo_url || ""
       }));
 
-      // SEARCH
       pvpSocket.send(JSON.stringify({
         type: "search",
         userId,
         username: tgUser.username || tgUser.first_name || "Player",
         stake: pvpStake
       }));
+    };
 
+    // 🔥 ВАЖНО — onmessage ДОЛЖЕН БЫТЬ ЗДЕСЬ
+    pvpSocket.onmessage = handlePvpMessage;
+
+    pvpSocket.onclose = () => {
+      clearInterval(pvpTimerInterval);
+      pvpSocket = null;
     };
 
   } else {
 
-    // если уже открыт — просто search
     pvpSocket.send(JSON.stringify({
       type: "search",
       userId,
       username: tgUser.username || tgUser.first_name || "Player",
       stake: pvpStake
     }));
+  }
+}
 
+
+
+function handlePvpMessage(event) {
+
+  const data = JSON.parse(event.data);
+
+  if (data.type === "searching") {
+    document.getElementById("pvp-search-ui").classList.remove("hidden");
   }
 
+  if (data.type === "opponent") {
+    document.getElementById("pvp-opp-name").innerText = data.name;
+  }
+
+  if (data.type === "start") {
+    document.getElementById("pvp-search-ui").classList.add("hidden");
+    document.getElementById("pvp-match").classList.remove("hidden");
+    startMatchTimer();
+  }
+
+  if (data.type === "score") {
+    document.getElementById("pvp-you").innerText = data.you;
+    document.getElementById("pvp-opp").innerText = data.opponent;
+  }
+
+  if (data.type === "end") {
+    clearInterval(pvpTimerInterval);
+    document.getElementById("pvp-timer").innerText = 0;
+  }
+
+  if (data.type === "invite") {
+    lastInviterId = data.fromId;
+    pendingInvite = data;
+    openOnlineList();
+  }
 }
+
 
 
 

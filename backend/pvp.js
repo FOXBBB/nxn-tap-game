@@ -112,8 +112,6 @@ async function handleSearch(ws, data) {
   ws.username = username || "Player";
   ws.userId = userId;
   ws.stake = stake;
-  // добавляем в онлайн
-onlineUsers.set(userId, ws);
 
 
   const user = await query(
