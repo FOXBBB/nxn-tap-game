@@ -364,6 +364,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     const resultScreen = document.getElementById("pvp-result-screen");
     const resultText = document.getElementById("pvp-result-text");
     const finalScore = document.getElementById("pvp-final-score");
+    const inviteBtn = document.getElementById("pvp-invite-btn");
+
+    if (inviteBtn) {
+      inviteBtn.onclick = () => {
+        if (!pvpStake) {
+          alert("Choose stake first");
+          return;
+        }
+        openOnlineList();
+      };
+    }
 
     // 🔥 ПОЛНЫЙ СБРОС UI
     resultScreen.classList.add("hidden");
@@ -385,11 +396,27 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     document.getElementById("pvp-play").disabled = false;
 
-    if (pvpSocket) {
-      pvpSocket.close();
-      pvpSocket = null;
-    }
+    
   };
+
+
+  // 🔥 подключаем сокет и регистрируем онлайн
+  if (!pvpSocket) {
+    pvpSocket = new WebSocket(
+      (location.protocol === "https:" ? "wss://" : "ws://") +
+      location.host +
+      "/pvp"
+    );
+
+    pvpSocket.onopen = () => {
+      pvpSocket.send(JSON.stringify({
+        type: "register",
+        userId,
+        username: tgUser.username || tgUser.first_name || "Player",
+        avatar: tgUser.photo_url || ""
+      }));
+    };
+  }
 
 
 
@@ -1840,3 +1867,45 @@ if (inviteDecline) {
   };
 }
 
+async function openOnlineList() {
+
+  const popup = document.getElementById("online-popup");
+  const list = document.getElementById("online-list");
+
+  list.innerHTML = "Loading...";
+
+  popup.classList.remove("hidden");
+  lockMenu();
+
+  const res = await fetch("/api/online");
+  const users = await res.json();
+
+  list.innerHTML = "";
+
+  if (!users.length) {
+    list.innerHTML = "<i>No players online</i>";
+    return;
+  }
+
+  users.forEach(u => {
+
+    if (String(u.id) === String(userId)) return;
+
+    const row = document.createElement("div");
+    row.className = "online-row";
+
+    row.innerHTML = `
+      <img src="${u.avatar || 'avatar.png'}">
+      <span>${u.username}</span>
+      <button>Invite</button>
+    `;
+
+    row.querySelector("button").onclick = () => {
+      sendInvite(u.id);
+      popup.classList.add("hidden");
+      unlockMenu();
+    };
+
+    list.appendChild(row);
+  });
+}

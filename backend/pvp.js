@@ -9,6 +9,8 @@ let waitingQueue = new Map();
 export function initPvp(server) {
   const wss = new WebSocketServer({ server, path: "/pvp" });
 
+
+
   wss.on("connection", (ws) => {
 
     ws.isActive = false;
@@ -22,10 +24,24 @@ export function initPvp(server) {
       cleanup(ws);
     });
 
+  
+
+
 
     ws.on("message", async (msg) => {
       try {
         const data = JSON.parse(msg);
+
+        // 🔥 REGISTER ONLINE
+if (data.type === "register") {
+  ws.userId = String(data.userId);
+  ws.username = data.username || "Player";
+  ws.avatar = data.avatar || null;
+
+  onlineUsers.set(ws.userId, ws);
+  return;
+}
+
 
         if (data.type === "search") {
           await handleSearch(ws, data);
