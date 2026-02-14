@@ -383,6 +383,8 @@ onlineInterval = setInterval(() => {
   openOnlineList();
 }, 5000);
 
+
+
       };
     }
 
@@ -407,6 +409,29 @@ onlineInterval = setInterval(() => {
     document.getElementById("pvp-play").disabled = false;
 
     openOnlineList();
+
+    // 🔥 создаём сокет для онлайна если его нет
+if (!pvpSocket || pvpSocket.readyState !== 1) {
+
+  pvpSocket = new WebSocket(
+    (location.protocol === "https:" ? "wss://" : "ws://") +
+    location.host +
+    "/pvp"
+  );
+
+  pvpSocket.onopen = () => {
+
+    pvpSocket.send(JSON.stringify({
+      type: "register",
+      userId,
+      username: tgUser.username || tgUser.first_name || "Player",
+      avatar: tgUser.photo_url || ""
+    }));
+
+  };
+
+}
+
     
   };
 
@@ -1576,31 +1601,48 @@ function unlockMenu() {
 
 function startPvpSearch() {
 
-  pvpSocket = new WebSocket(
-    (location.protocol === "https:" ? "wss://" : "ws://") +
-    location.host +
-    "/pvp"
-  );
+  // если сокета нет — создаём
+  if (!pvpSocket || pvpSocket.readyState !== 1) {
 
-  pvpSocket.onopen = () => {
+    pvpSocket = new WebSocket(
+      (location.protocol === "https:" ? "wss://" : "ws://") +
+      location.host +
+      "/pvp"
+    );
 
-  // 🔥 СНАЧАЛА REGISTER
-  pvpSocket.send(JSON.stringify({
-    type: "register",
-    userId,
-    username: tgUser.username || tgUser.first_name || "Player",
-    avatar: tgUser.photo_url || ""
-  }));
+    pvpSocket.onopen = () => {
 
-  // 🔥 ПОТОМ SEARCH
-  pvpSocket.send(JSON.stringify({
-    type: "search",
-    userId,
-    username: tgUser.username || tgUser.first_name || "Player",
-    stake: pvpStake
-  }));
+      // REGISTER
+      pvpSocket.send(JSON.stringify({
+        type: "register",
+        userId,
+        username: tgUser.username || tgUser.first_name || "Player",
+        avatar: tgUser.photo_url || ""
+      }));
 
-};
+      // SEARCH
+      pvpSocket.send(JSON.stringify({
+        type: "search",
+        userId,
+        username: tgUser.username || tgUser.first_name || "Player",
+        stake: pvpStake
+      }));
+
+    };
+
+  } else {
+
+    // если уже открыт — просто search
+    pvpSocket.send(JSON.stringify({
+      type: "search",
+      userId,
+      username: tgUser.username || tgUser.first_name || "Player",
+      stake: pvpStake
+    }));
+
+  }
+
+}
 
 
 
@@ -1781,7 +1823,6 @@ function startPvpSearch() {
     }, 1000);
   }
 
-}
 const againBtn = document.getElementById("pvp-again");
 
 if (againBtn) {
