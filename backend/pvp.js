@@ -59,7 +59,7 @@ if (data.type === "invite") {
 
   if (target && target.readyState === 1) {
     target.send(JSON.stringify({
-      type: "invite",
+      type: "invite_received",
       fromId: ws.userId,
       fromName: ws.username,
       stake: data.stake

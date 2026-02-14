@@ -1585,7 +1585,26 @@ function unlockMenu() {
 
 function handlePvpMessage(event) {
 
+
   const data = JSON.parse(event.data);
+
+  // ================= ERROR =================
+if (data.type === "error") {
+
+  clearInterval(pvpSearchInterval);
+
+  document.getElementById("pvp-search-ui")
+    .classList.add("hidden");
+
+  document.getElementById("pvp-play").disabled = false;
+
+  unlockMenu();
+
+  alert("Not enough NXN balance for this stake");
+
+  return;
+}
+
 
   // ================= ONLINE LIST =================
   if (data.type === "online_list") {
