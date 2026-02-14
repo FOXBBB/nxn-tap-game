@@ -34,19 +34,23 @@ export function initPvp(server) {
       try {
         const data = JSON.parse(msg);
 
-        // 🔥 REGISTER ONLINE
-if (data.type === "register") {
+ if (data.type === "register") {
+
+  console.log("REGISTER:", data.userId);
 
   ws.userId = String(data.userId);
   ws.username = data.username || "Player";
   ws.avatar = data.avatar || null;
+  ws.isActive = false;
+  ws.searching = false;
 
   onlineUsers.set(ws.userId, ws);
+
+  console.log("ONLINE COUNT:", onlineUsers.size);
 
   broadcastOnlineList();
   return;
 }
-
 
 
 
@@ -111,7 +115,6 @@ async function handleSearch(ws, data) {
 
   ws.searching = true;
 
-  broadcastOnlineList();
 
   const { userId, stake, username } = data;
 
@@ -541,35 +544,37 @@ function cleanup(ws) {
 }
 function broadcastOnlineList() {
 
-  onlineUsers.forEach((ws, id) => {
-    if (!ws || ws.readyState !== 1) {
-      onlineUsers.delete(id);
-    }
-  });
-
   const players = [];
 
-  onlineUsers.forEach((ws, id) => {
+  for (const [id, ws] of onlineUsers.entries()) {
 
-    if (ws.isActive) return; // 🔥 ТОЛЬКО В МАТЧЕ скрываем
+    if (!ws || ws.readyState !== 1) {
+      onlineUsers.delete(id);
+      continue;
+    }
+
+    if (ws.isActive) continue;
 
     players.push({
       id,
       name: ws.username,
       avatar: ws.avatar || ""
     });
-  });
+  }
+
+  console.log("BROADCAST ONLINE:", players.length);
 
   const payload = JSON.stringify({
     type: "online_list",
     players
   });
 
-  onlineUsers.forEach(ws => {
+  for (const ws of onlineUsers.values()) {
     if (ws.readyState === 1) {
       ws.send(payload);
     }
-  });
+  }
 }
+
 
 
