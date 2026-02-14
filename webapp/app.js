@@ -385,38 +385,39 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     document.getElementById("pvp-play").disabled = false;
 
-    // 🔥 ОТКРЫВАЕМ СОКЕТ ПРИ ВХОДЕ В PvP
-// 🔥 ВСЕГДА создаём новый сокет если он мёртв
-if (!pvpSocket || pvpSocket.readyState !== 1) {
 
-  // если был старый — обнуляем
-  if (pvpSocket) {
-    try { pvpSocket.close(); } catch {}
-  }
 
-  pvpSocket = new WebSocket(
-    (location.protocol === "https:" ? "wss://" : "ws://") +
-    location.host +
-    "/pvp"
-  );
+ // 🔥 ВСЕГДА ПЕРЕСОЗДАЁМ СОКЕТ ПРИ ВХОДЕ В PvP
 
-  pvpSocket.onopen = () => {
-
-    pvpSocket.send(JSON.stringify({
-      type: "register",
-      userId,
-      username: tgUser.username || tgUser.first_name || "Player",
-      avatar: tgUser.photo_url || ""
-    }));
-
-  };
-
-  pvpSocket.onmessage = handlePvpMessage;
-  pvpSocket.onclose = handleClose;
+if (pvpSocket) {
+  try { pvpSocket.close(); } catch {}
+  pvpSocket = null;
 }
 
+pvpSocket = new WebSocket(
+  (location.protocol === "https:" ? "wss://" : "ws://") +
+  location.host +
+  "/pvp"
+);
 
-  };
+pvpSocket.addEventListener("open", () => {
+
+  console.log("PVP CONNECTED");
+
+  pvpSocket.send(JSON.stringify({
+    type: "register",
+    userId,
+    username: tgUser.username || tgUser.first_name || "Player",
+    avatar: tgUser.photo_url || ""
+  }));
+
+});
+
+pvpSocket.addEventListener("message", handlePvpMessage);
+pvpSocket.addEventListener("close", handleClose);
+
+}
+
 
 
 
@@ -1884,9 +1885,9 @@ if (inviteAccept) {
     document.getElementById("pvp-invite-popup")
       .classList.add("hidden");
 
-    if (!pvpSocket) {
-      startPvpSearch();
-    }
+   if (!pvpSocket || pvpSocket.readyState !== 1) {
+  return;
+}
 
     setTimeout(() => {
       if (pvpSocket && pvpSocket.readyState === 1) {
