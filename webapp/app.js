@@ -386,7 +386,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("pvp-play").disabled = false;
 
     // 🔥 ОТКРЫВАЕМ СОКЕТ ПРИ ВХОДЕ В PvP
-if (!pvpSocket) {
+// 🔥 ВСЕГДА создаём новый сокет если он мёртв
+if (!pvpSocket || pvpSocket.readyState !== 1) {
+
+  // если был старый — обнуляем
+  if (pvpSocket) {
+    try { pvpSocket.close(); } catch {}
+  }
 
   pvpSocket = new WebSocket(
     (location.protocol === "https:" ? "wss://" : "ws://") +
@@ -406,9 +412,9 @@ if (!pvpSocket) {
   };
 
   pvpSocket.onmessage = handlePvpMessage;
-pvpSocket.onclose = handleClose;
-
+  pvpSocket.onclose = handleClose;
 }
+
 
   };
 
@@ -1573,10 +1579,39 @@ function handlePvpMessage(event) {
 
   const data = JSON.parse(event.data);
 
+  // ================= ONLINE LIST =================
+  if (data.type === "online_list") {
+
+    const list = document.getElementById("pvp-online-list");
+    if (!list) return;
+
+    list.innerHTML = "";
+
+    data.players.forEach(p => {
+
+      if (String(p.id) === String(userId)) return;
+
+      const row = document.createElement("div");
+      row.className = "pvp-online-row";
+
+      row.innerHTML = `
+        <img src="${p.avatar || 'avatar.png'}">
+        <span>${p.name}</span>
+        <button onclick="sendInvite('${p.id}')">Invite</button>
+      `;
+
+      list.appendChild(row);
+    });
+
+    return;
+  }
+
+  // ================= OPPONENT =================
   if (data.type === "opponent") {
     document.getElementById("pvp-opp-name").innerText = data.name;
   }
 
+  // ================= COUNTDOWN =================
   if (data.type === "countdown") {
 
     document.getElementById("pvp-match").classList.remove("hidden");
@@ -1594,7 +1629,10 @@ function handlePvpMessage(event) {
     }
   }
 
+  // ================= START =================
   if (data.type === "start") {
+
+    clearInterval(pvpSearchInterval);
 
     document.getElementById("pvp-search-ui").classList.add("hidden");
 
@@ -1605,14 +1643,18 @@ function handlePvpMessage(event) {
     startMatchTimer();
   }
 
+  // ================= SCORE =================
   if (data.type === "score") {
     document.getElementById("pvp-you").innerText = data.you;
     document.getElementById("pvp-opp").innerText = data.opponent;
   }
 
+  // ================= END =================
   if (data.type === "end") {
 
+    clearInterval(pvpSearchInterval);
     clearInterval(pvpTimerInterval);
+
     document.getElementById("pvp-timer").innerText = 0;
 
     const resultScreen = document.getElementById("pvp-result-screen");
@@ -1643,16 +1685,27 @@ function handlePvpMessage(event) {
 
 }
 
+
 function handleClose() {
 
   clearInterval(pvpTimerInterval);
+  clearInterval(pvpSearchInterval);
+
   pvpInGame = false;
 
   const btn = document.getElementById("pvp-play");
   if (btn) btn.disabled = false;
 
+  // скрываем поиск
+  const searchUI = document.getElementById("pvp-search-ui");
+  if (searchUI) searchUI.classList.add("hidden");
+
   unlockMenu();
+
+  // 🔥 ВАЖНО — обнуляем сокет
+  pvpSocket = null;
 }
+
 
 function startMatchTimer() {
 
