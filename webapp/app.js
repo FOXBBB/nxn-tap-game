@@ -390,6 +390,29 @@ document.addEventListener("DOMContentLoaded", async () => {
       pvpSocket.close();
       pvpSocket = null;
     }
+
+    // 🔥 ОТКРЫВАЕМ СОКЕТ ПРИ ВХОДЕ В PvP
+if (!pvpSocket) {
+
+  pvpSocket = new WebSocket(
+    (location.protocol === "https:" ? "wss://" : "ws://") +
+    location.host +
+    "/pvp"
+  );
+
+  pvpSocket.onopen = () => {
+
+    pvpSocket.send(JSON.stringify({
+      type: "register",
+      userId,
+      username: tgUser.username || tgUser.first_name || "Player",
+      avatar: tgUser.photo_url || ""
+    }));
+
+  };
+
+}
+
   };
 
 
@@ -410,7 +433,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   pvpPlayBtn.onclick = () => {
 
     if (!pvpStake) return alert("Choose stake");
-    if (pvpSocket) return;
+    if (!pvpSocket || pvpSocket.readyState !== 1) return;
 
     pvpInGame = true;
 
@@ -1559,33 +1582,15 @@ function unlockMenu() {
 
 function startPvpSearch(startSearch = true) {
 
-  pvpSocket = new WebSocket(
-    (location.protocol === "https:" ? "wss://" : "ws://") +
-    location.host +
-    "/pvp"
-  );
 
-  pvpSocket.onopen = () => {
+if (!pvpSocket || pvpSocket.readyState !== 1) return;
 
-  // REGISTER
-  pvpSocket.send(JSON.stringify({
-    type: "register",
-    userId,
-    username: tgUser.username || tgUser.first_name || "Player",
-    avatar: tgUser.photo_url || ""
-  }));
-
-  // SEARCH ТОЛЬКО ЕСЛИ НУЖНО
-  if (startSearch) {
-    pvpSocket.send(JSON.stringify({
-      type: "search",
-      userId,
-      username: tgUser.username || tgUser.first_name || "Player",
-      stake: pvpStake
-    }));
-  }
-};
-
+pvpSocket.send(JSON.stringify({
+  type: "search",
+  userId,
+  username: tgUser.username || tgUser.first_name || "Player",
+  stake: pvpStake
+}));
 
 
 
@@ -1752,10 +1757,6 @@ if (data.type === "online_list") {
 
       pvpInGame = false;
 
-      document.querySelectorAll(".menu div").forEach(b => {
-        b.style.pointerEvents = "";
-        b.style.opacity = "";
-      });
     }
   };
 
@@ -1815,6 +1816,8 @@ if (againBtn) {
     const status = document.getElementById("pvp-status");
     status.innerText = "Choose your stake";
     status.classList.remove("fight");
+
+    unlockMenu();
   };
 }
 

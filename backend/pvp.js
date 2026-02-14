@@ -36,16 +36,17 @@ export function initPvp(server) {
 
         // 🔥 REGISTER ONLINE
 if (data.type === "register") {
+
   ws.userId = String(data.userId);
   ws.username = data.username || "Player";
   ws.avatar = data.avatar || null;
 
   onlineUsers.set(ws.userId, ws);
 
-  broadcastOnlineList(); // 🔥 ВОТ ЭТО ГЛАВНОЕ
-
+  broadcastOnlineList();
   return;
 }
+
 
 
 
@@ -483,3 +484,4 @@ function broadcastOnlineList() {
     }
   });
 }
+
