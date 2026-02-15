@@ -518,12 +518,18 @@ document.addEventListener("DOMContentLoaded", async () => {
       };
 
 
+      let lastTap = 0;
+
       pvpCoin.addEventListener("touchstart", (e) => {
         e.preventDefault();
+
+        const now = Date.now();
+        if (now - lastTap < 40) return; // анти-дабл
+        lastTap = now;
+
         sendTap();
       }, { passive: false });
 
-      pvpCoin.addEventListener("click", sendTap);
     }
 
   };
@@ -1857,6 +1863,7 @@ function handlePvpMessage(event) {
     } else {
       number.innerText = "FIGHT!";
       pvpCountdownActive = false;
+      pvpInGame = false;
       setTimeout(() => overlay.classList.add("hidden"), 600);
     }
   }
@@ -1882,41 +1889,34 @@ function handlePvpMessage(event) {
   }
 
   // ================= END =================
-  if (data.type === "end") {
+if (data.type === "end") {
 
-    clearInterval(pvpSearchInterval);
-    clearInterval(pvpTimerInterval);
+  clearInterval(pvpSearchInterval);
+  clearInterval(pvpTimerInterval);
 
-    document.getElementById("pvp-timer").innerText = 0;
+  pvpInGame = false;
+  unlockMenu();
 
-    const resultScreen = document.getElementById("pvp-result-screen");
-    const finalScore = document.getElementById("pvp-final-score");
-    const resultText = document.getElementById("pvp-result-text");
+  const resultScreen = document.getElementById("pvp-result-screen");
+  const resultText = document.getElementById("pvp-result-text");
+  const finalScore = document.getElementById("pvp-final-score");
 
-    finalScore.innerText = `${data.you} : ${data.opponent}`;
+  finalScore.innerText = `${data.you} : ${data.opponent}`;
 
-    const playerWins = data.winner === userId;
+  const playerWins = data.winner === userId;
 
-    if (playerWins) {
-      resultText.innerText = "YOU WIN";
-      resultText.classList.add("win");
-      resultText.classList.remove("lose");
-    } else {
-      resultText.innerText = "YOU LOSE";
-      resultText.classList.add("lose");
-      resultText.classList.remove("win");
-    }
-
-    resultScreen.classList.remove("hidden");
-
-    document.getElementById("pvp-play").disabled = false;
-
-    pvpInGame = false;
-    unlockMenu();
-
-    pendingInvite = null;
-
+  if (playerWins) {
+    resultText.innerText = "YOU WIN";
+    resultText.classList.add("win");
+    resultText.classList.remove("lose");
+  } else {
+    resultText.innerText = "YOU LOSE";
+    resultText.classList.add("lose");
+    resultText.classList.remove("win");
   }
+
+  resultScreen.classList.remove("hidden");
+}
 
 }
 

@@ -3886,3 +3886,24 @@ body.locked {
   align-items: center;
   z-index: 9999;
 }
+#pvp-arena .pvp-hud {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  justify-content: space-between; /* 🔥 разводит по краям */
+  align-items: center;
+  margin-top: 40px;
+  margin-bottom: 30px;
+}
+
+#pvp-arena .pvp-side {
+  width: 45%;
+  text-align: center;
+}
+
+#pvp-arena .pvp-vs {
+  width: 10%;
+  text-align: center;
+  font-weight: bold;
+  opacity: 0.6;
+}
