@@ -1673,10 +1673,8 @@ if (data.type === "declined_cooldown") {
 
 
 
-  // ================= ONLINE LIST =================
- if (data.type === "online_list") {
-
-
+// ================= ONLINE LIST =================
+if (data.type === "online_list") {
 
   const list = document.getElementById("online-list");
   if (!list) return;
@@ -1713,72 +1711,48 @@ if (data.type === "declined_cooldown") {
 
     const now = Date.now();
 
-if (inviteCooldowns[p.id] && now < inviteCooldowns[p.id]) {
+    if (inviteCooldowns[p.id] && now < inviteCooldowns[p.id]) {
 
-  const seconds = Math.ceil(
-    (inviteCooldowns[p.id] - now) / 1000
-  );
+      const seconds = Math.ceil(
+        (inviteCooldowns[p.id] - now) / 1000
+      );
 
-  btn.innerText = seconds + "s";
-  btn.disabled = true;
-  btn.classList.add("disabled");
+      btn.innerText = seconds + "s";
+      btn.disabled = true;
+      btn.classList.add("disabled");
 
-  const interval = setInterval(() => {
+      const interval = setInterval(() => {
 
-    const remaining =
-      inviteCooldowns[p.id] - Date.now();
+        const remaining =
+          inviteCooldowns[p.id] - Date.now();
 
-    if (remaining <= 0) {
-      clearInterval(interval);
-      btn.innerText = "Invite";
-      btn.disabled = false;
-      btn.classList.remove("disabled");
-    } else {
-      btn.innerText =
-        Math.ceil(remaining / 1000) + "s";
-    }
-
-  }, 1000);
-}
-
-
-   if (pendingInvite && String(p.id) === String(pendingInvite.fromId)) {
-
-  btn.innerText = "Accept";
-  btn.classList.add("accept");
-
-  btn.onclick = () => {
-
-    if (!pvpSocket || pvpSocket.readyState !== 1) return;
-
-    pvpSocket.send(JSON.stringify({
-      type: "accept_invite",
-      fromId: pendingInvite.fromId,
-      stake: pendingInvite.stake
-    }));
-
-  };
-
-
-
-
-    } else {
-
-      btn.onclick = () => {
-        if (!pvpStake) {
-          alert("Choose stake first");
-          return;
+        if (remaining <= 0) {
+          clearInterval(interval);
+          btn.innerText = "Invite";
+          btn.disabled = false;
+          btn.classList.remove("disabled");
+        } else {
+          btn.innerText =
+            Math.ceil(remaining / 1000) + "s";
         }
-        sendInvite(p.id, btn);
-      };
 
+      }, 1000);
     }
+
+    btn.onclick = () => {
+      if (!pvpStake) {
+        alert("Choose stake first");
+        return;
+      }
+      sendInvite(p.id, btn);
+    };
 
     list.appendChild(row);
   });
 
   return;
 }
+
 
 
 
