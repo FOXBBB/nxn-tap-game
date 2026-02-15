@@ -66,6 +66,47 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         document.getElementById("referral-stake-amount").value = amount;
       };
+
+      // ===== INVITE BUTTONS (FIXED) =====
+
+const inviteAcceptBtn = document.getElementById("invite-accept");
+const inviteDeclineBtn = document.getElementById("invite-decline");
+
+if (inviteAcceptBtn) {
+  inviteAcceptBtn.onclick = () => {
+
+    if (!pendingInvite) return;
+    if (!pvpSocket || pvpSocket.readyState !== 1) return;
+
+    pvpSocket.send(JSON.stringify({
+      type: "accept_invite",
+      fromId: pendingInvite.fromId,
+      stake: pendingInvite.stake
+    }));
+
+    document.getElementById("pvp-invite-popup")
+      .classList.add("hidden");
+  };
+}
+
+if (inviteDeclineBtn) {
+  inviteDeclineBtn.onclick = () => {
+
+    if (!pendingInvite) return;
+    if (!pvpSocket || pvpSocket.readyState !== 1) return;
+
+    pvpSocket.send(JSON.stringify({
+      type: "decline_invite",
+      fromId: pendingInvite.fromId
+    }));
+
+    pendingInvite = null;
+
+    document.getElementById("pvp-invite-popup")
+      .classList.add("hidden");
+  };
+}
+
     });
 
 
@@ -1993,52 +2034,6 @@ function sendInvite(targetId, btn) {
 
 
 
-
-
-
-
-// ===== INVITE BUTTONS =====
-
-const inviteAccept = document.getElementById("invite-accept");
-const inviteDecline = document.getElementById("invite-decline");
-
-if (inviteAccept) {
-  inviteAccept.onclick = () => {
-
-    if (!pendingInvite) return;
-    if (!pvpSocket || pvpSocket.readyState !== 1) return;
-
-    pvpSocket.send(JSON.stringify({
-      type: "accept_invite",
-      fromId: pendingInvite.fromId,
-      stake: pendingInvite.stake
-    }));
-
-    document.getElementById("pvp-invite-popup")
-      .classList.add("hidden");
-  };
-}
-
-
-
-
-if (inviteDecline) {
-  inviteDecline.onclick = () => {
-
-    if (!pendingInvite) return;
-    if (!pvpSocket || pvpSocket.readyState !== 1) return;
-
-    pvpSocket.send(JSON.stringify({
-      type: "decline_invite",
-      fromId: pendingInvite.fromId
-    }));
-
-    pendingInvite = null;
-
-    document.getElementById("pvp-invite-popup")
-      .classList.add("hidden");
-  };
-}
 
 
 
