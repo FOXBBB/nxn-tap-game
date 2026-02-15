@@ -2003,27 +2003,28 @@ function startPvpSearch() {
 }
 
 
-const againBtn = document.getElementById("pvp-again");
+const pvpAgainBtn = document.getElementById("pvp-again");
 
-if (againBtn) {
-  againBtn.onclick = () => {
+pvpAgainBtn.addEventListener("click", () => {
 
-    document.getElementById("pvp-result-screen")
-      .classList.add("hidden");
+  // 1️⃣ скрываем result
+  document.getElementById("pvp-result-screen")
+    .classList.remove("active");
 
-    document.getElementById("pvp-you").innerText = 0;
-    document.getElementById("pvp-opp").innerText = 0;
+  // 2️⃣ скрываем арену
+  document.getElementById("pvp-arena")
+    .classList.add("hidden");
 
-    const status = document.getElementById("pvp-status");
-    status.innerText = "Choose your stake";
-    status.classList.remove("fight");
+  // 3️⃣ СКРЫВАЕМ ВСЕ ЭКРАНЫ
+  document.querySelectorAll(".screen")
+    .forEach(s => s.classList.add("hidden"));
 
-    showScreen("pvp");   // ← ВОЗВРАТ В ЛОББИ
+  // 4️⃣ показываем PvP лобби
+  document.getElementById("pvp")
+    .classList.remove("hidden");
 
-    unlockMenu();
-  };
+});
 
-}
 
 function sendInvite(targetId, btn) {
 
