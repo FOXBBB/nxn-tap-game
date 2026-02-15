@@ -27,8 +27,6 @@ let pendingInvite = null;
 let tgUser = null;
 let userId = null;
 let inviteCooldowns = {};
-let declinedCooldowns = {};
-
 
 
 // ================= INIT =================
@@ -367,8 +365,6 @@ document.getElementById("open-pvp").onclick = () => {
       avatar: tgUser.photo_url || ""
     }));
   }
-
-  showScreen("pvp");
 
     
     showScreen("pvp");
@@ -1615,6 +1611,65 @@ function handlePvpMessage(event) {
   }
 
 
+  // ================= DECLINED =================
+if (data.type === "declined") {
+
+  const cooldownMs = data.cooldown;
+  const endTime = Date.now() + cooldownMs;
+
+  document.querySelectorAll(".invite-btn").forEach(btn => {
+
+    btn.disabled = true;
+    btn.classList.add("disabled");
+
+    const interval = setInterval(() => {
+
+      const remaining = endTime - Date.now();
+
+      if (remaining <= 0) {
+        clearInterval(interval);
+        btn.innerText = "Invite";
+        btn.disabled = false;
+        btn.classList.remove("disabled");
+      } else {
+
+        const minutes = Math.floor(remaining / 60000);
+        const seconds = Math.ceil((remaining % 60000) / 1000);
+
+        btn.innerText =
+          `${minutes}:${seconds.toString().padStart(2, "0")}`;
+      }
+
+    }, 1000);
+
+  });
+
+  return;
+}
+
+// ================= DECLINED COOLDOWN TRY =================
+if (data.type === "declined_cooldown") {
+
+  const remaining = data.remaining;
+
+  const minutes = Math.floor(remaining / 60000);
+  const seconds = Math.ceil((remaining % 60000) / 1000);
+
+  const toast = document.createElement("div");
+  toast.className = "transfer-toast error";
+  toast.innerText =
+    `Wait ${minutes}:${seconds
+      .toString()
+      .padStart(2, "0")}`;
+
+  document.body.appendChild(toast);
+
+  setTimeout(() => toast.remove(), 2000);
+
+  return;
+}
+
+
 
   // ================= ONLINE LIST =================
  if (data.type === "online_list") {
@@ -1733,6 +1788,7 @@ if (data.type === "invite_received") {
     return; // ❌ не показываем если не в PvP
   }
 
+
   pendingInvite = data;
 
 
@@ -1759,6 +1815,9 @@ if (data.type === "invite_received") {
 
   // ================= COUNTDOWN =================
   if (data.type === "countdown") {
+
+    lockMenu();
+pvpInGame = true;
 
     document.getElementById("pvp-match").classList.remove("hidden");
 

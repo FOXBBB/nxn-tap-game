@@ -85,19 +85,25 @@ if (data.type === "leave_pvp") {
         if (data.type === "search") {
           await handleSearch(ws, data);
         }
-        // 🔥 SEND INVITE
+
+
 if (data.type === "invite") {
 
+  const inviterId = String(ws.userId);
   const targetId = String(data.targetId);
 
-  // 🔒 5 минут после decline
+  // 🔒 Проверка 5-минутного кулдауна отправителя
   if (
-    declinedCooldowns[targetId] &&
-    Date.now() < declinedCooldowns[targetId]
+    declinedCooldowns[inviterId] &&
+    Date.now() < declinedCooldowns[inviterId]
   ) {
+
     ws.send(JSON.stringify({
-      type: "error"
+      type: "declined_cooldown",
+      remaining:
+        declinedCooldowns[inviterId] - Date.now()
     }));
+
     return;
   }
 
@@ -106,36 +112,61 @@ if (data.type === "invite") {
   if (target && target.readyState === 1) {
     target.send(JSON.stringify({
       type: "invite_received",
-      fromId: ws.userId,
+      fromId: inviterId,
       fromName: ws.username,
       stake: data.stake
     }));
   }
+
+  return;
 }
+
+
 
 
 // 🔥 ACCEPT INVITE
 if (data.type === "accept_invite") {
 
-  const inviter = onlineUsers.get(String(data.fromId));
+
+  if (data.type === "decline_invite") {
+
+  const inviterId = String(data.fromId);
+
+  // 🔥 5 минут кулдаун отправителю
+  declinedCooldowns[inviterId] =
+    Date.now() + 5 * 60 * 1000;
+
+  const inviter = onlineUsers.get(inviterId);
 
   if (inviter && inviter.readyState === 1) {
-    await createMatch(inviter, ws, data.stake);
+    inviter.send(JSON.stringify({
+      type: "declined",
+      cooldown: 5 * 60 * 1000
+    }));
   }
 
   return;
 }
 
-// 🔥 DECLINE INVITE
-if (data.type === "decline_invite") {
 
-  const inviterId = String(data.fromId);
+  const inviter = onlineUsers.get(String(data.fromId));
 
-  declinedCooldowns[inviterId] =
-    Date.now() + 5 * 60 * 1000;
+  if (
+    inviter &&
+    inviter.readyState === 1 &&
+    ws.readyState === 1
+  ) {
+
+    // 🔥 сохраняем stake
+    ws.stake = Number(data.stake);
+    inviter.stake = Number(data.stake);
+
+    await createMatch(inviter, ws, Number(data.stake));
+  }
 
   return;
 }
+
 
 
         if (data.type === "tap") {
@@ -165,6 +196,7 @@ if (data.type === "decline_invite") {
 
   console.log("🔥 PvP WebSocket ready");
 }
+
 
 async function handleSearch(ws, data) {
 
