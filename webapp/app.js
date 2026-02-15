@@ -24,7 +24,6 @@ let pvpTimerInterval = null;
 let pvpInGame = false;
 let pvpSearchInterval = null;
 let pendingInvite = null;
-let inviteCooldown = false;
 let tgUser = null;
 let userId = null;
 
@@ -1611,11 +1610,11 @@ function handlePvpMessage(event) {
 
   data.players.forEach(p => {
 
-    if (String(p.userId) === String(userId)) return;
+    if (String(p.id) === String(userId)) return;
 
     const row = document.createElement("div");
     row.className = "online-row";
-    row.dataset.userid = p.userId;
+    row.dataset.userid = p.id;
 
     row.innerHTML = `
       <div class="online-left">
@@ -1630,31 +1629,39 @@ function handlePvpMessage(event) {
         </div>
       </div>
 
-      <button class="invite-btn" data-id="${p.userId}">
+      <button class="invite-btn" data-id="${p.id}">
         Invite
       </button>
     `;
 
     const btn = row.querySelector("button");
 
-    // 🔥 если это тот кто нас пригласил
-    if (pendingInvite && String(p.userId) === String(pendingInvite.fromId)) {
+    if (pendingInvite && String(p.id) === String(pendingInvite.fromId)) {
 
       btn.innerText = "Accept";
       btn.classList.add("accept");
 
       btn.onclick = () => {
 
-        if (!pvpSocket || pvpSocket.readyState !== 1) return;
+  pvpSocket.send(JSON.stringify({
+    type: "accept_invite",
+    fromId: pendingInvite.fromId,
+    stake: pendingInvite.stake
+  }));
 
-        pvpSocket.send(JSON.stringify({
-          type: "accept_invite",
-          fromId: pendingInvite.fromId,
-          stake: pendingInvite.stake
-        }));
+  pendingInvite = null;
 
-        pendingInvite = null;
-      };
+  // 🔥 ОБНОВЛЯЕМ СПИСОК ПОСЛЕ ACCEPT
+  if (pvpSocket && pvpSocket.readyState === 1) {
+    pvpSocket.send(JSON.stringify({
+      type: "register",
+      userId,
+      username: tgUser.username || tgUser.first_name || "Player",
+      avatar: tgUser.photo_url || ""
+    }));
+  }
+};
+
 
     } else {
 
@@ -1663,7 +1670,7 @@ function handlePvpMessage(event) {
           alert("Choose stake first");
           return;
         }
-        sendInvite(p.userId, btn);
+        sendInvite(p.id, btn);
       };
 
     }
@@ -1677,25 +1684,34 @@ function handlePvpMessage(event) {
 
 
   // ================= INVITE RECEIVED =================
-  if (data.type === "invite_received") {
+if (data.type === "invite_received") {
 
-    pendingInvite = data;
+  pendingInvite = data;
 
-    // перерисовать онлайн список
-pvpSocket.send(JSON.stringify({ type: "get_online" }));
-
-
-    const popup = document.getElementById("pvp-invite-popup");
-    popup.classList.remove("hidden");
-
-    document.getElementById("invite-from").innerText =
-      "From: " + data.fromName;
-
-    document.getElementById("invite-stake").innerText =
-      "Stake: " + data.stake + " NXN";
-
-    return;
+  // 🔥 принудительно обновляем список
+  if (pvpSocket && pvpSocket.readyState === 1) {
+    pvpSocket.send(JSON.stringify({
+      type: "register",
+      userId,
+      username: tgUser.username || tgUser.first_name || "Player",
+      avatar: tgUser.photo_url || ""
+    }));
   }
+
+  const popup = document.getElementById("pvp-invite-popup");
+  popup.classList.remove("hidden");
+
+  document.getElementById("invite-from").innerText =
+    "From: " + data.fromName;
+
+  document.getElementById("invite-stake").innerText =
+    "Stake: " + data.stake + " NXN";
+
+  return;
+}
+
+
+
 
 
   // ================= OPPONENT =================
@@ -1919,6 +1935,18 @@ if (inviteAccept) {
     unlockMenu();
 
     pendingInvite = null;
+
+    // 🔥 ОБНОВЛЯЕМ СПИСОК ПОСЛЕ ACCEPT
+if (pvpSocket && pvpSocket.readyState === 1) {
+  pvpSocket.send(JSON.stringify({
+    type: "register",
+    userId,
+    username: tgUser.username || tgUser.first_name || "Player",
+    avatar: tgUser.photo_url || ""
+  }));
+}
+
+
   };
 }
 
