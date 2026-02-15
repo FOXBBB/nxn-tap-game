@@ -28,6 +28,7 @@ let tgUser = null;
 let userId = null;
 let inviteCooldowns = {};
 let pvpCountdownActive = false;
+let pvpTapBound = false;
 
 
 
@@ -496,50 +497,30 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 
-    const pvpCoin = document.getElementById("pvp-tap-coin");
+  const pvpCoin = document.getElementById("pvp-tap-coin");
 
-    if (pvpCoin) {
+if (pvpCoin && !pvpTapBound) {
 
-      const sendTap = () => {
+  pvpCoin.addEventListener("touchstart", (e) => {
+    e.preventDefault();
 
-        if (pvpCountdownActive) return;
-        if (!pvpInGame) return;
-        if (!pvpSocket) return;
+    if (!pvpInGame) return;
+    if (pvpCountdownActive) return;
 
+    pvpSocket.send(JSON.stringify({ type: "tap" }));
 
-        pvpSocket.send(JSON.stringify({ type: "tap" }));
-
-        if (Telegram?.WebApp?.HapticFeedback) {
-          Telegram.WebApp.HapticFeedback.impactOccurred("light");
-        }
-
-        pvpCoin.classList.add("hit");
-        setTimeout(() => pvpCoin.classList.remove("hit"), 80);
-      };
-
-
-      let lastTap = 0;
-
-      pvpCoin.addEventListener("touchstart", (e) => {
-  e.preventDefault();
-
-  if (!pvpInGame) return;
-  if (pvpCountdownActive) return;
-
-  // всегда только 1 тап
-  pvpSocket.send(JSON.stringify({ type: "tap" }));
-
-  if (Telegram?.WebApp?.HapticFeedback) {
-    Telegram.WebApp.HapticFeedback.impactOccurred("light");
-  }
-
-  pvpCoin.classList.add("hit");
-  setTimeout(() => pvpCoin.classList.remove("hit"), 80);
-
-}, { passive: false });
-
-
+    if (Telegram?.WebApp?.HapticFeedback) {
+      Telegram.WebApp.HapticFeedback.impactOccurred("light");
     }
+
+    pvpCoin.classList.add("hit");
+    setTimeout(() => pvpCoin.classList.remove("hit"), 80);
+
+  }, { passive: false });
+
+  pvpTapBound = true;
+}
+
 
   };
 
@@ -1909,6 +1890,13 @@ if (data.type === "end") {
   pvpCountdownActive = false;
 
   unlockMenu();
+
+  const playBtn = document.getElementById("pvp-play");
+if (playBtn) playBtn.disabled = false;
+
+document.getElementById("pvp-search-ui")
+  ?.classList.add("hidden");
+
 
   // скрываем арену
   document.getElementById("pvp-arena")
