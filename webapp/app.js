@@ -526,11 +526,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (!pvpInGame) return;
   if (pvpCountdownActive) return;
 
-  const taps = e.touches.length;
-
-  for (let i = 0; i < taps; i++) {
-    pvpSocket.send(JSON.stringify({ type: "tap" }));
-  }
+  // всегда только 1 тап
+  pvpSocket.send(JSON.stringify({ type: "tap" }));
 
   if (Telegram?.WebApp?.HapticFeedback) {
     Telegram.WebApp.HapticFeedback.impactOccurred("light");
@@ -540,6 +537,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   setTimeout(() => pvpCoin.classList.remove("hit"), 80);
 
 }, { passive: false });
+
 
     }
 
@@ -1912,13 +1910,12 @@ if (data.type === "end") {
 
   unlockMenu();
 
-  // 1️⃣ Скрываем арену
-  const arena = document.getElementById("pvp-arena");
-  if (arena) arena.classList.add("hidden");
+  // скрываем арену
+  document.getElementById("pvp-arena")
+    .classList.add("hidden");
 
-  // 2️⃣ ОБЯЗАТЕЛЬНО показываем PvP экран
-  const pvpScreen = document.getElementById("pvp");
-  if (pvpScreen) pvpScreen.classList.remove("hidden");
+  // показываем лобби
+  showScreen("pvp");
 
   const resultScreen = document.getElementById("pvp-result-screen");
   const resultText = document.getElementById("pvp-result-text");
@@ -1926,11 +1923,9 @@ if (data.type === "end") {
 
   finalScore.innerText = `${data.you} : ${data.opponent}`;
 
-  const playerWins = data.winner === userId;
-
   resultText.classList.remove("win", "lose");
 
-  if (playerWins) {
+  if (data.winner === userId) {
     resultText.innerText = "YOU WIN";
     resultText.classList.add("win");
   } else {
@@ -1938,9 +1933,9 @@ if (data.type === "end") {
     resultText.classList.add("lose");
   }
 
-  // 3️⃣ Показываем результат
   resultScreen.classList.remove("hidden");
 }
+
 
 }
 
@@ -2005,25 +2000,23 @@ function startPvpSearch() {
 
 const pvpAgainBtn = document.getElementById("pvp-again");
 
-pvpAgainBtn.addEventListener("click", () => {
+if (pvpAgainBtn) {
+  pvpAgainBtn.onclick = () => {
 
-  // 1️⃣ скрываем result
-  document.getElementById("pvp-result-screen")
-    .classList.remove("active");
+    // скрываем result
+    document.getElementById("pvp-result-screen")
+      .classList.add("hidden");
 
-  // 2️⃣ скрываем арену
-  document.getElementById("pvp-arena")
-    .classList.add("hidden");
+    // скрываем арену
+    document.getElementById("pvp-arena")
+      .classList.add("hidden");
 
-  // 3️⃣ СКРЫВАЕМ ВСЕ ЭКРАНЫ
-  document.querySelectorAll(".screen")
-    .forEach(s => s.classList.add("hidden"));
+    // показываем лобби
+    showScreen("pvp");
 
-  // 4️⃣ показываем PvP лобби
-  document.getElementById("pvp")
-    .classList.remove("hidden");
+  };
+}
 
-});
 
 
 function sendInvite(targetId, btn) {
