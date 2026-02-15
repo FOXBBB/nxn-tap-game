@@ -2083,19 +2083,24 @@ function initPvpSocket() {
     "/pvp"
   );
 
-  pvpSocket.addEventListener("open", () => {
+ pvpSocket.addEventListener("open", () => {
   console.log("PvP socket connected");
+
+  if (userId && tgUser) {
+    pvpSocket.send(JSON.stringify({
+      type: "register",
+      userId,
+      username: tgUser.username || tgUser.first_name || "Player",
+      avatar: tgUser.photo_url || ""
+    }));
+  }
 });
 
-  pvpSocket.addEventListener("message", handlePvpMessage);
+pvpSocket.addEventListener("message", handlePvpMessage);
 
-  pvpSocket.addEventListener("close", () => {
-    pvpSocket = null;
-
-    // 🔥 авто-переподключение
-    setTimeout(() => {
-      initPvpSocket();
-    }, 2000);
-  });
+pvpSocket.addEventListener("close", () => {
+  pvpSocket = null;
+  setTimeout(() => initPvpSocket(), 2000);
+});
 
 }
