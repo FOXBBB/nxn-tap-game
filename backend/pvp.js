@@ -42,6 +42,8 @@ export function initPvp(server) {
 
 
     ws.on("message", async (msg) => {
+       ws.isAlive = true;
+       
       try {
         const data = JSON.parse(msg);
 
@@ -112,7 +114,10 @@ export function initPvp(server) {
 
   const inviter = onlineUsers.get(String(data.fromId));
 
-  if (!inviter) return;
+ if (!inviter) {
+  ws.send(JSON.stringify({ type: "error" }));
+  return;
+}
   if (inviter.readyState !== 1) return;
   if (ws.readyState !== 1) return;
   if (ws.isActive || inviter.isActive) return;

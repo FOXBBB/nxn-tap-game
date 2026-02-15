@@ -2068,8 +2068,8 @@ function initPvpSocket() {
 pvpSocket.addEventListener("message", handlePvpMessage);
 
 pvpSocket.addEventListener("close", () => {
+  console.log("PvP socket closed");
   pvpSocket = null;
-  setTimeout(() => initPvpSocket(), 2000);
 });
 
 }
