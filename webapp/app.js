@@ -523,8 +523,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       pvpCoin.addEventListener("touchstart", (e) => {
         e.preventDefault();
 
+        if (e.touches.length > 1) return;
+
         const now = Date.now();
-        if (now - lastTap < 40) return; // анти-дабл
+        if (now - lastTap < 120) return; // анти-дабл
         lastTap = now;
 
         sendTap();
@@ -1901,12 +1903,9 @@ if (data.type === "end") {
 
   unlockMenu();
 
-  // 🔥 ВАЖНО — скрываем арену
+  // 🔥 Просто скрываем арену
   const arena = document.getElementById("pvp-arena");
   if (arena) arena.classList.add("hidden");
-
-  // 🔥 Переходим обратно в PvP экран
-  showScreen("pvp");
 
   const resultScreen = document.getElementById("pvp-result-screen");
   const resultText = document.getElementById("pvp-result-text");
@@ -1916,14 +1915,14 @@ if (data.type === "end") {
 
   const playerWins = data.winner === userId;
 
+  resultText.classList.remove("win", "lose");
+
   if (playerWins) {
     resultText.innerText = "YOU WIN";
     resultText.classList.add("win");
-    resultText.classList.remove("lose");
   } else {
     resultText.innerText = "YOU LOSE";
     resultText.classList.add("lose");
-    resultText.classList.remove("win");
   }
 
   resultScreen.classList.remove("hidden");
