@@ -1751,7 +1751,6 @@ if (inviteCooldowns[p.id] && now < inviteCooldowns[p.id]) {
     stake: pendingInvite.stake
   }));
 
-  pendingInvite = null;
 
 
 };
@@ -1816,8 +1815,12 @@ if (data.type === "invite_received") {
   // ================= COUNTDOWN =================
   if (data.type === "countdown") {
 
-    lockMenu();
-pvpInGame = true;
+  pendingInvite = null;
+  document.getElementById("pvp-invite-popup")
+    ?.classList.add("hidden");
+
+  lockMenu();
+  pvpInGame = true;
 
     document.getElementById("pvp-match").classList.remove("hidden");
 
@@ -2036,8 +2039,6 @@ if (inviteAccept) {
 
   document.getElementById("pvp-invite-popup")
     .classList.add("hidden");
-
-  pendingInvite = null;
 };
 }
 
@@ -2055,8 +2056,6 @@ if (inviteDecline) {
 
   document.getElementById("pvp-invite-popup")
     .classList.add("hidden");
-
-  pendingInvite = null;
 };
 }
 

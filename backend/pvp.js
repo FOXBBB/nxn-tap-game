@@ -110,48 +110,49 @@ export function initPvp(server) {
         // ================= ACCEPT =================
         if (data.type === "accept_invite") {
 
-          const inviter = onlineUsers.get(String(data.fromId));
+  const inviter = onlineUsers.get(String(data.fromId));
 
-          if (
-            !inviter ||
-            inviter.readyState !== 1 ||
-            ws.readyState !== 1 ||
-            ws.isActive ||
-            inviter.isActive
-          ) {
-            return;
-          }
+  if (!inviter) return;
+  if (inviter.readyState !== 1) return;
+  if (ws.readyState !== 1) return;
+  if (ws.isActive || inviter.isActive) return;
 
-          const stake = Number(data.stake);
+  const stake = Number(data.stake);
 
-          // 🔥 проверяем баланс ОБОИХ
-          const user1 = await query(
-            "SELECT balance FROM users WHERE telegram_id = $1",
-            [inviter.userId]
-          );
+  // 🔥 ОТМЕНЯЕМ ПОИСК У ОБОИХ
+  ws.searching = false;
+  inviter.searching = false;
 
-          const user2 = await query(
-            "SELECT balance FROM users WHERE telegram_id = $1",
-            [ws.userId]
-          );
+  if (waitingQueue.has(stake)) {
+    waitingQueue.delete(stake);
+  }
 
-          if (
-            !user1.rows.length ||
-            !user2.rows.length ||
-            user1.rows[0].balance < stake ||
-            user2.rows[0].balance < stake
-          ) {
-            ws.send(JSON.stringify({ type: "error" }));
-            inviter.send(JSON.stringify({ type: "error" }));
-            return;
-          }
+  // 🔥 проверка баланса
+  const user1 = await query(
+    "SELECT balance FROM users WHERE telegram_id = $1",
+    [inviter.userId]
+  );
 
-          ws.stake = stake;
-          inviter.stake = stake;
+  const user2 = await query(
+    "SELECT balance FROM users WHERE telegram_id = $1",
+    [ws.userId]
+  );
 
-          await createMatch(inviter, ws, stake);
-          return;
-        }
+  if (
+    !user1.rows.length ||
+    !user2.rows.length ||
+    user1.rows[0].balance < stake ||
+    user2.rows[0].balance < stake
+  ) {
+    ws.send(JSON.stringify({ type: "error" }));
+    inviter.send(JSON.stringify({ type: "error" }));
+    return;
+  }
+
+  await createMatch(inviter, ws, stake);
+  return;
+}
+
 
 
         // ================= DECLINE =================
