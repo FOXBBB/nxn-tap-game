@@ -281,11 +281,6 @@ async function createMatch(ws1, ws2, stake) {
   }
 
 
-  // 🔥 ВОТ СЮДА ДОБАВИТЬ
-  ws1.isActive = true;
-  ws2.isActive = true;
-
-
   await query(
     "UPDATE users SET balance = balance - $1 WHERE telegram_id = $2",
     [stake, ws1.userId]
@@ -360,6 +355,9 @@ function startCountdown(ws1, ws2, stake) {
 
 
 function startMatch(ws1, ws2, stake) {
+
+  ws1.isActive = true;
+ws2.isActive = true;
 
 
   broadcastOnlineList();

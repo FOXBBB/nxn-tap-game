@@ -3857,3 +3857,8 @@ body.locked {
   background: linear-gradient(135deg,#00ffc8,#0099ff);
   color: #000;
 }
+#pvp,
+#pvp-arena {
+  height: 100vh;
+  overflow: hidden;
+}
