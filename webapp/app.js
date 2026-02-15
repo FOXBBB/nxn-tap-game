@@ -1,6 +1,3 @@
-// ================= TELEGRAM =================
-let tgUser = null;
-let userId = null;
 
 // ================= GAME STATE (ONLY FROM SERVER) =================
 // ===== REWARD EVENT =====
@@ -28,6 +25,8 @@ let pvpInGame = false;
 let pvpSearchInterval = null;
 let pendingInvite = null;
 let inviteCooldown = false;
+let tgUser = null;
+let userId = null;
 
 
 
@@ -82,7 +81,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   tgUser = Telegram.WebApp.initDataUnsafe.user;
   userId = String(tgUser.id);
 
-
+initPvpSocket();
   // ▶️ туториал — ПОСЛЕ
   startNXNTutorial();
 
@@ -387,43 +386,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 
- // 🔥 ВСЕГДА ПЕРЕСОЗДАЁМ СОКЕТ ПРИ ВХОДЕ В PvP
-
-if (pvpSocket) {
-  pvpSocket.removeEventListener("message", handlePvpMessage);
-  pvpSocket.removeEventListener("close", handleClose);
-  try { pvpSocket.close(); } catch {}
-  pvpSocket = null;
-}
-
-pvpSocket = new WebSocket(
-  (location.protocol === "https:" ? "wss://" : "ws://") +
-  location.host +
-  "/pvp"
-);
-
-pvpSocket.addEventListener("open", () => {
-  console.log("PVP CONNECTED");
-
-  pvpSocket.send(JSON.stringify({
-    type: "register",
-    userId,
-    username: tgUser.username || tgUser.first_name || "Player",
-    avatar: tgUser.photo_url || ""
-  }));
-});
-
-pvpSocket.addEventListener("message", handlePvpMessage);
-
-pvpSocket.addEventListener("error", (e) => {
-  console.log("PVP SOCKET ERROR:", e);
-});
-
-pvpSocket.addEventListener("close", () => {
-  console.log("PVP SOCKET CLOSED");
-  handleClose();
-});
-
 
 
 
@@ -477,6 +439,16 @@ pvpSocket.addEventListener("close", () => {
 
     startPvpSearch();
   };
+
+  if (pvpSocket && pvpSocket.readyState === 1) {
+  pvpSocket.send(JSON.stringify({
+    type: "register",
+    userId,
+    username: tgUser.username || tgUser.first_name || "Player",
+    avatar: tgUser.photo_url || ""
+  }));
+}
+
 
 
 
@@ -1640,7 +1612,7 @@ if (data.type === "error") {
 
    data.players.forEach(p => {
 
-  if (String(p.id) === String(userId)) return;
+  if (String(p.userId) === String(userId)) return;
 
   const row = document.createElement("div");
   row.className = "online-row";
@@ -1653,14 +1625,14 @@ if (data.type === "error") {
 
     <div class="online-name">${p.name}</div>
 
-    <button class="invite-btn" data-id="${p.id}">
+    <button class="invite-btn" data-id="${p.userId}">
       Invite
     </button>
   `;
 
   const btn = row.querySelector("button");
 
-  btn.onclick = () => sendInvite(p.id, btn);
+  btn.onclick = () => sendInvite(p.userId, btn);
 
   list.appendChild(row);
 });
@@ -1921,4 +1893,37 @@ if (inviteDecline) {
 
     pendingInvite = null;
   };
+}
+function initPvpSocket() {
+
+  if (pvpSocket && pvpSocket.readyState === 1) return;
+
+  pvpSocket = new WebSocket(
+    (location.protocol === "https:" ? "wss://" : "ws://") +
+    location.host +
+    "/pvp"
+  );
+
+  pvpSocket.addEventListener("open", () => {
+
+    pvpSocket.send(JSON.stringify({
+      type: "register",
+      userId,
+      username: tgUser.username || tgUser.first_name || "Player",
+      avatar: tgUser.photo_url || ""
+    }));
+
+  });
+
+  pvpSocket.addEventListener("message", handlePvpMessage);
+
+  pvpSocket.addEventListener("close", () => {
+    pvpSocket = null;
+
+    // 🔥 авто-переподключение
+    setTimeout(() => {
+      initPvpSocket();
+    }, 2000);
+  });
+
 }
