@@ -521,16 +521,25 @@ document.addEventListener("DOMContentLoaded", async () => {
       let lastTap = 0;
 
       pvpCoin.addEventListener("touchstart", (e) => {
-        e.preventDefault();
+  e.preventDefault();
 
-        if (e.touches.length > 1) return;
+  if (!pvpInGame) return;
+  if (pvpCountdownActive) return;
 
-        const now = Date.now();
-        if (now - lastTap < 120) return; // анти-дабл
-        lastTap = now;
+  const taps = e.touches.length;
 
-        sendTap();
-      }, { passive: false });
+  for (let i = 0; i < taps; i++) {
+    pvpSocket.send(JSON.stringify({ type: "tap" }));
+  }
+
+  if (Telegram?.WebApp?.HapticFeedback) {
+    Telegram.WebApp.HapticFeedback.impactOccurred("light");
+  }
+
+  pvpCoin.classList.add("hit");
+  setTimeout(() => pvpCoin.classList.remove("hit"), 80);
+
+}, { passive: false });
 
     }
 
@@ -1903,9 +1912,13 @@ if (data.type === "end") {
 
   unlockMenu();
 
-  // 🔥 Просто скрываем арену
+  // 1️⃣ Скрываем арену
   const arena = document.getElementById("pvp-arena");
   if (arena) arena.classList.add("hidden");
+
+  // 2️⃣ ОБЯЗАТЕЛЬНО показываем PvP экран
+  const pvpScreen = document.getElementById("pvp");
+  if (pvpScreen) pvpScreen.classList.remove("hidden");
 
   const resultScreen = document.getElementById("pvp-result-screen");
   const resultText = document.getElementById("pvp-result-text");
@@ -1925,9 +1938,9 @@ if (data.type === "end") {
     resultText.classList.add("lose");
   }
 
+  // 3️⃣ Показываем результат
   resultScreen.classList.remove("hidden");
 }
-
 
 }
 

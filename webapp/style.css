@@ -3068,13 +3068,6 @@ body.locked {
 .pvp-again-btn:hover {
   transform: scale(1.05);
 }
-#pvp-result-screen {
-  display: none;
-}
-
-#pvp-result-screen.show {
-  display: flex;
-}
 
 .pvp-header {
   text-align: center;
@@ -3857,11 +3850,7 @@ body.locked {
   background: linear-gradient(135deg,#00ffc8,#0099ff);
   color: #000;
 }
-#pvp,
-#pvp-arena {
-  height: 100vh;
-  overflow: hidden;
-}
+
 #pvp-arena {
   display: flex;
   flex-direction: column;
