@@ -1602,43 +1602,35 @@ if (data.type === "error") {
 
 
   // ================= ONLINE LIST =================
-  if (data.type === "online_list") {
+ if (data.type === "online_list") {
 
-    const list = document.getElementById("online-list");
+  const list = document.getElementById("online-list");
+  const status = document.getElementById("pvp-status");
 
-    if (!list) return;
+  if (!list) return;
 
-    list.innerHTML = "";
+  // 🔥 показываем сколько реально пришло
+  status.innerText = "ONLINE RECEIVED: " + data.players.length;
 
-   data.players.forEach(p => {
+  list.innerHTML = "";
 
- if (String(p.id) === String(userId)) return;
+  data.players.forEach(p => {
 
-  const row = document.createElement("div");
-  row.className = "online-row";
+    if (String(p.userId) === String(userId)) return;
 
-  row.innerHTML = `
-    <div class="online-avatar">
-      <img src="${p.avatar || 'avatar.png'}">
-      <div class="online-dot pulse"></div>
-    </div>
+    const row = document.createElement("div");
+    row.style.padding = "10px";
+    row.style.borderBottom = "1px solid #333";
+    row.style.color = "white";
 
-    <div class="online-name">${p.name}</div>
+    row.innerText = p.name + " (" + p.userId + ")";
 
-   <button class="invite-btn" data-id="${p.id}">
-      Invite
-    </button>
-  `;
+    list.appendChild(row);
+  });
 
-  const btn = row.querySelector("button");
+  return;
+}
 
-  btn.onclick = () => sendInvite(p.id, btn);
-
-  list.appendChild(row);
-});
-
-    return;
-  }
 
   // ================= INVITE RECEIVED =================
 if (data.type === "invite_received") {
