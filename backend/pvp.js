@@ -42,155 +42,136 @@ ws.on("pong", () => {
 
 
     ws.on("message", async (msg) => {
-      try {
-        const data = JSON.parse(msg);
+  try {
+    const data = JSON.parse(msg);
 
- if (data.type === "register") {
+    // ================= REGISTER =================
+    if (data.type === "register") {
 
-  console.log("REGISTER:", data.userId);
+      ws.userId = String(data.userId);
+      ws.username = data.username || "Player";
+      ws.avatar = data.avatar || "";
+      ws.isActive = false;
+      ws.searching = false;
 
-  ws.userId = String(data.userId);
-  ws.username = data.username || "Player";
-  ws.avatar = data.avatar || null;
-  ws.isActive = false;
-  ws.searching = false;
+      onlineUsers.set(ws.userId, ws);
 
-  onlineUsers.set(ws.userId, ws);
+      sendOnlineList(ws);
+      broadcastOnlineList();
+      return;
+    }
 
-  console.log("ONLINE COUNT:", onlineUsers.size);
-
-  // 🔥 ВАЖНО — сначала отправляем список ТОЛЬКО этому игроку
-  sendOnlineList(ws);
-
-  // 🔥 потом обновляем всем
-  broadcastOnlineList();
-
-  return;
-}
-
-
-if (data.type === "leave_pvp") {
-
-  if (ws.userId) {
-    onlineUsers.delete(ws.userId);
-    broadcastOnlineList();
-  }
-
-  return;
-}
-
-
-
-
-        if (data.type === "search") {
-          await handleSearch(ws, data);
-        }
-
-
-if (data.type === "invite") {
-
-  const inviterId = String(ws.userId);
-  const targetId = String(data.targetId);
-
-  // 🔒 Проверка 5-минутного кулдауна отправителя
-  if (
-    declinedCooldowns[inviterId] &&
-    Date.now() < declinedCooldowns[inviterId]
-  ) {
-
-    ws.send(JSON.stringify({
-      type: "declined_cooldown",
-      remaining:
-        declinedCooldowns[inviterId] - Date.now()
-    }));
-
-    return;
-  }
-
-  const target = onlineUsers.get(targetId);
-
-  if (target && target.readyState === 1) {
-    target.send(JSON.stringify({
-      type: "invite_received",
-      fromId: inviterId,
-      fromName: ws.username,
-      stake: data.stake
-    }));
-  }
-
-  return;
-}
-
-
-
-
-// 🔥 ACCEPT INVITE
-if (data.type === "accept_invite") {
-
-  const inviter = onlineUsers.get(String(data.fromId));
-
-  if (
-    inviter &&
-    inviter.readyState === 1 &&
-    ws.readyState === 1
-  ) {
-    ws.stake = Number(data.stake);
-    inviter.stake = Number(data.stake);
-
-    await createMatch(inviter, ws, Number(data.stake));
-  }
-
-  return;
-}
-
-
-// 🔥 DECLINE INVITE
-if (data.type === "decline_invite") {
-
-  const inviterId = String(data.fromId);
-
-  declinedCooldowns[inviterId] =
-    Date.now() + 5 * 60 * 1000;
-
-  const inviter = onlineUsers.get(inviterId);
-
-  if (inviter && inviter.readyState === 1) {
-    inviter.send(JSON.stringify({
-      type: "declined",
-      cooldown: 5 * 60 * 1000
-    }));
-  }
-
-  return;
-}
-
-
-
-        if (data.type === "tap") {
-          if (!ws.isActive) return;
-
-          ws.score++;
-
-          if (ws.opponent) {
-            sendScore(ws);
-            return;
-          }
-
-          if (ws.matchId === "bot") {
-            ws.send(JSON.stringify({
-              type: "score",
-              you: ws.score,
-              opponent: Math.floor(ws.botScore)
-            }));
-          }
-        }
-
-      } catch (e) {
-        console.error("WS ERROR:", e);
+    // ================= LEAVE PVP =================
+    if (data.type === "leave_pvp") {
+      if (ws.userId) {
+        onlineUsers.delete(ws.userId);
+        broadcastOnlineList();
       }
-    });
-  });
+      return;
+    }
 
+    // ================= SEARCH =================
+    if (data.type === "search") {
+      await handleSearch(ws, data);
+      return;
+    }
+
+    // ================= INVITE =================
+    if (data.type === "invite") {
+
+      const inviterId = String(ws.userId);
+      const targetId = String(data.targetId);
+
+      if (
+        declinedCooldowns[inviterId] &&
+        Date.now() < declinedCooldowns[inviterId]
+      ) {
+        ws.send(JSON.stringify({
+          type: "declined_cooldown",
+          remaining: declinedCooldowns[inviterId] - Date.now()
+        }));
+        return;
+      }
+
+      const target = onlineUsers.get(targetId);
+
+      if (target && target.readyState === 1) {
+        target.send(JSON.stringify({
+          type: "invite_received",
+          fromId: inviterId,
+          fromName: ws.username,
+          stake: data.stake
+        }));
+      }
+
+      return;
+    }
+
+    // ================= ACCEPT =================
+    if (data.type === "accept_invite") {
+
+      const inviter = onlineUsers.get(String(data.fromId));
+
+      if (
+        inviter &&
+        inviter.readyState === 1 &&
+        ws.readyState === 1
+      ) {
+        ws.stake = Number(data.stake);
+        inviter.stake = Number(data.stake);
+
+        await createMatch(inviter, ws, Number(data.stake));
+      }
+
+      return;
+    }
+
+    // ================= DECLINE =================
+    if (data.type === "decline_invite") {
+
+      const inviterId = String(data.fromId);
+
+      declinedCooldowns[inviterId] =
+        Date.now() + 5 * 60 * 1000;
+
+      const inviter = onlineUsers.get(inviterId);
+
+      if (inviter && inviter.readyState === 1) {
+        inviter.send(JSON.stringify({
+          type: "declined",
+          cooldown: 5 * 60 * 1000
+        }));
+      }
+
+      return;
+    }
+
+    // ================= TAP =================
+    if (data.type === "tap") {
+
+      if (!ws.isActive) return;
+
+      ws.score++;
+
+      if (ws.opponent) {
+        sendScore(ws);
+        return;
+      }
+
+      if (ws.matchId === "bot") {
+        ws.send(JSON.stringify({
+          type: "score",
+          you: ws.score,
+          opponent: Math.floor(ws.botScore)
+        }));
+      }
+    }
+
+  } catch (e) {
+    console.error("WS ERROR:", e);
+  }
+});
+});
   console.log("🔥 PvP WebSocket ready");
 }
 
