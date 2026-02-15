@@ -1674,6 +1674,9 @@ if (data.type === "declined_cooldown") {
   // ================= ONLINE LIST =================
  if (data.type === "online_list") {
 
+  if (pendingInvite) return;
+
+
   const list = document.getElementById("online-list");
   if (!list) return;
 
