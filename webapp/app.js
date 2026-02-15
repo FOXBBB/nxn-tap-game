@@ -26,7 +26,8 @@ let pvpSearchInterval = null;
 let pendingInvite = null;
 let tgUser = null;
 let userId = null;
-
+let inviteCooldowns = {};
+let declinedCooldowns = {};
 
 
 
@@ -1636,6 +1637,37 @@ function handlePvpMessage(event) {
 
     const btn = row.querySelector("button");
 
+    const now = Date.now();
+
+if (inviteCooldowns[p.id] && now < inviteCooldowns[p.id]) {
+
+  const seconds = Math.ceil(
+    (inviteCooldowns[p.id] - now) / 1000
+  );
+
+  btn.innerText = seconds + "s";
+  btn.disabled = true;
+  btn.classList.add("disabled");
+
+  const interval = setInterval(() => {
+
+    const remaining =
+      inviteCooldowns[p.id] - Date.now();
+
+    if (remaining <= 0) {
+      clearInterval(interval);
+      btn.innerText = "Invite";
+      btn.disabled = false;
+      btn.classList.remove("disabled");
+    } else {
+      btn.innerText =
+        Math.ceil(remaining / 1000) + "s";
+    }
+
+  }, 1000);
+}
+
+
     if (pendingInvite && String(p.id) === String(pendingInvite.fromId)) {
 
       btn.innerText = "Accept";
@@ -1685,6 +1717,14 @@ function handlePvpMessage(event) {
 
   // ================= INVITE RECEIVED =================
 if (data.type === "invite_received") {
+
+  const pvpScreen =
+    document.getElementById("pvp");
+
+  if (!pvpScreen ||
+      pvpScreen.classList.contains("hidden")) {
+    return; // ❌ не показываем если не в PvP
+  }
 
   pendingInvite = data;
 
@@ -1878,28 +1918,29 @@ function sendInvite(targetId, buttonEl) {
 
   if (!pvpSocket || pvpSocket.readyState !== 1) return;
 
-  // визуально блокируем кнопку
-  if (buttonEl) {
-    buttonEl.innerText = "Invited...";
-    buttonEl.classList.add("disabled");
-    buttonEl.disabled = true;
+  const now = Date.now();
+
+  // 🔒 проверка кулдауна
+  if (inviteCooldowns[targetId] && now < inviteCooldowns[targetId]) {
+
+    const seconds = Math.ceil(
+      (inviteCooldowns[targetId] - now) / 1000
+    );
+
+    alert("You can invite again in " + seconds + " sec");
+    return;
   }
+
+  // ставим кулдаун 20 сек
+  inviteCooldowns[targetId] = now + 20000;
 
   pvpSocket.send(JSON.stringify({
     type: "invite",
     targetId,
     stake: pvpStake
   }));
-
-  // кулдаун 20 секунд
-  if (buttonEl) {
-    setTimeout(() => {
-      buttonEl.innerText = "Invite";
-      buttonEl.classList.remove("disabled");
-      buttonEl.disabled = false;
-    }, 20000);
-  }
 }
+
 
 
 
@@ -1950,18 +1991,30 @@ if (pvpSocket && pvpSocket.readyState === 1) {
   };
 }
 
+
+
 if (inviteDecline) {
   inviteDecline.onclick = () => {
+
+    if (!pendingInvite) return;
+
+    if (pvpSocket && pvpSocket.readyState === 1) {
+      pvpSocket.send(JSON.stringify({
+        type: "decline_invite",
+        fromId: pendingInvite.fromId
+      }));
+    }
 
     document.getElementById("pvp-invite-popup")
       .classList.add("hidden");
 
     unlockMenu();
 
-
     pendingInvite = null;
   };
 }
+
+
 function initPvpSocket() {
 
   if (pvpSocket && pvpSocket.readyState === 1) return;

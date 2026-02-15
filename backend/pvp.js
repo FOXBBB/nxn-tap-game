@@ -5,6 +5,7 @@ export const onlineUsers = new Map();
 
 const MATCH_DURATION = 20000;
 let waitingQueue = new Map();
+const declinedCooldowns = {};
 
 export function initPvp(server) {
   const wss = new WebSocketServer({ server, path: "/pvp" });
@@ -12,6 +13,14 @@ export function initPvp(server) {
 
 
   wss.on("connection", (ws, req) => {
+
+    ws.isAlive = true;
+
+ws.on("pong", () => {
+  ws.isAlive = true;
+});
+
+
   console.log("NEW WS CONNECTION:", req.url);
 
 
@@ -67,7 +76,21 @@ export function initPvp(server) {
         }
         // 🔥 SEND INVITE
 if (data.type === "invite") {
-  const target = onlineUsers.get(data.targetId);
+
+  const targetId = String(data.targetId);
+
+  // 🔒 5 минут после decline
+  if (
+    declinedCooldowns[targetId] &&
+    Date.now() < declinedCooldowns[targetId]
+  ) {
+    ws.send(JSON.stringify({
+      type: "error"
+    }));
+    return;
+  }
+
+  const target = onlineUsers.get(targetId);
 
   if (target && target.readyState === 1) {
     target.send(JSON.stringify({
@@ -79,8 +102,22 @@ if (data.type === "invite") {
   }
 }
 
+
 // 🔥 ACCEPT INVITE
 if (data.type === "accept_invite") {
+
+// 🔥 DECLINE INVITE
+if (data.type === "decline_invite") {
+
+  const inviterId = String(data.fromId);
+
+  // ставим 5 минут блок
+  declinedCooldowns[inviterId] =
+    Date.now() + 5 * 60 * 1000;
+
+}
+
+
   const inviter = onlineUsers.get(data.fromId);
 
   if (inviter && inviter.readyState === 1) {
@@ -607,3 +644,24 @@ function sendOnlineList(ws) {
     players
   }));
 }
+// 🔥 AUTO CLEAN DEAD CONNECTIONS
+setInterval(() => {
+
+  for (const [id, ws] of onlineUsers.entries()) {
+
+    if (!ws.isAlive) {
+
+      onlineUsers.delete(id);
+      try { ws.terminate(); } catch {}
+
+      continue;
+    }
+
+    ws.isAlive = false;
+
+    try {
+      ws.ping();
+    } catch {}
+  }
+
+}, 10000);
