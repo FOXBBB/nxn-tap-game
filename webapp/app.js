@@ -1912,7 +1912,7 @@ if (againBtn) {
   };
 }
 
-function sendInvite(targetId) {
+function sendInvite(targetId, btn) {
 
   if (!pvpSocket || pvpSocket.readyState !== 1) return;
 
@@ -1923,8 +1923,28 @@ function sendInvite(targetId) {
     return;
   }
 
-  inviteCooldowns[targetId] =
-    now + 20000;
+  inviteCooldowns[targetId] = now + 20000;
+
+  // 🔥 МГНОВЕННО блокируем кнопку
+  btn.disabled = true;
+  btn.classList.add("disabled");
+
+  const interval = setInterval(() => {
+
+    const remaining =
+      inviteCooldowns[targetId] - Date.now();
+
+    if (remaining <= 0) {
+      clearInterval(interval);
+      btn.innerText = "Invite";
+      btn.disabled = false;
+      btn.classList.remove("disabled");
+    } else {
+      btn.innerText =
+        Math.ceil(remaining / 1000) + "s";
+    }
+
+  }, 1000);
 
   pvpSocket.send(JSON.stringify({
     type: "invite",
@@ -1947,25 +1967,19 @@ const inviteDecline = document.getElementById("invite-decline");
 if (inviteAccept) {
   inviteAccept.onclick = () => {
 
-    if (!pendingInvite) return;
+  if (!pendingInvite) return;
 
-    document.getElementById("pvp-invite-popup")
-      .classList.add("hidden");
+  pvpSocket.send(JSON.stringify({
+    type: "accept_invite",
+    fromId: pendingInvite.fromId,
+    stake: pendingInvite.stake
+  }));
 
-    if (!pvpSocket || pvpSocket.readyState !== 1) {
-      return;
-    }
+  document.getElementById("pvp-invite-popup")
+    .classList.add("hidden");
 
-    setTimeout(() => {
-
-    }, 300);
-
-    unlockMenu();
-
-    pendingInvite = null;
-
-
-  };
+  pendingInvite = null;
+};
 }
 
 
@@ -1973,16 +1987,18 @@ if (inviteAccept) {
 if (inviteDecline) {
   inviteDecline.onclick = () => {
 
-    if (!pendingInvite) return;
+  if (!pendingInvite) return;
 
+  pvpSocket.send(JSON.stringify({
+    type: "decline_invite",
+    fromId: pendingInvite.fromId
+  }));
 
-    document.getElementById("pvp-invite-popup")
-      .classList.add("hidden");
+  document.getElementById("pvp-invite-popup")
+    .classList.add("hidden");
 
-    unlockMenu();
-
-    pendingInvite = null;
-  };
+  pendingInvite = null;
+};
 }
 
 
