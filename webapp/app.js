@@ -1614,6 +1614,8 @@ function handlePvpMessage(event) {
   // ================= DECLINED =================
 if (data.type === "declined") {
 
+  pendingInvite = null;
+
   const cooldownMs = data.cooldown;
   const endTime = Date.now() + cooldownMs;
 
@@ -1674,7 +1676,6 @@ if (data.type === "declined_cooldown") {
   // ================= ONLINE LIST =================
  if (data.type === "online_list") {
 
-  if (pendingInvite) return;
 
 
   const list = document.getElementById("online-list");
@@ -1741,22 +1742,24 @@ if (inviteCooldowns[p.id] && now < inviteCooldowns[p.id]) {
 }
 
 
-    if (pendingInvite && String(p.id) === String(pendingInvite.fromId)) {
+   if (pendingInvite && String(p.id) === String(pendingInvite.fromId)) {
 
-      btn.innerText = "Accept";
-      btn.classList.add("accept");
+  btn.innerText = "Accept";
+  btn.classList.add("accept");
 
-      btn.onclick = () => {
+  btn.onclick = () => {
 
-  pvpSocket.send(JSON.stringify({
-    type: "accept_invite",
-    fromId: pendingInvite.fromId,
-    stake: pendingInvite.stake
-  }));
+    if (!pvpSocket || pvpSocket.readyState !== 1) return;
+
+    pvpSocket.send(JSON.stringify({
+      type: "accept_invite",
+      fromId: pendingInvite.fromId,
+      stake: pendingInvite.stake
+    }));
+
+  };
 
 
-
-};
 
 
     } else {
@@ -1818,7 +1821,6 @@ if (data.type === "invite_received") {
   // ================= COUNTDOWN =================
   if (data.type === "countdown") {
 
-  pendingInvite = null;
   document.getElementById("pvp-invite-popup")
     ?.classList.add("hidden");
 
@@ -1892,6 +1894,8 @@ if (data.type === "invite_received") {
 
     pvpInGame = false;
     unlockMenu();
+
+    pendingInvite = null;
 
   }
 
@@ -2032,35 +2036,41 @@ const inviteDecline = document.getElementById("invite-decline");
 if (inviteAccept) {
   inviteAccept.onclick = () => {
 
-  if (!pendingInvite) return;
+    if (!pendingInvite) return;
+    if (!pvpSocket || pvpSocket.readyState !== 1) return;
 
-  pvpSocket.send(JSON.stringify({
-    type: "accept_invite",
-    fromId: pendingInvite.fromId,
-    stake: pendingInvite.stake
-  }));
+    pvpSocket.send(JSON.stringify({
+      type: "accept_invite",
+      fromId: pendingInvite.fromId,
+      stake: pendingInvite.stake
+    }));
 
-  document.getElementById("pvp-invite-popup")
-    .classList.add("hidden");
-};
+    document.getElementById("pvp-invite-popup")
+      .classList.add("hidden");
+  };
 }
+
 
 
 
 if (inviteDecline) {
   inviteDecline.onclick = () => {
 
-  if (!pendingInvite) return;
+    if (!pendingInvite) return;
+    if (!pvpSocket || pvpSocket.readyState !== 1) return;
 
-  pvpSocket.send(JSON.stringify({
-    type: "decline_invite",
-    fromId: pendingInvite.fromId
-  }));
+    pvpSocket.send(JSON.stringify({
+      type: "decline_invite",
+      fromId: pendingInvite.fromId
+    }));
 
-  document.getElementById("pvp-invite-popup")
-    .classList.add("hidden");
-};
+    pendingInvite = null;
+
+    document.getElementById("pvp-invite-popup")
+      .classList.add("hidden");
+  };
 }
+
 
 
 function initPvpSocket() {
