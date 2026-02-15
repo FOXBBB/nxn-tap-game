@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   tgUser = Telegram.WebApp.initDataUnsafe.user;
   userId = String(tgUser.id);
 
-initPvpSocket();
+  initPvpSocket();
   // ▶️ туториал — ПОСЛЕ
   startNXNTutorial();
 
@@ -390,94 +390,94 @@ initPvpSocket();
 
 
 
-  document.querySelectorAll("[data-pvp]").forEach(btn => {
-    btn.onclick = () => {
-      pvpStake = Number(btn.dataset.pvp);
+    document.querySelectorAll("[data-pvp]").forEach(btn => {
+      btn.onclick = () => {
+        pvpStake = Number(btn.dataset.pvp);
 
-      document.querySelectorAll("[data-pvp]")
-        .forEach(b => b.classList.remove("active"));
+        document.querySelectorAll("[data-pvp]")
+          .forEach(b => b.classList.remove("active"));
 
-      btn.classList.add("active");
-    };
-  });
-
-  const pvpPlayBtn = document.getElementById("pvp-play");
-
-  pvpPlayBtn.onclick = () => {
-
-    if (!pvpStake) return alert("Choose stake");
-    if (!pvpSocket || pvpSocket.readyState !== 1) return;
-
-    pvpInGame = true;
-
-    document.querySelectorAll(".menu div").forEach(b => {
-      b.style.pointerEvents = "none";
-      b.style.opacity = "0.4";
+        btn.classList.add("active");
+      };
     });
 
-    pvpPlayBtn.disabled = true;
+    const pvpPlayBtn = document.getElementById("pvp-play");
 
-    // 🔥 ВОТ ЭТО ДОБАВИЛИ
-    document.getElementById("pvp-search-ui").classList.remove("hidden");
+    pvpPlayBtn.onclick = () => {
 
-    const searchText = document.getElementById("pvp-search-text");
+      if (!pvpStake) return alert("Choose stake");
+      if (!pvpSocket || pvpSocket.readyState !== 1) return;
 
-    const frames = [
-      "Searching opponent",
-      "Searching opponent.",
-      "Searching opponent..",
-      "Searching opponent..."
-    ];
+      pvpInGame = true;
 
-    let frame = 0;
+      document.querySelectorAll(".menu div").forEach(b => {
+        b.style.pointerEvents = "none";
+        b.style.opacity = "0.4";
+      });
 
-    pvpSearchInterval = setInterval(() => {
-      searchText.innerText = frames[frame];
-      frame = (frame + 1) % frames.length;
-    }, 500);
+      pvpPlayBtn.disabled = true;
 
+      // 🔥 ВОТ ЭТО ДОБАВИЛИ
+      document.getElementById("pvp-search-ui").classList.remove("hidden");
 
-    startPvpSearch();
-  };
+      const searchText = document.getElementById("pvp-search-text");
 
-  if (pvpSocket && pvpSocket.readyState === 1) {
-  pvpSocket.send(JSON.stringify({
-    type: "register",
-    userId,
-    username: tgUser.username || tgUser.first_name || "Player",
-    avatar: tgUser.photo_url || ""
-  }));
-}
+      const frames = [
+        "Searching opponent",
+        "Searching opponent.",
+        "Searching opponent..",
+        "Searching opponent..."
+      ];
 
+      let frame = 0;
 
-
+      pvpSearchInterval = setInterval(() => {
+        searchText.innerText = frames[frame];
+        frame = (frame + 1) % frames.length;
+      }, 500);
 
 
-  const pvpCoin = document.getElementById("pvp-tap-coin");
-
-  if (pvpCoin) {
-
-    const sendTap = () => {
-      if (!pvpSocket) return;
-
-      pvpSocket.send(JSON.stringify({ type: "tap" }));
-
-      if (Telegram?.WebApp?.HapticFeedback) {
-        Telegram.WebApp.HapticFeedback.impactOccurred("light");
-      }
-
-      pvpCoin.classList.add("hit");
-      setTimeout(() => pvpCoin.classList.remove("hit"), 80);
+      startPvpSearch();
     };
 
+    if (pvpSocket && pvpSocket.readyState === 1) {
+      pvpSocket.send(JSON.stringify({
+        type: "register",
+        userId,
+        username: tgUser.username || tgUser.first_name || "Player",
+        avatar: tgUser.photo_url || ""
+      }));
+    }
 
-    pvpCoin.addEventListener("touchstart", (e) => {
-      e.preventDefault();
-      sendTap();
-    }, { passive: false });
 
-     pvpCoin.addEventListener("click", sendTap);
-  }
+
+
+
+    const pvpCoin = document.getElementById("pvp-tap-coin");
+
+    if (pvpCoin) {
+
+      const sendTap = () => {
+        if (!pvpSocket) return;
+
+        pvpSocket.send(JSON.stringify({ type: "tap" }));
+
+        if (Telegram?.WebApp?.HapticFeedback) {
+          Telegram.WebApp.HapticFeedback.impactOccurred("light");
+        }
+
+        pvpCoin.classList.add("hit");
+        setTimeout(() => pvpCoin.classList.remove("hit"), 80);
+      };
+
+
+      pvpCoin.addEventListener("touchstart", (e) => {
+        e.preventDefault();
+        sendTap();
+      }, { passive: false });
+
+      pvpCoin.addEventListener("click", sendTap);
+    }
 
   };
 
@@ -1568,36 +1568,36 @@ function handlePvpMessage(event) {
   const data = JSON.parse(event.data);
 
   // ================= ERROR =================
-if (data.type === "error") {
+  if (data.type === "error") {
 
-  clearInterval(pvpSearchInterval);
+    clearInterval(pvpSearchInterval);
 
-  document.getElementById("pvp-search-ui")
-    .classList.add("hidden");
+    document.getElementById("pvp-search-ui")
+      .classList.add("hidden");
 
-  document.getElementById("pvp-play").disabled = false;
+    document.getElementById("pvp-play").disabled = false;
 
-  unlockMenu();
+    unlockMenu();
 
-  // 🔥 Красивый Web3 toast
-  const toast = document.createElement("div");
-  toast.className = "pvp-error-toast";
-  toast.innerHTML = `
+    // 🔥 Красивый Web3 toast
+    const toast = document.createElement("div");
+    toast.className = "pvp-error-toast";
+    toast.innerHTML = `
     <div class="pvp-error-card">
       <div class="pvp-error-title">INSUFFICIENT BALANCE</div>
       <div class="pvp-error-sub">Not enough NXN for this stake</div>
     </div>
   `;
-  document.body.appendChild(toast);
+    document.body.appendChild(toast);
 
-  setTimeout(() => toast.classList.add("show"), 10);
-  setTimeout(() => {
-    toast.classList.remove("show");
-    setTimeout(() => toast.remove(), 300);
-  }, 2000);
+    setTimeout(() => toast.classList.add("show"), 10);
+    setTimeout(() => {
+      toast.classList.remove("show");
+      setTimeout(() => toast.remove(), 300);
+    }, 2000);
 
-  return;
-}
+    return;
+  }
 
 
 
@@ -1611,40 +1611,62 @@ if (data.type === "error") {
 
   data.players.forEach(p => {
 
-    // ❗ НЕ показываем себя
     if (String(p.userId) === String(userId)) return;
 
     const row = document.createElement("div");
     row.className = "online-row";
+    row.dataset.userid = p.userId;
 
     row.innerHTML = `
-  <div class="online-left">
-    <div class="online-status-dot"></div>
+      <div class="online-left">
+        <div class="online-status-dot"></div>
 
-    <div class="online-avatar">
-      <img src="${p.avatar || 'avatar.png'}">
-    </div>
+        <div class="online-avatar">
+          <img src="${p.avatar || 'avatar.png'}">
+        </div>
 
-    <div class="online-name">
-      ${p.name}
-    </div>
-  </div>
+        <div class="online-name">
+          ${p.name}
+        </div>
+      </div>
 
-  <button class="invite-btn" data-id="${p.userId}">
-    Invite
-  </button>
-`;
-
+      <button class="invite-btn" data-id="${p.userId}">
+        Invite
+      </button>
+    `;
 
     const btn = row.querySelector("button");
 
-    btn.onclick = () => {
-      if (!pvpStake) {
-        alert("Choose stake first");
-        return;
-      }
-      sendInvite(p.userId, btn);
-    };
+    // 🔥 если это тот кто нас пригласил
+    if (pendingInvite && String(p.userId) === String(pendingInvite.fromId)) {
+
+      btn.innerText = "Accept";
+      btn.classList.add("accept");
+
+      btn.onclick = () => {
+
+        if (!pvpSocket || pvpSocket.readyState !== 1) return;
+
+        pvpSocket.send(JSON.stringify({
+          type: "accept_invite",
+          fromId: pendingInvite.fromId,
+          stake: pendingInvite.stake
+        }));
+
+        pendingInvite = null;
+      };
+
+    } else {
+
+      btn.onclick = () => {
+        if (!pvpStake) {
+          alert("Choose stake first");
+          return;
+        }
+        sendInvite(p.userId, btn);
+      };
+
+    }
 
     list.appendChild(row);
   });
@@ -1655,21 +1677,25 @@ if (data.type === "error") {
 
 
   // ================= INVITE RECEIVED =================
-if (data.type === "invite_received") {
+  if (data.type === "invite_received") {
 
-  pendingInvite = data;
+    pendingInvite = data;
 
-  const popup = document.getElementById("pvp-invite-popup");
-  popup.classList.remove("hidden");
+    // перерисовать онлайн список
+pvpSocket.send(JSON.stringify({ type: "get_online" }));
 
-  document.getElementById("invite-from").innerText =
-    "From: " + data.fromName;
 
-  document.getElementById("invite-stake").innerText =
-    "Stake: " + data.stake + " NXN";
+    const popup = document.getElementById("pvp-invite-popup");
+    popup.classList.remove("hidden");
 
-  return;
-}
+    document.getElementById("invite-from").innerText =
+      "From: " + data.fromName;
+
+    document.getElementById("invite-stake").innerText =
+      "Stake: " + data.stake + " NXN";
+
+    return;
+  }
 
 
   // ================= OPPONENT =================
@@ -1747,7 +1773,7 @@ if (data.type === "invite_received") {
 
     pvpInGame = false;
     unlockMenu();
-  
+
   }
 
 }
@@ -1876,9 +1902,9 @@ if (inviteAccept) {
     document.getElementById("pvp-invite-popup")
       .classList.add("hidden");
 
-   if (!pvpSocket || pvpSocket.readyState !== 1) {
-  return;
-}
+    if (!pvpSocket || pvpSocket.readyState !== 1) {
+      return;
+    }
 
     setTimeout(() => {
       if (pvpSocket && pvpSocket.readyState === 1) {
