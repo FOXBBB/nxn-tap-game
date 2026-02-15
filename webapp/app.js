@@ -1897,7 +1897,16 @@ if (data.type === "end") {
   clearInterval(pvpTimerInterval);
 
   pvpInGame = false;
+  pvpCountdownActive = false;
+
   unlockMenu();
+
+  // 🔥 ВАЖНО — скрываем арену
+  const arena = document.getElementById("pvp-arena");
+  if (arena) arena.classList.add("hidden");
+
+  // 🔥 Переходим обратно в PvP экран
+  showScreen("pvp");
 
   const resultScreen = document.getElementById("pvp-result-screen");
   const resultText = document.getElementById("pvp-result-text");
@@ -1919,6 +1928,7 @@ if (data.type === "end") {
 
   resultScreen.classList.remove("hidden");
 }
+
 
 }
 

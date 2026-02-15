@@ -3907,3 +3907,8 @@ body.locked {
   font-weight: bold;
   opacity: 0.6;
 }
+.pvp-result {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+}
