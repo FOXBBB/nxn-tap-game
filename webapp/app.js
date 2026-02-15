@@ -1612,7 +1612,7 @@ if (data.type === "error") {
 
    data.players.forEach(p => {
 
-  if (String(p.userId) === String(userId)) return;
+ if (String(p.id) === String(userId)) return;
 
   const row = document.createElement("div");
   row.className = "online-row";
@@ -1625,14 +1625,14 @@ if (data.type === "error") {
 
     <div class="online-name">${p.name}</div>
 
-    <button class="invite-btn" data-id="${p.userId}">
+   <button class="invite-btn" data-id="${p.id}">
       Invite
     </button>
   `;
 
   const btn = row.querySelector("button");
 
-  btn.onclick = () => sendInvite(p.userId, btn);
+  btn.onclick = () => sendInvite(p.id, btn);
 
   list.appendChild(row);
 });
