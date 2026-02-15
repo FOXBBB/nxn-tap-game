@@ -3862,3 +3862,27 @@ body.locked {
   height: 100vh;
   overflow: hidden;
 }
+#pvp-arena {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-top: 60px; /* регулируй */
+}
+
+#pvp-arena .pvp-hud {
+  margin-bottom: 40px;
+}
+
+#pvp-arena .pvp-coin-box {
+  margin-top: 40px;
+}
+.pvp-result {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}

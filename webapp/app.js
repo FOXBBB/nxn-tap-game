@@ -1907,7 +1907,7 @@ function handlePvpMessage(event) {
       resultText.classList.remove("win");
     }
 
-    resultScreen.classList.add("show");
+    resultScreen.classList.remove("hidden");
 
     document.getElementById("pvp-play").disabled = false;
 
