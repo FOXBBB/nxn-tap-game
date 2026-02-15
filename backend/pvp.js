@@ -16,12 +16,12 @@ export function initPvp(server) {
 
     ws.isAlive = true;
 
-ws.on("pong", () => {
-  ws.isAlive = true;
-});
+    ws.on("pong", () => {
+      ws.isAlive = true;
+    });
 
 
-  console.log("NEW WS CONNECTION:", req.url);
+    console.log("NEW WS CONNECTION:", req.url);
 
 
     ws.isActive = false;
@@ -29,149 +29,179 @@ ws.on("pong", () => {
     ws.botScore = 0;
 
     ws.on("close", () => {
-  if (ws.userId) {
-    onlineUsers.delete(ws.userId);
-    broadcastOnlineList(); // 🔥 обновляем список
-  }
-  cleanup(ws);
-});
+      if (ws.userId) {
+        onlineUsers.delete(ws.userId);
+        broadcastOnlineList(); // 🔥 обновляем список
+      }
+      cleanup(ws);
+    });
 
 
-  
+
 
 
 
     ws.on("message", async (msg) => {
-  try {
-    const data = JSON.parse(msg);
+      try {
+        const data = JSON.parse(msg);
 
-    // ================= REGISTER =================
-    if (data.type === "register") {
+        // ================= REGISTER =================
+        if (data.type === "register") {
 
-      ws.userId = String(data.userId);
-      ws.username = data.username || "Player";
-      ws.avatar = data.avatar || "";
-      ws.isActive = false;
-      ws.searching = false;
+          ws.userId = String(data.userId);
+          ws.username = data.username || "Player";
+          ws.avatar = data.avatar || "";
+          ws.isActive = false;
+          ws.searching = false;
 
-      onlineUsers.set(ws.userId, ws);
+          onlineUsers.set(ws.userId, ws);
 
-      sendOnlineList(ws);
-      broadcastOnlineList();
-      return;
-    }
+          sendOnlineList(ws);
+          broadcastOnlineList();
+          return;
+        }
 
-    // ================= LEAVE PVP =================
-    if (data.type === "leave_pvp") {
-      if (ws.userId) {
-        onlineUsers.delete(ws.userId);
-        broadcastOnlineList();
+        // ================= LEAVE PVP =================
+        if (data.type === "leave_pvp") {
+          if (ws.userId) {
+            onlineUsers.delete(ws.userId);
+            broadcastOnlineList();
+          }
+          return;
+        }
+
+        // ================= SEARCH =================
+        if (data.type === "search") {
+          await handleSearch(ws, data);
+          return;
+        }
+
+        // ================= INVITE =================
+        if (data.type === "invite") {
+
+          const inviterId = String(ws.userId);
+          const targetId = String(data.targetId);
+
+          if (
+            declinedCooldowns[inviterId] &&
+            Date.now() < declinedCooldowns[inviterId]
+          ) {
+            ws.send(JSON.stringify({
+              type: "declined_cooldown",
+              remaining: declinedCooldowns[inviterId] - Date.now()
+            }));
+            return;
+          }
+
+          const target = onlineUsers.get(targetId);
+
+          if (target && target.readyState === 1) {
+            target.send(JSON.stringify({
+              type: "invite_received",
+              fromId: inviterId,
+              fromName: ws.username,
+              stake: data.stake
+            }));
+          }
+
+          return;
+        }
+
+        // ================= ACCEPT =================
+        if (data.type === "accept_invite") {
+
+          const inviter = onlineUsers.get(String(data.fromId));
+
+          if (
+            !inviter ||
+            inviter.readyState !== 1 ||
+            ws.readyState !== 1 ||
+            ws.isActive ||
+            inviter.isActive
+          ) {
+            return;
+          }
+
+          const stake = Number(data.stake);
+
+          // 🔥 проверяем баланс ОБОИХ
+          const user1 = await query(
+            "SELECT balance FROM users WHERE telegram_id = $1",
+            [inviter.userId]
+          );
+
+          const user2 = await query(
+            "SELECT balance FROM users WHERE telegram_id = $1",
+            [ws.userId]
+          );
+
+          if (
+            !user1.rows.length ||
+            !user2.rows.length ||
+            user1.rows[0].balance < stake ||
+            user2.rows[0].balance < stake
+          ) {
+            ws.send(JSON.stringify({ type: "error" }));
+            inviter.send(JSON.stringify({ type: "error" }));
+            return;
+          }
+
+          ws.stake = stake;
+          inviter.stake = stake;
+
+          await createMatch(inviter, ws, stake);
+          return;
+        }
+
+
+        // ================= DECLINE =================
+        if (data.type === "decline_invite") {
+
+          const inviterId = String(data.fromId);
+
+          declinedCooldowns[inviterId] =
+            Date.now() + 5 * 60 * 1000;
+
+          const inviter = onlineUsers.get(inviterId);
+
+          if (inviter && inviter.readyState === 1) {
+            inviter.send(JSON.stringify({
+              type: "declined",
+              cooldown: 5 * 60 * 1000
+            }));
+          }
+
+          return;
+        }
+
+        // ================= TAP =================
+        if (data.type === "tap") {
+
+          if (!ws.isActive) return;
+
+          ws.score++;
+
+          if (ws.opponent) {
+            sendScore(ws);
+            return;
+          }
+
+          if (ws.matchId === "bot") {
+            ws.send(JSON.stringify({
+              type: "score",
+              you: ws.score,
+              opponent: Math.floor(ws.botScore)
+            }));
+          }
+        }
+
+      } catch (e) {
+        console.error("WS ERROR:", e);
       }
-      return;
-    }
+    });
+  });
 
-    // ================= SEARCH =================
-    if (data.type === "search") {
-      await handleSearch(ws, data);
-      return;
-    }
-
-    // ================= INVITE =================
-    if (data.type === "invite") {
-
-      const inviterId = String(ws.userId);
-      const targetId = String(data.targetId);
-
-      if (
-        declinedCooldowns[inviterId] &&
-        Date.now() < declinedCooldowns[inviterId]
-      ) {
-        ws.send(JSON.stringify({
-          type: "declined_cooldown",
-          remaining: declinedCooldowns[inviterId] - Date.now()
-        }));
-        return;
-      }
-
-      const target = onlineUsers.get(targetId);
-
-      if (target && target.readyState === 1) {
-        target.send(JSON.stringify({
-          type: "invite_received",
-          fromId: inviterId,
-          fromName: ws.username,
-          stake: data.stake
-        }));
-      }
-
-      return;
-    }
-
-    // ================= ACCEPT =================
-    if (data.type === "accept_invite") {
-
-      const inviter = onlineUsers.get(String(data.fromId));
-
-      if (
-        inviter &&
-        inviter.readyState === 1 &&
-        ws.readyState === 1
-      ) {
-        ws.stake = Number(data.stake);
-        inviter.stake = Number(data.stake);
-
-        await createMatch(inviter, ws, Number(data.stake));
-      }
-
-      return;
-    }
-
-    // ================= DECLINE =================
-    if (data.type === "decline_invite") {
-
-      const inviterId = String(data.fromId);
-
-      declinedCooldowns[inviterId] =
-        Date.now() + 5 * 60 * 1000;
-
-      const inviter = onlineUsers.get(inviterId);
-
-      if (inviter && inviter.readyState === 1) {
-        inviter.send(JSON.stringify({
-          type: "declined",
-          cooldown: 5 * 60 * 1000
-        }));
-      }
-
-      return;
-    }
-
-    // ================= TAP =================
-    if (data.type === "tap") {
-
-      if (!ws.isActive) return;
-
-      ws.score++;
-
-      if (ws.opponent) {
-        sendScore(ws);
-        return;
-      }
-
-      if (ws.matchId === "bot") {
-        ws.send(JSON.stringify({
-          type: "score",
-          you: ws.score,
-          opponent: Math.floor(ws.botScore)
-        }));
-      }
-    }
-
-  } catch (e) {
-    console.error("WS ERROR:", e);
-  }
-});
-});
+  
   console.log("🔥 PvP WebSocket ready");
 }
 
@@ -198,7 +228,7 @@ async function handleSearch(ws, data) {
     ws.searching = false;
     ws.send(JSON.stringify({ type: "error" }));
 
-     broadcastOnlineList();
+    broadcastOnlineList();
 
     return;
   }
@@ -227,8 +257,8 @@ async function handleSearch(ws, data) {
     waitingQueue.set(stake, { ws, timeout });
 
     if (ws.readyState === 1) {
-  ws.send(JSON.stringify({ type: "searching" }));
-}
+      ws.send(JSON.stringify({ type: "searching" }));
+    }
 
   }
 }
@@ -237,12 +267,18 @@ async function handleSearch(ws, data) {
 async function createMatch(ws1, ws2, stake) {
 
   if (
-  !ws1 || !ws2 ||
-  ws1.readyState !== 1 ||
-  ws2.readyState !== 1
-) {
-  return;
-}
+    !ws1 || !ws2 ||
+    ws1.readyState !== 1 ||
+    ws2.readyState !== 1
+  ) {
+    return;
+  }
+
+
+  // 🔥 ВОТ СЮДА ДОБАВИТЬ
+  ws1.isActive = true;
+  ws2.isActive = true;
+
 
   await query(
     "UPDATE users SET balance = balance - $1 WHERE telegram_id = $2",
@@ -261,25 +297,25 @@ async function createMatch(ws1, ws2, stake) {
   ws2.opponent = ws1;
 
   if (ws1.readyState === 1) {
-  ws1.send(JSON.stringify({
-    type: "opponent",
-    name: ws2.username
-  }));
-}
+    ws1.send(JSON.stringify({
+      type: "opponent",
+      name: ws2.username
+    }));
+  }
 
-if (ws2.readyState === 1) {
-  ws2.send(JSON.stringify({
-    type: "opponent",
-    name: ws1.username
-  }));
-}
+  if (ws2.readyState === 1) {
+    ws2.send(JSON.stringify({
+      type: "opponent",
+      name: ws1.username
+    }));
+  }
 
   startCountdown(ws1, ws2, stake);
 
   ws1.searching = false;
   ws2.searching = false;
 
-  broadcastOnlineList(); 
+  broadcastOnlineList();
 
 }
 
@@ -319,16 +355,14 @@ function startCountdown(ws1, ws2, stake) {
 
 function startMatch(ws1, ws2, stake) {
 
-  ws1.isActive = true;
-  ws2.isActive = true;
 
-   broadcastOnlineList(); 
+  broadcastOnlineList();
 
   if (ws1.readyState === 1)
-  ws1.send(JSON.stringify({ type: "start" }));
+    ws1.send(JSON.stringify({ type: "start" }));
 
-if (ws2.readyState === 1)
-  ws2.send(JSON.stringify({ type: "start" }));
+  if (ws2.readyState === 1)
+    ws2.send(JSON.stringify({ type: "start" }));
   setTimeout(() => finishMatch(ws1, ws2, stake), MATCH_DURATION);
 }
 
@@ -375,22 +409,22 @@ async function finishMatch(ws1, ws2, stake) {
   }
 
   if (ws1.readyState === 1) {
-  ws1.send(JSON.stringify({
-    type: "end",
-    winner: winner?.userId,
-    you: ws1.score,
-    opponent: ws2.score
-  }));
-}
+    ws1.send(JSON.stringify({
+      type: "end",
+      winner: winner?.userId,
+      you: ws1.score,
+      opponent: ws2.score
+    }));
+  }
 
-if (ws2.readyState === 1) {
-  ws2.send(JSON.stringify({
-    type: "end",
-    winner: winner?.userId,
-    you: ws2.score,
-    opponent: ws1.score
-  }));
-}
+  if (ws2.readyState === 1) {
+    ws2.send(JSON.stringify({
+      type: "end",
+      winner: winner?.userId,
+      you: ws2.score,
+      opponent: ws1.score
+    }));
+  }
 
 
   ws1.searching = false;
@@ -422,11 +456,11 @@ async function createBotMatch(ws, stake) {
   ws.matchId = "bot";
 
   if (ws.readyState === 1) {
-  ws.send(JSON.stringify({
-    type: "opponent",
-    name: "BOT NXN"
-  }));
-}
+    ws.send(JSON.stringify({
+      type: "opponent",
+      name: "BOT NXN"
+    }));
+  }
 
 
   startBotCountdown(ws, stake);
@@ -443,11 +477,11 @@ function startBotCountdown(ws, stake) {
   const interval = setInterval(() => {
 
     if (ws.readyState === 1) {
-  ws.send(JSON.stringify({
-    type: "countdown",
-    value: count
-  }));
-}
+      ws.send(JSON.stringify({
+        type: "countdown",
+        value: count
+      }));
+    }
 
 
     count--;
@@ -470,8 +504,8 @@ function startBotMatch(ws, stake) {
   broadcastOnlineList();
 
   if (ws.readyState === 1) {
-  ws.send(JSON.stringify({ type: "start" }));
-}
+    ws.send(JSON.stringify({ type: "start" }));
+  }
 
 
   // ===== BOT DIFFICULTY LOGIC =====
@@ -538,12 +572,12 @@ function startBotMatch(ws, stake) {
     }
 
     if (ws.readyState === 1) {
-  ws.send(JSON.stringify({
-    type: "score",
-    you: ws.score,
-    opponent: Math.floor(ws.botScore)
-  }));
-}
+      ws.send(JSON.stringify({
+        type: "score",
+        you: ws.score,
+        opponent: Math.floor(ws.botScore)
+      }));
+    }
 
   }, tickRate);
 
@@ -567,13 +601,13 @@ function startBotMatch(ws, stake) {
     }
 
     if (ws.readyState === 1) {
-  ws.send(JSON.stringify({
-    type: "end",
-    winner: playerWins ? ws.userId : "bot",
-    you: ws.score,
-    opponent: finalBot
-  }));
-}
+      ws.send(JSON.stringify({
+        type: "end",
+        winner: playerWins ? ws.userId : "bot",
+        you: ws.score,
+        opponent: finalBot
+      }));
+    }
 
 
     // очистка
@@ -583,7 +617,7 @@ function startBotMatch(ws, stake) {
     ws.botScore = 0;
     ws.searching = false;
 
-      broadcastOnlineList();
+    broadcastOnlineList();
 
   }, MATCH_DURATION);
 }
@@ -596,8 +630,8 @@ function startBotMatch(ws, stake) {
 function cleanup(ws) {
 
   if (ws.userId) {
-  onlineUsers.delete(String(ws.userId));
-}
+    onlineUsers.delete(String(ws.userId));
+  }
 
 
   if (ws.stake && waitingQueue.has(ws.stake)) {
@@ -672,18 +706,18 @@ setInterval(() => {
   for (const [id, ws] of onlineUsers.entries()) {
 
     if (!ws.isAlive) {
-  onlineUsers.delete(id);
-  try { ws.terminate(); } catch {}
-  broadcastOnlineList();
-  continue;
-}
+      onlineUsers.delete(id);
+      try { ws.terminate(); } catch { }
+      broadcastOnlineList();
+      continue;
+    }
 
 
     ws.isAlive = false;
 
     try {
       ws.ping();
-    } catch {}
+    } catch { }
   }
 
 }, 10000);
