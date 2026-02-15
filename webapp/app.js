@@ -1840,33 +1840,33 @@ function handlePvpMessage(event) {
   // ================= COUNTDOWN =================
   if (data.type === "countdown") {
 
+  showScreen("pvp-arena");
 
-    showScreen("pvp-arena");
+  document.getElementById("pvp-invite-popup")
+    ?.classList.add("hidden");
 
+  lockMenu();
 
-    document.getElementById("pvp-invite-popup")
-      ?.classList.add("hidden");
+  const overlay = document.getElementById("pvp-countdown-overlay");
+  const number = document.getElementById("pvp-countdown-number");
 
-    lockMenu();
-    pvpInGame = true;
+  overlay.classList.remove("hidden");
 
+  if (data.value > 0) {
+    pvpCountdownActive = true;
+    number.innerText = data.value;
+  } else {
+    number.innerText = "FIGHT!";
+    pvpCountdownActive = false;
 
-
-    const overlay = document.getElementById("pvp-countdown-overlay");
-    const number = document.getElementById("pvp-countdown-number");
-
-    overlay.classList.remove("hidden");
-
-    if (data.value > 0) {
-      pvpCountdownActive = true;
-      number.innerText = data.value;
-    } else {
-      number.innerText = "FIGHT!";
-      pvpCountdownActive = false;
-      pvpInGame = false;
-      setTimeout(() => overlay.classList.add("hidden"), 600);
-    }
+    setTimeout(() => {
+      overlay.classList.add("hidden");
+    }, 600);
   }
+
+  return;
+}
+
 
   // ================= START =================
   if (data.type === "start") {
@@ -1878,6 +1878,8 @@ function handlePvpMessage(event) {
     const status = document.getElementById("pvp-status");
     status.innerText = "FIGHT!";
     status.classList.add("fight");
+
+    pvpInGame = true; 
 
     startMatchTimer();
   }
