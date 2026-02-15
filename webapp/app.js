@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   tgUser = Telegram.WebApp.initDataUnsafe.user;
   userId = String(tgUser.id);
 
-  initPvpSocket();
+  
   // ▶️ туториал — ПОСЛЕ
   startNXNTutorial();
 
@@ -356,6 +356,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 document.getElementById("open-pvp").onclick = () => {
 
+  initPvpSocket();
+
   // 🔥 РЕГИСТРАЦИЯ В PvP ОНЛАЙНЕ
   if (pvpSocket && pvpSocket.readyState === 1) {
     pvpSocket.send(JSON.stringify({
@@ -459,6 +461,7 @@ document.getElementById("open-pvp").onclick = () => {
 
       const sendTap = () => {
         if (!pvpSocket) return;
+
 
         pvpSocket.send(JSON.stringify({ type: "tap" }));
 
@@ -1153,15 +1156,7 @@ function updateTapState() {
 
 function showScreen(id) {
 
-  // если уходим из PvP — удаляем из онлайна
-if (id !== "pvp" &&
-    pvpSocket &&
-    pvpSocket.readyState === 1) {
 
-  pvpSocket.send(JSON.stringify({
-    type: "leave_pvp"
-  }));
-}
   // скрываем все экраны
   document.querySelectorAll(".screen")
     .forEach(s => s.classList.add("hidden"));
