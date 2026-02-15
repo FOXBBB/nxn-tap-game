@@ -127,12 +127,28 @@ if (data.type === "invite") {
 // 🔥 ACCEPT INVITE
 if (data.type === "accept_invite") {
 
+  const inviter = onlineUsers.get(String(data.fromId));
 
-  if (data.type === "decline_invite") {
+  if (
+    inviter &&
+    inviter.readyState === 1 &&
+    ws.readyState === 1
+  ) {
+    ws.stake = Number(data.stake);
+    inviter.stake = Number(data.stake);
+
+    await createMatch(inviter, ws, Number(data.stake));
+  }
+
+  return;
+}
+
+
+// 🔥 DECLINE INVITE
+if (data.type === "decline_invite") {
 
   const inviterId = String(data.fromId);
 
-  // 🔥 5 минут кулдаун отправителю
   declinedCooldowns[inviterId] =
     Date.now() + 5 * 60 * 1000;
 
@@ -143,25 +159,6 @@ if (data.type === "accept_invite") {
       type: "declined",
       cooldown: 5 * 60 * 1000
     }));
-  }
-
-  return;
-}
-
-
-  const inviter = onlineUsers.get(String(data.fromId));
-
-  if (
-    inviter &&
-    inviter.readyState === 1 &&
-    ws.readyState === 1
-  ) {
-
-    // 🔥 сохраняем stake
-    ws.stake = Number(data.stake);
-    inviter.stake = Number(data.stake);
-
-    await createMatch(inviter, ws, Number(data.stake));
   }
 
   return;
