@@ -50,9 +50,15 @@ export function initPvp(server) {
 
   console.log("ONLINE COUNT:", onlineUsers.size);
 
+  // 🔥 ВАЖНО — сначала отправляем список ТОЛЬКО этому игроку
+  sendOnlineList(ws);
+
+  // 🔥 потом обновляем всем
   broadcastOnlineList();
+
   return;
 }
+
 
 
 
@@ -580,3 +586,24 @@ function broadcastOnlineList() {
 
 
 
+function sendOnlineList(ws) {
+
+  const players = [];
+
+  for (const [id, sock] of onlineUsers.entries()) {
+
+    if (!sock || sock.readyState !== 1) continue;
+    if (sock.isActive) continue;
+
+    players.push({
+      id,
+      name: sock.username,
+      avatar: sock.avatar || ""
+    });
+  }
+
+  ws.send(JSON.stringify({
+    type: "online_list",
+    players
+  }));
+}
