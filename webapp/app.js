@@ -1618,18 +1618,23 @@ if (data.type === "error") {
     row.className = "online-row";
 
     row.innerHTML = `
-      <div class="online-avatar">
-        <img src="${p.avatar || 'avatar.png'}">
-      </div>
+  <div class="online-left">
+    <div class="online-status-dot"></div>
 
-      <div class="online-name">
-        ${p.name}
-      </div>
+    <div class="online-avatar">
+      <img src="${p.avatar || 'avatar.png'}">
+    </div>
 
-      <button class="invite-btn" data-id="${p.userId}">
-        Invite
-      </button>
-    `;
+    <div class="online-name">
+      ${p.name}
+    </div>
+  </div>
+
+  <button class="invite-btn" data-id="${p.userId}">
+    Invite
+  </button>
+`;
+
 
     const btn = row.querySelector("button");
 
