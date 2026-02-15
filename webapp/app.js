@@ -1605,31 +1605,48 @@ if (data.type === "error") {
  if (data.type === "online_list") {
 
   const list = document.getElementById("online-list");
-  const status = document.getElementById("pvp-status");
-
   if (!list) return;
-
-  // 🔥 показываем сколько реально пришло
-  status.innerText = "ONLINE RECEIVED: " + data.players.length;
 
   list.innerHTML = "";
 
   data.players.forEach(p => {
 
+    // ❗ НЕ показываем себя
     if (String(p.userId) === String(userId)) return;
 
     const row = document.createElement("div");
-    row.style.padding = "10px";
-    row.style.borderBottom = "1px solid #333";
-    row.style.color = "white";
+    row.className = "online-row";
 
-    row.innerText = p.name + " (" + p.userId + ")";
+    row.innerHTML = `
+      <div class="online-avatar">
+        <img src="${p.avatar || 'avatar.png'}">
+      </div>
+
+      <div class="online-name">
+        ${p.name}
+      </div>
+
+      <button class="invite-btn" data-id="${p.userId}">
+        Invite
+      </button>
+    `;
+
+    const btn = row.querySelector("button");
+
+    btn.onclick = () => {
+      if (!pvpStake) {
+        alert("Choose stake first");
+        return;
+      }
+      sendInvite(p.userId, btn);
+    };
 
     list.appendChild(row);
   });
 
   return;
 }
+
 
 
   // ================= INVITE RECEIVED =================
