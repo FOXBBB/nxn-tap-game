@@ -69,6 +69,17 @@ ws.on("pong", () => {
 }
 
 
+if (data.type === "leave_pvp") {
+
+  if (ws.userId) {
+    onlineUsers.delete(ws.userId);
+    broadcastOnlineList();
+  }
+
+  return;
+}
+
+
 
 
         if (data.type === "search") {
@@ -106,23 +117,24 @@ if (data.type === "invite") {
 // 🔥 ACCEPT INVITE
 if (data.type === "accept_invite") {
 
+  const inviter = onlineUsers.get(String(data.fromId));
+
+  if (inviter && inviter.readyState === 1) {
+    await createMatch(inviter, ws, data.stake);
+  }
+
+  return;
+}
+
 // 🔥 DECLINE INVITE
 if (data.type === "decline_invite") {
 
   const inviterId = String(data.fromId);
 
-  // ставим 5 минут блок
   declinedCooldowns[inviterId] =
     Date.now() + 5 * 60 * 1000;
 
-}
-
-
-  const inviter = onlineUsers.get(data.fromId);
-
-  if (inviter && inviter.readyState === 1) {
-    await createMatch(inviter, ws, data.stake);
-  }
+  return;
 }
 
 
@@ -650,12 +662,12 @@ setInterval(() => {
   for (const [id, ws] of onlineUsers.entries()) {
 
     if (!ws.isAlive) {
+  onlineUsers.delete(id);
+  try { ws.terminate(); } catch {}
+  broadcastOnlineList();
+  continue;
+}
 
-      onlineUsers.delete(id);
-      try { ws.terminate(); } catch {}
-
-      continue;
-    }
 
     ws.isAlive = false;
 

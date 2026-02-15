@@ -356,8 +356,21 @@ document.addEventListener("DOMContentLoaded", async () => {
       formatNumber(balance);
   };
 
-  document.getElementById("open-pvp").onclick = () => {
+document.getElementById("open-pvp").onclick = () => {
 
+  // 🔥 РЕГИСТРАЦИЯ В PvP ОНЛАЙНЕ
+  if (pvpSocket && pvpSocket.readyState === 1) {
+    pvpSocket.send(JSON.stringify({
+      type: "register",
+      userId,
+      username: tgUser.username || tgUser.first_name || "Player",
+      avatar: tgUser.photo_url || ""
+    }));
+  }
+
+  showScreen("pvp");
+
+    
     showScreen("pvp");
 
     const resultScreen = document.getElementById("pvp-result-screen");
@@ -439,15 +452,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       startPvpSearch();
     };
-
-    if (pvpSocket && pvpSocket.readyState === 1) {
-      pvpSocket.send(JSON.stringify({
-        type: "register",
-        userId,
-        username: tgUser.username || tgUser.first_name || "Player",
-        avatar: tgUser.photo_url || ""
-      }));
-    }
 
 
 
@@ -1150,7 +1154,18 @@ function updateTapState() {
 }
 
 
+
 function showScreen(id) {
+
+  // если уходим из PvP — удаляем из онлайна
+if (id !== "pvp" &&
+    pvpSocket &&
+    pvpSocket.readyState === 1) {
+
+  pvpSocket.send(JSON.stringify({
+    type: "leave_pvp"
+  }));
+}
   // скрываем все экраны
   document.querySelectorAll(".screen")
     .forEach(s => s.classList.add("hidden"));
@@ -1683,15 +1698,7 @@ if (inviteCooldowns[p.id] && now < inviteCooldowns[p.id]) {
 
   pendingInvite = null;
 
-  // 🔥 ОБНОВЛЯЕМ СПИСОК ПОСЛЕ ACCEPT
-  if (pvpSocket && pvpSocket.readyState === 1) {
-    pvpSocket.send(JSON.stringify({
-      type: "register",
-      userId,
-      username: tgUser.username || tgUser.first_name || "Player",
-      avatar: tgUser.photo_url || ""
-    }));
-  }
+
 };
 
 
@@ -1728,15 +1735,6 @@ if (data.type === "invite_received") {
 
   pendingInvite = data;
 
-  // 🔥 принудительно обновляем список
-  if (pvpSocket && pvpSocket.readyState === 1) {
-    pvpSocket.send(JSON.stringify({
-      type: "register",
-      userId,
-      username: tgUser.username || tgUser.first_name || "Player",
-      avatar: tgUser.photo_url || ""
-    }));
-  }
 
   const popup = document.getElementById("pvp-invite-popup");
   popup.classList.remove("hidden");
@@ -1914,25 +1912,19 @@ if (againBtn) {
   };
 }
 
-function sendInvite(targetId, buttonEl) {
+function sendInvite(targetId) {
 
   if (!pvpSocket || pvpSocket.readyState !== 1) return;
 
   const now = Date.now();
 
-  // 🔒 проверка кулдауна
-  if (inviteCooldowns[targetId] && now < inviteCooldowns[targetId]) {
-
-    const seconds = Math.ceil(
-      (inviteCooldowns[targetId] - now) / 1000
-    );
-
-    alert("You can invite again in " + seconds + " sec");
+  if (inviteCooldowns[targetId] &&
+      now < inviteCooldowns[targetId]) {
     return;
   }
 
-  // ставим кулдаун 20 сек
-  inviteCooldowns[targetId] = now + 20000;
+  inviteCooldowns[targetId] =
+    now + 20000;
 
   pvpSocket.send(JSON.stringify({
     type: "invite",
@@ -1940,6 +1932,7 @@ function sendInvite(targetId, buttonEl) {
     stake: pvpStake
   }));
 }
+
 
 
 
@@ -1964,28 +1957,12 @@ if (inviteAccept) {
     }
 
     setTimeout(() => {
-      if (pvpSocket && pvpSocket.readyState === 1) {
-        pvpSocket.send(JSON.stringify({
-          type: "accept_invite",
-          fromId: pendingInvite.fromId,
-          stake: pendingInvite.stake
-        }));
-      }
+
     }, 300);
 
     unlockMenu();
 
     pendingInvite = null;
-
-    // 🔥 ОБНОВЛЯЕМ СПИСОК ПОСЛЕ ACCEPT
-if (pvpSocket && pvpSocket.readyState === 1) {
-  pvpSocket.send(JSON.stringify({
-    type: "register",
-    userId,
-    username: tgUser.username || tgUser.first_name || "Player",
-    avatar: tgUser.photo_url || ""
-  }));
-}
 
 
   };
@@ -1998,12 +1975,6 @@ if (inviteDecline) {
 
     if (!pendingInvite) return;
 
-    if (pvpSocket && pvpSocket.readyState === 1) {
-      pvpSocket.send(JSON.stringify({
-        type: "decline_invite",
-        fromId: pendingInvite.fromId
-      }));
-    }
 
     document.getElementById("pvp-invite-popup")
       .classList.add("hidden");
@@ -2026,15 +1997,8 @@ function initPvpSocket() {
   );
 
   pvpSocket.addEventListener("open", () => {
-
-    pvpSocket.send(JSON.stringify({
-      type: "register",
-      userId,
-      username: tgUser.username || tgUser.first_name || "Player",
-      avatar: tgUser.photo_url || ""
-    }));
-
-  });
+  console.log("PvP socket connected");
+});
 
   pvpSocket.addEventListener("message", handlePvpMessage);
 
