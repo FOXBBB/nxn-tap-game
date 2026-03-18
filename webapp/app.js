@@ -163,47 +163,33 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
   }
 
-  // ================= SUBSCRIBE GATE =================
-
-  Telegram.WebApp.ready();
-
-  // 1️⃣ СНАЧАЛА DOM-элементы
-  const subscribeOverlay = document.getElementById("subscribe-overlay");
-  const checkSubscribeBtn = document.getElementById("check-subscribe-btn");
-  // 🔥 ПЕРВАЯ ПРОВЕРКА ПОДПИСКИ (КОГДА DOM ГОТОВ)
-  checkSubscribeAccess();
-
-
-  async function checkSubscribeAccess() {
-    let data;
-
-    try {
-      const res = await fetch(`/api/subscribe/access/${userId}`);
-      data = await res.json();
-    } catch (e) {
-      console.error("SUB FETCH ERROR", e);
-      return;
-    }
-
-    console.log("SUB STATUS:", data);
-
-    if (!data.subscribed) {
-      subscribeOverlay.classList.remove("hidden");
-      lockGame();
-      return;
-    }
-
-    subscribeOverlay.classList.add("hidden");
-    unlockGame();
+    const openDailyBtn = document.getElementById("open-daily-btn");
+  if (openDailyBtn) {
+    openDailyBtn.onclick = () => {
+      showScreen("daily-screen");
+    };
   }
 
+  const openTasksBtn = document.getElementById("open-tasks-btn");
+  if (openTasksBtn) {
+    openTasksBtn.onclick = () => {
+      showScreen("tasks-screen");
+    };
+  }
 
-  // 🔁 повторная проверка при возврате в WebApp
-  Telegram.WebApp.onEvent("visibilityChanged", () => {
-    if (!userId) return;
-    checkSubscribeAccess();
-  });
+  const backFromDaily = document.getElementById("back-from-daily");
+  if (backFromDaily) {
+    backFromDaily.onclick = () => {
+      showScreen("tap");
+    };
+  }
 
+  const backFromTasks = document.getElementById("back-from-tasks");
+  if (backFromTasks) {
+    backFromTasks.onclick = () => {
+      showScreen("tap");
+    };
+  }
 
 
 

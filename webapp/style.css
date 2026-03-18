@@ -4041,7 +4041,7 @@ body.locked {
 
 /* монета + боковые кнопки чуть ниже */
 .home-coin-layout {
-  margin-top: clamp(14px, 2.5vh, 26px);
+  margin-top: clamp(28px, 4vh, 42px);
 }
 
 /* саму монету тоже чуть ниже */
@@ -4119,13 +4119,13 @@ body.locked {
 
 .home-side {
   position: absolute;
-  top: 50%;
+  top: 54%;
   transform: translateY(-50%);
   z-index: 3;
 
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 14px;
   width: 84px;
 }
 
@@ -4151,23 +4151,12 @@ body.locked {
 }
 
 .tap-icon {
-  width: 30px;
-  height: 30px;
+  width: 34px;
+  height: 34px;
   object-fit: contain;
-  display: block;
   pointer-events: none;
-  filter: drop-shadow(0 0 10px rgba(0,255,180,0.35));
-}
 
-.tap-label {
-  display: block;
-  font-size: 10px;
-  line-height: 1;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-align: center;
-  color: rgba(255,255,255,0.82);
-  white-space: nowrap;
+  filter: drop-shadow(0 0 10px rgba(0,255,180,0.35));
 }
 
 /* чтобы монета точно была видна */
@@ -4210,4 +4199,80 @@ body.locked {
   .tap-label {
     font-size: 8px;
   }
+}
+
+.daily-days {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.daily-day {
+  padding: 12px 8px;
+  text-align: center;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.daily-day.active {
+  background: linear-gradient(135deg, #2cff9c, #00c070);
+  color: #02140c;
+  box-shadow: 0 0 16px rgba(0,255,150,0.35);
+}
+
+#claim-daily-btn,
+#back-from-daily,
+#back-from-tasks {
+  width: 100%;
+  margin-top: 12px;
+  padding: 14px;
+  border-radius: 999px;
+  border: none;
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+#claim-daily-btn {
+  background: linear-gradient(180deg, #2cff9c, #00c070);
+  color: #02140c;
+}
+
+#back-from-daily,
+#back-from-tasks {
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.16);
+}
+
+.task-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  margin-bottom: 12px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+.task-item p {
+  margin: 4px 0 0;
+  opacity: 0.75;
+  font-size: 13px;
+}
+
+.task-btn {
+  min-width: 82px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: none;
+  font-weight: 800;
+  background: linear-gradient(180deg, #6cf0ff, #1a6aff);
+  color: #041b2d;
 }

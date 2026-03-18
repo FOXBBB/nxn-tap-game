@@ -95,37 +95,49 @@
           </div>
         </div>
 
-  <div class="home-coin-layout">
+        <div class="home-coin-layout">
 
-  <!-- LEFT -->
-  <div class="home-side home-side-left">
-    <div id="main-transfer-btn" class="tap-action-plain">
-      <img src="transfer-top.png" class="tap-icon" alt="Transfer">
-      <div class="tap-label">TRANSFER</div>
-    </div>
-  </div>
+          <!-- LEFT -->
+          <div class="home-side home-side-left">
+            <div id="main-transfer-btn" class="tap-action-plain">
+              <img src="transfer-top.png" class="tap-icon" alt="Transfer">
+              <div class="tap-label">TRANSFER</div>
+            </div>
 
-  <!-- CENTER -->
-  <div class="coin-box">
-    <img src="coin.png" id="coin" alt="NXN Coin">
-  </div>
+            <div id="open-tasks-btn" class="tap-action-plain">
+              <img src="tasks.png" class="tap-icon" alt="Tasks">
+              <div class="tap-label">TASKS</div>
+            </div>
 
-  <!-- RIGHT -->
-  <div class="home-side home-side-right">
+          </div>
 
-    <div id="home-games-btn" class="tap-action-plain">
-      <img src="games-top.png" class="tap-icon" alt="Games">
-      <div class="tap-label">GAMES</div>
-    </div>
+          <!-- CENTER -->
+          <div class="coin-box">
+            <img src="coin.png" id="coin" alt="NXN Coin">
+          </div>
 
-    <div id="open-referral" class="tap-action-plain">
-      <img src="referral.png" class="tap-icon" alt="Referral">
-      <div class="tap-label">REFERRAL</div>
-    </div>
+          <!-- RIGHT -->
+          <div class="home-side home-side-right">
 
-  </div>
+            <div id="home-games-btn" class="tap-action-plain">
+              <img src="games-top.png" class="tap-icon" alt="Games">
+              <div class="tap-label">GAMES</div>
+            </div>
 
-</div>
+            <div id="open-referral" class="tap-action-plain">
+              <img src="referral.png" class="tap-icon" alt="Referral">
+              <div class="tap-label">REFERRAL</div>
+
+            </div>
+
+             <div id="open-daily-btn" class="tap-action-plain">
+                <img src="calendar.png" class="tap-icon" alt="Daily">
+                <div class="tap-label">DAILY</div>
+              </div>
+
+          </div>
+
+        </div>
 
 
         <div class="glass stat" id="energy">Energy: 100 / 100</div>
@@ -137,6 +149,58 @@
 
 
         <h2>Referral</h2>
+
+        <section id="daily-screen" class="screen hidden">
+  <h2 class="title blue">DAILY REWARD</h2>
+  <div class="glass transfer-box">
+    <p style="text-align:center; margin-bottom:14px;">Come back every day and claim your reward</p>
+
+    <div id="daily-days" class="daily-days">
+      <div class="daily-day active">Day 1</div>
+      <div class="daily-day">Day 2</div>
+      <div class="daily-day">Day 3</div>
+      <div class="daily-day">Day 4</div>
+      <div class="daily-day">Day 5</div>
+      <div class="daily-day">Day 6</div>
+      <div class="daily-day">Day 7</div>
+    </div>
+
+    <button id="claim-daily-btn">CLAIM REWARD</button>
+    <button id="back-from-daily">Back</button>
+  </div>
+</section>
+
+<section id="tasks-screen" class="screen hidden">
+  <h2 class="title blue">TASKS</h2>
+
+  <div class="glass transfer-box">
+    <div class="task-item">
+      <div>
+        <b>Join Telegram Channel</b>
+        <p>Reward: 5,000 NXN</p>
+      </div>
+      <button class="task-btn">GO</button>
+    </div>
+
+    <div class="task-item">
+      <div>
+        <b>Follow on Twitter / X</b>
+        <p>Reward: 5,000 NXN</p>
+      </div>
+      <button class="task-btn">GO</button>
+    </div>
+
+    <div class="task-item">
+      <div>
+        <b>Invite friends</b>
+        <p>Reward: 10,000 NXN</p>
+      </div>
+      <button class="task-btn">GO</button>
+    </div>
+
+    <button id="back-from-tasks">Back</button>
+  </div>
+</section>
 
         <!-- YOUR CODE -->
         <div class="ref-box">
@@ -565,28 +629,6 @@
       <!-- MAIN APP LOGIC -->
       <script src="app.js"></script>
 
-      <!-- SUBSCRIBE MODAL -->
-      <div id="subscribe-overlay" class="subscribe-overlay hidden">
-        <div class="subscribe-modal">
-          <h2>🚀 Join NeXoN Community</h2>
-
-          <p class="subscribe-text">
-            To enter the game, you must subscribe to our official channel.
-          </p>
-
-          <a href="https://t.me/NXN_NeXoN" target="_blank" class="subscribe-btn primary">
-            Subscribe to Channel
-          </a>
-
-          <button id="check-subscribe-btn" class="subscribe-btn success">
-            Check Subscription
-          </button>
-
-          <p class="subscribe-note">
-            🎁 Bonus: <b>3000 NXN</b> (one time only)
-          </p>
-        </div>
-      </div>
 
       <!-- 🔥 PvP INVITE POPUP -->
       <div id="pvp-invite-popup" class="pvp-invite hidden">
