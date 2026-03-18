@@ -4949,3 +4949,365 @@ body {
   box-shadow: 0 0 16px rgba(0,255,136,0.45);
   transition: width 0.25s ease;
 }
+/* ================= HOME SCREEN FINAL ================= */
+
+#tap {
+  position: relative;
+  min-height: calc(100dvh - 90px);
+  padding: 20px 18px 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+}
+
+.top-balance-bar {
+  width: 100%;
+  max-width: 430px;
+  min-height: 74px;
+
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+
+  padding: 14px 16px;
+  margin-top: 6px;
+
+  border-radius: 24px;
+  background: linear-gradient(
+    180deg,
+    rgba(12, 32, 24, 0.94),
+    rgba(7, 18, 13, 0.92)
+  );
+  border: 1px solid rgba(0,255,170,0.18);
+  box-shadow:
+    0 0 26px rgba(0,255,170,0.10),
+    inset 0 1px 0 rgba(255,255,255,0.04);
+  backdrop-filter: blur(14px);
+  z-index: 3;
+}
+
+.top-balance-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.top-avatar-wrap {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid rgba(0,255,170,0.22);
+  box-shadow: 0 0 16px rgba(0,255,170,0.12);
+  flex-shrink: 0;
+}
+
+.top-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.top-balance-text {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: rgba(230,255,245,0.82);
+  white-space: nowrap;
+}
+
+.top-balance-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 0;
+}
+
+.top-balance-center .balance-value {
+  font-size: 30px;
+  font-weight: 900;
+  line-height: 1;
+  color: #f7fff9;
+  text-shadow: 0 0 18px rgba(0,255,170,0.18);
+  white-space: nowrap;
+}
+
+.top-balance-right {
+  width: 24px;
+  height: 24px;
+}
+
+/* CENTER HERO */
+.hero-zone {
+  width: 100%;
+  max-width: 430px;
+  flex: 1;
+
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-top: 10px;
+}
+
+/* COIN */
+.hero-coin-wrap {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-coin-wrap #coin {
+  width: min(62vw, 250px);
+  max-width: 250px;
+  min-width: 180px;
+  display: block;
+  filter:
+    drop-shadow(0 0 16px rgba(0,255,170,0.22))
+    drop-shadow(0 0 34px rgba(0,255,170,0.08));
+}
+
+/* SIDE BUTTONS */
+.hero-side {
+  position: absolute;
+  top: 56%;
+  transform: translateY(-50%);
+  z-index: 3;
+
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.hero-left {
+  left: 2px;
+}
+
+.hero-right {
+  right: 2px;
+}
+
+.hero-circle-btn {
+  width: 72px;
+  min-height: 84px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  padding: 10px 6px;
+  border-radius: 22px;
+
+  background: radial-gradient(
+    circle at 50% 35%,
+    rgba(0,255,170,0.12),
+    rgba(8,24,16,0.82)
+  );
+  border: 1px solid rgba(0,255,170,0.16);
+  box-shadow:
+    0 0 22px rgba(0,255,170,0.08),
+    inset 0 0 14px rgba(255,255,255,0.03);
+
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.hero-circle-btn:active {
+  transform: scale(0.96);
+}
+
+.hero-circle-btn img {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  display: block;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 10px rgba(0,255,170,0.18));
+}
+
+.hero-circle-btn span {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: rgba(240,255,248,0.88);
+  text-align: center;
+  line-height: 1.1;
+}
+
+/* ENERGY */
+.energy-shell {
+  width: 100%;
+  max-width: 430px;
+  margin-top: -6px;
+  z-index: 3;
+}
+
+.energy-title {
+  text-align: center;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 800;
+  color: #e9fff1;
+}
+
+.energy-track {
+  width: 100%;
+  height: 14px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.25);
+}
+
+.energy-fill-bar {
+  width: 100%;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #00ff88, #ffe45c);
+  box-shadow: 0 0 18px rgba(0,255,136,0.26);
+  transition: width 0.25s ease;
+}
+
+/* ================= BOTTOM MENU FIX ================= */
+
+.menu {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  height: 92px;
+  padding-bottom: env(safe-area-inset-bottom);
+
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+
+  background: linear-gradient(
+    180deg,
+    rgba(6,20,14,0.92),
+    rgba(4,12,9,0.96)
+  );
+  border-top: 1px solid rgba(0,255,170,0.16);
+  backdrop-filter: blur(18px);
+  z-index: 50;
+}
+
+.menu div {
+  flex: 1;
+  height: 100%;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.72;
+  transform: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.menu div span {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu img {
+  width: 34px !important;
+  height: 34px !important;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 0 10px rgba(0,255,170,0.14));
+}
+
+.menu div.active img {
+  width: 34px !important;
+  height: 34px !important;
+  filter: drop-shadow(0 0 14px rgba(0,255,170,0.32));
+}
+
+.menu div.active {
+  opacity: 1;
+}
+
+/* центральная кнопка tap */
+.menu div[data-go="tap"] {
+  position: relative;
+}
+
+.menu div[data-go="tap"] span {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #0cff7e 0%, #0c3f23 100%);
+  box-shadow:
+    0 0 24px rgba(0,255,136,0.35),
+    inset 0 0 14px rgba(255,255,255,0.12);
+}
+
+.menu div[data-go="tap"] img,
+.menu div[data-go="tap"].active img {
+  width: 34px !important;
+  height: 34px !important;
+}
+
+/* responsive */
+@media (max-width: 430px) {
+  .hero-circle-btn {
+    width: 66px;
+    min-height: 78px;
+    border-radius: 20px;
+  }
+
+  .hero-circle-btn img {
+    width: 32px;
+    height: 32px;
+  }
+
+  .hero-circle-btn span {
+    font-size: 9px;
+  }
+
+  .hero-left { left: 0; }
+  .hero-right { right: 0; }
+}
+
+@media (max-width: 380px) {
+  .top-balance-center .balance-value {
+    font-size: 26px;
+  }
+
+  .hero-circle-btn {
+    width: 60px;
+    min-height: 72px;
+    gap: 6px;
+  }
+
+  .hero-circle-btn img {
+    width: 28px;
+    height: 28px;
+  }
+
+  .hero-circle-btn span {
+    font-size: 8px;
+  }
+
+  .menu img,
+  .menu div.active img {
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+  .menu div[data-go="tap"] span {
+    width: 66px;
+    height: 66px;
+  }
+}
