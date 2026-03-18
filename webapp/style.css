@@ -3901,3 +3901,107 @@ body.locked {
   inset: 0;
   z-index: 9999;
 }
+/* =========================================================
+   TAP HOME RIGHT FLOATING BUTTONS — SAFE PATCH
+   Добавляет маленькие кнопки справа БЕЗ сдвига центра
+   ========================================================= */
+
+/* главный экран как опорная точка */
+#tap {
+  position: relative;
+}
+
+/* если у тебя есть старый правый блок — скрываем его */
+.tap-right-panel,
+.tap-premium-layout .tap-right-panel,
+.home-side-card,
+.home-side-text,
+.home-side-title,
+.home-side-sub,
+.home-side-icon {
+  display: none !important;
+}
+
+/* кнопки справа поверх экрана */
+.tap-floating-actions {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 6;
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* сами кнопки */
+.floating-action {
+  width: 58px;
+  height: 58px;
+  border: none;
+  border-radius: 18px;
+  padding: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  background: linear-gradient(180deg, rgba(10,18,30,0.94), rgba(6,10,18,0.98));
+  box-shadow:
+    0 10px 22px rgba(0,0,0,0.28),
+    inset 0 1px 0 rgba(255,255,255,0.05);
+
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+/* цвета */
+.floating-action.games {
+  border: 1px solid rgba(0,255,200,0.22);
+  box-shadow:
+    0 10px 22px rgba(0,0,0,0.28),
+    0 0 14px rgba(0,255,200,0.10);
+}
+
+.floating-action.transfer {
+  border: 1px solid rgba(108,240,255,0.22);
+  box-shadow:
+    0 10px 22px rgba(0,0,0,0.28),
+    0 0 14px rgba(108,240,255,0.10);
+}
+
+.floating-action.referral {
+  border: 1px solid rgba(255,190,80,0.22);
+  box-shadow:
+    0 10px 22px rgba(0,0,0,0.28),
+    0 0 14px rgba(255,190,80,0.10);
+}
+
+.floating-action:active {
+  transform: scale(0.94);
+}
+
+.floating-icon {
+  font-size: 22px;
+  line-height: 1;
+}
+
+/* очень маленькие экраны */
+@media (max-width: 390px) {
+  .tap-floating-actions {
+    right: 6px;
+    gap: 10px;
+  }
+
+  .floating-action {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+  }
+
+  .floating-icon {
+    font-size: 20px;
+  }
+}
