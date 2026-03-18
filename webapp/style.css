@@ -4100,7 +4100,6 @@ body.locked {
   text-align: center;
 }
 /* ===== TAP SIDE ICONS FINAL ===== */
-/* ===== TAP SIDE ICONS FINAL ===== */
 .home-coin-layout {
   position: relative;
   width: 100%;
@@ -4118,16 +4117,21 @@ body.locked {
   margin: 0;
 }
 
+
 .home-side {
   position: absolute;
-  top: 61.5%;
-  transform: translateY(-50%);
-  z-index: 3;
+
+  top: 68%; /* 🔥 ВОТ ТУТ РЕАЛЬНО ОПУСКАЕМ */
+  transform: none; /* ❌ УБРАЛИ центрирование */
+
+  z-index: 20; /* 🔥 ПОВЕРХ ВСЕГО */
 
   display: flex;
   flex-direction: column;
   gap: 16px;
   width: 84px;
+
+  pointer-events: auto; /* 🔥 КРИТИЧНО */
 }
 
 .home-side-left {
@@ -4136,6 +4140,11 @@ body.locked {
 
 .home-side-right {
   right: 0;
+}
+
+.home-coin-layout {
+  position: relative;
+  z-index: 10;
 }
 
 .tap-action-plain {
