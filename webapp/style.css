@@ -4312,10 +4312,7 @@ body.locked {
   position: relative !important;
 }
 
-/* левая часть ниже */
-.tap-left {
-  padding-top: 26px !important;
-}
+
 /* =========================================================
    HOME FINAL POSITION FIX
    ========================================================= */
@@ -4344,19 +4341,7 @@ body.locked {
   padding-top: 58px !important; /* ниже баланс + монета */
 }
 
-/* баланс ниже */
-#tap #balance {
-  margin: 0 auto !important;
-  min-width: 260px !important;
-  max-width: calc(100vw - 110px) !important;
-  width: fit-content !important;
 
-  padding: 14px 20px !important;
-
-  overflow: visible !important;
-  text-overflow: unset !important;
-  white-space: nowrap !important;
-}
 
 /* число баланса */
 .balance-value {
@@ -4376,26 +4361,7 @@ body.locked {
   margin-top: 34px !important;
 }
 
-#tap #coin,
-#tap .coin-box img {
-  display: block !important;
-  margin: 0 auto !important;
-  width: 260px !important;
-  max-width: 72vw !important;
-}
 
-/* энергия наоборот выше — ближе к нижнему меню */
-#tap #energy {
-  position: fixed !important;
-  left: 50% !important;
-  bottom: 108px !important; /* рядом над меню */
-  transform: translateX(-50%) !important;
-
-  margin: 0 !important;
-  width: fit-content !important;
-  max-width: calc(100vw - 40px) !important;
-  z-index: 9 !important;
-}
 
 /* правые кнопки по центру экрана */
 .tap-floating-actions {
@@ -4432,10 +4398,7 @@ body.locked {
 
 /* маленькие экраны */
 @media (max-width: 420px) {
-  .tap-left {
-    padding-top: 48px !important;
-  }
-
+ 
   #tap #coin,
   #tap .coin-box img {
     width: 240px !important;
@@ -4459,15 +4422,6 @@ body.locked {
    ========================================================= */
 
 /* весь центральный блок еще ниже */
-.tap-left {
-  padding-top: 92px !important;
-}
-
-/* баланс ниже */
-#tap #balance {
-  margin-top: 0 !important;
-  margin-bottom: 26px !important;
-}
 
 /* монета ниже */
 #tap .coin-box {
@@ -4503,10 +4457,7 @@ body.locked {
 
 /* на маленьких экранах */
 @media (max-width: 420px) {
-  .tap-left {
-    padding-top: 78px !important;
-  }
-
+ 
   #tap #balance {
     margin-bottom: 22px !important;
   }
@@ -4520,4 +4471,39 @@ body.locked {
     padding: 14px 20px !important;
     font-size: 17px !important;
   }
+}
+/* =========================================================
+   FINAL CLEAN POSITION FIX (NO SIZE BREAK)
+   ========================================================= */
+
+/* контейнер */
+.tap-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding-top: 70px; /* двигаем ВЕСЬ блок вниз */
+}
+
+/* баланс — просто отступ вниз */
+#tap #balance {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+/* монета — НЕ трогаем размер */
+#tap .coin-box {
+  margin-top: 20px;
+}
+
+/* энергия — ниже и шире */
+#tap #energy {
+  margin-top: 30px;
+
+  min-width: 260px;
+  width: max-content;
+
+  padding: 16px 28px;
+  font-size: 18px;
+  white-space: nowrap;
 }
