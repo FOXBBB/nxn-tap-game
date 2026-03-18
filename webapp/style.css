@@ -3865,301 +3865,16 @@ body.locked {
   z-index: 9999;
 }
 /* =========================================================
-   TAP HOME RIGHT FLOATING BUTTONS — SAFE PATCH
-   Добавляет маленькие кнопки справа БЕЗ сдвига центра
+   CLEAN HOME FIX
    ========================================================= */
 
-/* главный экран как опорная точка */
+/* главный экран */
 #tap {
   position: relative;
+  padding-top: 0 !important;
 }
 
-/* если у тебя есть старый правый блок — скрываем его */
-.tap-right-panel,
-.tap-premium-layout .tap-right-panel,
-.home-side-card,
-.home-side-text,
-.home-side-title,
-.home-side-sub,
-.home-side-icon {
-  display: none !important;
-}
-
-/* кнопки справа поверх экрана */
-.tap-floating-actions {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 6;
-
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-/* сами кнопки */
-.floating-action {
-  width: 58px;
-  height: 58px;
-  border: none;
-  border-radius: 18px;
-  padding: 0;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  cursor: pointer;
-
-  background: linear-gradient(180deg, rgba(10,18,30,0.94), rgba(6,10,18,0.98));
-  box-shadow:
-    0 10px 22px rgba(0,0,0,0.28),
-    inset 0 1px 0 rgba(255,255,255,0.05);
-
-  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-}
-
-/* цвета */
-.floating-action.games {
-  border: 1px solid rgba(0,255,200,0.22);
-  box-shadow:
-    0 10px 22px rgba(0,0,0,0.28),
-    0 0 14px rgba(0,255,200,0.10);
-}
-
-.floating-action.transfer {
-  border: 1px solid rgba(108,240,255,0.22);
-  box-shadow:
-    0 10px 22px rgba(0,0,0,0.28),
-    0 0 14px rgba(108,240,255,0.10);
-}
-
-.floating-action.referral {
-  border: 1px solid rgba(255,190,80,0.22);
-  box-shadow:
-    0 10px 22px rgba(0,0,0,0.28),
-    0 0 14px rgba(255,190,80,0.10);
-}
-
-.floating-action:active {
-  transform: scale(0.94);
-}
-
-.floating-icon {
-  font-size: 22px;
-  line-height: 1;
-}
-
-/* очень маленькие экраны */
-@media (max-width: 390px) {
-  .tap-floating-actions {
-    right: 6px;
-    gap: 10px;
-  }
-
-  .floating-action {
-    width: 52px;
-    height: 52px;
-    border-radius: 16px;
-  }
-
-  .floating-icon {
-    font-size: 20px;
-  }
-}
-/* =========================================================
-   PREMIUM MENU FIX
-   ========================================================= */
-
-.premium-menu {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 50;
-
-  height: 94px;
-  padding: 10px 8px calc(env(safe-area-inset-bottom) + 8px);
-
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-
-  background: linear-gradient(180deg, rgba(8,14,18,0.82), rgba(4,8,10,0.92));
-  border-top: 1px solid rgba(0,255,180,0.18);
-  box-shadow: 0 -8px 30px rgba(0,0,0,0.38);
-  backdrop-filter: blur(18px);
-}
-
-.premium-menu .menu-item {
-  flex: 1;
-  height: 100%;
-
-  display: flex !important;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  gap: 4px;
-  margin: 0 2px;
-  padding: 0;
-
-  cursor: pointer;
-  opacity: 0.62;
-  transition: all 0.18s ease;
-}
-
-.premium-menu .menu-item.active {
-  opacity: 1;
-  transform: translateY(-2px);
-}
-
-.premium-menu .menu-glyph {
-  width: 42px;
-  height: 42px;
-  border-radius: 14px;
-
-  display: flex !important;
-  align-items: center;
-  justify-content: center;
-
-  font-size: 20px !important;
-  line-height: 1 !important;
-
-  background: rgba(255,255,255,0.05);
-  color: #bfffee;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
-}
-
-.premium-menu .menu-item.active .menu-glyph {
-  background: linear-gradient(180deg, rgba(0,255,180,0.22), rgba(0,140,100,0.22));
-  box-shadow:
-    0 0 18px rgba(0,255,180,0.26),
-    inset 0 1px 0 rgba(255,255,255,0.08);
-  color: #ffffff;
-}
-
-.premium-menu .menu-item small {
-  font-size: 10px !important;
-  line-height: 1 !important;
-  color: #d7e6e2 !important;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  opacity: 0.75;
-}
-
-.premium-menu .menu-item.active small {
-  color: #7affc6 !important;
-  opacity: 1;
-}
-
-.premium-menu .menu-item.center .menu-glyph {
-  width: 52px;
-  height: 52px;
-  border-radius: 18px;
-  font-size: 24px !important;
-}
-
-/* старые img-правила не должны мешать */
-.premium-menu img {
-  display: none !important;
-}
-
-@media (max-width: 390px) {
-  .premium-menu .menu-glyph {
-    width: 38px;
-    height: 38px;
-    font-size: 18px !important;
-  }
-
-  .premium-menu .menu-item.center .menu-glyph {
-    width: 48px;
-    height: 48px;
-    font-size: 22px !important;
-  }
-
-  .premium-menu .menu-item small {
-    font-size: 9px !important;
-  }
-}
-/* =========================================================
-   TAP RIGHT FLOATING ACTIONS
-   ========================================================= */
-
-#tap {
-  position: relative;
-}
-
-.tap-premium-layout {
-  position: relative;
-  width: 100%;
-  max-width: 420px;
-  margin: 0 auto;
-}
-
-.tap-left {
-  width: 100%;
-}
-
-.tap-floating-actions {
-  position: absolute;
-  right: -72px;
-  top: 50%;
-  transform: translateY(-50%);
-
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  z-index: 20;
-}
-
-.floating-action {
-  width: 58px;
-  height: 58px;
-  border: none;
-  border-radius: 18px;
-  padding: 0;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  cursor: pointer;
-
-  background: linear-gradient(180deg, rgba(10,18,30,0.94), rgba(6,10,18,0.98));
-  box-shadow:
-    0 10px 22px rgba(0,0,0,0.28),
-    inset 0 1px 0 rgba(255,255,255,0.05);
-}
-
-.floating-action.games {
-  border: 1px solid rgba(0,255,200,0.22);
-}
-
-.floating-action.transfer {
-  border: 1px solid rgba(108,240,255,0.22);
-}
-
-.floating-action.referral {
-  border: 1px solid rgba(255,190,80,0.22);
-}
-
-.floating-icon {
-  font-size: 22px;
-  line-height: 1;
-}
-
-@media (max-width: 520px) {
-  .tap-floating-actions {
-    right: 6px;
-  }
-}
-/* =========================================================
-   HOME POSITION TUNE
-   ========================================================= */
-
-/* главный контейнер */
+/* контейнер главной страницы */
 .tap-premium-layout {
   position: relative;
   width: 100%;
@@ -4168,48 +3883,123 @@ body.locked {
   min-height: calc(100dvh - 150px);
 }
 
-/* левая/центральная часть чуть ниже */
+/* центральная колонка */
 .tap-left {
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding-top: 34px;
+  padding-top: 72px;
 }
 
-/* баланс чуть ниже */
+/* баланс — просто ниже */
 #tap #balance {
-  margin-top: 34px !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
+  margin: 0 auto 24px !important;
+  min-width: 260px;
+  max-width: calc(100vw - 96px);
+  width: fit-content;
+  padding: 14px 20px;
+  white-space: nowrap;
+  overflow: visible;
+  text-overflow: unset;
 }
 
-/* монета строго по центру */
+/* число баланса */
+.balance-value {
+  font-size: 32px;
+  font-weight: 900;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* монета — опускаем, но размер не ломаем */
 #tap .coin-box {
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 26px !important;
+  text-align: center;
+  margin-top: 22px !important;
 }
 
 #tap #coin,
 #tap .coin-box img {
   display: block;
   margin: 0 auto !important;
+  width: 260px !important;
+  max-width: 260px !important;
 }
 
-/* энергия ниже */
+/* энергия — шире и ниже */
 #tap #energy {
-  margin-top: 38px !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
+  display: block;
+  margin: 30px auto 0 !important;
+  min-width: 270px;
+  max-width: calc(100vw - 32px);
+  width: max-content;
+  padding: 16px 28px;
+  font-size: 18px;
+  line-height: 1.2;
+  white-space: nowrap;
+  text-align: center;
 }
 
-/* =========================================================
-   BACK BUTTON FIX
-   ========================================================= */
+#energy,
+#energy.energy-low {
+  white-space: nowrap !important;
+  overflow: visible !important;
+}
 
+/* правые кнопки */
+.tap-floating-actions {
+  position: absolute;
+  right: 6px;
+  top: 54%;
+  transform: translateY(-50%);
+  z-index: 12;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.floating-action {
+  width: 58px;
+  height: 58px;
+  border: none;
+  border-radius: 18px;
+  padding: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  background: linear-gradient(180deg, rgba(10,18,30,0.94), rgba(6,10,18,0.98));
+  box-shadow:
+    0 10px 22px rgba(0,0,0,0.28),
+    inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+.floating-action.games {
+  border: 1px solid rgba(0,255,200,0.22);
+}
+
+.floating-action.transfer {
+  border: 1px solid rgba(108,240,255,0.22);
+}
+
+.floating-action.referral {
+  border: 1px solid rgba(255,190,80,0.22);
+}
+
+.floating-icon {
+  font-size: 22px;
+  line-height: 1;
+}
+
+/* back кнопки */
 #games .bottom-back-btn,
 #transfer .bottom-back-btn {
   width: 100%;
@@ -4231,8 +4021,6 @@ body.locked {
   box-shadow:
     0 6px 0 #009a5a,
     0 12px 22px rgba(0,255,150,0.28);
-
-  cursor: pointer;
 }
 
 #games .bottom-back-btn:active,
@@ -4243,267 +4031,50 @@ body.locked {
     0 6px 12px rgba(0,255,150,0.22);
 }
 
-/* если где-то старые правила прячут */
 #games .back-btn,
 #transfer .back-btn {
   display: none !important;
 }
-/* =========================================================
-   FINAL HOME SIZE + POSITION FIX
-   ========================================================= */
 
-/* баланс: центр, нормальный рост по ширине */
-#tap #balance {
-  margin-top: 34px !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
-
-  min-width: 260px !important;
-  max-width: calc(100vw - 110px) !important; /* оставляем место справа под кнопки */
-  width: fit-content !important;
-
-  overflow: visible !important;
-  text-overflow: unset !important;
-  white-space: nowrap !important;
-
-  padding: 14px 20px !important;
-}
-
-/* число баланса */
-.balance-value {
-  font-size: 32px;
-  font-weight: 900;
-  line-height: 1;
-  white-space: nowrap;
-}
-
-/* если число очень большое — чуть уменьшаем только на маленьких экранах */
+/* мобильная адаптация */
 @media (max-width: 420px) {
-  .balance-value {
-    font-size: 28px !important;
+  .tap-left {
+    padding-top: 64px;
   }
 
   #tap #balance {
-    max-width: calc(100vw - 96px) !important;
-  }
-}
-
-/* центрируем монету жестко */
-#tap .coin-box {
-  width: 100% !important;
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  margin-top: 26px !important;
-  text-align: center !important;
-}
-
-#tap #coin,
-#tap .coin-box img {
-  display: block !important;
-  margin: 0 auto !important;
-}
-
-/* энергия ниже */
-#tap #energy {
-  display: block !important;
-  width: fit-content !important;
-  margin: 48px auto 0 !important;
-  position: relative !important;
-}
-
-
-/* =========================================================
-   HOME FINAL POSITION FIX
-   ========================================================= */
-
-/* главный экран */
-#tap {
-  position: relative !important;
-  padding-top: 0 !important;
-}
-
-/* центральный контейнер */
-.tap-premium-layout {
-  position: relative !important;
-  width: 100% !important;
-  max-width: 420px !important;
-  margin: 0 auto !important;
-  min-height: calc(100dvh - 140px) !important;
-}
-
-/* весь блок чуть ниже */
-.tap-left {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: flex-start !important;
-  padding-top: 58px !important; /* ниже баланс + монета */
-}
-
-
-
-/* число баланса */
-.balance-value {
-  font-size: 32px !important;
-  font-weight: 900 !important;
-  line-height: 1 !important;
-  white-space: nowrap !important;
-}
-
-/* монета ниже */
-#tap .coin-box {
-  width: 100% !important;
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  text-align: center !important;
-  margin-top: 34px !important;
-}
-
-
-
-/* правые кнопки по центру экрана */
-.tap-floating-actions {
-  position: absolute !important;
-  right: 6px !important;
-  top: 52% !important;
-  transform: translateY(-50%) !important;
-  z-index: 12 !important;
-}
-
-/* кнопки назад в games/transfer */
-#games .bottom-back-btn,
-#transfer .bottom-back-btn {
-  width: 100% !important;
-  max-width: 420px !important;
-  margin: 20px auto 0 !important;
-  display: block !important;
-
-  padding: 14px 16px !important;
-  border: none !important;
-  border-radius: 18px !important;
-
-  font-size: 15px !important;
-  font-weight: 900 !important;
-  letter-spacing: 0.04em !important;
-
-  background: linear-gradient(180deg, #2cff9c, #00c070) !important;
-  color: #02140c !important;
-
-  box-shadow:
-    0 6px 0 #009a5a,
-    0 12px 22px rgba(0,255,150,0.28) !important;
-}
-
-/* маленькие экраны */
-@media (max-width: 420px) {
- 
-  #tap #coin,
-  #tap .coin-box img {
-    width: 240px !important;
-    max-width: 68vw !important;
-  }
-
-  .balance-value {
-    font-size: 28px !important;
-  }
-
-  #tap #balance {
-    max-width: calc(100vw - 96px) !important;
-  }
-
-  #tap #energy {
-    bottom: 102px !important;
-  }
-}
-/* =========================================================
-   HOME FINAL TUNE 2
-   ========================================================= */
-
-/* весь центральный блок еще ниже */
-
-/* монета ниже */
-#tap .coin-box {
-  margin-top: 18px !important;
-}
-
-#tap #coin,
-#tap .coin-box img {
-  margin-top: 0 !important;
-}
-
-/* энергия шире и красивее */
-#tap #energy {
-  bottom: 108px !important;
-
-  min-width: 250px !important;
-  max-width: calc(100vw - 36px) !important;
-  width: max-content !important;
-
-  padding: 16px 26px !important;
-  font-size: 18px !important;
-  line-height: 1.2 !important;
-  white-space: nowrap !important;
-  text-align: center !important;
-}
-
-/* чтобы текст max energy не ломался */
-#energy,
-#energy.energy-low {
-  white-space: nowrap !important;
-  overflow: visible !important;
-}
-
-/* на маленьких экранах */
-@media (max-width: 420px) {
- 
-  #tap #balance {
+    max-width: calc(100vw - 88px);
     margin-bottom: 22px !important;
   }
 
-  #tap .coin-box {
-    margin-top: 14px !important;
+  .balance-value {
+    font-size: 28px;
+  }
+
+  #tap #coin,
+  #tap .coin-box img {
+    width: 250px !important;
+    max-width: 250px !important;
   }
 
   #tap #energy {
-    min-width: 220px !important;
-    padding: 14px 20px !important;
-    font-size: 17px !important;
+    min-width: 235px;
+    padding: 14px 22px;
+    font-size: 17px;
   }
-}
-/* =========================================================
-   FINAL CLEAN POSITION FIX (NO SIZE BREAK)
-   ========================================================= */
 
-/* контейнер */
-.tap-left {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  .tap-floating-actions {
+    right: 4px;
+    gap: 10px;
+  }
 
-  padding-top: 70px; /* двигаем ВЕСЬ блок вниз */
-}
+  .floating-action {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+  }
 
-/* баланс — просто отступ вниз */
-#tap #balance {
-  margin-top: 20px;
-  margin-bottom: 20px;
-}
-
-/* монета — НЕ трогаем размер */
-#tap .coin-box {
-  margin-top: 20px;
-}
-
-/* энергия — ниже и шире */
-#tap #energy {
-  margin-top: 30px;
-
-  min-width: 260px;
-  width: max-content;
-
-  padding: 16px 28px;
-  font-size: 18px;
-  white-space: nowrap;
+  .floating-icon {
+    font-size: 20px;
+  }
 }
