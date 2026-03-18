@@ -4099,8 +4099,7 @@ body.locked {
   color: rgba(255,255,255,0.88);
   text-align: center;
 }
-/* ===== TAP SIDE ICONS FINAL FIX ===== */
-
+/* ===== TAP SIDE ICONS FINAL ===== */
 .home-coin-layout {
   position: relative;
   width: 100%;
@@ -4120,14 +4119,14 @@ body.locked {
 
 .home-side {
   position: absolute;
-  top: 58%;
+  top: 56.5%;
   transform: translateY(-50%);
   z-index: 3;
 
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  width: 96px;
+  gap: 16px;
+  width: 84px;
 }
 
 .home-side-left {
@@ -4143,7 +4142,7 @@ body.locked {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 7px;
   cursor: pointer;
   background: none !important;
   border: none !important;
@@ -4152,49 +4151,30 @@ body.locked {
 }
 
 .tap-icon {
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
   object-fit: contain;
   pointer-events: none;
-
   filter: drop-shadow(0 0 10px rgba(0,255,180,0.35));
 }
 
-/* чтобы монета точно была видна */
-#tap #coin {
-  display: block;
-  width: 260px;
-  max-width: 100%;
-  position: relative;
-  z-index: 2;
+.tap-label {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: rgba(255,255,255,0.86);
 }
 
-/* адаптив */
 @media (max-width: 430px) {
   .home-side {
-    width: 88px;
-    gap: 16px;
+    width: 76px;
+    gap: 15px;
+    top: 56.5%;
   }
 
   .tap-icon {
-    width: 36px;
-    height: 36px;
-  }
-
-  .tap-label {
-    font-size: 10px;
-  }
-}
-
-@media (max-width: 380px) {
-  .home-side {
-    width: 80px;
-    gap: 14px;
-  }
-
-  .tap-icon {
-    width: 34px;
-    height: 34px;
+    width: 32px;
+    height: 32px;
   }
 
   .tap-label {
@@ -4202,88 +4182,21 @@ body.locked {
   }
 }
 
-.daily-days {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  margin-bottom: 18px;
-}
+@media (max-width: 380px) {
+  .home-side {
+    width: 68px;
+    gap: 13px;
+    top: 56%;
+  }
 
-.daily-day {
-  padding: 12px 8px;
-  text-align: center;
-  border-radius: 14px;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.12);
-  font-size: 12px;
-  font-weight: 700;
-}
+  .tap-icon {
+    width: 28px;
+    height: 28px;
+  }
 
-.daily-day.active {
-  background: linear-gradient(135deg, #2cff9c, #00c070);
-  color: #02140c;
-  box-shadow: 0 0 16px rgba(0,255,150,0.35);
-}
-
-#claim-daily-btn,
-#back-from-daily,
-#back-from-tasks {
-  width: 100%;
-  margin-top: 12px;
-  padding: 14px;
-  border-radius: 999px;
-  border: none;
-  font-size: 15px;
-  font-weight: 900;
-  letter-spacing: 1px;
-}
-
-#claim-daily-btn {
-  background: linear-gradient(180deg, #2cff9c, #00c070);
-  color: #02140c;
-}
-
-#back-from-daily,
-#back-from-tasks {
-  background: rgba(255,255,255,0.08);
-  color: #fff;
-  border: 1px solid rgba(255,255,255,0.16);
-}
-
-.task-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  padding: 14px;
-  margin-bottom: 12px;
-  border-radius: 16px;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.12);
-}
-
-.task-item p {
-  margin: 4px 0 0;
-  opacity: 0.75;
-  font-size: 13px;
-}
-
-.task-btn {
-  min-width: 82px;
-  padding: 10px 14px;
-  border-radius: 12px;
-  border: none;
-  font-weight: 800;
-  background: linear-gradient(180deg, #6cf0ff, #1a6aff);
-  color: #041b2d;
-}
-.home-side-right .tap-action-plain,
-.home-side-left .tap-action-plain {
-  width: 100%;
-}
-
-.tap-action-plain {
-  min-height: 64px;
+  .tap-label {
+    font-size: 8px;
+  }
 }
 /* ===== DAILY REWARD PREMIUM ===== */
 
@@ -4494,4 +4407,100 @@ body.locked {
   font-weight: 700;
   background: linear-gradient(135deg, #00ffa3, #00c070);
   color: #002d1c;
+}
+/* ===== DAILY CLAIMED STATE ===== */
+.daily-card {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.daily-card.claimed {
+  border-color: rgba(0, 255, 170, 0.7);
+  background: linear-gradient(
+    180deg,
+    rgba(0,255,170,0.18),
+    rgba(0,120,80,0.12)
+  );
+  box-shadow:
+    0 0 24px rgba(0,255,170,0.28),
+    inset 0 0 18px rgba(0,255,170,0.12);
+}
+
+.daily-card.claimed::after {
+  content: "✓";
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 15px;
+  font-weight: 900;
+  color: #032a1d;
+
+  background: linear-gradient(180deg, #2cff9c, #00c070);
+  box-shadow:
+    0 0 14px rgba(0,255,150,0.55),
+    0 0 28px rgba(0,255,150,0.2);
+
+  animation: claimedPop 0.35s ease;
+}
+
+.daily-card.claimed::before {
+  content: "";
+  position: absolute;
+  inset: -30%;
+  background: linear-gradient(
+    120deg,
+    transparent 20%,
+    rgba(255,255,255,0.18) 45%,
+    transparent 70%
+  );
+  transform: translateX(-120%) rotate(8deg);
+  animation: claimedShine 1.2s ease;
+  pointer-events: none;
+}
+
+@keyframes claimedPop {
+  0% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes claimedShine {
+  0% {
+    transform: translateX(-120%) rotate(8deg);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(120%) rotate(8deg);
+    opacity: 0;
+  }
+}
+
+/* кнопка после получения */
+#claim-daily-btn.claimed {
+  background: linear-gradient(180deg, #2cff9c, #00c070);
+  color: #05291c;
+  box-shadow: 0 0 18px rgba(0,255,150,0.35);
+}
+
+#claim-daily-btn.claimed::after {
+  content: " ✓";
 }

@@ -147,8 +147,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   await loadRewardState();
   updateUI();
   initMenu();
-    applyDailyTapBoost();
-  renderDailyScreen();
+   applyDailyTapBoost();
 
     const mainTransferBtn = document.getElementById("main-transfer-btn");
   if (mainTransferBtn) {
@@ -173,12 +172,45 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
   }
 
-    const claimDailyBtn = document.getElementById("claim-daily-btn");
-  if (claimDailyBtn) {
-    claimDailyBtn.onclick = async () => {
-      await claimDailyReward();
-    };
-  }
+
+ const claimDailyBtn = document.getElementById("claim-daily-btn");
+
+if (claimDailyBtn) {
+  claimDailyBtn.onclick = async () => {
+    const res = await fetch("/api/daily/claim", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId })
+    });
+
+    const data = await res.json();
+
+    if (!data.ok) {
+      alert(data.error || "Daily claim failed");
+      return;
+    }
+
+    const activeCard = document.querySelector(`.daily-card[data-day="${data.day}"]`);
+    if (activeCard) {
+      activeCard.classList.add("claimed");
+    }
+
+    claimDailyBtn.disabled = true;
+    claimDailyBtn.innerText = "CLAIMED";
+    claimDailyBtn.classList.add("claimed");
+
+    const toast = document.createElement("div");
+    toast.className = "transfer-toast success";
+    toast.innerText = data.rewardLabel || "Reward claimed";
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 1800);
+
+    await refreshMe();
+    updateUI();
+    await renderDailyScreen();
+  };
+}
+
 
   const openTasksBtn = document.getElementById("open-tasks-btn");
   if (openTasksBtn) {
@@ -2027,29 +2059,6 @@ function initPvpSocket() {
 }
 // ================= DAILY REWARD =================
 
-const DAILY_REWARDS = [
-  { type: "nxn", value: 500, label: "500 NXN" },
-  { type: "nxn", value: 1000, label: "1000 NXN" },
-  { type: "nxn", value: 1000, label: "1000 NXN" },
-  { type: "nxn", value: 1000, label: "1000 NXN" },
-  { type: "nxn", value: 1000, label: "1000 NXN" },
-  { type: "tap", value: 2, hours: 24, label: "Tap +2 / 24h" }
-];
-
-function getDailyState() {
-  return {
-    streakDay: Number(localStorage.getItem("nxn_daily_day") || 1),
-    lastClaim: Number(localStorage.getItem("nxn_daily_last_claim") || 0),
-    boostUntil: Number(localStorage.getItem("nxn_daily_tap_boost_until") || 0)
-  };
-}
-
-function setDailyState(state) {
-  localStorage.setItem("nxn_daily_day", String(state.streakDay));
-  localStorage.setItem("nxn_daily_last_claim", String(state.lastClaim));
-  localStorage.setItem("nxn_daily_tap_boost_until", String(state.boostUntil || 0));
-}
-
 function formatDailyTime(ms) {
   if (ms <= 0) return "Available now";
 
@@ -2058,51 +2067,11 @@ function formatDailyTime(ms) {
   const minutes = Math.floor((totalSec % 3600) / 60);
   const seconds = totalSec % 60;
 
-  if (hours > 0) {
-    return `${hours}h ${minutes}m ${seconds}s`;
-  }
+  if (hours > 0) return `${hours}h ${minutes}m ${seconds}s`;
   return `${minutes}m ${seconds}s`;
 }
 
-function getDailyAvailability() {
-  const state = getDailyState();
-  const now = Date.now();
-
-  if (!state.lastClaim) {
-    return { canClaim: true, nextIn: 0, state };
-  }
-
-  const diff = now - state.lastClaim;
-  const oneDay = 24 * 60 * 60 * 1000;
-  const twoDays = 48 * 60 * 60 * 1000;
-
-  if (diff >= twoDays) {
-    state.streakDay = 1;
-    setDailyState(state);
-    return { canClaim: true, nextIn: 0, state };
-  }
-
-  if (diff >= oneDay) {
-    return { canClaim: true, nextIn: 0, state };
-  }
-
-  return {
-    canClaim: false,
-    nextIn: oneDay - diff,
-    state
-  };
-}
-
-function applyDailyTapBoost() {
-  const state = getDailyState();
-  const now = Date.now();
-
-  if (state.boostUntil && state.boostUntil > now) {
-    tapPower = Math.max(tapPower, 3); // базовый 1 + бонус 2
-  }
-}
-
-function renderDailyScreen() {
+async function renderDailyScreen() {
   const timer = document.getElementById("daily-timer");
   const info = document.getElementById("daily-current-info");
   const btn = document.getElementById("claim-daily-btn");
@@ -2110,65 +2079,40 @@ function renderDailyScreen() {
 
   if (!timer || !info || !btn || !cards.length) return;
 
-  const { canClaim, nextIn, state } = getDailyAvailability();
-  const currentDay = Math.min(state.streakDay, DAILY_REWARDS.length);
-  const reward = DAILY_REWARDS[currentDay - 1];
+  const res = await fetch(`/api/daily/state/${userId}`);
+  const data = await res.json();
+
+  if (!data.ok) return;
 
   cards.forEach(card => {
     const day = Number(card.dataset.day);
     card.classList.remove("claimed", "active", "locked");
 
-    if (day < currentDay) {
+    if (day < data.day) {
       card.classList.add("claimed");
-    } else if (day === currentDay) {
+    } else if (day === data.day) {
       card.classList.add("active");
     } else {
       card.classList.add("locked");
     }
   });
 
-  timer.innerText = canClaim ? "Available now" : `Next reward in ${formatDailyTime(nextIn)}`;
-  info.innerHTML = `Today reward: <b>${reward.label}</b>`;
+  info.innerHTML = `Today reward: <b>${data.rewardLabel}</b>`;
 
-  btn.disabled = !canClaim;
-  btn.innerText = canClaim ? "CLAIM REWARD" : "WAIT";
-}
-
-async function claimDailyReward() {
-  const { canClaim, state } = getDailyAvailability();
-  if (!canClaim) return;
-
-  const dayIndex = Math.min(state.streakDay, DAILY_REWARDS.length) - 1;
-  const reward = DAILY_REWARDS[dayIndex];
-  const now = Date.now();
-
-  if (reward.type === "nxn") {
-    balance += reward.value;
+  if (data.canClaim) {
+    timer.innerText = "Available now";
+    btn.disabled = false;
+    btn.innerText = "CLAIM REWARD";
+    btn.classList.remove("claimed");
+  } else {
+    timer.innerText = `Next reward in ${formatDailyTime(data.nextClaimInMs || 0)}`;
+    btn.disabled = true;
+    btn.innerText = "WAIT";
   }
-
-  if (reward.type === "tap") {
-    state.boostUntil = now + (reward.hours * 60 * 60 * 1000);
-    tapPower = Math.max(tapPower, 3);
-  }
-
-  state.lastClaim = now;
-  state.streakDay = state.streakDay >= DAILY_REWARDS.length ? 1 : state.streakDay + 1;
-
-  setDailyState(state);
-  updateUI();
-
-  const toast = document.createElement("div");
-  toast.className = "transfer-toast success";
-  toast.innerText = reward.type === "nxn"
-    ? `+${reward.value} NXN`
-    : `TAP POWER +2 FOR 24H`;
-  document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 1800);
-
-  renderDailyScreen();
 }
 
 setInterval(() => {
-  renderDailyScreen();
-  applyDailyTapBoost();
+  if (!document.getElementById("daily-screen")?.classList.contains("hidden")) {
+    renderDailyScreen();
+  }
 }, 1000);
