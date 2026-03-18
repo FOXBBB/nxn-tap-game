@@ -640,8 +640,11 @@ async function loadRewardState() {
 // ================= UI =================
 function updateUI() {
   const value = document.querySelector(".balance-value");
-  const hud = document.getElementById("balance");
-  const e = document.getElementById("energy");
+  const hud = document.querySelector(".top-balance-bar");
+  const oldEnergy = document.getElementById("energy");
+
+  const energyInline = document.getElementById("energy-value-inline");
+  const energyFillBar = document.getElementById("energy-fill-bar");
 
   if (value) {
     const newVal = balance.toLocaleString("en-US");
@@ -654,10 +657,19 @@ function updateUI() {
     value.innerText = newVal;
   }
 
-  if (e) {
-    e.innerText = `Energy: ${energy} / ${maxEnergy}`;
-    if (energy <= 5) e.classList.add("energy-low");
-    else e.classList.remove("energy-low");
+  if (oldEnergy) {
+    oldEnergy.innerText = `Energy: ${energy} / ${maxEnergy}`;
+    if (energy <= 5) oldEnergy.classList.add("energy-low");
+    else oldEnergy.classList.remove("energy-low");
+  }
+
+  if (energyInline) {
+    energyInline.innerText = `${energy} / ${maxEnergy}`;
+  }
+
+  if (energyFillBar) {
+    const percent = maxEnergy > 0 ? (energy / maxEnergy) * 100 : 0;
+    energyFillBar.style.width = `${Math.max(0, Math.min(100, percent))}%`;
   }
 }
 
@@ -1140,23 +1152,24 @@ setInterval(() => {
 }, 5000);
 // ================= ENERGY SYNC TICK =================
 setInterval(async () => {
-
   if (!userId) return;
-
-  // ❌ НЕ СИНХРОНИЗИРУЕМ во время PvP
   if (pvpInGame) return;
 
-  const res = await fetch(`/api/me/${userId}`);
-  const data = await res.json();
+  try {
+    const res = await fetch(`/api/me/${userId}`);
+    const data = await res.json();
 
-  balance = Number(data.balance) || balance;
-  energy = Number(data.energy) || energy;
-  maxEnergy = Number(data.maxEnergy) || maxEnergy;
+    balance = Number(data.balance) || balance;
+    energy = Number(data.energy) || energy;
+    maxEnergy = Number(data.maxEnergy) || maxEnergy;
+    tapPower = Number(data.tapPower) || tapPower;
 
-  updateUI();
-  updateTapState();
-
-}, 5000); // было 1000
+    updateUI();
+    updateTapState();
+  } catch (e) {
+    console.error("Energy sync error:", e);
+  }
+}, 3000);
 
 
 function updateTapState() {
