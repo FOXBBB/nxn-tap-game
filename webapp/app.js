@@ -123,8 +123,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   userId = String(tgUser.id);
 
 
-  // ▶️ туториал — ПОСЛЕ
- //tartNXNTutorial();
 
 
   tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
@@ -339,9 +337,11 @@ if (claimDailyBtn) {
       body: JSON.stringify({ userId, amount })
     });
 
-    const data = await res.json();
-    if (!data.ok) return;
-
+  const data = await res.json();
+if (!data.ok) {
+  alert(data.error || "Referral stake failed");
+  return;
+}
     // fly animation
     const fly = document.createElement("div");
     fly.className = "stake-fly";
@@ -2133,20 +2133,26 @@ async function renderDailyScreen() {
 
   info.innerHTML = `Today reward: <b>${data.rewardLabel}</b>`;
 
-  if (data.canClaim) {
-    timer.innerText = "Available now";
-    btn.disabled = false;
-    btn.innerText = "CLAIM REWARD";
-    btn.classList.remove("claimed");
+if (data.canClaim) {
+  timer.innerText = "Available now";
 
-    if (dailyTimerInterval) {
-      clearInterval(dailyTimerInterval);
-      dailyTimerInterval = null;
-    }
-  } else {
-    dailyNextClaimAt = Date.now() + (data.nextClaimInMs || 0);
-    btn.disabled = true;
-    btn.innerText = "WAIT";
-    startDailyTimer();
+  btn.disabled = false;
+  btn.innerText = "CLAIM REWARD";
+  btn.classList.remove("claimed");
+
+  if (dailyTimerInterval) {
+    clearInterval(dailyTimerInterval);
+    dailyTimerInterval = null;
   }
+
+} else {
+  const ms = data.nextClaimInMs || 86400000; // fallback 24h
+
+  dailyNextClaimAt = Date.now() + ms;
+
+  btn.disabled = true;
+  btn.innerText = "WAIT";
+
+  startDailyTimer();
+}
 }
