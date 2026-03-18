@@ -5331,3 +5331,159 @@ body {
   height: 46px !important;
   object-fit: contain !important;
 }
+
+/* ===== FINAL HOME FIX ===== */
+
+/* 1) убираем зеленую оболочку под кнопкой tap в нижнем меню */
+.menu div[data-go="tap"] span {
+  width: auto !important;
+  height: auto !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* 2) делаем центральную иконку tap больше */
+.menu div[data-go="tap"] img,
+.menu div[data-go="tap"].active img {
+  width: 58px !important;
+  height: 58px !important;
+}
+
+/* 3) остальные иконки нижнего меню одинаковые */
+.menu img {
+  width: 50px !important;
+  height: 50px !important;
+  object-fit: contain !important;
+  display: block;
+}
+
+.menu div.active img {
+  width: 50px !important;
+  height: 50px !important;
+}
+
+/* 4) чуть ниже весь баланс */
+.top-balance-bar {
+  margin-top: 28px !important;
+}
+
+/* 5) монету на главном экране чуть больше */
+.hero-coin-wrap #coin {
+  width: min(70vw, 290px) !important;
+  max-width: 290px !important;
+  min-width: 210px !important;
+}
+
+/* 6) боковые меню спустить ниже */
+.hero-side {
+  top: 68% !important;
+  transform: translateY(-50%) !important;
+}
+
+/* 7) сделать все боковые кнопки одинаковыми */
+.hero-circle-btn {
+  width: 84px !important;
+  min-height: 96px !important;
+  padding: 12px 8px !important;
+  border-radius: 24px !important;
+}
+
+/* 8) все иконки внутри боковых кнопок одинакового размера */
+.hero-circle-btn img {
+  width: 42px !important;
+  height: 42px !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+
+/* 9) уменьшаем именно transfer, потому что PNG у него визуально больше */
+.hero-circle-btn img[src*="transfer"] {
+  width: 36px !important;
+  height: 36px !important;
+}
+
+/* 10) энергию спустить ниже */
+.energy-shell {
+  margin-top: 42px !important;
+  margin-bottom: 0 !important;
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 430px) {
+  .hero-side {
+    top: 69% !important;
+  }
+
+  .hero-circle-btn {
+    width: 80px !important;
+    min-height: 92px !important;
+  }
+
+  .hero-circle-btn img {
+    width: 40px !important;
+    height: 40px !important;
+  }
+
+  .hero-circle-btn img[src*="transfer"] {
+    width: 34px !important;
+    height: 34px !important;
+  }
+
+  .energy-shell {
+    margin-top: 46px !important;
+  }
+
+  .menu img {
+    width: 46px !important;
+    height: 46px !important;
+  }
+
+  .menu div.active img {
+    width: 46px !important;
+    height: 46px !important;
+  }
+
+  .menu div[data-go="tap"] img,
+  .menu div[data-go="tap"].active img {
+    width: 54px !important;
+    height: 54px !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .hero-side {
+    top: 70% !important;
+  }
+
+  .hero-circle-btn {
+    width: 74px !important;
+    min-height: 86px !important;
+  }
+
+  .hero-circle-btn img {
+    width: 36px !important;
+    height: 36px !important;
+  }
+
+  .hero-circle-btn img[src*="transfer"] {
+    width: 31px !important;
+    height: 31px !important;
+  }
+
+  .energy-shell {
+    margin-top: 48px !important;
+  }
+
+  .menu img,
+  .menu div.active img {
+    width: 42px !important;
+    height: 42px !important;
+  }
+
+  .menu div[data-go="tap"] img,
+  .menu div[data-go="tap"].active img {
+    width: 50px !important;
+    height: 50px !important;
+  }
+}
