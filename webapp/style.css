@@ -5383,24 +5383,24 @@ body {
 
 /* 7) сделать все боковые кнопки одинаковыми */
 .hero-circle-btn {
-  width: 84px !important;
-  min-height: 96px !important;
-  padding: 12px 8px !important;
-  border-radius: 24px !important;
+  width: 72px !important;
+  min-height: 82px !important;
+  padding: 10px 6px !important;
+  border-radius: 20px !important;
 }
 
 /* 8) все иконки внутри боковых кнопок одинакового размера */
 .hero-circle-btn img {
-  width: 42px !important;
-  height: 42px !important;
+  width: 44px !important;
+  height: 44px !important;
   object-fit: contain !important;
   display: block !important;
 }
 
 /* 9) уменьшаем именно transfer, потому что PNG у него визуально больше */
 .hero-circle-btn img[src*="transfer"] {
-  width: 36px !important;
-  height: 36px !important;
+  width: 38px !important;
+  height: 38px !important;
 }
 
 /* 10) энергию спустить ниже */
@@ -5514,8 +5514,8 @@ body {
 /* центральная кнопка ещё больше */
 .menu div[data-go="tap"] img,
 .menu div[data-go="tap"].active img {
-  width: 70px !important;
-  height: 70px !important;
+  width: 90px !important;
+  height: 90px !important;
 }
 
 /* убираем круг под ней если вдруг остался */
@@ -5526,8 +5526,12 @@ body {
 /* ===== ENERGY LOWER ===== */
 
 .energy-shell {
-  margin-top: 70px !important;
+  margin-top: 75px !important;
 }
 .top-balance-bar {
-  margin-top: 30px !important;
+  margin-top: 40px !important;
+}
+.hero-circle-btn img[src*="tasks"] {
+  width: 48px !important;
+  height: 48px !important;
 }
