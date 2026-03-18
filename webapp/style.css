@@ -903,35 +903,23 @@ input {
 
 /* дополнительно чуть воздуха между элементами */
 #tap #balance {
-  margin-top: 10px;
+  margin-top: 8px;
+  margin-bottom: 0;
+  flex-shrink: 0;
 }
 
-#tap #coin {
-  margin-top: 16px;
-}
-
-#tap #energy {
-  margin-top: 18px;
-}
 
 /* ================= TAP SCREEN FINAL VERTICAL SHIFT ================= */
 
-#tap {
-  padding-top: 30px;
-}
-
-/* баланс */
-#tap #balance {
-  margin-top: 20px;
-}
-/* монета */
-#tap #coin {
-  margin-top: 24px;
-}
 
 /* энергия */
 #tap #energy {
-  margin-top: 26px;
+  margin-top: 0;
+  margin-bottom: 0;
+  flex-shrink: 0;
+
+  position: relative;
+  z-index: 2;
 }
 
 /* ===== iOS SAFE AREA FIX ===== */
@@ -2495,8 +2483,14 @@ body.locked {
 }
 #tap {
   position: relative;
-}
+  min-height: calc(100dvh - 90px);
+  padding: 18px 18px 120px;
+  padding-top: calc(18px + env(safe-area-inset-top));
 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
 
 
@@ -3908,10 +3902,13 @@ body.locked {
   position: relative;
   width: 100%;
   max-width: 420px;
-  margin: 14px auto 0;
+
+  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
+
+  margin: 0 auto;
 }
 
 .home-coin-layout .coin-box {
