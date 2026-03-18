@@ -5535,3 +5535,24 @@ body {
   width: 48px !important;
   height: 48px !important;
 }
+/* ===== NO SHELL ===== */
+
+.hero-circle-btn {
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  width: auto !important;
+  min-height: auto !important;
+}
+
+/* иконки чуть больше */
+.hero-circle-btn img {
+  width: 46px !important;
+  height: 46px !important;
+}
+
+/* текст */
+.hero-circle-btn span {
+  font-size: 10px !important;
+}
