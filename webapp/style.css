@@ -6382,92 +6382,27 @@ body {
   flex: none !important;
   transform: scale(1) !important;
 }
-/* ===== FINAL BACK BUTTONS INSIDE SCREEN ===== */
-#daily-screen,
-#tasks-screen,
-#referral-screen {
-  max-width: 420px;
-  margin: 0 auto;
+/* ===== SAFE FINAL FIX ===== */
+
+/* referral back оставляем как был */
+#back-from-ref {
+  width: 100%;
+  margin-top: 12px;
 }
 
-#back-from-ref,
+/* daily/tasks back полностью скрываем */
 #back-from-daily,
 #back-from-tasks {
-  position: static !important;
-  left: auto !important;
-  bottom: auto !important;
-  transform: none !important;
-  z-index: auto !important;
-
-  width: 100%;
-  max-width: 100%;
-  margin: 18px 0 0 0;
-  display: block;
-
-  padding: 14px;
-  border-radius: 999px;
-  border: none;
-
-  font-size: 15px;
-  font-weight: 900;
-  letter-spacing: 1px;
-
-  cursor: pointer;
-  background: linear-gradient(180deg, #2cff9c, #00c070);
-  color: #02140c;
-  box-shadow:
-    0 6px 0 #009a5a,
-    0 12px 20px rgba(0,255,150,0.35);
+  display: none !important;
 }
 
-#back-from-ref:active,
-#back-from-daily:active,
-#back-from-tasks:active {
-  transform: translateY(4px) !important;
-  box-shadow:
-    0 2px 0 #009a5a,
-    0 6px 12px rgba(0,255,150,0.3);
-}
-/* ===== FINAL DROPDOWN ICONS REAL BIG ===== */
-#avatar-dropdown {
-  min-width: 176px !important;
-  padding: 12px !important;
-  gap: 8px !important;
-}
-
-#avatar-dropdown .avatar-item {
-  min-height: 46px !important;
-  padding: 10px 12px !important;
-  gap: 14px !important;
-  align-items: center !important;
-}
-
-#avatar-dropdown .avatar-item img {
-  width: 32px !important;
-  height: 32px !important;
-  min-width: 32px !important;
-  min-height: 32px !important;
-  max-width: 32px !important;
-  max-height: 32px !important;
-  flex: 0 0 32px !important;
+/* иконки dropdown чуть больше, без ломания */
+#avatar-dropdown .avatar-item img,
+.avatar-dropdown .avatar-item img {
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px !important;
+  min-height: 28px !important;
   object-fit: contain !important;
   display: block !important;
-}
-
-/* отдельно усиливаем именно эти 3 пункта */
-#open-tasks-from-menu img,
-#open-daily-from-menu img,
-#open-ref-from-menu img {
-  width: 34px !important;
-  height: 34px !important;
-  min-width: 34px !important;
-  min-height: 34px !important;
-}
-
-/* текст рядом чуть крупнее */
-#avatar-dropdown .avatar-item span {
-  font-size: 13px !important;
-  font-weight: 800 !important;
-  letter-spacing: 0.6px !important;
-  line-height: 1 !important;
 }
