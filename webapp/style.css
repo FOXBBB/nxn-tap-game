@@ -3902,10 +3902,10 @@ body.locked {
   z-index: 9999;
 }
 /* =========================================================
-   ONLY POSITION FIX — NO VISUAL CHANGES
+   FINAL POSITION FIX — ADAPTIVE, NO VISUAL RESTYLE
    ========================================================= */
 
-/* нижнее меню видно */
+/* меню всегда видно */
 .menu,
 .premium-menu {
   position: fixed !important;
@@ -3916,7 +3916,7 @@ body.locked {
   z-index: 99999 !important;
 }
 
-/* вернуть видимость иконок в нижнем меню */
+/* premium menu не прячем */
 .premium-menu .menu-item {
   display: flex !important;
   flex-direction: column !important;
@@ -3933,10 +3933,10 @@ body.locked {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  font-size: 20px !important;
-  line-height: 1 !important;
   width: 42px !important;
   height: 42px !important;
+  font-size: 20px !important;
+  line-height: 1 !important;
   opacity: 1 !important;
   visibility: visible !important;
 }
@@ -3951,11 +3951,7 @@ body.locked {
   display: block !important;
 }
 
-.menu div img {
-  display: none !important;
-}
-
-/* кнопки справа */
+/* правые кнопки */
 #tap {
   position: relative !important;
 }
@@ -3965,6 +3961,7 @@ body.locked {
   width: 100% !important;
   max-width: 420px !important;
   margin: 0 auto !important;
+  min-height: calc(100dvh - 120px) !important;
 }
 
 .tap-floating-actions {
@@ -3979,31 +3976,77 @@ body.locked {
   z-index: 20 !important;
 }
 
-/* ВАЖНО:
-   только опускаем ниже, стиль баланса не трогаем */
+/* главный блок: чуть ниже, но без перегиба */
 #tap .tap-left {
+  width: 100% !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
-  padding-top: 150px !important;
+  justify-content: flex-start !important;
+  padding-top: clamp(34px, 5.5vh, 56px) !important;
 }
 
-/* баланс — только расстояние, без визуальных изменений */
+/* БАЛАНС — НЕ МЕНЯЕМ ВИЗУАЛ, только безопасная ширина */
 #tap #balance {
-  margin-bottom: 58px !important;
+  margin-top: 0 !important;
+  margin-bottom: clamp(18px, 2.8vh, 28px) !important;
+
+  min-width: 0 !important;
+  width: auto !important;
+  max-width: calc(100vw - 92px) !important; /* место справа под кнопки */
+
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
 }
 
-/* тапалка — выше энергии */
+/* внутренности баланса */
+.balance-center {
+  min-width: 0 !important;
+}
+
+.balance-row {
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+.balance-value {
+  display: block !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+
+  /* размер сам подстраивается под экран */
+  font-size: clamp(24px, 5vw, 32px) !important;
+  line-height: 1 !important;
+}
+
+/* тапалка — чуть выше энергии */
 #tap .coin-box {
-  margin-bottom: 34px !important;
+  margin-top: 0 !important;
+  margin-bottom: clamp(14px, 2.4vh, 24px) !important;
+}
+
+#tap #coin,
+#tap .coin-box img {
+  display: block !important;
+  margin: 0 auto !important;
 }
 
 /* энергия — почти над меню */
 #tap #energy {
-  margin-bottom: 6px !important;
+  margin-top: 0 !important;
+  margin-bottom: clamp(4px, 1vh, 10px) !important;
+
+  max-width: calc(100vw - 28px) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
 }
 
-/* back кнопки как были в referral */
+/* кнопки back как в referral */
 #games .bottom-back-btn,
 #transfer .bottom-back-btn {
   width: 100% !important;
@@ -4030,24 +4073,23 @@ body.locked {
     0 6px 12px rgba(0,255,150,0.3) !important;
 }
 
+/* маленькие устройства */
 @media (max-width: 420px) {
-  #tap .tap-left {
-    padding-top: 135px !important;
+  .tap-floating-actions {
+    right: 6px !important;
+    gap: 10px !important;
+  }
+
+  .floating-action {
+    width: 52px !important;
+    height: 52px !important;
+  }
+
+  .floating-icon {
+    font-size: 20px !important;
   }
 
   #tap #balance {
-    margin-bottom: 50px !important;
-  }
-
-  #tap .coin-box {
-    margin-bottom: 28px !important;
-  }
-
-  #tap #energy {
-    margin-bottom: 4px !important;
-  }
-
-  .tap-floating-actions {
-    right: 6px !important;
+    max-width: calc(100vw - 86px) !important;
   }
 }
