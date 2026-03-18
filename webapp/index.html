@@ -82,67 +82,64 @@
 
       <section id="tap" class="screen">
 
-        <div id="balance">
-          <div class="balance-icon">
-            <img src="coin.png" alt="NXN">
-          </div>
+  <!-- TOP BALANCE BAR -->
+  <div class="top-balance-bar">
+    <div class="top-balance-left">
+      <div class="top-avatar-wrap">
+        <img src="avatar-placeholder.png" alt="Avatar" class="top-avatar">
+      </div>
+      <div class="top-balance-text">NXN Balance</div>
+    </div>
 
-          <div class="balance-center">
-            <div class="label">NXN BALANCE</div>
-            <div class="balance-row">
-              <span class="balance-value">0</span>
-            </div>
-          </div>
-        </div>
+    <div class="top-balance-center">
+      <span class="balance-value">0</span>
+      <span class="balance-today">+124 today</span>
+    </div>
 
-        <div class="home-coin-layout">
+    <div class="top-balance-right">
+      <img src="referral.png" alt="Referral" class="top-ref-icon">
+    </div>
+  </div>
 
-          <!-- LEFT -->
-          <div class="home-side home-side-left">
-            <div id="main-transfer-btn" class="tap-action-plain">
-              <img src="transfer-top.png" class="tap-icon" alt="Transfer">
-              <div class="tap-label">TRANSFER</div>
-            </div>
+  <!-- CENTER AREA -->
+  <div class="hero-zone">
 
-            <div id="open-tasks-btn" class="tap-action-plain">
-              <img src="tasks.png" class="tap-icon tasks-icon" alt="Tasks">
-              <div class="tap-label">TASKS</div>
-            </div>
+    <!-- LEFT -->
+    <div class="hero-side hero-left">
+      <div id="open-tasks-btn" class="hero-circle-btn">
+        <img src="tasks.png" alt="Tasks">
+        <span>Tasks</span>
+      </div>
+    </div>
 
-          </div>
+    <!-- CENTER COIN -->
+    <div class="hero-coin-wrap">
+      <img src="coin.png" id="coin" alt="NXN Coin">
+    </div>
 
-          <!-- CENTER -->
-          <div class="coin-box">
-            <img src="coin.png" id="coin" alt="NXN Coin">
-          </div>
+    <!-- RIGHT -->
+    <div class="hero-side hero-right">
+      <div id="open-daily-btn" class="hero-circle-btn">
+        <img src="daily.png" alt="Daily">
+        <span>Daily</span>
+      </div>
+    </div>
 
-          <!-- RIGHT -->
-          <div class="home-side home-side-right">
+  </div>
 
-            <div id="home-games-btn" class="tap-action-plain">
-              <img src="games-top.png" class="tap-icon" alt="Games">
-              <div class="tap-label">GAMES</div>
-            </div>
+  <!-- ENERGY -->
+  <div class="energy-shell">
+    <div class="energy-title">
+      Energy <span id="energy-value-inline">100 / 100</span>
+    </div>
 
-            <div id="open-referral" class="tap-action-plain">
-              <img src="referral.png" class="tap-icon" alt="Referral">
-              <div class="tap-label">REFERRAL</div>
+    <div class="energy-track">
+      <div class="energy-fill-bar" id="energy-fill-bar"></div>
+      <div class="energy-glow-dot"></div>
+    </div>
+  </div>
 
-            </div>
-
-             <div id="open-daily-btn" class="tap-action-plain">
-                <img src="calendar.png" class="tap-icon" alt="Daily">
-                <div class="tap-label">DAILY</div>
-              </div>
-
-          </div>
-
-        </div>
-
-
-        <div class="glass stat" id="energy">Energy: 100 / 100</div>
-
-      </section>
+</section>
 
 
    <div id="referral-screen" class="screen hidden">
@@ -583,21 +580,26 @@
 
       <!-- MENU -->
       <div class="menu">
-        <div data-go="leaderboard">
-          <span><img src="menu-leaderboard.png"></span>
-        </div>
+  <div data-go="leaderboard">
+    <span><img src="leaderboard.png" alt="Leaderboard"></span>
+  </div>
 
-        <div data-go="tap">
-          <span><img src="menu-tap.png"></span>
-        </div>
+  <div data-go="games">
+    <span><img src="games.png" alt="Games"></span>
+  </div>
 
-        <div data-go="stake-screen">
-          <span><img src="menu-stake.png"></span>
-        </div>
-        <div data-go="shop">
-          <span><img src="menu-shop.png"></span>
-        </div>
-      </div>
+  <div data-go="tap" class="active">
+    <span><img src="coin.png" alt="Tap"></span>
+  </div>
+
+  <div data-go="stake-screen">
+    <span><img src="vault.png" alt="Vault"></span>
+  </div>
+
+  <div data-go="shop">
+    <span><img src="shop.png" alt="Shop"></span>
+  </div>
+</div>
 
 
 

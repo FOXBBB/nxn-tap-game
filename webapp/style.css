@@ -4593,3 +4593,131 @@ body.locked {
 .daily-card.claimed {
   animation: claimGlow 0.6s ease;
 }
+
+body {
+  margin: 0;
+  background: radial-gradient(circle at center, #0f2f0f 0%, #020402 100%);
+  overflow: hidden;
+}
+
+/* звезды */
+#stars {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+#stars span {
+  position: absolute;
+  background: #7aff7a;
+  border-radius: 50%;
+  animation: twinkle 4s infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 1; }
+}
+.tap-center {
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+.tap-center img {
+  width: 180px;
+  filter: drop-shadow(0 0 25px #22ff55);
+}
+.side-btn {
+  position: absolute;
+  top: 48%;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: rgba(0,255,100,0.08);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 20px rgba(0,255,100,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.side-btn img {
+  width: 45px;
+}
+
+/* слева */
+.tasks-btn {
+  left: 8%;
+}
+
+/* справа */
+.daily-btn {
+  right: 8%;
+}
+.energy-bar {
+  position: absolute;
+  bottom: 120px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 18px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.1);
+  overflow: hidden;
+}
+
+.energy-fill {
+  height: 100%;
+  width: 40%;
+  background: linear-gradient(90deg, #00ff88, #ffee00);
+  box-shadow: 0 0 15px #00ff88;
+}
+.bottom-menu {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 95px;
+  background: rgba(0, 40, 0, 0.7);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(0,255,100,0.2);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 10;
+}
+
+/* кнопки */
+.menu-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* иконки */
+.menu-item img {
+  width: 40px;
+  opacity: 0.8;
+}
+
+/* центральная кнопка */
+.menu-center {
+  position: relative;
+  top: -25px;
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #00ff88, #004d1f);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 25px #00ff88;
+}
+
+.menu-center img {
+  width: 40px;
+}
