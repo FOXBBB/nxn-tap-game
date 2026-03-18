@@ -164,10 +164,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const openDailyBtn = document.getElementById("open-daily-btn");
   if (openDailyBtn) {
-    openDailyBtn.onclick = () => {
-      renderDailyScreen();
-      showScreen("daily-screen");
-    };
+    openDailyBtn.onclick = async () => {
+  showScreen("daily-screen");
+  await renderDailyScreen();
+};
   }
 
 
@@ -2113,46 +2113,60 @@ async function renderDailyScreen() {
 
   if (!timer || !info || !btn || !cards.length) return;
 
-  const res = await fetch(`/api/daily/state/${userId}`);
-  const data = await res.json();
+  try {
+    const res = await fetch(`/api/daily/state/${userId}`);
+    const data = await res.json();
 
-  if (!data.ok) return;
-
-  cards.forEach(card => {
-    const day = Number(card.dataset.day);
-    card.classList.remove("claimed", "active", "locked");
-
-    if (day < data.day) {
-      card.classList.add("claimed");
-    } else if (day === data.day) {
-      card.classList.add("active");
-    } else {
-      card.classList.add("locked");
+    if (data.ok === false) {
+      timer.innerText = "Daily unavailable";
+      info.innerHTML = "Failed to load daily reward";
+      btn.disabled = true;
+      btn.innerText = "WAIT";
+      return;
     }
-  });
 
-  info.innerHTML = `Today reward: <b>${data.rewardLabel}</b>`;
+    cards.forEach(card => {
+      const day = Number(card.dataset.day);
+      card.classList.remove("claimed", "active", "locked");
 
-if (data.canClaim) {
-  timer.innerText = "Available now";
+      if (day < data.day) {
+        card.classList.add("claimed");
+      } else if (day === data.day) {
+        card.classList.add("active");
+      } else {
+        card.classList.add("locked");
+      }
+    });
 
-  btn.disabled = false;
-  btn.innerText = "CLAIM REWARD";
-  btn.classList.remove("claimed");
+    info.innerHTML = `Today reward: <b>${data.rewardLabel || "Reward"}</b>`;
 
-  if (dailyTimerInterval) {
-    clearInterval(dailyTimerInterval);
-    dailyTimerInterval = null;
+    if (data.canClaim) {
+      timer.innerText = "Available now";
+
+      btn.disabled = false;
+      btn.innerText = "CLAIM REWARD";
+      btn.classList.remove("claimed");
+
+      if (dailyTimerInterval) {
+        clearInterval(dailyTimerInterval);
+        dailyTimerInterval = null;
+      }
+    } else {
+      const ms = Number(data.nextClaimInMs) || 86400000;
+
+      dailyNextClaimAt = Date.now() + ms;
+
+      btn.disabled = true;
+      btn.innerText = "WAIT";
+
+      timer.innerText = `Next reward in ${formatDailyTime(ms)}`;
+      startDailyTimer();
+    }
+  } catch (err) {
+    console.error("Daily render error:", err);
+    timer.innerText = "Daily unavailable";
+    info.innerHTML = "Failed to load daily reward";
+    btn.disabled = true;
+    btn.innerText = "WAIT";
   }
-
-} else {
-  const ms = data.nextClaimInMs || 86400000; // fallback 24h
-
-  dailyNextClaimAt = Date.now() + ms;
-
-  btn.disabled = true;
-  btn.innerText = "WAIT";
-
-  startDailyTimer();
-}
 }
