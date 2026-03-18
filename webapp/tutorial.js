@@ -382,20 +382,24 @@
 
 
       /* ================= 4 GAMES ================= */
-      case 4: {
-        showComment(t.gamesGo, false);
+     case 4: {
+  showScreen("tap");
 
-        const btn = document.querySelector('[data-go="games"]');
-        lockOnly(btn);
-        showFinger(btn);
+  setTimeout(() => {
+    showComment(t.gamesGo, false);
 
-        btn.addEventListener("click", () => {
-          step = 5;
-          run();
-        }, { once: true });
+    const btn = document.getElementById("home-games-btn");
+    lockOnly(btn);
+    showFinger(btn);
 
-        break;
-      }
+    btn.addEventListener("click", () => {
+      step = 5;
+      run();
+    }, { once: true });
+  }, 250);
+
+  break;
+}
 
       /* ================= 5 GAMES INFO ================= */
       case 5:

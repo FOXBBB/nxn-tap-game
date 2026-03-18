@@ -34,6 +34,21 @@ let pvpTapBound = false;
 
 // ================= INIT =================
 document.addEventListener("DOMContentLoaded", async () => {
+
+  const backFromGames = document.getElementById("back-from-games");
+if (backFromGames) {
+  backFromGames.onclick = () => {
+    showScreen("tap");
+  };
+}
+
+const backFromTransfer = document.getElementById("back-from-transfer");
+if (backFromTransfer) {
+  backFromTransfer.onclick = () => {
+    showScreen("tap");
+  };
+}
+
   if (!window.Telegram || !Telegram.WebApp) {
     alert("Open app from Telegram");
     return;
