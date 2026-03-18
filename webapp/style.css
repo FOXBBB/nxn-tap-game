@@ -4010,4 +4010,47 @@ body.locked {
     padding: 7px 5px;
     border-radius: 14px;
   }
+}/* ===== TAP SCREEN FINAL POSITION FIX ===== */
+
+/* весь главный экран чуть ниже */
+#tap {
+  padding-top: clamp(42px, 6vh, 70px);
+}
+
+/* баланс ниже, но размер цифры НЕ меняем */
+#tap #balance {
+  margin-top: 24px;
+
+  width: fit-content;
+  min-width: 260px;
+  max-width: min(94vw, 560px);
+
+  padding-left: 22px;
+  padding-right: 22px;
+}
+
+/* чтобы баланс мог расширяться, а текст не ломал блок */
+#balance .balance-center {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.balance-value {
+  white-space: nowrap;
+}
+
+/* монета + боковые кнопки чуть ниже */
+.home-coin-layout {
+  margin-top: clamp(14px, 2.5vh, 26px);
+}
+
+/* саму монету тоже чуть ниже */
+#tap #coin {
+  margin-top: 28px;
+}
+
+/* энергия ближе к меню */
+#tap #energy {
+  margin-top: clamp(52px, 7vh, 82px);
+  margin-bottom: 0;
 }
