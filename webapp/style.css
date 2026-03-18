@@ -4014,7 +4014,7 @@ body.locked {
 
 /* весь главный экран чуть ниже */
 #tap {
-  padding-top: clamp(42px, 6vh, 70px);
+  padding-top: clamp(60px, 8vh, 90px);
 }
 
 /* баланс ниже, но размер цифры НЕ меняем */
@@ -4046,11 +4046,11 @@ body.locked {
 
 /* саму монету тоже чуть ниже */
 #tap #coin {
-  margin-top: 28px;
+  margin-top: 36px;
 }
 
 /* энергия ближе к меню */
 #tap #energy {
-  margin-top: clamp(52px, 7vh, 82px);
+  margin-top: clamp(70px, 10vh, 110px);
   margin-bottom: 0;
 }
