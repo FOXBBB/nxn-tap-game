@@ -3902,10 +3902,10 @@ body.locked {
   z-index: 9999;
 }
 /* =========================================================
-   FINAL FIX
+   ONLY POSITION FIX — NO VISUAL CHANGES
    ========================================================= */
 
-/* ===== BOTTOM MENU: SHOW ICONS AGAIN ===== */
+/* нижнее меню видно */
 .menu,
 .premium-menu {
   position: fixed !important;
@@ -3913,82 +3913,49 @@ body.locked {
   right: 0 !important;
   bottom: 0 !important;
   width: 100% !important;
-  height: 90px !important;
-  display: flex !important;
-  justify-content: space-around !important;
-  align-items: center !important;
   z-index: 99999 !important;
-  opacity: 1 !important;
-  visibility: visible !important;
 }
 
-.menu .menu-item,
+/* вернуть видимость иконок в нижнем меню */
 .premium-menu .menu-item {
-  flex: 1 !important;
-  height: 100% !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 4px !important;
-  opacity: 0.6 !important;
-  transform: none !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  border-radius: 0 !important;
-  font-size: inherit !important;
-  line-height: normal !important;
-  padding: 0 !important;
-  margin: 0 !important;
+  opacity: 0.62 !important;
 }
 
-.menu .menu-item.active,
 .premium-menu .menu-item.active {
   opacity: 1 !important;
 }
 
-.menu .menu-glyph,
 .premium-menu .menu-glyph {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
+  font-size: 20px !important;
+  line-height: 1 !important;
   width: 42px !important;
   height: 42px !important;
-  font-size: 24px !important;
-  line-height: 1 !important;
   opacity: 1 !important;
   visibility: visible !important;
 }
 
-.menu .menu-item.center .menu-glyph,
 .premium-menu .menu-item.center .menu-glyph {
   width: 52px !important;
   height: 52px !important;
-  font-size: 28px !important;
+  font-size: 24px !important;
 }
 
-.menu .menu-item small,
 .premium-menu .menu-item small {
   display: block !important;
-  font-size: 10px !important;
-  line-height: 1 !important;
 }
 
 .menu div img {
   display: none !important;
 }
 
-/* убираем старое правило, которое ломало центр */
-.menu div:nth-child(2) {
-  width: auto !important;
-  height: 100% !important;
-  border-radius: 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  transform: none !important;
-}
-
-/* ===== FLOATING ACTIONS: MOVE TO RIGHT ===== */
+/* кнопки справа */
 #tap {
   position: relative !important;
 }
@@ -3998,14 +3965,6 @@ body.locked {
   width: 100% !important;
   max-width: 420px !important;
   margin: 0 auto !important;
-  min-height: calc(100dvh - 120px) !important;
-}
-
-.tap-left {
-  width: 100% !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
 }
 
 .tap-floating-actions {
@@ -4020,50 +3979,31 @@ body.locked {
   z-index: 20 !important;
 }
 
-.floating-action {
-  width: 56px !important;
-  height: 56px !important;
-  border-radius: 16px !important;
+/* ВАЖНО:
+   только опускаем ниже, стиль баланса не трогаем */
+#tap .tap-left {
   display: flex !important;
+  flex-direction: column !important;
   align-items: center !important;
-  justify-content: center !important;
+  padding-top: 150px !important;
 }
 
-.floating-icon {
-  font-size: 22px !important;
-  line-height: 1 !important;
-}
-
-/* ===== TAP SCREEN POSITION ===== */
-/* баланс выше кнопки тап примерно на 15мм */
+/* баланс — только расстояние, без визуальных изменений */
 #tap #balance {
-  margin-top: 0 !important;
-  margin-bottom: 56px !important;
+  margin-bottom: 58px !important;
 }
 
-/* кнопка тап выше энергии примерно на 10мм */
+/* тапалка — выше энергии */
 #tap .coin-box {
-  margin-top: 0 !important;
-  margin-bottom: 38px !important;
+  margin-bottom: 34px !important;
 }
 
-#tap #coin {
-  margin-top: 0 !important;
-}
-
-/* энергия почти над меню */
+/* энергия — почти над меню */
 #tap #energy {
-  margin-top: 0 !important;
-  margin-bottom: 8px !important; /* примерно 2мм над меню */
+  margin-bottom: 6px !important;
 }
 
-/* ===== SCREENS A BIT LOWER ABOVE MENU ===== */
-.screen {
-  padding-top: 18px !important;
-  padding-bottom: 120px !important;
-}
-
-/* ===== BACK BUTTONS LIKE REFERRAL ===== */
+/* back кнопки как были в referral */
 #games .bottom-back-btn,
 #transfer .bottom-back-btn {
   width: 100% !important;
@@ -4071,15 +4011,12 @@ body.locked {
   padding: 14px !important;
   border-radius: 999px !important;
   border: none !important;
-
   font-size: 15px !important;
   font-weight: 900 !important;
   letter-spacing: 1px !important;
   cursor: pointer !important;
-
   background: linear-gradient(180deg, #2cff9c, #00c070) !important;
   color: #02140c !important;
-
   box-shadow:
     0 6px 0 #009a5a,
     0 12px 20px rgba(0,255,150,0.35) !important;
@@ -4093,41 +4030,24 @@ body.locked {
     0 6px 12px rgba(0,255,150,0.3) !important;
 }
 
-/* ===== MOBILE ===== */
 @media (max-width: 420px) {
-  .tap-floating-actions {
-    right: 6px !important;
-    gap: 10px !important;
-  }
-
-  .floating-action {
-    width: 52px !important;
-    height: 52px !important;
-  }
-
-  .menu .menu-glyph,
-  .premium-menu .menu-glyph {
-    width: 40px !important;
-    height: 40px !important;
-    font-size: 22px !important;
-  }
-
-  .menu .menu-item.center .menu-glyph,
-  .premium-menu .menu-item.center .menu-glyph {
-    width: 48px !important;
-    height: 48px !important;
-    font-size: 26px !important;
+  #tap .tap-left {
+    padding-top: 135px !important;
   }
 
   #tap #balance {
-    margin-bottom: 48px !important;
+    margin-bottom: 50px !important;
   }
 
   #tap .coin-box {
-    margin-bottom: 32px !important;
+    margin-bottom: 28px !important;
   }
 
   #tap #energy {
-    margin-bottom: 6px !important;
+    margin-bottom: 4px !important;
+  }
+
+  .tap-floating-actions {
+    right: 6px !important;
   }
 }
