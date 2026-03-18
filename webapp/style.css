@@ -3941,10 +3941,10 @@ body.locked {
   display: none !important;
 }
 /* =========================================================
-   FINAL HOME FIX — KEEP GAME EXACTLY CENTERED
+   FINAL SAFE FIX — HOME CENTER + NORMAL BOTTOM MENU
    ========================================================= */
 
-/* главный экран */
+/* ---------- TAP HOME ---------- */
 #tap {
   position: relative !important;
   min-height: calc(100dvh - 110px) !important;
@@ -3952,45 +3952,39 @@ body.locked {
   display: block !important;
 }
 
-/* контейнер тапалки */
 .tap-premium-layout {
   position: relative !important;
   width: 100% !important;
-  max-width: 100% !important;
+  max-width: 420px !important;
   margin: 0 auto !important;
   display: block !important;
 }
 
-/* центральная колонка */
 .tap-left {
   width: 100% !important;
-  max-width: 100% !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
   justify-content: flex-start !important;
-  padding: 0 !important;
   margin: 0 auto !important;
+  padding: 0 !important;
 }
 
-/* баланс строго по центру и нормального размера */
 #tap #balance {
   width: fit-content !important;
   min-width: 300px !important;
   max-width: 90vw !important;
   margin: 20px auto 0 !important;
-  padding: 14px 22px !important;
   transform: none !important;
 }
 
-/* монета строго по центру */
 #tap .coin-box {
   width: 100% !important;
   display: flex !important;
   justify-content: center !important;
   align-items: center !important;
-  margin: 16px auto 0 !important;
   text-align: center !important;
+  margin: 16px auto 0 !important;
 }
 
 #tap .coin-box img,
@@ -4001,7 +3995,6 @@ body.locked {
   display: block !important;
 }
 
-/* энергия строго по центру */
 #tap #energy {
   width: fit-content !important;
   max-width: 90vw !important;
@@ -4009,13 +4002,8 @@ body.locked {
   transform: none !important;
 }
 
-/* старую правую колонку отключаем полностью */
-.tap-right-panel,
-.home-side-card,
-.home-side-text,
-.home-side-title,
-.home-side-sub,
-.home-side-icon {
+/* скрываем старую боковую колонку если она осталась */
+.tap-right-panel {
   display: none !important;
 }
 
@@ -4041,10 +4029,10 @@ body.locked {
   align-items: center !important;
   justify-content: center !important;
   cursor: pointer !important;
+  padding: 0 !important;
   box-shadow:
     0 12px 24px rgba(0,0,0,0.28),
     inset 0 1px 0 rgba(255,255,255,0.05) !important;
-  padding: 0 !important;
 }
 
 .floating-action.games {
@@ -4064,74 +4052,89 @@ body.locked {
   line-height: 1 !important;
 }
 
-/* меню снизу оставить крупным и нормальным */
-.premium-menu {
-  height: 94px !important;
-  padding: 10px 8px calc(env(safe-area-inset-bottom) + 8px) !important;
+/* ---------- NORMAL BOTTOM MENU FOR YOUR CURRENT HTML ---------- */
+.menu {
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 92px !important;
+  padding: 8px 6px calc(env(safe-area-inset-bottom) + 8px) !important;
+
+  display: flex !important;
+  justify-content: space-around !important;
+  align-items: center !important;
+
   background: linear-gradient(180deg, rgba(8,14,18,0.82), rgba(4,8,10,0.92)) !important;
   border-top: 1px solid rgba(0,255,180,0.18) !important;
   box-shadow: 0 -8px 30px rgba(0,0,0,0.38) !important;
   backdrop-filter: blur(18px) !important;
+  z-index: 50 !important;
 }
 
-.premium-menu .menu-item {
+.menu div {
+  flex: 1 !important;
+  height: 100% !important;
   display: flex !important;
-  flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 4px !important;
-  opacity: 0.62 !important;
+  position: relative !important;
+  opacity: 0.58 !important;
+  transform: none !important;
+  background: transparent !important;
+  border-radius: 18px !important;
   margin: 0 2px !important;
+  padding: 0 !important;
+  line-height: normal !important;
+  font-size: initial !important;
 }
 
-.premium-menu .menu-item small {
-  font-size: 10px !important;
-  line-height: 1 !important;
-  color: #d7e6e2 !important;
-  letter-spacing: 0.08em !important;
-  text-transform: uppercase !important;
-  opacity: 0.75 !important;
-}
-
-.premium-menu .menu-glyph {
-  width: 42px !important;
-  height: 42px !important;
-  border-radius: 14px !important;
+.menu div span {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  font-size: 20px !important;
-  font-weight: 900 !important;
-  background: rgba(255,255,255,0.05) !important;
-  color: #bfffee !important;
 }
 
-.premium-menu .menu-item.active {
+.menu div img {
+  width: 40px !important;
+  height: 40px !important;
+  object-fit: contain !important;
+  display: block !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  pointer-events: none !important;
+  -webkit-user-drag: none !important;
+  user-select: none !important;
+  filter: none !important;
+}
+
+.menu div.active {
   opacity: 1 !important;
   transform: translateY(-2px) !important;
 }
 
-.premium-menu .menu-item.active .menu-glyph {
-  background: linear-gradient(180deg, rgba(0,255,180,0.22), rgba(0,140,100,0.22)) !important;
-  box-shadow:
-    0 0 18px rgba(0,255,180,0.26),
-    inset 0 1px 0 rgba(255,255,255,0.08) !important;
-  color: #ffffff !important;
+.menu div.active img {
+  width: 46px !important;
+  height: 46px !important;
+  filter: drop-shadow(0 0 14px rgba(0,255,180,0.55)) !important;
 }
 
-.premium-menu .menu-item.active small {
-  color: #7affc6 !important;
-  opacity: 1 !important;
-}
-
-.premium-menu .menu-item.center .menu-glyph {
-  width: 52px !important;
-  height: 52px !important;
+/* убираем старый огромный центральный круг, который ломал низ */
+.menu div:nth-child(2) {
+  width: auto !important;
+  height: 100% !important;
   border-radius: 18px !important;
-  font-size: 24px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  transform: none !important;
 }
 
-/* back кнопки снизу */
+.menu div:nth-child(2).active {
+  transform: translateY(-2px) !important;
+}
+
+/* ---------- BACK BUTTONS ---------- */
 .back-btn {
   display: none !important;
 }
@@ -4154,7 +4157,14 @@ body.locked {
     0 12px 22px rgba(0,255,150,0.28) !important;
 }
 
-/* маленькие экраны */
+.bottom-back-btn:active {
+  transform: translateY(4px) !important;
+  box-shadow:
+    0 2px 0 #009a5a,
+    0 6px 12px rgba(0,255,150,0.22) !important;
+}
+
+/* ---------- SMALL SCREENS ---------- */
 @media (max-width: 390px) {
   #tap #balance {
     min-width: 280px !important;
@@ -4181,19 +4191,17 @@ body.locked {
     font-size: 20px !important;
   }
 
-  .premium-menu .menu-glyph {
-    width: 38px !important;
-    height: 38px !important;
-    font-size: 18px !important;
+  .menu {
+    height: 88px !important;
   }
 
-  .premium-menu .menu-item.center .menu-glyph {
-    width: 48px !important;
-    height: 48px !important;
-    font-size: 22px !important;
+  .menu div img {
+    width: 36px !important;
+    height: 36px !important;
   }
 
-  .premium-menu .menu-item small {
-    font-size: 9px !important;
+  .menu div.active img {
+    width: 42px !important;
+    height: 42px !important;
   }
 }
