@@ -4454,3 +4454,70 @@ body.locked {
     bottom: 102px !important;
   }
 }
+/* =========================================================
+   HOME FINAL TUNE 2
+   ========================================================= */
+
+/* весь центральный блок еще ниже */
+.tap-left {
+  padding-top: 92px !important;
+}
+
+/* баланс ниже */
+#tap #balance {
+  margin-top: 0 !important;
+  margin-bottom: 26px !important;
+}
+
+/* монета ниже */
+#tap .coin-box {
+  margin-top: 18px !important;
+}
+
+#tap #coin,
+#tap .coin-box img {
+  margin-top: 0 !important;
+}
+
+/* энергия шире и красивее */
+#tap #energy {
+  bottom: 108px !important;
+
+  min-width: 250px !important;
+  max-width: calc(100vw - 36px) !important;
+  width: max-content !important;
+
+  padding: 16px 26px !important;
+  font-size: 18px !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+  text-align: center !important;
+}
+
+/* чтобы текст max energy не ломался */
+#energy,
+#energy.energy-low {
+  white-space: nowrap !important;
+  overflow: visible !important;
+}
+
+/* на маленьких экранах */
+@media (max-width: 420px) {
+  .tap-left {
+    padding-top: 78px !important;
+  }
+
+  #tap #balance {
+    margin-bottom: 22px !important;
+  }
+
+  #tap .coin-box {
+    margin-top: 14px !important;
+  }
+
+  #tap #energy {
+    min-width: 220px !important;
+    padding: 14px 20px !important;
+    font-size: 17px !important;
+  }
+}
