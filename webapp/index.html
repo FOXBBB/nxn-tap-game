@@ -80,53 +80,54 @@
 
 
 
-     <section id="tap" class="screen">
+      <section id="tap" class="screen">
 
-  <div id="balance">
-    <div class="balance-icon">
-      <img src="coin.png" alt="NXN">
-    </div>
+        <div id="balance">
+          <div class="balance-icon">
+            <img src="coin.png" alt="NXN">
+          </div>
 
-    <div class="balance-center">
-      <div class="label">NXN BALANCE</div>
-      <div class="balance-row">
-        <span class="balance-value">0</span>
-      </div>
-    </div>
-  </div>
+          <div class="balance-center">
+            <div class="label">NXN BALANCE</div>
+            <div class="balance-row">
+              <span class="balance-value">0</span>
+            </div>
+          </div>
+        </div>
 
-  <div class="home-coin-layout">
+        <div class="home-coin-layout">
 
-    <div class="home-side home-side-left">
-      <div id="open-referral" class="tap-action-card referral">
-        <span>REFERRAL</span>
-      </div>
+          <div class="home-side home-side-left">
+            <div id="open-referral" class="tap-action-card referral">
+              <span>REFERRAL</span>
+            </div>
 
-      <div id="main-transfer-btn" class="tap-action-card transfer">
-        <span>TRANSFER</span>
-      </div>
-    </div>
+            <div id="main-transfer-btn" class="tap-action-card transfer">
+              <span>TRANSFER</span>
+            </div>
+          </div>
 
-    <div class="coin-box">
-      <img src="coin.png" id="coin">
-    </div>
+          <div class="coin-box">
+            <img src="coin.png" id="coin">
+          </div>
 
-    <div class="home-side home-side-right">
-      <div id="home-games-btn" class="tap-action-card games">
-        <span>GAMES</span>
-      </div>
-    </div>
+          <div class="home-side home-side-right">
+            <div id="home-games-btn" class="tap-action-card games">
+              <span>GAMES</span>
+            </div>
+          </div>
 
-  </div>
+        </div>
 
-  <div class="glass stat" id="energy">Energy: 100 / 100</div>
+        <div class="glass stat" id="energy">Energy: 100 / 100</div>
 
-</section>
+      </section>
 
 
-      <div id="referral-screen" class="screen hidden">
+     <div id="referral-screen" class="screen hidden">
 
-        <h2>Referral</h2>
+  <img src="referral.png" class="screen-top-icon" alt="Referral">
+  <h2>Referral</h2>
 
         <!-- YOUR CODE -->
         <div class="ref-box">
@@ -269,7 +270,9 @@
 
       <!-- TRANSFER (НЕ ТРОГАЕМ) -->
       <section id="transfer" class="screen hidden">
-        <div class="title blue">TRANSFER COINS</div>
+  <img src="transfer-top.png" class="screen-top-icon" alt="Transfer">
+  <div class="title blue">TRANSFER COINS</div>
+
         <div class="subtitle yellow">BY ID</div>
         <div class="glass stat" id="my-id">Your ID: ...</div>
 
@@ -299,8 +302,9 @@
         <img src="transfer.png" class="transfer-img">
       </section>
 
-      <section id="games" class="screen hidden">
-        <div class="title blue">GAMES</div>
+     <section id="games" class="screen hidden">
+  <img src="games-top.png" class="screen-top-icon" alt="Games">
+  <div class="title blue">GAMES</div>
 
         <!-- PvP CARD -->
         <div class="game-card pvp-card" id="open-pvp">
@@ -490,9 +494,8 @@
         </div>
 
         <div data-go="stake-screen">
-          <span><img src="menu-games.png"></span>
+          <span><img src="menu-stake.png"></span>
         </div>
-
         <div data-go="shop">
           <span><img src="menu-shop.png"></span>
         </div>
