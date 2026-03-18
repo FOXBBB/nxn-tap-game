@@ -3901,3 +3901,390 @@ body.locked {
   inset: 0;
   z-index: 9999;
 }
+/* =========================================================
+   NXN PREMIUM HOME + MENU + TYPOGRAPHY OVERRIDE
+   ========================================================= */
+
+body {
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  letter-spacing: 0.01em;
+}
+
+.title.blue,
+.lb-title,
+.pvp-title,
+.stake-phase,
+.home-side-title,
+.online-title,
+.invite-title {
+  font-family: Inter, system-ui, sans-serif;
+}
+
+.screen {
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+/* ===== TAP PREMIUM LAYOUT ===== */
+.tap-premium-layout {
+  display: grid;
+  grid-template-columns: 1fr 148px;
+  gap: 14px;
+  align-items: center;
+  min-height: calc(100dvh - 170px);
+}
+
+.tap-left {
+  min-width: 0;
+}
+
+.tap-right-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-self: center;
+}
+
+.home-side-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 96px;
+  border-radius: 22px;
+  padding: 14px 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  border: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(14px);
+  box-shadow:
+    0 12px 30px rgba(0,0,0,0.25),
+    inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+.home-side-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+  pointer-events: none;
+}
+
+.home-side-card:hover {
+  transform: translateY(-2px);
+}
+
+.home-side-card:active {
+  transform: scale(0.97);
+}
+
+.home-side-card.games {
+  background:
+    radial-gradient(circle at top right, rgba(0,255,200,0.22), transparent 55%),
+    linear-gradient(180deg, rgba(8,18,30,0.95), rgba(6,10,18,0.95));
+  border-color: rgba(0,255,200,0.22);
+  box-shadow: 0 16px 30px rgba(0,255,200,0.12);
+}
+
+.home-side-card.transfer {
+  background:
+    radial-gradient(circle at top right, rgba(108,240,255,0.22), transparent 55%),
+    linear-gradient(180deg, rgba(7,18,30,0.95), rgba(5,9,18,0.95));
+  border-color: rgba(108,240,255,0.24);
+  box-shadow: 0 16px 30px rgba(80,150,255,0.14);
+}
+
+.home-side-card.referral {
+  background:
+    radial-gradient(circle at top right, rgba(255,215,100,0.22), transparent 55%),
+    linear-gradient(180deg, rgba(24,18,8,0.95), rgba(16,12,5,0.95));
+  border-color: rgba(255,200,80,0.24);
+  box-shadow: 0 16px 30px rgba(255,180,80,0.14);
+}
+
+.home-side-icon {
+  position: relative;
+  z-index: 1;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 900;
+  background: rgba(255,255,255,0.08);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+.home-side-text {
+  position: relative;
+  z-index: 1;
+}
+
+.home-side-title {
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-top: 10px;
+}
+
+.home-side-sub {
+  font-size: 11px;
+  opacity: 0.72;
+  margin-top: 4px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.coin-box {
+  margin-top: 16px;
+}
+
+.coin-box img {
+  width: min(72vw, 290px);
+}
+
+#energy {
+  margin-top: 18px;
+  border-radius: 20px;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+/* ===== HOME RESPONSIVE ===== */
+@media (max-width: 720px) {
+  .tap-premium-layout {
+    grid-template-columns: 1fr 128px;
+    gap: 12px;
+  }
+
+  .home-side-card {
+    min-height: 88px;
+    border-radius: 18px;
+    padding: 12px 10px;
+  }
+
+  .home-side-title {
+    font-size: 14px;
+  }
+
+  .home-side-sub {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 540px) {
+  .tap-premium-layout {
+    grid-template-columns: 1fr 112px;
+    gap: 10px;
+  }
+
+  .home-side-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+  }
+
+  .coin-box img {
+    width: min(68vw, 250px);
+  }
+}
+
+/* ===== PREMIUM MENU ===== */
+.premium-menu {
+  height: 94px;
+  padding: 10px 8px calc(env(safe-area-inset-bottom) + 8px);
+  background:
+    linear-gradient(180deg, rgba(8,14,18,0.82), rgba(4,8,10,0.92));
+  border-top: 1px solid rgba(0,255,180,0.18);
+  box-shadow: 0 -8px 30px rgba(0,0,0,0.38);
+  backdrop-filter: blur(18px);
+}
+
+.premium-menu .menu-item {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  opacity: 0.62;
+  transition: all 0.18s ease;
+  border-radius: 18px;
+  margin: 0 2px;
+}
+
+.premium-menu .menu-item small {
+  font-size: 10px;
+  line-height: 1;
+  color: #d7e6e2;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+
+.premium-menu .menu-glyph {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 900;
+  background: rgba(255,255,255,0.05);
+  color: #bfffee;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+}
+
+.premium-menu .menu-item.active {
+  opacity: 1;
+  transform: translateY(-2px);
+}
+
+.premium-menu .menu-item.active .menu-glyph {
+  background: linear-gradient(180deg, rgba(0,255,180,0.22), rgba(0,140,100,0.22));
+  box-shadow:
+    0 0 18px rgba(0,255,180,0.26),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+  color: #ffffff;
+}
+
+.premium-menu .menu-item.active small {
+  color: #7affc6;
+  opacity: 1;
+}
+
+.premium-menu .menu-item.center .menu-glyph {
+  width: 52px;
+  height: 52px;
+  border-radius: 18px;
+  font-size: 24px;
+  background: linear-gradient(180deg, rgba(0,255,180,0.28), rgba(0,200,120,0.24));
+  box-shadow:
+    0 0 24px rgba(0,255,180,0.3),
+    inset 0 1px 0 rgba(255,255,255,0.1);
+}
+
+/* ===== BALANCE / CARD POLISH ===== */
+#balance {
+  border-radius: 28px;
+  padding: 14px 18px;
+  background:
+    radial-gradient(circle at left top, rgba(0,255,180,0.26), transparent 45%),
+    linear-gradient(180deg, rgba(8,22,18,0.94), rgba(5,12,10,0.94));
+  border: 1px solid rgba(0,255,170,0.35);
+  box-shadow:
+    0 12px 28px rgba(0,0,0,0.32),
+    0 0 22px rgba(0,255,170,0.1),
+    inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+.balance-icon img {
+  width: 48px;
+  height: 48px;
+}
+
+#balance .label {
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.68;
+}
+
+.balance-value {
+  font-size: clamp(28px, 4vw, 36px);
+  font-weight: 900;
+}
+
+/* ===== REFERRAL SCREEN PREMIUM ===== */
+#referral-screen h2 {
+  text-align: center;
+  font-size: 30px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  margin-bottom: 18px;
+  background: linear-gradient(180deg, #ffe38a, #ffbf3c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+#copy-ref,
+#bind-ref,
+#back-from-ref,
+#stake-confirm,
+#send,
+.pvp-play,
+.pvp-again-btn,
+.shop-buy,
+.ref-stake-btn,
+.stake-btn {
+  border-radius: 18px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+/* ===== GENERAL PREMIUM TEXT ===== */
+.ref-label,
+.stake-stat .label,
+.lb-sub,
+.shop-desc,
+.online-title,
+.subscribe-note {
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.stake-card,
+.transfer-box,
+.shop-card,
+.pvp-box,
+.ref-box,
+.stake-me,
+.lb-list,
+.pvp-online-table {
+  border-radius: 22px;
+  box-shadow: 0 14px 30px rgba(0,0,0,0.24);
+}
+
+/* ===== MAKE STAKE SCREEN FEEL PREMIUM ===== */
+.stake-card {
+  background:
+    radial-gradient(circle at top right, rgba(0,255,180,0.14), transparent 40%),
+    linear-gradient(180deg, rgba(10,18,16,0.95), rgba(6,10,10,0.95));
+  border: 1px solid rgba(0,255,180,0.16);
+}
+
+.stake-stat {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.stake-amounts button {
+  border-radius: 14px;
+  font-weight: 700;
+}
+
+.stake-amounts button.active {
+  box-shadow: 0 0 18px rgba(0,255,150,0.28);
+}
+
+/* ===== SMALL SCREEN ===== */
+@media (max-width: 420px) {
+  .premium-menu .menu-glyph {
+    width: 38px;
+    height: 38px;
+    font-size: 18px;
+  }
+
+  .premium-menu .menu-item.center .menu-glyph {
+    width: 48px;
+    height: 48px;
+    font-size: 22px;
+  }
+
+  .premium-menu .menu-item small {
+    font-size: 9px;
+  }
+}

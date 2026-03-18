@@ -20,7 +20,7 @@
       lbGo: { title: "Leaderboard", text: "Tap the leaderboard icon." },
       lbInfo: { title: "Leaderboard", text: "This is the global ranking of players." },
 
-      transferGo: { title: "Transfer", text: "Tap Transfer." },
+      transferGo: { title: "Transfer", text: "Tap the Transfer card on the main screen." },
       transferInfo: { title: "Transfer", text: "Send NXN to other players by ID." },
 
       shopGo: { title: "Shop", text: "Tap Shop." },
@@ -28,7 +28,7 @@
 
       backTap: { title: "Main screen", text: "Return to the tap screen." },
 
-      stakeGo: { title: "Stake", text: "Tap Stake to open staking." },
+      stakeGo: { title: "Stack", text: "Tap the Stack icon in the bottom menu." },
       stakeInfo: { title: "Stake", text: "Stake NXN to participate in reward cycles." },
       stakeNXN: { title: "Stake NXN", text: "Choose amount and confirm staking." },
       stakeRef: { title: "Referral stake", text: "Referral NXN can be used only for staking." },
@@ -62,7 +62,7 @@
       lbGo: { title: "Лидерборд", text: "Нажми на иконку лидерборда." },
       lbInfo: { title: "Лидерборд", text: "Здесь показан общий рейтинг игроков соревнуйся с лидерами из ТОП 100." },
 
-      transferGo: { title: "Переводы", text: "Нажми «Переводы»." },
+      transferGo: { title: "Переводы", text: "Нажми карточку «Transfer» на главном экране." },
       transferInfo: { title: "Переводы", text: "Отправляй и делись NXN своим друзьям по ID." },
 
       shopGo: { title: "Магазин", text: "Нажми «Магазин»." },
@@ -70,7 +70,7 @@
 
       backTap: { title: "Главный экран", text: "Вернись на экран тапалки." },
 
-      stakeGo: { title: "Стэк", text: "Нажми «Стэк»." },
+      stakeGo: { title: "Стэк", text: "Нажми иконку «Stack» в нижнем меню." },
       stakeInfo: { title: "Стэк", text: "Стейкай NXN для участия в наградах настоящего NXN TOKEN." },
       stakeNXN: { title: "Стэк NXN", text: "Выбери сумму и подтверди стэк." },
       stakeRef: { title: "Реферальный стэк", text: "Реферальные NXN доступны только для стэка." },
@@ -104,7 +104,7 @@
       lbGo: { title: "Sıralama", text: "Sıralama ikonuna dokun." },
       lbInfo: { title: "Sıralama", text: "Oyuncuların genel sıralaması TOP 100 kisiden biri sen ol." },
 
-      transferGo: { title: "Transfer", text: "Transfer'e dokun." },
+      transferGo: { title: "Transfer", text: "Ana ekrandaki Transfer kartına dokun." },
       transferInfo: { title: "Transfer", text: "NXN'i ID üzere diğer oyunculara gönder." },
 
       gamesGo: { title: "Oyunlar", text: "Mini oyunları açmak için Oyunlar'a dokun." },
@@ -116,7 +116,7 @@
 
       backTap: { title: "Ana ekran", text: "Ana tap ekranına dön." },
 
-      stakeGo: { title: "Stake", text: "Stake'e dokun." },
+      stakeGo: { title: "Stake", text: "Alt menüdeki Stake ikonuna dokun." },
       stakeInfo: { title: "Stake", text: "Ödüller için NXN stake et." },
       stakeNXN: { title: "NXN Stake", text: "Miktar seç ve onayla." },
       stakeRef: { title: "Referans Stake", text: "Referans NXN sadece stake içindir." },
@@ -466,19 +466,19 @@
         break;
 
       /* ================= 12 STAKE ================= */
-      case 12: {
-        showComment(t.stakeGo, false);
-        const btn = document.getElementById("stake-btn");
-        lockOnly(btn);
-        showFinger(btn);
+     case 12: {
+  showComment(t.stakeGo, false);
+  const btn = document.querySelector('[data-go="stake-screen"]');
+  lockOnly(btn);
+  showFinger(btn);
 
-        btn.addEventListener("click", () => {
-          step = 13;
-          run();
-        }, { once: true });
+  btn.addEventListener("click", () => {
+    step = 13;
+    run();
+  }, { once: true });
 
-        break;
-      }
+  break;
+}
 
       /* ================= 13 STAKE INFO ================= */
       case 13:
@@ -545,18 +545,22 @@
 
       /* ================= 19 REFERRAL ================= */
       case 19: {
-        showComment(t.referralGo, false);
-        const btn = document.getElementById("open-referral");
-        lockOnly(btn);
-        showFinger(btn);
+  showScreen("tap");
 
-        btn.addEventListener("click", () => {
-          step = 20;
-          run();
-        }, { once: true });
+  setTimeout(() => {
+    showComment(t.referralGo, false);
+    const btn = document.getElementById("home-referral-btn");
+    lockOnly(btn);
+    showFinger(btn);
 
-        break;
-      }
+    btn.addEventListener("click", () => {
+      step = 20;
+      run();
+    }, { once: true });
+  }, 250);
+
+  break;
+}
 
       /* ================= 20 REFERRAL INFO ================= */
       case 20:

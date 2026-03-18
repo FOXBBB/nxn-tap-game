@@ -81,47 +81,58 @@
 
 
       <!-- TAP (НЕ ТРОГАЕМ) -->
-      <section id="tap" class="screen">
+     <section id="tap" class="screen">
 
-
-        <div id="balance">
-          <div class="balance-icon">
-            <img src="coin.png" alt="NXN">
-          </div>
-
-          <div class="balance-center">
-            <div class="label">NXN BALANCE</div>
-            <div class="balance-row">
-              <span class="balance-value">0</span>
-            </div>
-          </div>
+  <div class="tap-premium-layout">
+    <div class="tap-left">
+      <div id="balance">
+        <div class="balance-icon">
+          <img src="coin.png" alt="NXN">
         </div>
 
-       <div class="tap-actions">
-
-  <div id="stake-btn" class="tap-action-card stake">
-    <span>STAKE</span>
-  </div>
-
-  <div id="main-transfer-btn" class="tap-action-card transfer">
-    <span>TRANSFER</span>
-  </div>
-
-</div>
-
-
-        <div class="coin-box">
-          <img src="coin.png" id="coin">
+        <div class="balance-center">
+          <div class="label">NXN BALANCE</div>
+          <div class="balance-row">
+            <span class="balance-value">0</span>
+          </div>
         </div>
+      </div>
 
-        <div class="glass stat" id="energy">Energy: 100 / 100</div>
+      <div class="coin-box">
+        <img src="coin.png" id="coin">
+      </div>
 
-  
+      <div class="glass stat" id="energy">Energy: 100 / 100</div>
+    </div>
 
+    <div class="tap-right-panel">
+      <div id="home-games-btn" class="home-side-card games">
+        <div class="home-side-icon">🎮</div>
+        <div class="home-side-text">
+          <div class="home-side-title">Games</div>
+          <div class="home-side-sub">Arena & more</div>
+        </div>
+      </div>
 
+      <div id="main-transfer-btn" class="home-side-card transfer">
+        <div class="home-side-icon">⇄</div>
+        <div class="home-side-text">
+          <div class="home-side-title">Transfer</div>
+          <div class="home-side-sub">Send NXN</div>
+        </div>
+      </div>
 
+      <div id="home-referral-btn" class="home-side-card referral">
+        <div class="home-side-icon">👥</div>
+        <div class="home-side-text">
+          <div class="home-side-title">Referral</div>
+          <div class="home-side-sub">Invite friends</div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-      </section> <!-- конец TAP -->
+</section>
 
 
       <div id="referral-screen" class="screen hidden">
@@ -155,7 +166,7 @@
           <b id="ref-balance">0</b> NXN
         </div>
 
-        <button id="back-from-ref">Back</button>
+        <button id="back-from-ref">Back to Main</button>
       </div>
 
 
@@ -212,10 +223,6 @@
 
           <button id="open-stake-lb" class="stake-btn">
             View Stake Leaderboard
-          </button>
-
-          <button id="open-referral" class="ref-open-btn">
-            Referral
           </button>
 
 
@@ -485,24 +492,32 @@
       </section>
 
       <!-- MENU -->
-      <div class="menu">
-        <div data-go="leaderboard">
-          <span><img src="menu-leaderboard.png"></span>
-        </div>
+      <div class="menu premium-menu">
+  <div data-go="leaderboard" class="menu-item">
+    <span class="menu-glyph">🏆</span>
+    <small>Top</small>
+  </div>
 
-        <div data-go="tap">
-          <span><img src="menu-tap.png"></span>
-        </div>
+  <div data-go="tap" class="menu-item active center">
+    <span class="menu-glyph">◉</span>
+    <small>Tap</small>
+  </div>
 
-        <div data-go="games">
-          <span><img src="menu-games.png"></span>
-        </div>
+  <div data-go="stake-screen" class="menu-item">
+    <span class="menu-glyph">⬢</span>
+    <small>Stack</small>
+  </div>
 
-        <div data-go="shop">
-          <span><img src="menu-shop.png"></span>
-        </div>
-      </div>
+  <div data-go="games" class="menu-item">
+    <span class="menu-glyph">✦</span>
+    <small>Games</small>
+  </div>
 
+  <div data-go="shop" class="menu-item">
+    <span class="menu-glyph">◆</span>
+    <small>Shop</small>
+  </div>
+</div>
 
 
       <div id="referral-stake-modal" class="modal hidden">

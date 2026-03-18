@@ -114,3 +114,26 @@ body.tutorial-next-only .nxn-comment * {
   50%  { box-shadow: 0 0 18px rgba(34,197,94,0.9); }
   100% { box-shadow: 0 0 0 rgba(34,197,94,0.0); }
 }
+/* ===== Tutorial safer on premium layout ===== */
+.nxn-comment {
+  border-radius: 18px;
+  padding: 16px 18px;
+  box-shadow:
+    0 16px 30px rgba(0,0,0,0.38),
+    0 0 24px rgba(34,197,94,0.18);
+}
+
+.nxn-comment-title {
+  font-size: 15px;
+  letter-spacing: 0.04em;
+}
+
+.nxn-comment-text {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.nxn-comment-btn {
+  border-radius: 12px;
+  padding: 8px 16px;
+}
