@@ -148,6 +148,21 @@ document.addEventListener("DOMContentLoaded", async () => {
   updateUI();
   initMenu();
 
+    const mainTransferBtn = document.getElementById("main-transfer-btn");
+  if (mainTransferBtn) {
+    mainTransferBtn.onclick = () => {
+      showScreen("transfer");
+      loadHistory();
+    };
+  }
+
+  const homeGamesBtn = document.getElementById("home-games-btn");
+  if (homeGamesBtn) {
+    homeGamesBtn.onclick = () => {
+      showScreen("games");
+    };
+  }
+
   // ================= SUBSCRIBE GATE =================
 
   Telegram.WebApp.ready();
@@ -322,9 +337,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 
-  document.getElementById("back-from-ref").onclick = () => {
-    showScreen("stake-screen");
-  };
+ document.getElementById("back-from-ref").onclick = () => {
+  showScreen("tap");
+};
 
 
   document.getElementById("stake-referral-btn").onclick = async () => {
@@ -1581,14 +1596,6 @@ function closeModal() {
   document.getElementById("stackModal")?.classList.add("hidden");
 }
 // ================= MAIN TRANSFER BUTTON =================
-const mainTransferBtn = document.getElementById("main-transfer-btn");
-
-if (mainTransferBtn) {
-  mainTransferBtn.onclick = () => {
-    showScreen("transfer");
-    loadHistory(); // чтобы сразу загрузилась история
-  };
-}
 
 const homeGamesBtn = document.getElementById("home-games-btn");
 
