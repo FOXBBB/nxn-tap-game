@@ -1023,17 +1023,18 @@ function initMenu() {
 const stakeBtn = document.getElementById("stake-btn");
 const stakeScreen = document.getElementById("stake-screen");
 
-stakeBtn.onclick = async () => {
-  showScreen("stake-screen");
+if (stakeBtn) {
+  stakeBtn.onclick = async () => {
+    showScreen("stake-screen");
 
-  await refreshMe();
-  await loadRewardState();
+    await refreshMe();
+    await loadRewardState();
 
-  if (rewardState === "CLAIM_ACTIVE") {
-    loadClaimInfo();
-  }
-};
-
+    if (rewardState === "CLAIM_ACTIVE") {
+      loadClaimInfo();
+    }
+  };
+}
 
 
 
@@ -1597,13 +1598,7 @@ function closeModal() {
 }
 // ================= MAIN TRANSFER BUTTON =================
 
-const homeGamesBtn = document.getElementById("home-games-btn");
 
-if (homeGamesBtn) {
-  homeGamesBtn.onclick = () => {
-    showScreen("games");
-  };
-}
 
 
 function lockMenu() {
