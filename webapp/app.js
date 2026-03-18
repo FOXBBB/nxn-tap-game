@@ -17,7 +17,6 @@ let maxEnergy = 100;
 let tapPower = 1;
 let canTap = false;
 let tonConnectUI = null;
-window.__NXN_TUTORIAL_ACTIVE__ = false;
 let pvpSocket = null;
 let pvpStake = 0;
 let pvpTimerInterval = null;
@@ -124,7 +123,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
   // ▶️ туториал — ПОСЛЕ
-  startNXNTutorial();
+ //tartNXNTutorial();
 
 
   tonConnectUI = new TON_CONNECT_UI.TonConnectUI({

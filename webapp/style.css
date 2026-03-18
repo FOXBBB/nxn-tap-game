@@ -4100,6 +4100,7 @@ body.locked {
   text-align: center;
 }
 /* ===== TAP SIDE ICONS FINAL ===== */
+/* ===== TAP SIDE ICONS FINAL ===== */
 .home-coin-layout {
   position: relative;
   width: 100%;
@@ -4119,7 +4120,7 @@ body.locked {
 
 .home-side {
   position: absolute;
-  top: 56.5%;
+  top: 61.5%;
   transform: translateY(-50%);
   z-index: 3;
 
@@ -4169,7 +4170,7 @@ body.locked {
   .home-side {
     width: 76px;
     gap: 15px;
-    top: 56.5%;
+    top: 61%;
   }
 
   .tap-icon {
@@ -4186,7 +4187,7 @@ body.locked {
   .home-side {
     width: 68px;
     gap: 13px;
-    top: 56%;
+    top: 60.5%;
   }
 
   .tap-icon {
