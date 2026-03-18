@@ -34,21 +34,6 @@ let pvpTapBound = false;
 
 // ================= INIT =================
 document.addEventListener("DOMContentLoaded", async () => {
-
-  const backFromGames = document.getElementById("back-from-games");
-if (backFromGames) {
-  backFromGames.onclick = () => {
-    showScreen("tap");
-  };
-}
-
-const backFromTransfer = document.getElementById("back-from-transfer");
-if (backFromTransfer) {
-  backFromTransfer.onclick = () => {
-    showScreen("tap");
-  };
-}
-
   if (!window.Telegram || !Telegram.WebApp) {
     alert("Open app from Telegram");
     return;
@@ -279,7 +264,28 @@ if (backFromTransfer) {
 
 
   // ===== OPEN REFERRAL =====
- 
+  document.getElementById("open-referral").onclick = async () => {
+    const res = await fetch(`/api/referral/me/${userId}`);
+    const data = await res.json();
+
+    showScreen("referral-screen");
+
+    document.getElementById("ref-code").innerText = data.referralCode;
+    document.getElementById("ref-balance").innerText =
+      formatNumber(data.referralStackBalance);
+
+    document.getElementById("ref-invited").innerText = data.stats.invited;
+    document.getElementById("ref-active").innerText = data.stats.active;
+    document.getElementById("ref-earned").innerText =
+      formatNumber(data.stats.totalEarned);
+
+    if (data.referredBy) {
+      const input = document.getElementById("ref-input");
+      input.value = "Bound";
+      input.disabled = true;
+      document.getElementById("bind-ref").disabled = true;
+    }
+  };
 
 
   document.getElementById("copy-ref").onclick = () => {
@@ -317,8 +323,8 @@ if (backFromTransfer) {
 
 
   document.getElementById("back-from-ref").onclick = () => {
-  showScreen("tap");
-};
+    showScreen("stake-screen");
+  };
 
 
   document.getElementById("stake-referral-btn").onclick = async () => {
@@ -978,16 +984,12 @@ async function loadLeaderboard() {
 // ================= MENU =================
 function initMenu() {
   document.querySelectorAll(".menu div").forEach(btn => {
-    btn.addEventListener("click", async (e) => {
+    btn.addEventListener("click", (e) => {
+      // 🔑 важно: всегда берём div, даже если клик по img
       const targetBtn = e.currentTarget;
       const go = targetBtn.dataset.go;
 
       if (!go) return;
-
-      if (go === "stake-screen") {
-        await openStakeScreen();
-        return;
-      }
 
       showScreen(go);
 
@@ -1003,9 +1005,10 @@ function initMenu() {
 }
 
 
+const stakeBtn = document.getElementById("stake-btn");
 const stakeScreen = document.getElementById("stake-screen");
 
-async function openStakeScreen() {
+stakeBtn.onclick = async () => {
   showScreen("stake-screen");
 
   await refreshMe();
@@ -1014,7 +1017,7 @@ async function openStakeScreen() {
   if (rewardState === "CLAIM_ACTIVE") {
     loadClaimInfo();
   }
-}
+};
 
 
 
@@ -1192,25 +1195,26 @@ function updateTapState() {
 
 
 function showScreen(id) {
+
+
+  // скрываем все экраны
   document.querySelectorAll(".screen")
     .forEach(s => s.classList.add("hidden"));
 
+  // показываем нужный
   const screen = document.getElementById(id);
   if (screen) {
     screen.classList.remove("hidden");
   }
 
+  // обновляем активное меню
   document.querySelectorAll(".menu div")
     .forEach(b => b.classList.remove("active"));
 
   const activeBtn = document.querySelector(`.menu div[data-go="${id}"]`);
   if (activeBtn) activeBtn.classList.add("active");
-
-  if (id === "referral-screen" || id === "transfer") {
-    const tapBtn = document.querySelector(`.menu div[data-go="tap"]`);
-    if (tapBtn) tapBtn.classList.add("active");
-  }
 }
+
 
 
 // ===== STAR FIELD (FALLING, SAFE) =====
@@ -1578,44 +1582,19 @@ function closeModal() {
 }
 // ================= MAIN TRANSFER BUTTON =================
 const mainTransferBtn = document.getElementById("main-transfer-btn");
-const homeReferralBtn = document.getElementById("home-referral-btn");
-const homeGamesBtn = document.getElementById("home-games-btn");
 
 if (mainTransferBtn) {
   mainTransferBtn.onclick = () => {
     showScreen("transfer");
-    loadHistory();
+    loadHistory(); // чтобы сразу загрузилась история
   };
 }
+
+const homeGamesBtn = document.getElementById("home-games-btn");
 
 if (homeGamesBtn) {
   homeGamesBtn.onclick = () => {
     showScreen("games");
-  };
-}
-
-if (homeReferralBtn) {
-  homeReferralBtn.onclick = async () => {
-    const res = await fetch(`/api/referral/me/${userId}`);
-    const data = await res.json();
-
-    showScreen("referral-screen");
-
-    document.getElementById("ref-code").innerText = data.referralCode;
-    document.getElementById("ref-balance").innerText =
-      formatNumber(data.referralStackBalance);
-
-    document.getElementById("ref-invited").innerText = data.stats.invited;
-    document.getElementById("ref-active").innerText = data.stats.active;
-    document.getElementById("ref-earned").innerText =
-      formatNumber(data.stats.totalEarned);
-
-    if (data.referredBy) {
-      const input = document.getElementById("ref-input");
-      input.value = "Bound";
-      input.disabled = true;
-      document.getElementById("bind-ref").disabled = true;
-    }
   };
 }
 

@@ -97,29 +97,29 @@
           </div>
         </div>
 
-       <div class="tap-actions">
+        <div class="home-coin-layout">
 
-  <div id="stake-btn" class="tap-action-card stake">
-    <span>STAKE</span>
-  </div>
+          <div class="home-side home-side-left">
+            <div id="open-referral" class="tap-action-card referral">
+              <span>REFERRAL</span>
+            </div>
 
-  <div id="main-transfer-btn" class="tap-action-card transfer">
-    <span>TRANSFER</span>
-  </div>
+            <div id="main-transfer-btn" class="tap-action-card transfer">
+              <span>TRANSFER</span>
+            </div>
+          </div>
 
-</div>
+          <div class="coin-box">
+            <img src="coin.png" id="coin">
+          </div>
 
+          <div class="home-side home-side-right">
+            <div id="home-games-btn" class="tap-action-card games">
+              <span>GAMES</span>
+            </div>
+          </div>
 
-        <div class="coin-box">
-          <img src="coin.png" id="coin">
         </div>
-
-        <div class="glass stat" id="energy">Energy: 100 / 100</div>
-
-  
-
-
-
 
       </section> <!-- конец TAP -->
 
@@ -214,11 +214,6 @@
             View Stake Leaderboard
           </button>
 
-          <button id="open-referral" class="ref-open-btn">
-            Referral
-          </button>
-
-
 
 
           <div class="stake-warning">
@@ -305,117 +300,117 @@
       </section>
 
       <section id="games" class="screen hidden">
-  <div class="title blue">GAMES</div>
+        <div class="title blue">GAMES</div>
 
-  <!-- PvP CARD -->
-  <div class="game-card pvp-card" id="open-pvp">
-    <div class="game-card-overlay"></div>
-    <div class="game-card-content">
-      <h3>PvP Arena</h3>
-      <p>1 vs 1 • 20 seconds • Burn 10%</p>
-    </div>
-  </div>
+        <!-- PvP CARD -->
+        <div class="game-card pvp-card" id="open-pvp">
+          <div class="game-card-overlay"></div>
+          <div class="game-card-content">
+            <h3>PvP Arena</h3>
+            <p>1 vs 1 • 20 seconds • Burn 10%</p>
+          </div>
+        </div>
 
-  <!-- COMING SOON CARD -->
-  <div class="game-card coming-card">
-    <div class="game-card-overlay blur"></div>
-    <div class="game-card-content">
-      <h3>Jackpot RUSH</h3>
-      <p>COMING SOON</p>
-    </div>
-  </div>
+        <!-- COMING SOON CARD -->
+        <div class="game-card coming-card">
+          <div class="game-card-overlay blur"></div>
+          <div class="game-card-content">
+            <h3>Jackpot RUSH</h3>
+            <p>COMING SOON</p>
+          </div>
+        </div>
 
-</section>
-
-
-
-      
-     <section id="pvp" class="screen hidden">
-
-  <div class="pvp-header">
-  <div class="online-indicator">ONLINE</div>
-  </div>
-<div class="glass pvp-box">
-
-  <div id="pvp-status" class="pvp-status"></div>
-
-  <div id="pvp-search-ui" class="pvp-search hidden">
-    <span id="pvp-search-text">Searching player</span>
-    <div class="search-spinner"></div>
-  </div>
-
-</div>
-
-
-    <div class="stake-amounts pvp-stakes">
-      <button data-pvp="1000">1K</button>
-      <button data-pvp="5000">5K</button>
-      <button data-pvp="10000">10K</button>
-      <button data-pvp="20000">20K</button>
-      <button data-pvp="30000">30K</button>
-      <button data-pvp="40000">40K</button>
-      <button data-pvp="50000">50K</button>
-      <button data-pvp="100000">100K</button>
-    </div>
+      </section>
 
 
 
-    <button id="pvp-play" class="pvp-play">
-      ENTER ARENA
-    </button>
-<div class="pvp-online-table">
-  <div class="online-title">ONLINE PLAYERS</div>
-  <div id="online-list" class="online-list"></div>
-</div>
+
+      <section id="pvp" class="screen hidden">
+
+        <div class="pvp-header">
+          <div class="online-indicator">ONLINE</div>
+        </div>
+        <div class="glass pvp-box">
+
+          <div id="pvp-status" class="pvp-status"></div>
+
+          <div id="pvp-search-ui" class="pvp-search hidden">
+            <span id="pvp-search-text">Searching player</span>
+            <div class="search-spinner"></div>
+          </div>
+
+        </div>
 
 
-</section>
+        <div class="stake-amounts pvp-stakes">
+          <button data-pvp="1000">1K</button>
+          <button data-pvp="5000">5K</button>
+          <button data-pvp="10000">10K</button>
+          <button data-pvp="20000">20K</button>
+          <button data-pvp="30000">30K</button>
+          <button data-pvp="40000">40K</button>
+          <button data-pvp="50000">50K</button>
+          <button data-pvp="100000">100K</button>
+        </div>
 
 
+
+        <button id="pvp-play" class="pvp-play">
+          ENTER ARENA
+        </button>
+        <div class="pvp-online-table">
+          <div class="online-title">ONLINE PLAYERS</div>
+          <div id="online-list" class="online-list"></div>
+        </div>
+
+
+      </section>
 
 
 
 
 
-  <div id="pvp-result-screen" class="pvp-result-screen hidden">
-  <div class="pvp-result-box">
-    <div id="pvp-result-text" class="pvp-result-text"></div>
-<div id="pvp-final-score" class="pvp-final-score"></div>
-    <button id="pvp-again" class="pvp-again-btn">PLAY AGAIN</button>
-  </div>
-</div>
 
 
-<!-- ===== PvP ARENA (NEW SCREEN) ===== -->
-<section id="pvp-arena" class="screen hidden">
+      <div id="pvp-result-screen" class="pvp-result-screen hidden">
+        <div class="pvp-result-box">
+          <div id="pvp-result-text" class="pvp-result-text"></div>
+          <div id="pvp-final-score" class="pvp-final-score"></div>
+          <button id="pvp-again" class="pvp-again-btn">PLAY AGAIN</button>
+        </div>
+      </div>
 
-  <div id="pvp-countdown-overlay" class="pvp-countdown hidden">
-    <div id="pvp-countdown-number">3</div>
-  </div>
 
-  <div class="pvp-hud">
+      <!-- ===== PvP ARENA (NEW SCREEN) ===== -->
+      <section id="pvp-arena" class="screen hidden">
 
-    <div class="pvp-side">
-      <div class="pvp-name">YOU</div>
-      <div id="pvp-you" class="pvp-score">0</div>
-    </div>
+        <div id="pvp-countdown-overlay" class="pvp-countdown hidden">
+          <div id="pvp-countdown-number">3</div>
+        </div>
 
-    <div class="pvp-vs">VS</div>
+        <div class="pvp-hud">
 
-    <div class="pvp-side">
-      <div id="pvp-opp-name" class="pvp-name">OPPONENT</div>
-      <div id="pvp-opp" class="pvp-score">0</div>
-    </div>
+          <div class="pvp-side">
+            <div class="pvp-name">YOU</div>
+            <div id="pvp-you" class="pvp-score">0</div>
+          </div>
 
-  </div>
+          <div class="pvp-vs">VS</div>
 
-  <div class="pvp-timer" id="pvp-timer">20</div>
+          <div class="pvp-side">
+            <div id="pvp-opp-name" class="pvp-name">OPPONENT</div>
+            <div id="pvp-opp" class="pvp-score">0</div>
+          </div>
 
-  <div class="pvp-coin-box">
-    <img src="coin.png" id="pvp-tap-coin">
-  </div>
+        </div>
 
-</section>
+        <div class="pvp-timer" id="pvp-timer">20</div>
+
+        <div class="pvp-coin-box">
+          <img src="coin.png" id="pvp-tap-coin">
+        </div>
+
+      </section>
 
 
 
@@ -494,7 +489,7 @@
           <span><img src="menu-tap.png"></span>
         </div>
 
-        <div data-go="games">
+        <div data-go="stake-screen">
           <span><img src="menu-games.png"></span>
         </div>
 
@@ -581,18 +576,18 @@
       </div>
 
       <!-- 🔥 PvP INVITE POPUP -->
-<div id="pvp-invite-popup" class="pvp-invite hidden">
-  <div class="pvp-invite-box">
-    <div class="invite-title">PvP Arena Invitation</div>
-    <div id="invite-from" class="invite-from"></div>
-    <div id="invite-stake" class="invite-stake"></div>
+      <div id="pvp-invite-popup" class="pvp-invite hidden">
+        <div class="pvp-invite-box">
+          <div class="invite-title">PvP Arena Invitation</div>
+          <div id="invite-from" class="invite-from"></div>
+          <div id="invite-stake" class="invite-stake"></div>
 
-    <div class="invite-actions">
-      <button id="invite-accept" class="invite-accept">ACCEPT</button>
-      <button id="invite-decline" class="invite-decline">DECLINE</button>
-    </div>
-  </div>
-</div>
+          <div class="invite-actions">
+            <button id="invite-accept" class="invite-accept">ACCEPT</button>
+            <button id="invite-decline" class="invite-decline">DECLINE</button>
+          </div>
+        </div>
+      </div>
 
 
 

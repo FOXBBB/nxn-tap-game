@@ -553,7 +553,7 @@
 
   setTimeout(() => {
     showComment(t.referralGo, false);
-    const btn = document.getElementById("home-referral-btn");
+   const btn = document.getElementById("open-referral");
     lockOnly(btn);
     showFinger(btn);
 

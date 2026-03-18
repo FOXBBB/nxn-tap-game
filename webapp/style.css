@@ -3901,3 +3901,120 @@ body.locked {
   inset: 0;
   z-index: 9999;
 }
+/* ===== HOME SIDE BUTTONS AROUND COIN (NO LAYOUT BREAK) ===== */
+
+.home-coin-layout {
+  width: 100%;
+  max-width: 520px;
+  margin: 10px auto 0;
+
+  display: grid;
+  grid-template-columns: 96px 1fr 96px;
+  align-items: center;
+  column-gap: 10px;
+}
+
+.home-side {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.home-side-left {
+  align-items: stretch;
+}
+
+.home-side-right {
+  align-items: stretch;
+}
+
+.home-side .tap-action-card {
+  min-height: 58px;
+  padding: 12px 10px;
+  border-radius: 18px;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+.home-side .tap-action-card span {
+  display: block;
+  width: 100%;
+}
+
+.tap-action-card.referral {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 226, 122, 0.24),
+    rgba(255, 179, 0, 0.18)
+  );
+  border: 1px solid rgba(255, 200, 80, 0.55);
+}
+
+.tap-action-card.transfer {
+  background: linear-gradient(
+    135deg,
+    rgba(108,240,255,0.25),
+    rgba(26,106,255,0.18)
+  );
+  border: 1px solid rgba(108,240,255,0.6);
+}
+
+.tap-action-card.games {
+  background: linear-gradient(
+    135deg,
+    rgba(160,255,122,0.25),
+    rgba(0,255,98,0.18)
+  );
+  border: 1px solid rgba(0,255,120,0.6);
+}
+
+/* coin остаётся по центру */
+.home-coin-layout .coin-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+}
+
+/* адаптив без ломания */
+@media (max-width: 430px) {
+  .home-coin-layout {
+    grid-template-columns: 82px 1fr 82px;
+    column-gap: 8px;
+  }
+
+  .home-side {
+    gap: 10px;
+  }
+
+  .home-side .tap-action-card {
+    min-height: 52px;
+    padding: 10px 8px;
+    font-size: 11px;
+    border-radius: 16px;
+  }
+
+  .coin-box img {
+    width: 240px;
+  }
+}
+
+@media (max-width: 380px) {
+  .home-coin-layout {
+    grid-template-columns: 74px 1fr 74px;
+    column-gap: 6px;
+  }
+
+  .home-side .tap-action-card {
+    min-height: 48px;
+    padding: 8px 6px;
+    font-size: 10px;
+    letter-spacing: 0.5px;
+  }
+
+  .coin-box img {
+    width: 220px;
+  }
+}
