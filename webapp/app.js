@@ -28,7 +28,8 @@ let userId = null;
 let inviteCooldowns = {};
 let pvpCountdownActive = false;
 let pvpTapBound = false;
-
+let dailyNextClaimAt = 0;
+let dailyTimerInterval = null;
 
 
 // ================= INIT =================
@@ -2057,7 +2058,6 @@ function initPvpSocket() {
 
 }
 // ================= DAILY REWARD =================
-
 function formatDailyTime(ms) {
   if (ms <= 0) return "Available now";
 
@@ -2066,8 +2066,43 @@ function formatDailyTime(ms) {
   const minutes = Math.floor((totalSec % 3600) / 60);
   const seconds = totalSec % 60;
 
-  if (hours > 0) return `${hours}h ${minutes}m ${seconds}s`;
+  if (hours > 0) {
+    return `${hours}h ${minutes}m ${seconds}s`;
+  }
+
   return `${minutes}m ${seconds}s`;
+}
+
+function startDailyTimer() {
+  const timer = document.getElementById("daily-timer");
+  if (!timer) return;
+
+  if (dailyTimerInterval) {
+    clearInterval(dailyTimerInterval);
+  }
+
+  dailyTimerInterval = setInterval(() => {
+    const screen = document.getElementById("daily-screen");
+    if (!screen || screen.classList.contains("hidden")) return;
+
+    const left = dailyNextClaimAt - Date.now();
+
+    if (left <= 0) {
+      timer.innerText = "Available now";
+      clearInterval(dailyTimerInterval);
+      dailyTimerInterval = null;
+
+      const btn = document.getElementById("claim-daily-btn");
+      if (btn) {
+        btn.disabled = false;
+        btn.innerText = "CLAIM REWARD";
+        btn.classList.remove("claimed");
+      }
+      return;
+    }
+
+    timer.innerText = `Next reward in ${formatDailyTime(left)}`;
+  }, 1000);
 }
 
 async function renderDailyScreen() {
@@ -2103,15 +2138,15 @@ async function renderDailyScreen() {
     btn.disabled = false;
     btn.innerText = "CLAIM REWARD";
     btn.classList.remove("claimed");
+
+    if (dailyTimerInterval) {
+      clearInterval(dailyTimerInterval);
+      dailyTimerInterval = null;
+    }
   } else {
-    timer.innerText = `Next reward in ${formatDailyTime(data.nextClaimInMs || 0)}`;
+    dailyNextClaimAt = Date.now() + (data.nextClaimInMs || 0);
     btn.disabled = true;
     btn.innerText = "WAIT";
+    startDailyTimer();
   }
 }
-
-setInterval(() => {
-  if (!document.getElementById("daily-screen")?.classList.contains("hidden")) {
-    renderDailyScreen();
-  }
-}, 1000);
