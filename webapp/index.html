@@ -84,51 +84,52 @@
 
   <!-- TOP BALANCE BAR -->
   <div class="top-balance-bar">
+    <!-- LEFT: avatar -->
     <div class="top-balance-left">
-    <div class="top-avatar-wrap" id="avatar-menu-btn">
-  <img src="avatar-placeholder.png" alt="Avatar" class="top-avatar">
+      <div class="top-avatar-wrap" id="avatar-menu-btn">
+        <img src="avatar-placeholder.png" alt="Avatar" class="top-avatar">
 
-  <!-- DROPDOWN -->
-  <div id="avatar-dropdown" class="avatar-dropdown hidden">
+        <!-- DROPDOWN -->
+        <div id="avatar-dropdown" class="avatar-dropdown hidden">
+          <div class="avatar-item" id="open-tasks-from-menu">
+            <img src="tasks.png" alt="Tasks">
+            <span>TASKS</span>
+          </div>
 
-    <div class="avatar-item" id="open-tasks-from-menu">
-      <img src="tasks.png">
-      <span>TASKS</span>
+          <div class="avatar-item" id="open-daily-from-menu">
+            <img src="daily.png" alt="Daily">
+            <span>DAILY</span>
+          </div>
+
+          <div class="avatar-item" id="open-ref-from-menu">
+            <img src="referral.png" alt="Referral">
+            <span>REFERRAL</span>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="avatar-item" id="open-daily-from-menu">
-      <img src="calendar.png">
-      <span>DAILY</span>
-    </div>
-
-    <div class="avatar-item" id="open-ref-from-menu">
-      <img src="referral.png">
-      <span>REFERRAL</span>
-    </div>
-
-  </div>
-</div>
-
-
-      <div class="top-balance-text">NXN Balance</div>
-    </div>
-
+    <!-- CENTER: label above number -->
     <div class="top-balance-center">
-      <span class="balance-value">0</span>
+      <div class="top-balance-label">NXN Balance</div>
+      <div class="balance-value">0</div>
     </div>
 
-    <div class="top-balance-right"></div>
+    <!-- RIGHT: transfer -->
+    <div class="top-balance-right">
+      <div id="main-transfer-btn" class="top-transfer-btn">
+        <img src="transfer-top.png" alt="Transfer" class="top-transfer-icon">
+      </div>
+    </div>
   </div>
 
   <!-- CENTER AREA -->
   <div class="hero-zone">
-
     <!-- LEFT -->
     <div class="hero-side hero-left">
-
-      <div id="main-transfer-btn" class="hero-circle-btn">
-        <img src="transfer-top.png" alt="Transfer">
-        <span>Transfer</span>
+      <div id="home-games-btn" class="hero-circle-btn">
+        <img src="menu-games.png" alt="Games">
+        <span>Games</span>
       </div>
     </div>
 
@@ -137,25 +138,8 @@
       <img src="coin.png" id="coin" alt="NXN Coin">
     </div>
 
-    <!-- RIGHT -->
-    <div class="hero-side hero-right">
-
- <div id="open-tasks-btn" class="hero-circle-btn">
-        <img src="tasks.png" alt="Tasks">
-        <span>Tasks</span>
-      </div>
-
-      <div id="open-daily-btn" class="hero-circle-btn">
-        <img src="daily.png" alt="Daily">
-        <span>Daily</span>
-      </div>
-
-      <div id="open-referral" class="hero-circle-btn">
-        <img src="referral.png" alt="Referral">
-        <span>Referral</span>
-      </div>
-    </div>
-
+    <!-- RIGHT EMPTY -->
+    <div class="hero-side hero-right"></div>
   </div>
 
   <!-- ENERGY -->

@@ -2198,13 +2198,37 @@ document.addEventListener("click", () => {
 
 // переходы
 document.getElementById("open-tasks-from-menu")?.addEventListener("click", () => {
-  document.getElementById("open-tasks-btn")?.click();
+  dropdown?.classList.add("hidden");
+  showScreen("tasks-screen");
 });
 
-document.getElementById("open-daily-from-menu")?.addEventListener("click", () => {
-  document.getElementById("open-daily-btn")?.click();
+document.getElementById("open-daily-from-menu")?.addEventListener("click", async () => {
+  dropdown?.classList.add("hidden");
+  showScreen("daily-screen");
+  await renderDailyScreen();
 });
 
-document.getElementById("open-ref-from-menu")?.addEventListener("click", () => {
-  document.getElementById("open-referral")?.click();
+document.getElementById("open-ref-from-menu")?.addEventListener("click", async () => {
+  dropdown?.classList.add("hidden");
+
+  const res = await fetch(`/api/referral/me/${userId}`);
+  const data = await res.json();
+
+  showScreen("referral-screen");
+
+  document.getElementById("ref-code").innerText = data.referralCode;
+  document.getElementById("ref-balance").innerText =
+    formatNumber(data.referralStackBalance);
+
+  document.getElementById("ref-invited").innerText = data.stats.invited;
+  document.getElementById("ref-active").innerText = data.stats.active;
+  document.getElementById("ref-earned").innerText =
+    formatNumber(data.stats.totalEarned);
+
+  if (data.referredBy) {
+    const input = document.getElementById("ref-input");
+    input.value = "Bound";
+    input.disabled = true;
+    document.getElementById("bind-ref").disabled = true;
+  }
 });
