@@ -231,6 +231,13 @@ if (claimDailyBtn) {
     };
   }
 
+  const backFromRef = document.getElementById("back-from-ref");
+if (backFromRef) {
+  backFromRef.onclick = () => {
+    showScreen("tap");
+  };
+}
+
 
 
 
@@ -298,9 +305,6 @@ if (claimDailyBtn) {
 
 
 
- document.getElementById("back-from-ref").onclick = () => {
-  showScreen("tap");
-};
 
 
   document.getElementById("stake-referral-btn").onclick = async () => {
