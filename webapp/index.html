@@ -85,9 +85,31 @@
   <!-- TOP BALANCE BAR -->
   <div class="top-balance-bar">
     <div class="top-balance-left">
-      <div class="top-avatar-wrap">
-        <img src="avatar-placeholder.png" alt="Avatar" class="top-avatar">
-      </div>
+    <div class="top-avatar-wrap" id="avatar-menu-btn">
+  <img src="avatar-placeholder.png" alt="Avatar" class="top-avatar">
+
+  <!-- DROPDOWN -->
+  <div id="avatar-dropdown" class="avatar-dropdown hidden">
+
+    <div class="avatar-item" id="open-tasks-from-menu">
+      <img src="tasks.png">
+      <span>TASKS</span>
+    </div>
+
+    <div class="avatar-item" id="open-daily-from-menu">
+      <img src="calendar.png">
+      <span>DAILY</span>
+    </div>
+
+    <div class="avatar-item" id="open-ref-from-menu">
+      <img src="referral.png">
+      <span>REFERRAL</span>
+    </div>
+
+  </div>
+</div>
+
+
       <div class="top-balance-text">NXN Balance</div>
     </div>
 

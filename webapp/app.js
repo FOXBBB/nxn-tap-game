@@ -2183,3 +2183,28 @@ async function renderDailyScreen() {
     btn.innerText = "WAIT";
   }
 }
+const avatarBtn = document.getElementById("avatar-menu-btn");
+const dropdown = document.getElementById("avatar-dropdown");
+
+avatarBtn?.addEventListener("click", (e) => {
+  e.stopPropagation();
+  dropdown.classList.toggle("hidden");
+});
+
+// закрытие при клике вне
+document.addEventListener("click", () => {
+  dropdown.classList.add("hidden");
+});
+
+// переходы
+document.getElementById("open-tasks-from-menu")?.addEventListener("click", () => {
+  document.getElementById("open-tasks-btn")?.click();
+});
+
+document.getElementById("open-daily-from-menu")?.addEventListener("click", () => {
+  document.getElementById("open-daily-btn")?.click();
+});
+
+document.getElementById("open-ref-from-menu")?.addEventListener("click", () => {
+  document.getElementById("open-referral")?.click();
+});
