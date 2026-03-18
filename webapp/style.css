@@ -5487,3 +5487,47 @@ body {
     height: 50px !important;
   }
 }
+/* ===== PUSH SIDE BUTTONS DOWN ===== */
+
+.hero-side {
+  top: 75% !important;
+  transform: translateY(-50%) !important;
+}
+/* ===== BIG BOTTOM MENU ===== */
+
+.menu {
+  height: 120px !important;
+  padding-bottom: 10px;
+}
+
+.menu img {
+  width: 60px !important;
+  height: 60px !important;
+  object-fit: contain;
+}
+
+.menu div.active img {
+  width: 60px !important;
+  height: 60px !important;
+}
+
+/* центральная кнопка ещё больше */
+.menu div[data-go="tap"] img,
+.menu div[data-go="tap"].active img {
+  width: 70px !important;
+  height: 70px !important;
+}
+
+/* убираем круг под ней если вдруг остался */
+.menu div[data-go="tap"] span {
+  background: none !important;
+  box-shadow: none !important;
+}
+/* ===== ENERGY LOWER ===== */
+
+.energy-shell {
+  margin-top: 70px !important;
+}
+.top-balance-bar {
+  margin-top: 30px !important;
+}
