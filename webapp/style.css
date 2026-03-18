@@ -4541,3 +4541,139 @@ body.locked {
 #claim-daily-btn.claimed::after {
   content: " ✓";
 }
+.tasks-icon {
+  transform: scale(1.15);
+}
+
+/* ===== HOME BUTTONS FINAL FIX ===== */
+
+#tap {
+  overflow: visible !important;
+}
+
+.home-coin-layout {
+  position: relative !important;
+  width: 100% !important;
+  max-width: 420px !important;
+  margin: 0 auto !important;
+  margin-top: clamp(28px, 4vh, 42px) !important;
+
+  flex: 1 !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+
+  overflow: visible !important;
+  z-index: 5 !important;
+}
+
+.home-coin-layout .coin-box {
+  position: relative !important;
+  z-index: 1 !important;
+  margin: 0 !important;
+  pointer-events: none !important; /* контейнер не мешает */
+}
+
+#coin {
+  pointer-events: auto !important; /* сама монета работает */
+  position: relative !important;
+  z-index: 2 !important;
+  margin-top: 36px !important;
+}
+
+.home-side {
+  position: absolute !important;
+  top: 68% !important;
+  transform: translateY(-50%) !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+  width: 84px !important;
+
+  z-index: 50 !important;
+  pointer-events: auto !important;
+}
+
+.home-side-left {
+  left: 0 !important;
+}
+
+.home-side-right {
+  right: 0 !important;
+}
+
+.tap-action-plain {
+  position: relative !important;
+  z-index: 60 !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  width: 100% !important;
+  min-height: 58px !important;
+  padding: 6px 4px !important;
+
+  cursor: pointer !important;
+  pointer-events: auto !important;
+
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.tap-action-plain * {
+  pointer-events: none !important; /* клик ловит сам блок */
+}
+
+.tap-icon {
+  width: 38px !important;
+  height: 38px !important;
+  object-fit: contain !important;
+  display: block !important;
+  filter: drop-shadow(0 0 10px rgba(0,255,180,0.35)) !important;
+}
+
+.tap-label {
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  letter-spacing: 1px !important;
+  color: rgba(255,255,255,0.86) !important;
+  text-align: center !important;
+}
+
+@media (max-width: 430px) {
+  .home-side {
+    width: 76px !important;
+    gap: 15px !important;
+    top: 66% !important;
+  }
+
+  .tap-icon {
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+  .tap-label {
+    font-size: 9px !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .home-side {
+    width: 68px !important;
+    gap: 13px !important;
+    top: 65% !important;
+  }
+
+  .tap-icon {
+    width: 28px !important;
+    height: 28px !important;
+  }
+
+  .tap-label {
+    font-size: 8px !important;
+  }
+}
