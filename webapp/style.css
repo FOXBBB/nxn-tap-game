@@ -6368,3 +6368,31 @@ body {
     0 2px 0 #009a5a,
     0 6px 12px rgba(0,255,150,0.3);
 }
+/* ===== FORCE BIG ICONS (FINAL FIX) ===== */
+#avatar-dropdown .avatar-item img {
+  width: 26px !important;
+  height: 26px !important;
+
+  min-width: 26px !important;
+  min-height: 26px !important;
+
+  max-width: none !important;
+  max-height: none !important;
+
+  flex: none !important;
+  transform: scale(1) !important;
+}
+
+/* ===== BACK BUTTON FIXED BOTTOM ===== */
+#back-from-daily,
+#back-from-tasks,
+#back-from-ref {
+  position: fixed;
+  bottom: 90px; /* выше нижнего меню */
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: 90%;
+  max-width: 420px;
+  z-index: 999;
+}
