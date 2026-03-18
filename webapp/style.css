@@ -4449,3 +4449,179 @@ body {
 .back-btn:active {
   transform: scale(0.95);
 }
+/* =========================================================
+   NXN TAP SCREEN FINAL FIX
+   center game fully + right panel as overlay
+   ========================================================= */
+
+#tap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100dvh - 110px);
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+/* главный контейнер больше не grid */
+.tap-premium-layout {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* левая часть теперь реально по центру */
+.tap-left {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* правая панель не двигает layout */
+.tap-right-panel {
+  position: absolute;
+  right: -2px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 86px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 3;
+}
+
+.home-side-card {
+  min-height: 74px;
+  padding: 9px 8px;
+  border-radius: 18px;
+}
+
+.home-side-icon {
+  width: 30px;
+  height: 30px;
+  font-size: 14px;
+  border-radius: 10px;
+}
+
+.home-side-title {
+  font-size: 11px;
+  margin-top: 6px;
+}
+
+.home-side-sub {
+  font-size: 8px;
+  margin-top: 2px;
+  line-height: 1.15;
+}
+
+/* центрируем основные элементы */
+#balance,
+.coin-box,
+#energy {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.coin-box {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.coin-box img,
+#coin {
+  width: min(66vw, 250px);
+}
+
+/* чтобы справа карточки не наезжали на монету */
+.tap-left {
+  padding-right: 74px;
+  box-sizing: border-box;
+}
+
+/* очень маленькие экраны */
+@media (max-width: 390px) {
+  .tap-premium-layout {
+    max-width: 390px;
+  }
+
+  .tap-right-panel {
+    width: 76px;
+    gap: 8px;
+    right: 0;
+  }
+
+  .home-side-card {
+    min-height: 66px;
+    padding: 8px 6px;
+  }
+
+  .home-side-icon {
+    width: 26px;
+    height: 26px;
+    font-size: 12px;
+  }
+
+  .home-side-title {
+    font-size: 10px;
+  }
+
+  .home-side-sub {
+    font-size: 7px;
+  }
+
+  .tap-left {
+    padding-right: 66px;
+  }
+
+  .coin-box img,
+  #coin {
+    width: min(64vw, 220px);
+  }
+}
+/* =========================================================
+   BOTTOM BACK BUTTON
+   ========================================================= */
+
+.bottom-back-btn {
+  width: 100%;
+  max-width: 420px;
+  margin: 18px auto 0;
+  display: block;
+
+  padding: 14px 16px;
+  border: none;
+  border-radius: 18px;
+
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+
+  background: linear-gradient(180deg, #2cff9c, #00c070);
+  color: #02140c;
+
+  box-shadow:
+    0 6px 0 #009a5a,
+    0 12px 22px rgba(0,255,150,0.28);
+
+  cursor: pointer;
+  transition: 0.18s ease;
+}
+
+.bottom-back-btn:active {
+  transform: translateY(4px);
+  box-shadow:
+    0 2px 0 #009a5a,
+    0 6px 12px rgba(0,255,150,0.22);
+}
+.back-btn {
+  display: none !important;
+}
