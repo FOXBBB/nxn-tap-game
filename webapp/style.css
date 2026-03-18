@@ -4285,3 +4285,181 @@ body.locked {
 .tap-action-plain {
   min-height: 64px;
 }
+/* ===== DAILY REWARD PREMIUM ===== */
+
+.daily-panel {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 18px;
+  border-radius: 22px;
+}
+
+.daily-head {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+.daily-head-title {
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  color: #7affc6;
+}
+
+.daily-timer {
+  font-size: 13px;
+  color: #9affea;
+  opacity: 0.9;
+}
+
+.daily-calendar {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.daily-card {
+  min-height: 108px;
+  padding: 14px 12px;
+  border-radius: 18px;
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,0.08),
+    rgba(255,255,255,0.04)
+  );
+  border: 1px solid rgba(255,255,255,0.14);
+  box-shadow:
+    inset 0 0 10px rgba(255,255,255,0.04),
+    0 0 14px rgba(0,0,0,0.18);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+}
+
+.daily-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 26px;
+  background: linear-gradient(90deg, rgba(108,240,255,0.22), rgba(26,106,255,0.12));
+}
+
+.daily-card-top {
+  position: relative;
+  z-index: 1;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  color: #dff7ff;
+}
+
+.daily-card-reward {
+  font-size: 20px;
+  font-weight: 900;
+  color: #ffffff;
+  margin-top: 14px;
+}
+
+.daily-card-sub {
+  font-size: 12px;
+  color: rgba(255,255,255,0.72);
+  margin-top: 6px;
+}
+
+.daily-card.claimed {
+  border-color: rgba(34,197,94,0.75);
+  box-shadow:
+    0 0 18px rgba(34,197,94,0.35),
+    inset 0 0 14px rgba(34,197,94,0.14);
+}
+
+.daily-card.claimed .daily-card-reward {
+  color: #7affc6;
+}
+
+.daily-card.active {
+  border-color: rgba(108,240,255,0.9);
+  box-shadow:
+    0 0 20px rgba(108,240,255,0.35),
+    inset 0 0 14px rgba(108,240,255,0.14);
+  transform: translateY(-2px);
+}
+
+.daily-card.locked {
+  opacity: 0.45;
+}
+
+.daily-card.premium {
+  background: linear-gradient(
+    180deg,
+    rgba(255,210,80,0.16),
+    rgba(255,170,0,0.08)
+  );
+  border-color: rgba(255,200,80,0.45);
+}
+
+.daily-card.premium::before {
+  background: linear-gradient(90deg, rgba(255,226,122,0.28), rgba(255,179,0,0.18));
+}
+
+.daily-current-info {
+  margin: 12px 0 14px;
+  padding: 14px;
+  border-radius: 16px;
+  text-align: center;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  font-size: 14px;
+}
+
+#claim-daily-btn {
+  width: 100%;
+  margin-top: 4px;
+  padding: 15px;
+  border-radius: 999px;
+  border: none;
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  background: linear-gradient(180deg, #2cff9c, #00c070);
+  color: #02140c;
+  box-shadow:
+    0 6px 0 #009a5a,
+    0 12px 20px rgba(0,255,150,0.35);
+}
+
+#claim-daily-btn:active {
+  transform: translateY(4px);
+  box-shadow:
+    0 2px 0 #009a5a,
+    0 6px 12px rgba(0,255,150,0.28);
+}
+
+#claim-daily-btn:disabled {
+  background: linear-gradient(135deg, #2b2f3a, #1f232d) !important;
+  color: #9fa6b2 !important;
+  box-shadow: none !important;
+}
+
+@media (max-width: 380px) {
+  .daily-card {
+    min-height: 96px;
+    padding: 12px 10px;
+  }
+
+  .daily-card-reward {
+    font-size: 17px;
+  }
+
+  .daily-card-sub {
+    font-size: 11px;
+  }
+}

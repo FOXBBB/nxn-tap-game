@@ -180,17 +180,53 @@
 
 <section id="daily-screen" class="screen hidden">
   <h2 class="title blue">DAILY REWARD</h2>
-  <div class="glass transfer-box">
-    <p style="text-align:center; margin-bottom:14px;">Come back every day and claim your reward</p>
 
-    <div id="daily-days" class="daily-days">
-      <div class="daily-day active">Day 1</div>
-      <div class="daily-day">Day 2</div>
-      <div class="daily-day">Day 3</div>
-      <div class="daily-day">Day 4</div>
-      <div class="daily-day">Day 5</div>
-      <div class="daily-day">Day 6</div>
-      <div class="daily-day">Day 7</div>
+  <div class="glass daily-panel">
+    <div class="daily-head">
+      <div class="daily-head-title">Login Streak Reward</div>
+      <div id="daily-timer" class="daily-timer">Available now</div>
+    </div>
+
+    <div id="daily-calendar" class="daily-calendar">
+      <div class="daily-card" data-day="1">
+        <div class="daily-card-top">DAY 1</div>
+        <div class="daily-card-reward">+500 NXN</div>
+        <div class="daily-card-sub">Login reward</div>
+      </div>
+
+      <div class="daily-card" data-day="2">
+        <div class="daily-card-top">DAY 2</div>
+        <div class="daily-card-reward">+1000 NXN</div>
+        <div class="daily-card-sub">Login reward</div>
+      </div>
+
+      <div class="daily-card" data-day="3">
+        <div class="daily-card-top">DAY 3</div>
+        <div class="daily-card-reward">+1000 NXN</div>
+        <div class="daily-card-sub">Login reward</div>
+      </div>
+
+      <div class="daily-card" data-day="4">
+        <div class="daily-card-top">DAY 4</div>
+        <div class="daily-card-reward">+1000 NXN</div>
+        <div class="daily-card-sub">Login reward</div>
+      </div>
+
+      <div class="daily-card" data-day="5">
+        <div class="daily-card-top">DAY 5</div>
+        <div class="daily-card-reward">+1000 NXN</div>
+        <div class="daily-card-sub">Login reward</div>
+      </div>
+
+      <div class="daily-card premium" data-day="6">
+        <div class="daily-card-top">DAY 6</div>
+        <div class="daily-card-reward">TAP +2</div>
+        <div class="daily-card-sub">24 hours boost</div>
+      </div>
+    </div>
+
+    <div id="daily-current-info" class="daily-current-info">
+      Today reward: <b>500 NXN</b>
     </div>
 
     <button id="claim-daily-btn">CLAIM REWARD</button>
@@ -229,38 +265,6 @@
     <button id="back-from-tasks">Back</button>
   </div>
 </section>
-
-
-
-        <!-- YOUR CODE -->
-        <div class="ref-box">
-          <div class="ref-label">Your referral code</div>
-          <div class="ref-code" id="ref-code">—</div>
-          <button id="copy-ref">Copy code</button>
-        </div>
-
-        <!-- BIND CODE -->
-        <div class="ref-box">
-          <div class="ref-label">Enter referral code</div>
-          <input id="ref-input" placeholder="NXN-XXXXXX" />
-          <button id="bind-ref">Bind referral</button>
-        </div>
-
-        <!-- STATS -->
-        <div class="ref-stats">
-          <div>Invited: <b id="ref-invited">0</b></div>
-          <div>Active referrals: <b id="ref-active">0</b></div>
-          <div>Total earned: <b id="ref-earned">0</b> NXN</div>
-        </div>
-
-        <!-- BALANCE -->
-        <div class="ref-balance">
-          Referral Stack Balance:
-          <b id="ref-balance">0</b> NXN
-        </div>
-
-        <button id="back-from-ref">Back</button>
-      </div>
 
 
 
@@ -674,12 +678,10 @@
         </div>
       </div>
 
+    </div>
+  </div>
 
-
-      <div id="nxn-tutorial-root"></div>
-      <script src="tutorial.js"></script>
-
-
+  <div id="nxn-tutorial-root"></div>
+  <script src="tutorial.js"></script>
 </body>
-
 </html>
