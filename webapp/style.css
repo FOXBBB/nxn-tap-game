@@ -4721,3 +4721,173 @@ body {
 .menu-center img {
   width: 40px;
 }
+/* ================= NEW TAP UI (FINAL FIX) ================= */
+
+/* TOP BAR */
+.top-balance-bar {
+  width: 100%;
+  max-width: 520px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 14px 18px;
+  margin-bottom: 20px;
+
+  border-radius: 999px;
+
+  background: linear-gradient(
+    180deg,
+    rgba(0,255,170,0.25),
+    rgba(0,180,120,0.15)
+  );
+
+  border: 1px solid rgba(0,255,170,0.6);
+
+  box-shadow:
+    0 0 20px rgba(0,255,170,0.6),
+    inset 0 0 20px rgba(0,255,170,0.25);
+}
+
+/* LEFT */
+.top-balance-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.top-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+}
+
+.top-balance-text {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+/* CENTER */
+.top-balance-center {
+  text-align: center;
+}
+
+.top-balance-center .balance-value {
+  font-size: 28px;
+  font-weight: 900;
+}
+
+.balance-today {
+  display: block;
+  font-size: 12px;
+  color: #7affc6;
+}
+
+/* RIGHT */
+.top-ref-icon {
+  width: 36px;
+  height: 36px;
+}
+
+/* HERO */
+.hero-zone {
+  position: relative;
+
+  width: 100%;
+  max-width: 420px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  margin-top: 20px;
+}
+
+/* COIN */
+.hero-coin-wrap img {
+  width: 260px;
+  z-index: 2;
+}
+
+/* SIDE BUTTONS */
+.hero-side {
+  position: absolute;
+  top: 55%;
+  transform: translateY(-50%);
+}
+
+.hero-left {
+  left: 0;
+}
+
+.hero-right {
+  right: 0;
+}
+
+.hero-circle-btn {
+  width: 85px;
+  height: 85px;
+
+  border-radius: 50%;
+
+  background: rgba(0,255,150,0.08);
+  backdrop-filter: blur(10px);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  box-shadow: 0 0 20px rgba(0,255,150,0.4);
+
+  cursor: pointer;
+}
+
+.hero-circle-btn img {
+  width: 38px;
+}
+
+.hero-circle-btn span {
+  font-size: 10px;
+  margin-top: 4px;
+}
+
+/* ENERGY BAR */
+.energy-shell {
+  width: 90%;
+  max-width: 420px;
+  margin-top: 40px;
+}
+
+.energy-title {
+  text-align: center;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+.energy-track {
+  height: 16px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.1);
+  overflow: hidden;
+  position: relative;
+}
+
+.energy-fill-bar {
+  height: 100%;
+  width: 40%;
+  background: linear-gradient(90deg,#00ff88,#ffee00);
+  box-shadow: 0 0 15px #00ff88;
+}
+
+.energy-glow-dot {
+  position: absolute;
+  right: 10%;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  background: #fff;
+  border-radius: 50%;
+}
