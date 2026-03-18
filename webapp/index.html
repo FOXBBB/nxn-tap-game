@@ -145,12 +145,40 @@
       </section>
 
 
-      <div id="referral-screen" class="screen hidden">
+   <div id="referral-screen" class="screen hidden">
+  <h2>Referral</h2>
 
+  <!-- YOUR CODE -->
+  <div class="ref-box">
+    <div class="ref-label">Your referral code</div>
+    <div class="ref-code" id="ref-code">—</div>
+    <button id="copy-ref">Copy code</button>
+  </div>
 
-        <h2>Referral</h2>
+  <!-- BIND CODE -->
+  <div class="ref-box">
+    <div class="ref-label">Enter referral code</div>
+    <input id="ref-input" placeholder="NXN-XXXXXX" />
+    <button id="bind-ref">Bind referral</button>
+  </div>
 
-        <section id="daily-screen" class="screen hidden">
+  <!-- STATS -->
+  <div class="ref-stats">
+    <div>Invited: <b id="ref-invited">0</b></div>
+    <div>Active referrals: <b id="ref-active">0</b></div>
+    <div>Total earned: <b id="ref-earned">0</b> NXN</div>
+  </div>
+
+  <!-- BALANCE -->
+  <div class="ref-balance">
+    Referral Stack Balance:
+    <b id="ref-balance">0</b> NXN
+  </div>
+
+  <button id="back-from-ref">Back</button>
+</div>
+
+<section id="daily-screen" class="screen hidden">
   <h2 class="title blue">DAILY REWARD</h2>
   <div class="glass transfer-box">
     <p style="text-align:center; margin-bottom:14px;">Come back every day and claim your reward</p>
@@ -201,6 +229,8 @@
     <button id="back-from-tasks">Back</button>
   </div>
 </section>
+
+
 
         <!-- YOUR CODE -->
         <div class="ref-box">

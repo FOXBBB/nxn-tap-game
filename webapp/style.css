@@ -4093,10 +4093,11 @@ body.locked {
 }
 
 .tap-label {
-  font-size: 10px;
-  font-weight: 700;
+  font-size: 11px;
+  font-weight: 800;
   letter-spacing: 1px;
-  color: rgba(255,255,255,0.8);
+  color: rgba(255,255,255,0.88);
+  text-align: center;
 }
 /* ===== TAP SIDE ICONS FINAL FIX ===== */
 
@@ -4119,14 +4120,14 @@ body.locked {
 
 .home-side {
   position: absolute;
-  top: 54%;
+  top: 58%;
   transform: translateY(-50%);
   z-index: 3;
 
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  width: 84px;
+  gap: 18px;
+  width: 96px;
 }
 
 .home-side-left {
@@ -4151,8 +4152,8 @@ body.locked {
 }
 
 .tap-icon {
-  width: 34px;
-  height: 34px;
+  width: 40px;
+  height: 40px;
   object-fit: contain;
   pointer-events: none;
 
@@ -4171,33 +4172,33 @@ body.locked {
 /* адаптив */
 @media (max-width: 430px) {
   .home-side {
-    width: 76px;
+    width: 88px;
     gap: 16px;
   }
 
   .tap-icon {
-    width: 28px;
-    height: 28px;
+    width: 36px;
+    height: 36px;
   }
 
   .tap-label {
-    font-size: 9px;
+    font-size: 10px;
   }
 }
 
 @media (max-width: 380px) {
   .home-side {
-    width: 68px;
+    width: 80px;
     gap: 14px;
   }
 
   .tap-icon {
-    width: 26px;
-    height: 26px;
+    width: 34px;
+    height: 34px;
   }
 
   .tap-label {
-    font-size: 8px;
+    font-size: 9px;
   }
 }
 
@@ -4275,4 +4276,12 @@ body.locked {
   font-weight: 800;
   background: linear-gradient(180deg, #6cf0ff, #1a6aff);
   color: #041b2d;
+}
+.home-side-right .tap-action-plain,
+.home-side-left .tap-action-plain {
+  width: 100%;
+}
+
+.tap-action-plain {
+  min-height: 64px;
 }
