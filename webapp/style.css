@@ -4248,3 +4248,71 @@ body.locked {
 #transfer .back-btn {
   display: none !important;
 }
+/* =========================================================
+   FINAL HOME SIZE + POSITION FIX
+   ========================================================= */
+
+/* баланс: центр, нормальный рост по ширине */
+#tap #balance {
+  margin-top: 34px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+
+  min-width: 260px !important;
+  max-width: calc(100vw - 110px) !important; /* оставляем место справа под кнопки */
+  width: fit-content !important;
+
+  overflow: visible !important;
+  text-overflow: unset !important;
+  white-space: nowrap !important;
+
+  padding: 14px 20px !important;
+}
+
+/* число баланса */
+.balance-value {
+  font-size: 32px;
+  font-weight: 900;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* если число очень большое — чуть уменьшаем только на маленьких экранах */
+@media (max-width: 420px) {
+  .balance-value {
+    font-size: 28px !important;
+  }
+
+  #tap #balance {
+    max-width: calc(100vw - 96px) !important;
+  }
+}
+
+/* центрируем монету жестко */
+#tap .coin-box {
+  width: 100% !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  margin-top: 26px !important;
+  text-align: center !important;
+}
+
+#tap #coin,
+#tap .coin-box img {
+  display: block !important;
+  margin: 0 auto !important;
+}
+
+/* энергия ниже */
+#tap #energy {
+  display: block !important;
+  width: fit-content !important;
+  margin: 48px auto 0 !important;
+  position: relative !important;
+}
+
+/* левая часть ниже */
+.tap-left {
+  padding-top: 26px !important;
+}
