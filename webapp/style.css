@@ -4054,12 +4054,13 @@ body.locked {
   margin-top: clamp(70px, 10vh, 110px);
   margin-bottom: 0;
 }
-/* ===== TOP ICONS FOR SCREENS ===== */
-.screen-top-icon {
-  display: block;
-  width: 72px;
-  height: 72px;
+/* ===== TAP ICONS ===== */
+
+.tap-icon {
+  width: 26px;
+  height: 26px;
   object-fit: contain;
-  margin: 0 auto 14px;
-  filter: drop-shadow(0 0 14px rgba(0, 255, 180, 0.35));
+  display: block;
+  margin: 0 auto;
+  pointer-events: none;
 }
