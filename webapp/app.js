@@ -146,7 +146,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   await loadRewardState();
   updateUI();
   initMenu();
-   applyDailyTapBoost();
+
 
     const mainTransferBtn = document.getElementById("main-transfer-btn");
   if (mainTransferBtn) {
