@@ -2183,17 +2183,30 @@ async function renderDailyScreen() {
     btn.innerText = "WAIT";
   }
 }
+
+
 const avatarBtn = document.getElementById("avatar-menu-btn");
 const dropdown = document.getElementById("avatar-dropdown");
+const avatarArrow = document.getElementById("avatar-toggle-arrow");
 
 avatarBtn?.addEventListener("click", (e) => {
   e.stopPropagation();
-  dropdown.classList.toggle("hidden");
+
+  const isHidden = dropdown.classList.contains("hidden");
+
+  if (isHidden) {
+    dropdown.classList.remove("hidden");
+    if (avatarArrow) avatarArrow.innerText = "⌃";
+  } else {
+    dropdown.classList.add("hidden");
+    if (avatarArrow) avatarArrow.innerText = "⌄";
+  }
 });
 
 // закрытие при клике вне
 document.addEventListener("click", () => {
-  dropdown.classList.add("hidden");
+  dropdown?.classList.add("hidden");
+  if (avatarArrow) avatarArrow.innerText = "⌄";
 });
 
 // переходы
