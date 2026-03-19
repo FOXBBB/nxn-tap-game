@@ -1207,19 +1207,26 @@ function showScreen(id) {
 const stars = document.getElementById("stars");
 
 if (stars) {
-  for (let i = 0; i < 25; i++) {
+  stars.innerHTML = "";
+
+  const STAR_COUNT = 55;
+
+  for (let i = 0; i < STAR_COUNT; i++) {
     const s = document.createElement("span");
 
-    const size = Math.random() * 2 + 1;
-    s.style.width = size + "px";
-    s.style.height = size + "px";
+    const size = Math.random() * 2.8 + 1;
+    const left = Math.random() * 100;
+    const delay = Math.random() * 14;
+    const duration = 8 + Math.random() * 14;
+    const twinkle = 1.8 + Math.random() * 2.8;
 
-    s.style.left = Math.random() * 100 + "vw";
-    s.style.top = Math.random() * 100 + "vh";
+    s.style.width = `${size}px`;
+    s.style.height = `${size}px`;
+    s.style.left = `${left}vw`;
+    s.style.top = `${-20 - Math.random() * 30}vh`;
 
-    s.style.opacity = Math.random() * 0.6 + 0.2;
-    s.style.animationDuration = 8 + Math.random() * 12 + "s";
-    s.style.animationDelay = Math.random() * 10 + "s";
+    s.style.animationDuration = `${duration}s, ${twinkle}s`;
+    s.style.animationDelay = `${delay}s, ${Math.random() * 2}s`;
 
     stars.appendChild(s);
   }

@@ -17,11 +17,14 @@ body {
 .bg {
   position: fixed;
   inset: 0;
-  z-index: 1;
-  background:
-    radial-gradient(600px 300px at 50% 30%, rgba(34,197,94,0.12), transparent 70%);
+  z-index: 0;
   pointer-events: none;
+  background:
+    radial-gradient(700px 360px at 20% 8%, rgba(34,197,94,0.10), transparent 60%),
+    radial-gradient(600px 320px at 80% 12%, rgba(16,185,129,0.08), transparent 60%),
+    radial-gradient(500px 260px at 50% 30%, rgba(0,255,170,0.06), transparent 70%);
 }
+
 
 .hidden {
   display: none !important;
@@ -4612,23 +4615,58 @@ body {
 }
 
 /* звезды */
+/* ===== PREMIUM FALLING STARS BACKGROUND ===== */
+
 #stars {
   position: fixed;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
 }
 
 #stars span {
   position: absolute;
-  background: #7aff7a;
-  border-radius: 50%;
-  animation: twinkle 4s infinite;
+  display: block;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(122,255,198,0.75) 45%, rgba(122,255,198,0) 100%);
+  box-shadow:
+    0 0 6px rgba(122,255,198,0.55),
+    0 0 14px rgba(122,255,198,0.18);
+  opacity: 0;
+  will-change: transform, opacity;
+  animation: starFall linear infinite, starTwinkle ease-in-out infinite;
 }
 
-@keyframes twinkle {
-  0%, 100% { opacity: 0.2; }
-  50% { opacity: 1; }
+/* движение */
+@keyframes starFall {
+  0% {
+    transform: translate3d(0, -12vh, 0) scale(0.85);
+    opacity: 0;
+  }
+
+  8% {
+    opacity: 1;
+  }
+
+  70% {
+    opacity: 0.9;
+  }
+
+  100% {
+    transform: translate3d(-160px, 120vh, 0) scale(1.05);
+    opacity: 0;
+  }
+}
+
+/* мерцание */
+@keyframes starTwinkle {
+  0%, 100% {
+    filter: brightness(0.85);
+  }
+  50% {
+    filter: brightness(1.35);
+  }
 }
 .tap-center {
   position: absolute;
