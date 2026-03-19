@@ -4806,11 +4806,6 @@ body {
   gap: 10px;
 }
 
-.top-avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-}
 
 .top-balance-text {
   font-size: 12px;
@@ -5054,21 +5049,9 @@ body {
   min-width: 0;
 }
 
-.top-avatar-wrap {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 1px solid rgba(0,255,170,0.22);
-  box-shadow: 0 0 16px rgba(0,255,170,0.12);
-  flex-shrink: 0;
-}
 
-.top-avatar {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
+
+
 
 .top-balance-text {
   font-size: 12px;
@@ -5609,10 +5592,7 @@ body {
 }
 /* ===== AVATAR DROPDOWN ===== */
 
-.top-avatar-wrap {
-  position: relative;
-  cursor: pointer;
-}
+
 
 .avatar-dropdown {
   position: absolute;
@@ -5704,25 +5684,8 @@ body {
   justify-content: center;
 }
 
-.top-avatar-wrap {
-  position: relative;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  overflow: visible;
-  cursor: pointer;
-  flex-shrink: 0;
-}
 
-.top-avatar {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  object-fit: cover;
-  display: block;
-  border: 1px solid rgba(0,255,170,0.22);
-  box-shadow: 0 0 14px rgba(0,255,170,0.12);
-}
+
 
 .top-balance-center {
   display: flex;
@@ -6074,24 +6037,8 @@ body {
 }
 
 /* avatar */
-.top-avatar-wrap {
-  position: relative;
-  width: 42px;
-  height: 42px;
-  overflow: visible !important;
-  cursor: pointer;
-  flex-shrink: 0;
-}
 
-.top-avatar {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  object-fit: cover;
-  display: block;
-  border: 1px solid rgba(0,255,170,0.18);
-  box-shadow: 0 0 10px rgba(0,255,170,0.10);
-}
+
 
 /* arrow near avatar */
 .avatar-toggle-arrow {
@@ -6306,15 +6253,8 @@ body {
     padding: 12px;
   }
 
-  .top-avatar-wrap {
-    width: 38px;
-    height: 38px;
-  }
-
-  .top-avatar {
-    width: 38px;
-    height: 38px;
-  }
+  
+ 
 
   .top-balance-center .balance-value {
     font-size: 24px;
@@ -7434,4 +7374,137 @@ body {
   .task-btn {
     flex: 1;
   }
+}
+
+/* ===== TASK STATUS MODAL ===== */
+
+.task-status-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.62);
+  backdrop-filter: blur(8px);
+}
+
+.task-status-modal.hidden {
+  display: none !important;
+}
+
+.task-status-card {
+  width: min(88vw, 360px);
+  padding: 22px 18px;
+  border-radius: 24px;
+  text-align: center;
+
+  background:
+    radial-gradient(circle at top, rgba(0,255,170,0.10), transparent 35%),
+    linear-gradient(180deg, rgba(10,24,18,0.96), rgba(5,14,10,0.98));
+
+  border: 1px solid rgba(0,255,170,0.18);
+  box-shadow:
+    0 0 30px rgba(0,255,170,0.12),
+    inset 0 0 20px rgba(0,255,170,0.04);
+
+  animation: taskStatusPop 0.22s ease;
+}
+
+@keyframes taskStatusPop {
+  from {
+    transform: scale(0.92);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.task-status-title {
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: 1.2px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  color: #7affc6;
+}
+
+.task-status-text {
+  font-size: 14px;
+  line-height: 1.45;
+  color: rgba(235,255,245,0.86);
+  margin-bottom: 18px;
+}
+
+.task-status-close {
+  width: 100%;
+  min-height: 46px;
+  border: none;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  cursor: pointer;
+
+  background: linear-gradient(180deg, #2cff9c, #00c070);
+  color: #02140c;
+
+  box-shadow:
+    0 6px 0 #009a5a,
+    0 12px 20px rgba(0,255,150,0.28);
+}
+
+.task-status-close:active {
+  transform: translateY(4px);
+  box-shadow:
+    0 2px 0 #009a5a,
+    0 6px 12px rgba(0,255,150,0.22);
+}
+
+/* error / warning state */
+.task-status-card.warning {
+  border-color: rgba(255, 190, 70, 0.28);
+  box-shadow:
+    0 0 30px rgba(255,190,70,0.12),
+    inset 0 0 20px rgba(255,190,70,0.04);
+}
+
+.task-status-card.warning .task-status-title {
+  color: #ffd36b;
+}
+
+.task-status-card.error {
+  border-color: rgba(255, 90, 90, 0.28);
+  box-shadow:
+    0 0 30px rgba(255,90,90,0.12),
+    inset 0 0 20px rgba(255,90,90,0.04);
+}
+
+.task-status-card.error .task-status-title {
+  color: #ff8f8f;
+}
+.top-avatar-wrap {
+  position: relative;
+  width: 42px;
+  height: 42px;
+  overflow: visible !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  border: none !important;
+  background: transparent !important;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.top-avatar {
+  width: 42px;
+  height: 42px;
+  object-fit: contain !important;
+  display: block;
+  border-radius: 10px !important;
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
 }

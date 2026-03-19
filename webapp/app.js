@@ -102,9 +102,13 @@ if (taskTelegramCheck) {
     const data = await res.json();
 
     if (!data.ok) {
-      alert(data.error || "Task failed");
-      return;
-    }
+  showTaskStatus(
+    "Subscription Required",
+    data.error || "You need to complete this task first.",
+    "warning"
+  );
+  return;
+}
 
     const toast = document.createElement("div");
     toast.className = "transfer-toast success";
@@ -133,10 +137,24 @@ if (taskTwitterCheck) {
     });
 
     const data = await res.json();
-    alert(data.error || "Not ready yet");
-  };
+    showTaskStatus(
+  "Task Not Available",
+  data.error || "This verification is not connected yet.",
+  "error"
+);
+  }
 }
 
+const taskStatusClose = document.getElementById("task-status-close");
+if (taskStatusClose) {
+  taskStatusClose.onclick = closeTaskStatus;
+}
+
+document.getElementById("task-status-modal")?.addEventListener("click", (e) => {
+  if (e.target.id === "task-status-modal") {
+    closeTaskStatus();
+  }
+});
 
 
   // ===== INVITE BUTTONS =====
@@ -2394,4 +2412,25 @@ async function loadTasksState() {
     if (openBtn) openBtn.innerText = "Claimed";
     if (checkBtn) checkBtn.innerText = "Done";
   }
+}
+
+function showTaskStatus(title, text, type = "warning") {
+  const modal = document.getElementById("task-status-modal");
+  const card = modal?.querySelector(".task-status-card");
+  const titleEl = document.getElementById("task-status-title");
+  const textEl = document.getElementById("task-status-text");
+
+  if (!modal || !card || !titleEl || !textEl) return;
+
+  card.classList.remove("warning", "error");
+  if (type) card.classList.add(type);
+
+  titleEl.innerText = title;
+  textEl.innerText = text;
+
+  modal.classList.remove("hidden");
+}
+
+function closeTaskStatus() {
+  document.getElementById("task-status-modal")?.classList.add("hidden");
 }
