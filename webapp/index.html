@@ -254,84 +254,113 @@
 
 
       <!-- STAKE / REWARD EVENT -->
-      <section id="stake-screen" class="screen hidden">
+     <section id="stake-screen" class="screen hidden">
+  <div class="stake-shell">
 
+    <!-- HERO -->
+    <div class="stake-hero glass">
+      <div class="stake-hero-top">
+        <div class="stake-hero-badge" id="stake-phase-badge">STAKE LIVE</div>
+        <div id="stake-timer" class="stake-timer">⏳ loading...</div>
+      </div>
 
-        <!-- HEADER -->
-        <div class="stake-status">
+      <div class="stake-hero-title">REWARD EVENT</div>
+      <div class="stake-hero-sub">
+        Burn NXN • Join the ranking • Claim reward if eligible
+      </div>
+    </div>
 
-          <div class="stake-title-wrap">
-            <div class="stake-phase">REWARD EVENT</div>
-            <div id="stake-timer" class="stake-timer">⏳ loading...</div>
-          </div>
+    <!-- SUMMARY -->
+    <div class="stake-summary">
+      <div class="stake-summary-card glass">
+        <div class="stake-summary-label">AVAILABLE BALANCE</div>
+        <div class="stake-summary-value accent" id="stake-balance">0</div>
+      </div>
+
+      <div class="stake-summary-card glass">
+        <div class="stake-summary-label">ALREADY STAKED</div>
+        <div class="stake-summary-value" id="stake-current">0</div>
+      </div>
+    </div>
+
+    <!-- SELECTED -->
+    <div class="stake-selected glass">
+      <div class="stake-selected-label">SELECTED AMOUNT</div>
+      <div class="stake-selected-value" id="stake-selected-view">0 NXN</div>
+    </div>
+
+    <!-- MAIN CARD -->
+    <div class="glass stake-card premium-stake-card">
+      <div class="stake-block-title">CHOOSE STAKE AMOUNT</div>
+
+      <div class="stake-amounts premium-stake-amounts">
+        <button data-amount="10000">10K</button>
+        <button data-amount="20000">20K</button>
+        <button data-amount="50000">50K</button>
+        <button data-amount="100000">100K</button>
+        <button data-amount="150000">150K</button>
+        <button data-amount="200000">200K</button>
+        <button data-amount="max" class="max">MAX</button>
+      </div>
+
+      <button id="stake-confirm" class="stake-confirm premium-main-btn">
+        Stake NeXoN
+      </button>
+
+      <!-- referral -->
+      <div class="stake-referral-box glass">
+        <div class="stake-referral-head">
+          <div class="stake-referral-title">REFERRAL STACK</div>
+          <div class="stake-referral-sub">Use referral NXN only for this event</div>
         </div>
 
+        <button id="stake-referral-btn" class="ref-stake-btn premium-ref-btn">
+          Stake Referral NXN
+        </button>
+      </div>
 
+      <!-- leaderboard -->
+      <button id="open-stake-lb" class="stake-btn premium-outline-btn">
+        View Stake Leaderboard
+      </button>
 
-        <!-- CARD -->
-        <div class="glass stake-card">
-
-          <div class="stake-stats">
-            <div class="stake-stat">
-              <div class="label">Balance</div>
-              <span class="value accent" id="stake-balance">0</span>
-            </div>
-
-            <div class="stake-stat">
-              <div class="label">Your Stake</div>
-              <span class="value" id="stake-current">0</span>
-            </div>
-          </div>
-
-          <div class="stake-amounts">
-            <button data-amount="10000">10K</button>
-            <button data-amount="20000">20K</button>
-            <button data-amount="50000">50K</button>
-            <button data-amount="100000">100K</button>
-            <button data-amount="150000">150K</button>
-            <button data-amount="200000">200K</button>
-            <button data-amount="max" class="max">MAX</button>
-          </div>
-
-          <button id="stake-confirm" class="stake-confirm">
-            Stake NeXoN
-          </button>
-
-          <button id="stake-referral-btn" class="ref-stake-btn">
-            Stake Referral NXN
-          </button>
-
-
-          <button id="open-stake-lb" class="stake-btn">
-            View Stake Leaderboard
-          </button>
-
-
-
-          <div class="stake-warning">
-            • Staked NXN is consumed<br>
-            • Rewards are not guaranteed
-          </div>
-
-          <!-- CLAIM REWARD -->
-          <div id="claim-box" class="glass claim-box hidden">
-            <div class="claim-title">🎁 Claim Reward</div>
-
-            <div class="claim-info">
-              Your reward:
-              <b id="claim-amount">—</b>
-            </div>
-
-            <input id="claim-wallet" placeholder="Enter TON wallet" class="claim-input" />
-
-            <button id="claim-btn" class="stake-confirm">
-              Claim Reward
-            </button>
-          </div>
-
+      <!-- info -->
+      <div class="stake-info-box">
+        <div class="stake-info-item">
+          <span class="stake-info-dot green"></span>
+          <span>Staked NXN is burned after confirmation</span>
         </div>
 
-      </section>
+        <div class="stake-info-item">
+          <span class="stake-info-dot blue"></span>
+          <span>Reward depends on final ranking</span>
+        </div>
+
+        <div class="stake-info-item">
+          <span class="stake-info-dot gold"></span>
+          <span>Claim requires your TON wallet</span>
+        </div>
+      </div>
+
+      <!-- CLAIM -->
+      <div id="claim-box" class="glass claim-box hidden">
+        <div class="claim-top-badge">REWARD READY</div>
+        <div class="claim-title">Claim Reward</div>
+
+        <div class="claim-info">
+          Your reward:
+          <b id="claim-amount">—</b>
+        </div>
+
+        <input id="claim-wallet" placeholder="Enter TON wallet" class="claim-input" />
+
+        <button id="claim-btn" class="stake-confirm premium-main-btn">
+          Claim Reward
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
 
 
 

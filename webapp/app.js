@@ -35,13 +35,13 @@ let dailyTimerInterval = null;
 // ================= INIT =================
 document.addEventListener("DOMContentLoaded", async () => {
   if (!window.Telegram || !Telegram.WebApp) {
-  showStatusModal(
-    "Telegram only",
-    "Open this app from Telegram to continue.",
-    "warning"
-  );
-  return;
-}
+    showStatusModal(
+      "Telegram only",
+      "Open this app from Telegram to continue.",
+      "warning"
+    );
+    return;
+  }
 
   document
     .querySelectorAll("#referral-stake-modal .stake-amounts button")
@@ -85,80 +85,80 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
   const taskTelegramOpen = document.getElementById("task-telegram-open");
-const taskTelegramCheck = document.getElementById("task-telegram-check");
-const taskTwitterOpen = document.getElementById("task-twitter-open");
-const taskTwitterCheck = document.getElementById("task-twitter-check");
+  const taskTelegramCheck = document.getElementById("task-telegram-check");
+  const taskTwitterOpen = document.getElementById("task-twitter-open");
+  const taskTwitterCheck = document.getElementById("task-twitter-check");
 
-if (taskTelegramOpen) {
-  taskTelegramOpen.onclick = () => {
-    Telegram.WebApp.openTelegramLink("https://t.me/NXN_NeXoN");
-  };
-}
-
-if (taskTelegramCheck) {
-  taskTelegramCheck.onclick = async () => {
-    const res = await fetch("/api/tasks/telegram/claim", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId })
-    });
-
-    const data = await res.json();
-
-    if (!data.ok) {
-  showTaskStatus(
-    "Subscription Required",
-    data.error || "You need to complete this task first.",
-    "warning"
-  );
-  return;
-}
-
-    const toast = document.createElement("div");
-    toast.className = "transfer-toast success";
-    toast.innerText = `+${data.reward} NXN`;
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 1800);
-
-    await refreshMe();
-    updateUI();
-    await loadTasksState();
-  };
-}
-
-if (taskTwitterOpen) {
-  taskTwitterOpen.onclick = () => {
-    Telegram.WebApp.openLink("https://x.com/NeXoN_NXN");
-  };
-}
-
-if (taskTwitterCheck) {
-  taskTwitterCheck.onclick = async () => {
-    const res = await fetch("/api/tasks/twitter/claim", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId })
-    });
-
-    const data = await res.json();
-    showTaskStatus(
-  "Task Not Available",
-  data.error || "This verification is not connected yet.",
-  "error"
-);
+  if (taskTelegramOpen) {
+    taskTelegramOpen.onclick = () => {
+      Telegram.WebApp.openTelegramLink("https://t.me/NXN_NeXoN");
+    };
   }
-}
 
-const taskStatusClose = document.getElementById("task-status-close");
-if (taskStatusClose) {
-  taskStatusClose.onclick = closeTaskStatus;
-}
+  if (taskTelegramCheck) {
+    taskTelegramCheck.onclick = async () => {
+      const res = await fetch("/api/tasks/telegram/claim", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId })
+      });
 
-document.getElementById("task-status-modal")?.addEventListener("click", (e) => {
-  if (e.target.id === "task-status-modal") {
-    closeTaskStatus();
+      const data = await res.json();
+
+      if (!data.ok) {
+        showTaskStatus(
+          "Subscription Required",
+          data.error || "You need to complete this task first.",
+          "warning"
+        );
+        return;
+      }
+
+      const toast = document.createElement("div");
+      toast.className = "transfer-toast success";
+      toast.innerText = `+${data.reward} NXN`;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 1800);
+
+      await refreshMe();
+      updateUI();
+      await loadTasksState();
+    };
   }
-});
+
+  if (taskTwitterOpen) {
+    taskTwitterOpen.onclick = () => {
+      Telegram.WebApp.openLink("https://x.com/NeXoN_NXN");
+    };
+  }
+
+  if (taskTwitterCheck) {
+    taskTwitterCheck.onclick = async () => {
+      const res = await fetch("/api/tasks/twitter/claim", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId })
+      });
+
+      const data = await res.json();
+      showTaskStatus(
+        "Task Not Available",
+        data.error || "This verification is not connected yet.",
+        "error"
+      );
+    }
+  }
+
+  const taskStatusClose = document.getElementById("task-status-close");
+  if (taskStatusClose) {
+    taskStatusClose.onclick = closeTaskStatus;
+  }
+
+  document.getElementById("task-status-modal")?.addEventListener("click", (e) => {
+    if (e.target.id === "task-status-modal") {
+      closeTaskStatus();
+    }
+  });
 
 
   // ===== INVITE BUTTONS =====
@@ -226,12 +226,13 @@ document.getElementById("task-status-modal")?.addEventListener("click", (e) => {
   await syncUser();
   await refreshMe();
   await loadRewardState();
+  updateStakeSelectedView(selectedStakeAmount);
   updateUI();
   initMenu();
   buildDailyCalendar();
 
 
-    const mainTransferBtn = document.getElementById("main-transfer-btn");
+  const mainTransferBtn = document.getElementById("main-transfer-btn");
   if (mainTransferBtn) {
     mainTransferBtn.onclick = () => {
       showScreen("transfer");
@@ -246,64 +247,64 @@ document.getElementById("task-status-modal")?.addEventListener("click", (e) => {
     };
   }
 
-    const openDailyBtn = document.getElementById("open-daily-btn");
+  const openDailyBtn = document.getElementById("open-daily-btn");
   if (openDailyBtn) {
     openDailyBtn.onclick = async () => {
-  showScreen("daily-screen");
-  await renderDailyScreen();
-};
+      showScreen("daily-screen");
+      await renderDailyScreen();
+    };
   }
-const claimDailyBtn = document.getElementById("claim-daily-btn");
+  const claimDailyBtn = document.getElementById("claim-daily-btn");
 
-if (claimDailyBtn) {
-  claimDailyBtn.onclick = async () => {
-    const res = await fetch("/api/daily/claim", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId: String(userId) })
-    });
+  if (claimDailyBtn) {
+    claimDailyBtn.onclick = async () => {
+      const res = await fetch("/api/daily/claim", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: String(userId) })
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-   if (!data.ok) {
-  showStatusModal(
-    "Daily reward",
-    data.error || "Daily claim failed.",
-    "error"
-  );
-  return;
-}
+      if (!data.ok) {
+        showStatusModal(
+          "Daily reward",
+          data.error || "Daily claim failed.",
+          "error"
+        );
+        return;
+      }
 
-    const activeCard = document.querySelector(`.daily-card[data-day="${data.day}"]`);
-    if (activeCard) {
-      activeCard.classList.add("claimed");
-    }
+      const activeCard = document.querySelector(`.daily-card[data-day="${data.day}"]`);
+      if (activeCard) {
+        activeCard.classList.add("claimed");
+      }
 
-    claimDailyBtn.disabled = true;
-    claimDailyBtn.innerText = "CLAIMED";
-    claimDailyBtn.classList.add("claimed");
+      claimDailyBtn.disabled = true;
+      claimDailyBtn.innerText = "CLAIMED";
+      claimDailyBtn.classList.add("claimed");
 
-    const toast = document.createElement("div");
-    toast.className = "transfer-toast success";
-    toast.innerText = data.rewardLabel || "Reward claimed";
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 1800);
+      const toast = document.createElement("div");
+      toast.className = "transfer-toast success";
+      toast.innerText = data.rewardLabel || "Reward claimed";
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 1800);
 
-    await refreshMe();
-    updateUI();
-    await renderDailyScreen();
-  };
-}
+      await refreshMe();
+      updateUI();
+      await renderDailyScreen();
+    };
+  }
 
 
 
   const openTasksBtn = document.getElementById("open-tasks-btn");
-if (openTasksBtn) {
-  openTasksBtn.onclick = async () => {
-    showScreen("tasks-screen");
-    await loadTasksState();
-  };
-}
+  if (openTasksBtn) {
+    openTasksBtn.onclick = async () => {
+      showScreen("tasks-screen");
+      await loadTasksState();
+    };
+  }
 
   const backFromDaily = document.getElementById("back-from-daily");
   if (backFromDaily) {
@@ -320,11 +321,11 @@ if (openTasksBtn) {
   }
 
   const backFromRef = document.getElementById("back-from-ref");
-if (backFromRef) {
-  backFromRef.onclick = () => {
-    showScreen("tap");
-  };
-}
+  if (backFromRef) {
+    backFromRef.onclick = () => {
+      showScreen("tap");
+    };
+  }
 
 
 
@@ -336,30 +337,30 @@ if (backFromRef) {
 
   // ===== OPEN REFERRAL =====
   const openReferralBtn = document.getElementById("open-referral");
-if (openReferralBtn) {
-  openReferralBtn.onclick = async () => {
-    const res = await fetch(`/api/referral/me/${userId}`);
-    const data = await res.json();
+  if (openReferralBtn) {
+    openReferralBtn.onclick = async () => {
+      const res = await fetch(`/api/referral/me/${userId}`);
+      const data = await res.json();
 
-    showScreen("referral-screen");
+      showScreen("referral-screen");
 
-    document.getElementById("ref-code").innerText = data.referralCode;
-    document.getElementById("ref-balance").innerText =
-      formatNumber(data.referralStackBalance);
+      document.getElementById("ref-code").innerText = data.referralCode;
+      document.getElementById("ref-balance").innerText =
+        formatNumber(data.referralStackBalance);
 
-    document.getElementById("ref-invited").innerText = data.stats.invited;
-    document.getElementById("ref-active").innerText = data.stats.active;
-    document.getElementById("ref-earned").innerText =
-      formatNumber(data.stats.totalEarned);
+      document.getElementById("ref-invited").innerText = data.stats.invited;
+      document.getElementById("ref-active").innerText = data.stats.active;
+      document.getElementById("ref-earned").innerText =
+        formatNumber(data.stats.totalEarned);
 
-    if (data.referredBy) {
-      const input = document.getElementById("ref-input");
-      input.value = "Bound";
-      input.disabled = true;
-      document.getElementById("bind-ref").disabled = true;
-    }
-  };
-}
+      if (data.referredBy) {
+        const input = document.getElementById("ref-input");
+        input.value = "Bound";
+        input.disabled = true;
+        document.getElementById("bind-ref").disabled = true;
+      }
+    };
+  }
 
 
   document.getElementById("copy-ref").onclick = () => {
@@ -389,14 +390,14 @@ if (openReferralBtn) {
     });
 
     const data = await res.json();
-   if (!data.ok) {
-  showStatusModal(
-    "Referral error",
-    data.error || "Failed to bind referral code.",
-    "error"
-  );
-  return;
-}
+    if (!data.ok) {
+      showStatusModal(
+        "Referral error",
+        data.error || "Failed to bind referral code.",
+        "error"
+      );
+      return;
+    }
 
     document.getElementById("open-referral").click();
   };
@@ -439,16 +440,16 @@ if (openReferralBtn) {
       body: JSON.stringify({ userId, amount })
     });
 
-  const data = await res.json();
+    const data = await res.json();
 
-if (!data.ok) {
-  showStatusModal(
-    "Referral stake failed",
-    data.error || "Unable to stake referral NXN.",
-    "error"
-  );
-  return;
-}
+    if (!data.ok) {
+      showStatusModal(
+        "Referral stake failed",
+        data.error || "Unable to stake referral NXN.",
+        "error"
+      );
+      return;
+    }
 
     // fly animation
     const fly = document.createElement("div");
@@ -544,81 +545,81 @@ if (!data.ok) {
 
 
 
-pvpPlayBtn.onclick = () => {
-  if (!pvpStake) {
-    showStatusModal(
-      "Choose stake",
-      "Select a PvP stake amount before entering the arena.",
-      "warning"
-    );
-    return;
-  }
+    pvpPlayBtn.onclick = () => {
+      if (!pvpStake) {
+        showStatusModal(
+          "Choose stake",
+          "Select a PvP stake amount before entering the arena.",
+          "warning"
+        );
+        return;
+      }
 
-  if (!pvpSocket || pvpSocket.readyState !== 1) {
-    showStatusModal(
-      "Connection error",
-      "PvP connection is not ready yet. Please try again.",
-      "error"
-    );
-    return;
-  }
+      if (!pvpSocket || pvpSocket.readyState !== 1) {
+        showStatusModal(
+          "Connection error",
+          "PvP connection is not ready yet. Please try again.",
+          "error"
+        );
+        return;
+      }
 
-  pvpInGame = true;
+      pvpInGame = true;
 
-  document.querySelectorAll(".menu div").forEach(b => {
-    b.style.pointerEvents = "none";
-    b.style.opacity = "0.4";
-  });
+      document.querySelectorAll(".menu div").forEach(b => {
+        b.style.pointerEvents = "none";
+        b.style.opacity = "0.4";
+      });
 
-  pvpPlayBtn.disabled = true;
+      pvpPlayBtn.disabled = true;
 
-  document.getElementById("pvp-search-ui").classList.remove("hidden");
+      document.getElementById("pvp-search-ui").classList.remove("hidden");
 
-  const searchText = document.getElementById("pvp-search-text");
+      const searchText = document.getElementById("pvp-search-text");
 
-  const frames = [
-    "Searching opponent",
-    "Searching opponent.",
-    "Searching opponent..",
-    "Searching opponent..."
-  ];
+      const frames = [
+        "Searching opponent",
+        "Searching opponent.",
+        "Searching opponent..",
+        "Searching opponent..."
+      ];
 
-  let frame = 0;
+      let frame = 0;
 
-  pvpSearchInterval = setInterval(() => {
-    searchText.innerText = frames[frame];
-    frame = (frame + 1) % frames.length;
-  }, 500);
+      pvpSearchInterval = setInterval(() => {
+        searchText.innerText = frames[frame];
+        frame = (frame + 1) % frames.length;
+      }, 500);
 
-  startPvpSearch();
-};
-
-
+      startPvpSearch();
+    };
 
 
-  const pvpCoin = document.getElementById("pvp-tap-coin");
 
-if (pvpCoin && !pvpTapBound) {
 
-  pvpCoin.addEventListener("touchstart", (e) => {
-    e.preventDefault();
+    const pvpCoin = document.getElementById("pvp-tap-coin");
 
-    if (!pvpInGame) return;
-    if (pvpCountdownActive) return;
+    if (pvpCoin && !pvpTapBound) {
 
-    pvpSocket.send(JSON.stringify({ type: "tap" }));
+      pvpCoin.addEventListener("touchstart", (e) => {
+        e.preventDefault();
 
-    if (Telegram?.WebApp?.HapticFeedback) {
-      Telegram.WebApp.HapticFeedback.impactOccurred("light");
+        if (!pvpInGame) return;
+        if (pvpCountdownActive) return;
+
+        pvpSocket.send(JSON.stringify({ type: "tap" }));
+
+        if (Telegram?.WebApp?.HapticFeedback) {
+          Telegram.WebApp.HapticFeedback.impactOccurred("light");
+        }
+
+        pvpCoin.classList.add("hit");
+        setTimeout(() => pvpCoin.classList.remove("hit"), 80);
+
+      }, { passive: false });
+
+      pvpTapBound = true;
     }
-
-    pvpCoin.classList.add("hit");
-    setTimeout(() => pvpCoin.classList.remove("hit"), 80);
-
-  }, { passive: false });
-
-  pvpTapBound = true;
-}
 
 
   };
@@ -745,6 +746,19 @@ async function loadRewardState() {
 
   document.getElementById("stake-current").innerText =
     formatNumber(currentStake);
+
+  const phaseBadge = document.getElementById("stake-phase-badge");
+  if (phaseBadge) {
+    if (rewardState === "STAKE_ACTIVE") {
+      phaseBadge.innerText = "STAKE LIVE";
+    } else if (rewardState === "CLAIM_ACTIVE") {
+      phaseBadge.innerText = "CLAIM LIVE";
+    } else {
+      phaseBadge.innerText = "CYCLE CLOSED";
+    }
+  }
+
+  updateStakeSelectedView(selectedStakeAmount);
 
   updateStakeButton();
   updateRewardTimer();
@@ -1120,6 +1134,7 @@ if (stakeBtn) {
 
     await refreshMe();
     await loadRewardState();
+    updateStakeSelectedView(selectedStakeAmount);
 
     if (rewardState === "CLAIM_ACTIVE") {
       loadClaimInfo();
@@ -1141,7 +1156,6 @@ document.querySelectorAll(".stake-amounts button").forEach(btn => {
       amount = Number(val);
     }
 
-    // ❌ not enough balance
     if (amount > balance) {
       showMinStackModal("Not enough NXN to stake");
       return;
@@ -1154,22 +1168,26 @@ document.querySelectorAll(".stake-amounts button").forEach(btn => {
       .forEach(b => b.classList.remove("active"));
 
     btn.classList.add("active");
+
+    updateStakeSelectedView(selectedStakeAmount);
   };
 });
+
+
 
 
 const stakeConfirm = document.getElementById("stake-confirm");
 
 if (stakeConfirm) {
   stakeConfirm.onclick = async () => {
-   if (rewardState !== "STAKE_ACTIVE") {
-  showStatusModal(
-    "Stake closed",
-    "The staking phase is currently closed.",
-    "warning"
-  );
-  return;
-}
+    if (rewardState !== "STAKE_ACTIVE") {
+      showStatusModal(
+        "Stake closed",
+        "The staking phase is currently closed.",
+        "warning"
+      );
+      return;
+    }
 
     if (!selectedStakeAmount || selectedStakeAmount < 10000) {
       showMinStackModal();
@@ -1205,11 +1223,11 @@ if (stakeConfirm) {
         return;
       }
 
-     showStatusModal(
-  "Stake failed",
-  data.error || "Unable to place stake right now.",
-  "error"
-);
+      showStatusModal(
+        "Stake failed",
+        data.error || "Unable to place stake right now.",
+        "error"
+      );
       return;
     }
 
@@ -1235,6 +1253,13 @@ if (stakeConfirm) {
 
     await refreshMe();
     await loadRewardState();
+
+    selectedStakeAmount = 0;
+    updateStakeSelectedView(0);
+
+    document
+      .querySelectorAll(".stake-amounts button")
+      .forEach(b => b.classList.remove("active"));
 
   };
 }
@@ -1364,10 +1389,10 @@ async function buyNXN(itemId) {
     });
   } catch (e) {
     showStatusModal(
-  "Network error",
-  "Please try again in a moment.",
-  "error"
-);
+      "Network error",
+      "Please try again in a moment.",
+      "error"
+    );
     return;
   }
 
@@ -1376,10 +1401,10 @@ async function buyNXN(itemId) {
     data = await res.json();
   } catch {
     showStatusModal(
-  "Server error",
-  "Unexpected server response.",
-  "error"
-);
+      "Server error",
+      "Unexpected server response.",
+      "error"
+    );
     return;
   }
 
@@ -1419,10 +1444,10 @@ async function buyNXN(itemId) {
 async function payTON(amountTon, itemId) {
   if (!tonConnectUI) {
     showStatusModal(
-  "TON not ready",
-  "Wallet connection is not ready yet.",
-  "warning"
-);
+      "TON not ready",
+      "Wallet connection is not ready yet.",
+      "warning"
+    );
     return;
   }
 
@@ -1469,10 +1494,10 @@ async function payTON(amountTon, itemId) {
   } catch (e) {
     console.error("TON ERROR", e);
     showStatusModal(
-  "Payment failed",
-  "Payment was cancelled or failed.",
-  "error"
-);
+      "Payment failed",
+      "Payment was cancelled or failed.",
+      "error"
+    );
   }
 }
 
@@ -1500,6 +1525,13 @@ function parseFormattedNumber(text) {
   if (t.includes("K")) return parseFloat(t) * 1e3;
 
   return Number(t.replace(/[^0-9.]/g, ""));
+}
+
+function updateStakeSelectedView(amount) {
+  const el = document.getElementById("stake-selected-view");
+  if (!el) return;
+
+  el.innerText = `${formatNumber(amount || 0)} NXN`;
 }
 
 
@@ -1658,14 +1690,14 @@ if (claimBtn) {
     const wallet =
       document.getElementById("claim-wallet").value.trim();
 
-   if (!wallet) {
-  showStatusModal(
-    "Wallet required",
-    "Enter your TON wallet to claim the reward.",
-    "warning"
-  );
-  return;
-}
+    if (!wallet) {
+      showStatusModal(
+        "Wallet required",
+        "Enter your TON wallet to claim the reward.",
+        "warning"
+      );
+      return;
+    }
 
     const res = await fetch("/api/reward/claim", {
       method: "POST",
@@ -1676,13 +1708,13 @@ if (claimBtn) {
     const data = await res.json();
 
     if (!data.ok) {
-  showStatusModal(
-    "Claim failed",
-    data.error || "Unable to claim reward.",
-    "error"
-  );
-  return;
-}
+      showStatusModal(
+        "Claim failed",
+        data.error || "Unable to claim reward.",
+        "error"
+      );
+      return;
+    }
     // ✅ UI после клейма
     document.getElementById("claim-amount").innerText =
       "Claimed ✓";
@@ -1904,10 +1936,10 @@ function handlePvpMessage(event) {
       btn.onclick = () => {
         if (!pvpStake) {
           showStatusModal(
-  "Select stake",
-  "Choose a PvP stake amount before entering the arena.",
-  "warning"
-);
+            "Select stake",
+            "Choose a PvP stake amount before entering the arena.",
+            "warning"
+          );
           return;
         }
         sendInvite(p.id, btn);
@@ -1961,32 +1993,32 @@ function handlePvpMessage(event) {
   // ================= COUNTDOWN =================
   if (data.type === "countdown") {
 
-  showScreen("pvp-arena");
+    showScreen("pvp-arena");
 
-  document.getElementById("pvp-invite-popup")
-    ?.classList.add("hidden");
+    document.getElementById("pvp-invite-popup")
+      ?.classList.add("hidden");
 
-  lockMenu();
+    lockMenu();
 
-  const overlay = document.getElementById("pvp-countdown-overlay");
-  const number = document.getElementById("pvp-countdown-number");
+    const overlay = document.getElementById("pvp-countdown-overlay");
+    const number = document.getElementById("pvp-countdown-number");
 
-  overlay.classList.remove("hidden");
+    overlay.classList.remove("hidden");
 
-  if (data.value > 0) {
-    pvpCountdownActive = true;
-    number.innerText = data.value;
-  } else {
-    number.innerText = "FIGHT!";
-    pvpCountdownActive = false;
+    if (data.value > 0) {
+      pvpCountdownActive = true;
+      number.innerText = data.value;
+    } else {
+      number.innerText = "FIGHT!";
+      pvpCountdownActive = false;
 
-    setTimeout(() => {
-      overlay.classList.add("hidden");
-    }, 600);
+      setTimeout(() => {
+        overlay.classList.add("hidden");
+      }, 600);
+    }
+
+    return;
   }
-
-  return;
-}
 
 
   // ================= START =================
@@ -2000,7 +2032,7 @@ function handlePvpMessage(event) {
     status.innerText = "FIGHT!";
     status.classList.add("fight");
 
-    pvpInGame = true; 
+    pvpInGame = true;
 
     startMatchTimer();
   }
@@ -2012,48 +2044,48 @@ function handlePvpMessage(event) {
   }
 
   // ================= END =================
-if (data.type === "end") {
+  if (data.type === "end") {
 
-  clearInterval(pvpSearchInterval);
-  clearInterval(pvpTimerInterval);
+    clearInterval(pvpSearchInterval);
+    clearInterval(pvpTimerInterval);
 
-  pvpInGame = false;
-  pvpCountdownActive = false;
+    pvpInGame = false;
+    pvpCountdownActive = false;
 
-  unlockMenu();
+    unlockMenu();
 
-  const playBtn = document.getElementById("pvp-play");
-if (playBtn) playBtn.disabled = false;
+    const playBtn = document.getElementById("pvp-play");
+    if (playBtn) playBtn.disabled = false;
 
-document.getElementById("pvp-search-ui")
-  ?.classList.add("hidden");
+    document.getElementById("pvp-search-ui")
+      ?.classList.add("hidden");
 
 
-  // скрываем арену
-  document.getElementById("pvp-arena")
-    .classList.add("hidden");
+    // скрываем арену
+    document.getElementById("pvp-arena")
+      .classList.add("hidden");
 
-  // показываем лобби
-  showScreen("pvp");
+    // показываем лобби
+    showScreen("pvp");
 
-  const resultScreen = document.getElementById("pvp-result-screen");
-  const resultText = document.getElementById("pvp-result-text");
-  const finalScore = document.getElementById("pvp-final-score");
+    const resultScreen = document.getElementById("pvp-result-screen");
+    const resultText = document.getElementById("pvp-result-text");
+    const finalScore = document.getElementById("pvp-final-score");
 
-  finalScore.innerText = `${data.you} : ${data.opponent}`;
+    finalScore.innerText = `${data.you} : ${data.opponent}`;
 
-  resultText.classList.remove("win", "lose");
+    resultText.classList.remove("win", "lose");
 
-  if (data.winner === userId) {
-    resultText.innerText = "YOU WIN";
-    resultText.classList.add("win");
-  } else {
-    resultText.innerText = "YOU LOSE";
-    resultText.classList.add("lose");
+    if (data.winner === userId) {
+      resultText.innerText = "YOU WIN";
+      resultText.classList.add("win");
+    } else {
+      resultText.innerText = "YOU LOSE";
+      resultText.classList.add("lose");
+    }
+
+    resultScreen.classList.remove("hidden");
   }
-
-  resultScreen.classList.remove("hidden");
-}
 
 
 }
@@ -2264,16 +2296,16 @@ function startDailyTimer() {
 }
 
 const DAILY_REWARD_LIST = {
-  1:  { reward: "500 NXN", sub: "Start reward" },
-  2:  { reward: "750 NXN", sub: "Daily reward" },
-  3:  { reward: "1,000 NXN", sub: "Daily reward" },
-  4:  { reward: "1,250 NXN", sub: "Daily reward" },
-  5:  { reward: "1,500 NXN", sub: "Daily reward" },
-  6:  { reward: "TAP +2", sub: "24 hours boost", premium: true },
+  1: { reward: "500 NXN", sub: "Start reward" },
+  2: { reward: "750 NXN", sub: "Daily reward" },
+  3: { reward: "1,000 NXN", sub: "Daily reward" },
+  4: { reward: "1,250 NXN", sub: "Daily reward" },
+  5: { reward: "1,500 NXN", sub: "Daily reward" },
+  6: { reward: "TAP +2", sub: "24 hours boost", premium: true },
 
-  7:  { reward: "500 NXN", sub: "Cycle continues" },
-  8:  { reward: "750 NXN", sub: "Daily reward" },
-  9:  { reward: "1,000 NXN", sub: "Daily reward" },
+  7: { reward: "500 NXN", sub: "Cycle continues" },
+  8: { reward: "750 NXN", sub: "Daily reward" },
+  9: { reward: "1,000 NXN", sub: "Daily reward" },
   10: { reward: "1,250 NXN", sub: "Daily reward" },
   11: { reward: "1,500 NXN", sub: "Daily reward" },
   12: { reward: "ENERGY +200", sub: "24 hours boost", premium: true },
