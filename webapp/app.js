@@ -78,6 +78,67 @@ document.addEventListener("DOMContentLoaded", async () => {
   Telegram.WebApp.ready();
   Telegram.WebApp.expand();
 
+
+
+  const taskTelegramOpen = document.getElementById("task-telegram-open");
+const taskTelegramCheck = document.getElementById("task-telegram-check");
+const taskTwitterOpen = document.getElementById("task-twitter-open");
+const taskTwitterCheck = document.getElementById("task-twitter-check");
+
+if (taskTelegramOpen) {
+  taskTelegramOpen.onclick = () => {
+    Telegram.WebApp.openTelegramLink("https://t.me/NXN_NeXoN");
+  };
+}
+
+if (taskTelegramCheck) {
+  taskTelegramCheck.onclick = async () => {
+    const res = await fetch("/api/tasks/telegram/claim", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId })
+    });
+
+    const data = await res.json();
+
+    if (!data.ok) {
+      alert(data.error || "Task failed");
+      return;
+    }
+
+    const toast = document.createElement("div");
+    toast.className = "transfer-toast success";
+    toast.innerText = `+${data.reward} NXN`;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 1800);
+
+    await refreshMe();
+    updateUI();
+    await loadTasksState();
+  };
+}
+
+if (taskTwitterOpen) {
+  taskTwitterOpen.onclick = () => {
+    Telegram.WebApp.openLink("https://x.com/NeXoN_NXN");
+  };
+}
+
+if (taskTwitterCheck) {
+  taskTwitterCheck.onclick = async () => {
+    const res = await fetch("/api/tasks/twitter/claim", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId })
+    });
+
+    const data = await res.json();
+    alert(data.error || "Not ready yet");
+  };
+}
+
+
+
   // ===== INVITE BUTTONS =====
   const inviteAcceptBtn = document.getElementById("invite-accept");
   const inviteDeclineBtn = document.getElementById("invite-decline");
@@ -211,11 +272,12 @@ if (claimDailyBtn) {
 
 
   const openTasksBtn = document.getElementById("open-tasks-btn");
-  if (openTasksBtn) {
-    openTasksBtn.onclick = () => {
-      showScreen("tasks-screen");
-    };
-  }
+if (openTasksBtn) {
+  openTasksBtn.onclick = async () => {
+    showScreen("tasks-screen");
+    await loadTasksState();
+  };
+}
 
   const backFromDaily = document.getElementById("back-from-daily");
   if (backFromDaily) {
@@ -2271,9 +2333,10 @@ document.addEventListener("click", () => {
 });
 
 // переходы
-document.getElementById("open-tasks-from-menu")?.addEventListener("click", () => {
+document.getElementById("open-tasks-from-menu")?.addEventListener("click", async () => {
   dropdown?.classList.add("hidden");
   showScreen("tasks-screen");
+  await loadTasksState();
 });
 
 document.getElementById("open-daily-from-menu")?.addEventListener("click", async () => {
@@ -2306,3 +2369,29 @@ document.getElementById("open-ref-from-menu")?.addEventListener("click", async (
     document.getElementById("bind-ref").disabled = true;
   }
 });
+
+async function loadTasksState() {
+  const res = await fetch(`/api/tasks/state/${userId}`);
+  const data = await res.json();
+
+  if (!data.ok) return;
+
+  const tgCard = document.querySelector(`.task-card[data-task="telegram"]`);
+  const xCard = document.querySelector(`.task-card[data-task="twitter"]`);
+
+  if (data.telegram?.claimed && tgCard) {
+    tgCard.classList.add("done");
+    const openBtn = document.getElementById("task-telegram-open");
+    const checkBtn = document.getElementById("task-telegram-check");
+    if (openBtn) openBtn.innerText = "Claimed";
+    if (checkBtn) checkBtn.innerText = "Done";
+  }
+
+  if (data.twitter?.claimed && xCard) {
+    xCard.classList.add("done");
+    const openBtn = document.getElementById("task-twitter-open");
+    const checkBtn = document.getElementById("task-twitter-check");
+    if (openBtn) openBtn.innerText = "Claimed";
+    if (checkBtn) checkBtn.innerText = "Done";
+  }
+}

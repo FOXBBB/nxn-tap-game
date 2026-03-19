@@ -200,35 +200,57 @@
 
 
 <section id="tasks-screen" class="screen hidden">
-  <h2 class="title blue">TASKS</h2>
-
-  <div class="glass transfer-box">
-    <div class="task-item">
-      <div class="task-left">
-        <img src="tg.png" class="task-icon">
-        <div>
-          <b>Join Telegram</b>
-          <p>+5,000 NXN</p>
-        </div>
-      </div>
-      <button class="task-btn">GO</button>
+  <div class="glass tasks-panel">
+    <div class="tasks-head">
+      <div class="tasks-head-title">TASKS</div>
+      <div class="tasks-head-sub">Complete tasks and earn NXN</div>
     </div>
 
-    <div class="task-item">
-      <div class="task-left">
-        <img src="twitter.png" class="task-icon">
-        <div>
-          <b>Follow on X</b>
-          <p>+5,000 NXN</p>
+    <div class="tasks-list">
+
+      <div class="task-card premium-task" data-task="telegram">
+        <div class="task-card-left">
+          <div class="task-icon-wrap">
+            <img src="tg.png" class="task-icon" alt="Telegram">
+          </div>
+
+          <div class="task-content">
+            <div class="task-title">Join Telegram Channel</div>
+            <div class="task-desc">Subscribe to our official Telegram channel</div>
+            <div class="task-reward">+5,000 NXN</div>
+          </div>
+        </div>
+
+        <div class="task-actions">
+          <button class="task-btn open" id="task-telegram-open">Subscribe</button>
+          <button class="task-btn check" id="task-telegram-check">Check</button>
         </div>
       </div>
-      <button class="task-btn">GO</button>
+
+      <div class="task-card premium-task x-task" data-task="twitter">
+        <div class="task-card-left">
+          <div class="task-icon-wrap">
+            <img src="twitter.png" class="task-icon" alt="X">
+          </div>
+
+          <div class="task-content">
+            <div class="task-title">Follow on X</div>
+            <div class="task-desc">Follow our official X account</div>
+            <div class="task-reward">+5,000 NXN</div>
+          </div>
+        </div>
+
+        <div class="task-actions">
+          <button class="task-btn open" id="task-twitter-open">Subscribe</button>
+          <button class="task-btn check" id="task-twitter-check">Check</button>
+        </div>
+      </div>
+
     </div>
 
     <button id="back-from-tasks" class="back-like-ref">Back</button>
   </div>
 </section>
-
 
 
       <!-- STAKE / REWARD EVENT -->

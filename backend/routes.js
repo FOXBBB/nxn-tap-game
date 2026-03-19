@@ -1236,6 +1236,111 @@ router.post("/subscribe/confirm", async (req, res) => {
 });
 
 
+
+// ================= TASKS =================
+
+// state
+router.get("/tasks/state/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const userRes = await query(`
+      SELECT task_tg_claimed, task_x_claimed
+      FROM users
+      WHERE telegram_id = $1::text
+    `, [userId]);
+
+    if (userRes.rowCount === 0) {
+      return res.json({ ok: false });
+    }
+
+    res.json({
+      ok: true,
+      telegram: {
+        claimed: !!userRes.rows[0].task_tg_claimed
+      },
+      twitter: {
+        claimed: !!userRes.rows[0].task_x_claimed
+      }
+    });
+  } catch (e) {
+    console.error("TASK STATE ERROR", e);
+    res.json({ ok: false });
+  }
+});
+
+
+// telegram task claim
+router.post("/tasks/telegram/claim", async (req, res) => {
+  try {
+    const { userId } = req.body;
+
+    const userRes = await query(`
+      SELECT task_tg_claimed
+      FROM users
+      WHERE telegram_id = $1::text
+    `, [userId]);
+
+    if (userRes.rowCount === 0) {
+      return res.json({ ok: false, error: "User not found" });
+    }
+
+    if (userRes.rows[0].task_tg_claimed) {
+      return res.json({ ok: false, error: "Reward already claimed" });
+    }
+
+    const subscribed = await checkSubscription(userId);
+
+    if (!subscribed) {
+      return res.json({ ok: false, error: "Subscription not found" });
+    }
+
+    await query(`
+      UPDATE users
+      SET balance = balance + 5000,
+          task_tg_claimed = true
+      WHERE telegram_id = $1::text
+    `, [userId]);
+
+    res.json({ ok: true, reward: 5000 });
+  } catch (e) {
+    console.error("TG TASK CLAIM ERROR", e);
+    res.json({ ok: false, error: "Task claim failed" });
+  }
+});
+
+
+// x task temporary manual off
+router.post("/tasks/twitter/claim", async (req, res) => {
+  try {
+    const { userId } = req.body;
+
+    const userRes = await query(`
+      SELECT task_x_claimed
+      FROM users
+      WHERE telegram_id = $1::text
+    `, [userId]);
+
+    if (userRes.rowCount === 0) {
+      return res.json({ ok: false, error: "User not found" });
+    }
+
+    if (userRes.rows[0].task_x_claimed) {
+      return res.json({ ok: false, error: "Reward already claimed" });
+    }
+
+    // пока без X API реальной проверки
+    return res.json({
+      ok: false,
+      error: "X verification not connected yet"
+    });
+  } catch (e) {
+    console.error("X TASK CLAIM ERROR", e);
+    res.json({ ok: false, error: "Task claim failed" });
+  }
+});
+
+
 // GET daily state
 router.get("/daily/state/:userId", async (req, res) => {
   try {
