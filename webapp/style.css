@@ -9068,3 +9068,31 @@ body {
     font-size: 15px !important;
   }
 }
+/* ===== PVP INVITE CLICK FIX ===== */
+
+#online-list,
+.online-list,
+.online-row,
+.online-left {
+  pointer-events: auto !important;
+}
+
+.online-row {
+  position: relative;
+  z-index: 1;
+}
+
+.online-row .invite-btn {
+  position: relative;
+  z-index: 20;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+.online-row .invite-btn:not(.disabled) {
+  opacity: 1;
+}
+
+.online-row .invite-btn.disabled {
+  pointer-events: none !important;
+}

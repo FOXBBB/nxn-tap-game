@@ -2618,3 +2618,24 @@ if (statusModal) {
   });
 }
 
+// ===== PVP INVITE SAFE CLICK =====
+document.getElementById("online-list")?.addEventListener("click", (e) => {
+  const btn = e.target.closest(".invite-btn");
+  if (!btn) return;
+
+  if (btn.classList.contains("disabled")) return;
+
+  const targetId = btn.dataset.id;
+  if (!targetId) return;
+
+  if (!pvpStake) {
+    showStatusModal(
+      "Select stake",
+      "Choose a PvP stake amount before entering the arena.",
+      "warning"
+    );
+    return;
+  }
+
+  sendInvite(targetId, btn);
+});
