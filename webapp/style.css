@@ -6406,3 +6406,213 @@ body {
   object-fit: contain !important;
   display: block !important;
 }
+/* ===== GLOBAL PREMIUM TITLES ===== */
+
+/* базовые большие заголовки экранов */
+.title.blue,
+.daily-head-title,
+.stake-phase,
+.lb-title {
+  position: relative;
+  text-align: center;
+  font-weight: 900;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  line-height: 1;
+  margin: 0 auto;
+
+  background: linear-gradient(
+    180deg,
+    #f7fff9 0%,
+    #9affd3 38%,
+    #39fca8 68%,
+    #11c973 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  text-shadow:
+    0 0 18px rgba(0,255,170,0.10),
+    0 0 36px rgba(0,255,170,0.08);
+}
+
+/* размеры под основные секции */
+.title.blue {
+  font-size: clamp(28px, 5vw, 36px) !important;
+  margin-bottom: 14px;
+}
+
+.lb-title {
+  font-size: clamp(30px, 5.8vw, 40px) !important;
+  margin-bottom: 8px;
+}
+
+.daily-head-title {
+  font-size: clamp(24px, 4.8vw, 30px) !important;
+  margin-bottom: 2px;
+}
+
+.stake-phase {
+  font-size: clamp(22px, 4.6vw, 28px) !important;
+  letter-spacing: 1.4px;
+}
+
+/* аккуратная светящаяся линия под заголовками */
+.title.blue::after,
+.daily-head-title::after,
+.stake-phase::after,
+.lb-title::after {
+  content: "";
+  display: block;
+  width: 72px;
+  height: 3px;
+  margin: 10px auto 0;
+  border-radius: 999px;
+
+  background: linear-gradient(
+    90deg,
+    rgba(0,255,170,0),
+    rgba(0,255,170,0.95),
+    rgba(0,255,170,0)
+  );
+
+  box-shadow:
+    0 0 10px rgba(0,255,170,0.35),
+    0 0 22px rgba(0,255,170,0.18);
+}
+
+/* подзаголовки */
+.subtitle.yellow,
+.lb-sub {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2.4px;
+  text-transform: uppercase;
+  margin-top: 8px;
+  margin-bottom: 16px;
+  color: rgba(220,255,240,0.76) !important;
+  text-shadow: 0 0 12px rgba(0,255,170,0.08);
+}
+
+.lb-sub {
+  margin-top: 2px;
+}
+
+/* ===== STAKE HEADER PREMIUM ===== */
+
+.stake-status {
+  padding-top: 8px;
+  margin-bottom: 10px;
+}
+
+.stake-title-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+/* таймер в stake */
+.stake-timer {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  padding: 8px 14px;
+  border-radius: 999px;
+
+  font-size: 12px !important;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #dffff0 !important;
+
+  background: linear-gradient(
+    180deg,
+    rgba(8,30,20,0.95),
+    rgba(5,18,12,0.92)
+  );
+  border: 1px solid rgba(0,255,170,0.18);
+  box-shadow:
+    0 0 16px rgba(0,255,170,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.04);
+}
+
+/* ===== DAILY HEADER PREMIUM ===== */
+
+.daily-head {
+  margin-bottom: 20px;
+}
+
+.daily-timer {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+
+  min-height: 34px;
+  padding: 8px 14px;
+  border-radius: 999px;
+
+  font-size: 12px !important;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #dffff0 !important;
+
+  background: linear-gradient(
+    180deg,
+    rgba(8,30,20,0.95),
+    rgba(5,18,12,0.92)
+  );
+  border: 1px solid rgba(0,255,170,0.18);
+  box-shadow:
+    0 0 16px rgba(0,255,170,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.04);
+}
+
+/* ===== GAMES / SHOP / TASKS / TRANSFER spacing ===== */
+
+#games .title.blue,
+#shop .title.blue,
+#transfer .title.blue,
+#tasks-screen .title.blue,
+#stake-leaderboard .title.blue {
+  margin-top: 4px;
+  margin-bottom: 10px;
+}
+
+/* ===== OPTIONAL SCREEN HEADER FEEL ===== */
+
+#games .title.blue,
+#shop .title.blue,
+#transfer .title.blue,
+#tasks-screen .title.blue,
+#stake-leaderboard .title.blue,
+.daily-head-title,
+.stake-phase,
+.lb-title {
+  filter: drop-shadow(0 0 10px rgba(0,255,170,0.08));
+}
+
+/* mobile tune */
+@media (max-width: 380px) {
+  .subtitle.yellow,
+  .lb-sub {
+    font-size: 11px;
+    letter-spacing: 2px;
+  }
+
+  .stake-timer,
+  .daily-timer {
+    font-size: 11px !important;
+    padding: 7px 12px;
+  }
+
+  .title.blue::after,
+  .daily-head-title::after,
+  .stake-phase::after,
+  .lb-title::after {
+    width: 58px;
+    margin-top: 8px;
+  }
+}
