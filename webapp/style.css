@@ -6800,7 +6800,7 @@ body {
 
 @media (max-width: 430px) {
   .daily-calendar {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 10px;
   }
 
@@ -6933,4 +6933,223 @@ body {
 .stake-timer {
   text-align: center;
   margin-top: 6px;
+}
+
+/* ===== DAILY FINAL FIX ===== */
+
+.daily-panel {
+  max-width: 430px;
+  margin: 10px auto 0;
+  padding: 24px 16px 20px;
+  border-radius: 28px;
+}
+
+.daily-head {
+  margin-bottom: 16px;
+}
+
+.daily-current-info {
+  margin: 10px 0 18px;
+}
+
+.daily-calendar {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+  margin-top: 8px !important;
+  padding-top: 6px !important;   /* 👈 опускает первый ряд ниже */
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.daily-card {
+  min-height: 88px !important;
+  padding: 12px 8px 10px !important;
+  border-radius: 14px !important;
+  overflow: hidden;
+}
+
+.daily-card-top {
+  font-size: 10px !important;
+  margin-bottom: 8px !important;
+}
+
+.daily-card-reward {
+  font-size: 13px !important;
+  line-height: 1.15 !important;
+  margin-top: 2px !important;
+}
+
+.daily-card-sub {
+  font-size: 8px !important;
+  margin-top: 4px !important;
+  line-height: 1.15 !important;
+}
+
+/* чтобы первый ряд не выглядел обрезанным */
+#daily-screen {
+  padding-top: 22px !important;
+}
+
+/* НЕ даем media query снова сломать 4 колонки */
+@media (max-width: 430px) {
+  .daily-calendar {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+
+  .daily-card {
+    min-height: 88px !important;
+    padding: 12px 8px 10px !important;
+  }
+
+  .daily-card-top {
+    font-size: 10px !important;
+  }
+
+  .daily-card-reward {
+    font-size: 13px !important;
+  }
+
+  .daily-card-sub {
+    font-size: 8px !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .daily-calendar {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 7px !important;
+  }
+
+  .daily-card {
+    min-height: 82px !important;
+    padding: 10px 6px 8px !important;
+  }
+
+  .daily-card-top {
+    font-size: 9px !important;
+  }
+
+  .daily-card-reward {
+    font-size: 12px !important;
+  }
+
+  .daily-card-sub {
+    font-size: 7px !important;
+  }
+}
+/* ===== BOTTOM MENU LABELS FINAL ===== */
+
+.menu {
+  height: 118px !important;
+  padding-bottom: calc(8px + env(safe-area-inset-bottom));
+}
+
+.menu div {
+  flex: 1;
+  height: 100%;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.72;
+}
+
+.menu .menu-inner {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  line-height: 1;
+}
+
+.menu img {
+  width: 46px !important;
+  height: 46px !important;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+}
+
+.menu div[data-go="tap"] img,
+.menu div[data-go="tap"].active img {
+  width: 58px !important;
+  height: 58px !important;
+}
+
+.menu small {
+  display: block;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  color: rgba(235, 255, 245, 0.72);
+  text-transform: uppercase;
+  text-align: center;
+  line-height: 1;
+  margin: 0;
+  padding: 0;
+  text-shadow: 0 0 8px rgba(0, 255, 170, 0.08);
+}
+
+.menu div.active small {
+  color: #7affc6;
+  text-shadow:
+    0 0 10px rgba(0,255,170,0.25),
+    0 0 18px rgba(0,255,170,0.12);
+}
+
+.menu div.active img {
+  filter: drop-shadow(0 0 16px rgba(0,255,170,0.34));
+}
+
+/* убираем старые странные стили span */
+.menu div span {
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+/* mobile */
+@media (max-width: 430px) {
+  .menu {
+    height: 112px !important;
+  }
+
+  .menu img {
+    width: 42px !important;
+    height: 42px !important;
+  }
+
+  .menu div[data-go="tap"] img,
+  .menu div[data-go="tap"].active img {
+    width: 54px !important;
+    height: 54px !important;
+  }
+
+  .menu small {
+    font-size: 9px;
+  }
+}
+
+@media (max-width: 380px) {
+  .menu {
+    height: 108px !important;
+  }
+
+  .menu img {
+    width: 38px !important;
+    height: 38px !important;
+  }
+
+  .menu div[data-go="tap"] img,
+  .menu div[data-go="tap"].active img {
+    width: 48px !important;
+    height: 48px !important;
+  }
+
+  .menu small {
+    font-size: 8px;
+    letter-spacing: 0.4px;
+  }
 }
