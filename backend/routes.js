@@ -1326,17 +1326,22 @@ router.post("/tasks/twitter/claim", async (req, res) => {
     }
 
     if (userRes.rows[0].task_x_claimed) {
-      return res.json({ ok: false, error: "Reward already claimed" });
+      return res.json({ ok: false, error: "Already claimed" });
     }
 
-    // пока без X API реальной проверки
-    return res.json({
-      ok: false,
-      error: "X verification not connected yet"
-    });
+    // 💰 даём награду без проверки
+    await query(`
+      UPDATE users
+      SET balance = balance + 5000,
+          task_x_claimed = true
+      WHERE telegram_id = $1::text
+    `, [userId]);
+
+    res.json({ ok: true, reward: 5000 });
+
   } catch (e) {
-    console.error("X TASK CLAIM ERROR", e);
-    res.json({ ok: false, error: "Task claim failed" });
+    console.error("X TASK ERROR", e);
+    res.json({ ok: false });
   }
 });
 

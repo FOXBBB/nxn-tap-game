@@ -2434,3 +2434,54 @@ function showTaskStatus(title, text, type = "warning") {
 function closeTaskStatus() {
   document.getElementById("task-status-modal")?.classList.add("hidden");
 }
+
+let twitterOpened = false;
+
+if (taskTwitterOpen) {
+  taskTwitterOpen.onclick = () => {
+    twitterOpened = true;
+
+    Telegram.WebApp.openLink("https://x.com/your_account_here");
+  };
+}
+
+if (taskTwitterCheck) {
+  taskTwitterCheck.onclick = async () => {
+
+    if (!twitterOpened) {
+      showTaskStatus(
+        "Follow Required",
+        "Please open the X page first.",
+        "warning"
+      );
+      return;
+    }
+
+    const res = await fetch("/api/tasks/twitter/claim", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId })
+    });
+
+    const data = await res.json();
+
+    if (!data.ok) {
+      showTaskStatus(
+        "Error",
+        data.error || "Task failed",
+        "error"
+      );
+      return;
+    }
+
+    const toast = document.createElement("div");
+    toast.className = "transfer-toast success";
+    toast.innerText = `+${data.reward} NXN`;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 1800);
+
+    await refreshMe();
+    updateUI();
+    await loadTasksState();
+  };
+}
