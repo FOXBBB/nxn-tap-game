@@ -7791,8 +7791,8 @@ body {
 
 .pvp-coin-ring {
   position: absolute;
-  width: 240px;
-  height: 240px;
+  width: 300px;
+  height: 300px;
   border-radius: 50%;
   border: 1px solid rgba(0,255,170,0.16);
   box-shadow:
@@ -7821,8 +7821,8 @@ body {
 }
 
 #pvp-tap-coin {
-  width: 190px;
-  max-width: 190px;
+  width: 270px;
+  max-width: 270px;
   filter:
     drop-shadow(0 0 16px rgba(0,255,170,0.22))
     drop-shadow(0 0 34px rgba(0,255,170,0.10));
@@ -7910,11 +7910,41 @@ body {
   }
 
   .pvp-coin-ring {
-    width: 210px;
-    height: 210px;
+    width: 270px;
+    height: 270px;
   }
 
   #pvp-tap-coin {
-    width: 170px;
+    width: 220px;
+    max-width: 220px;
   }
+}
+/* ===== FIX PVP SIDE ALIGN ===== */
+
+#pvp-arena .pvp-side:first-child {
+  text-align: left;
+  align-items: flex-start;
+}
+
+#pvp-arena .pvp-side:last-child {
+  text-align: right;
+  align-items: flex-end;
+}
+
+/* имя */
+#pvp-arena .pvp-name {
+  width: 100%;
+}
+
+/* счёт */
+#pvp-you,
+#pvp-opp {
+  width: 100%;
+}
+#pvp-arena .pvp-side:first-child {
+  border-left: 2px solid rgba(0,255,170,0.2);
+}
+
+#pvp-arena .pvp-side:last-child {
+  border-right: 2px solid rgba(0,255,170,0.2);
 }
