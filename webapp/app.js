@@ -2142,8 +2142,7 @@ const DAILY_REWARD_LIST = {
   25: { reward: "1,000 NXN", sub: "Daily reward" },
   26: { reward: "1,250 NXN", sub: "Daily reward" },
   27: { reward: "1,500 NXN", sub: "Daily reward" },
-  28: { reward: "2,000 NXN", sub: "Big reward" },
-  29: { reward: "AUTOCLICKER", sub: "10 hours boost", premium: true }
+  28: { reward: "AUTOCLICKER", sub: "10 hours boost", premium: true }
 };
 
 function buildDailyCalendar() {
@@ -2152,7 +2151,7 @@ function buildDailyCalendar() {
 
   wrap.innerHTML = "";
 
-  for (let day = 1; day <= 29; day++) {
+  for (let day = 1; day <= 28; day++) {
     const item = DAILY_REWARD_LIST[day];
 
     const card = document.createElement("div");

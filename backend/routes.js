@@ -1345,7 +1345,7 @@ router.post("/daily/claim", async (req, res) => {
     const reward = getDailyReward(dailyDay);
 
     let nextDay = dailyDay + 1;
-    if (nextDay > 29) nextDay = 1;
+    if (nextDay > 28) nextDay = 1;
 
     if (reward.type === "nix") {
       await query(`
@@ -1434,9 +1434,7 @@ const DAILY_REWARDS = {
   25: { type: "nix", value: 1000, label: "1,000 NXN" },
   26: { type: "nix", value: 1250, label: "1,250 NXN" },
   27: { type: "nix", value: 1500, label: "1,500 NXN" },
-  28: { type: "nix", value: 2000, label: "2,000 NXN" },
-
-  29: { type: "autoclicker", hours: 10, label: "AUTOCLICKER · 10h" }
+  28: { type: "autoclicker", hours: 10, label: "AUTOCLICKER · 10h" }
 };
 
 function getDailyReward(day) {
