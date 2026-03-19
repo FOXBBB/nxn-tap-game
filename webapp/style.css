@@ -4265,12 +4265,6 @@ body.locked {
   opacity: 0.9;
 }
 
-.daily-calendar {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  margin-bottom: 16px;
-}
 
 .daily-card {
   min-height: 108px;
@@ -6634,8 +6628,8 @@ body {
 
 .daily-calendar {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
   margin-top: 16px;
   max-height: 52vh;
   overflow-y: auto;
@@ -6785,4 +6779,134 @@ body {
   display: block;
   width: 100%;
   margin: 0 auto;
+}
+
+@media (max-width: 430px) {
+  .daily-calendar {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  .daily-card {
+    min-height: 92px;
+    padding: 12px 10px;
+  }
+
+  .daily-card-top {
+    font-size: 11px;
+  }
+
+  .daily-card-reward {
+    font-size: 16px;
+  }
+
+  .daily-card-sub {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 380px) {
+  .daily-calendar {
+    gap: 8px;
+  }
+
+  .daily-card {
+    min-height: 84px;
+    padding: 10px 8px;
+    border-radius: 14px;
+  }
+
+  .daily-card-top {
+    font-size: 10px;
+  }
+
+  .daily-card-reward {
+    font-size: 14px;
+  }
+
+  .daily-card-sub {
+    font-size: 9px;
+  }
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden !important;
+  overscroll-behavior: none;
+}
+
+body {
+  position: fixed;
+  inset: 0;
+}
+
+/* только экраны скроллятся */
+.screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 112px; /* высота меню */
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* главный экран без прокрутки */
+#tap {
+  overflow: hidden !important;
+}
+
+/* daily / tasks / referral / shop / transfer / games / leaderboard / stake — скролл внутри */
+#daily-screen,
+#tasks-screen,
+#referral-screen,
+#shop,
+#transfer,
+#games,
+#leaderboard,
+#stake-screen,
+#stake-leaderboard,
+#pvp {
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.daily-card {
+  min-height: 96px;
+  padding: 12px 10px;
+}
+
+.daily-card-reward {
+  font-size: 17px;
+}
+
+.daily-card-sub {
+  font-size: 11px;
+}
+/* ===== STAKE HEADER CENTER FIX ===== */
+
+.stake-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* центр по горизонтали */
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+}
+
+/* заголовок */
+.stake-head-title {
+  text-align: center;
+  width: 100%;
+}
+
+/* таймер */
+.stake-timer {
+  text-align: center;
+  margin-top: 6px;
 }
