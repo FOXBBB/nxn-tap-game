@@ -35,9 +35,13 @@ let dailyTimerInterval = null;
 // ================= INIT =================
 document.addEventListener("DOMContentLoaded", async () => {
   if (!window.Telegram || !Telegram.WebApp) {
-    alert("Open app from Telegram");
-    return;
-  }
+  showStatusModal(
+    "Telegram only",
+    "Open this app from Telegram to continue.",
+    "warning"
+  );
+  return;
+}
 
   document
     .querySelectorAll("#referral-stake-modal .stake-amounts button")
@@ -261,10 +265,14 @@ if (claimDailyBtn) {
 
     const data = await res.json();
 
-    if (!data.ok) {
-      alert(data.error || "Daily claim failed");
-      return;
-    }
+   if (!data.ok) {
+  showStatusModal(
+    "Daily reward",
+    data.error || "Daily claim failed.",
+    "error"
+  );
+  return;
+}
 
     const activeCard = document.querySelector(`.daily-card[data-day="${data.day}"]`);
     if (activeCard) {
@@ -381,7 +389,14 @@ if (openReferralBtn) {
     });
 
     const data = await res.json();
-    if (!data.ok) return alert(data.error);
+   if (!data.ok) {
+  showStatusModal(
+    "Referral error",
+    data.error || "Failed to bind referral code.",
+    "error"
+  );
+  return;
+}
 
     document.getElementById("open-referral").click();
   };
@@ -425,10 +440,16 @@ if (openReferralBtn) {
     });
 
   const data = await res.json();
+
 if (!data.ok) {
-  alert(data.error || "Referral stake failed");
+  showStatusModal(
+    "Referral stake failed",
+    data.error || "Unable to stake referral NXN.",
+    "error"
+  );
   return;
 }
+
     // fly animation
     const fly = document.createElement("div");
     fly.className = "stake-fly";
@@ -521,43 +542,56 @@ if (!data.ok) {
 
     const pvpPlayBtn = document.getElementById("pvp-play");
 
-    pvpPlayBtn.onclick = () => {
-
-      if (!pvpStake) return alert("Choose stake");
-      if (!pvpSocket || pvpSocket.readyState !== 1) return;
-
-      pvpInGame = true;
-
-      document.querySelectorAll(".menu div").forEach(b => {
-        b.style.pointerEvents = "none";
-        b.style.opacity = "0.4";
-      });
-
-      pvpPlayBtn.disabled = true;
-
-      // 🔥 ВОТ ЭТО ДОБАВИЛИ
-      document.getElementById("pvp-search-ui").classList.remove("hidden");
-
-      const searchText = document.getElementById("pvp-search-text");
-
-      const frames = [
-        "Searching opponent",
-        "Searching opponent.",
-        "Searching opponent..",
-        "Searching opponent..."
-      ];
-
-      let frame = 0;
-
-      pvpSearchInterval = setInterval(() => {
-        searchText.innerText = frames[frame];
-        frame = (frame + 1) % frames.length;
-      }, 500);
 
 
-      startPvpSearch();
-    };
+pvpPlayBtn.onclick = () => {
+  if (!pvpStake) {
+    showStatusModal(
+      "Choose stake",
+      "Select a PvP stake amount before entering the arena.",
+      "warning"
+    );
+    return;
+  }
 
+  if (!pvpSocket || pvpSocket.readyState !== 1) {
+    showStatusModal(
+      "Connection error",
+      "PvP connection is not ready yet. Please try again.",
+      "error"
+    );
+    return;
+  }
+
+  pvpInGame = true;
+
+  document.querySelectorAll(".menu div").forEach(b => {
+    b.style.pointerEvents = "none";
+    b.style.opacity = "0.4";
+  });
+
+  pvpPlayBtn.disabled = true;
+
+  document.getElementById("pvp-search-ui").classList.remove("hidden");
+
+  const searchText = document.getElementById("pvp-search-text");
+
+  const frames = [
+    "Searching opponent",
+    "Searching opponent.",
+    "Searching opponent..",
+    "Searching opponent..."
+  ];
+
+  let frame = 0;
+
+  pvpSearchInterval = setInterval(() => {
+    searchText.innerText = frames[frame];
+    frame = (frame + 1) % frames.length;
+  }, 500);
+
+  startPvpSearch();
+};
 
 
 
@@ -879,8 +913,21 @@ document.getElementById("send").onclick = async () => {
     const toId = document.getElementById("to-id")?.value.trim();
     const amount = Number(document.getElementById("amount")?.value);
 
-    if (!toId || amount <= 0) {
-      alert("Enter valid ID and amount");
+    if (!toId) {
+      showStatusModal(
+        "Invalid ID",
+        "Enter a valid recipient ID before sending NXN.",
+        "error"
+      );
+      return;
+    }
+
+    if (!amount || amount <= 0) {
+      showStatusModal(
+        "Amount required",
+        "Enter the amount you want to transfer.",
+        "warning"
+      );
       return;
     }
 
@@ -891,16 +938,13 @@ document.getElementById("send").onclick = async () => {
         setTimeout(() => box.classList.remove("transfer-error"), 450);
       }
 
-      const toast = document.createElement("div");
-      toast.className = "transfer-toast error";
-      toast.innerText = "Minimum transfer is 100 NXN";
-      document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 1600);
-
-      btn.disabled = false;
+      showStatusModal(
+        "Transfer too small",
+        "Minimum transfer is 100 NXN.",
+        "warning"
+      );
       return;
     }
-
 
     const res = await fetch("/api/transfer", {
       method: "POST",
@@ -912,8 +956,8 @@ document.getElementById("send").onclick = async () => {
       })
     });
 
-
     const data = await res.json();
+
     if (!data.ok) {
       const box = document.querySelector(".transfer-box");
       if (box) {
@@ -921,33 +965,24 @@ document.getElementById("send").onclick = async () => {
         setTimeout(() => box.classList.remove("transfer-error"), 450);
       }
 
-      const toast = document.createElement("div");
-      toast.className = "transfer-toast error";
-      toast.innerText = data.error || "TRANSFER FAILED";
-      document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 1600);
-
+      showStatusModal(
+        "Transfer failed",
+        data.error || "Unable to complete transfer.",
+        "error"
+      );
       return;
     }
 
     await loadHistory();
-
     await refreshMe();
     updateUI();
 
-
-
-
-    // ===== TRANSFER SUCCESS UI =====
     const box = document.querySelector(".transfer-box");
     if (box) {
       box.classList.add("transfer-success");
       setTimeout(() => box.classList.remove("transfer-success"), 600);
     }
 
-
-
-    // burn animation
     const burn = document.createElement("div");
     burn.className = "plus-one";
     burn.innerText = "-10% BURNED";
@@ -959,22 +994,16 @@ document.getElementById("send").onclick = async () => {
     document.body.appendChild(burn);
     setTimeout(() => burn.remove(), 900);
 
-
-    // toast message
     const toast = document.createElement("div");
-    toast.className = "transfer-toast";
+    toast.className = "transfer-toast success";
     toast.innerText = "TRANSFER SUCCESS ✓";
     document.body.appendChild(toast);
-
     setTimeout(() => toast.remove(), 1600);
 
   } finally {
-    // 🔒 ВСЕГДА возвращаем кнопку
     btn.disabled = false;
   }
 };
-
-
 
 // ===== HISTORY TOGGLE =====
 const toggle = document.getElementById("history-toggle");
@@ -1133,10 +1162,14 @@ const stakeConfirm = document.getElementById("stake-confirm");
 
 if (stakeConfirm) {
   stakeConfirm.onclick = async () => {
-    if (rewardState !== "STAKE_ACTIVE") {
-      alert("Stake phase is closed");
-      return;
-    }
+   if (rewardState !== "STAKE_ACTIVE") {
+  showStatusModal(
+    "Stake closed",
+    "The staking phase is currently closed.",
+    "warning"
+  );
+  return;
+}
 
     if (!selectedStakeAmount || selectedStakeAmount < 10000) {
       showMinStackModal();
@@ -1172,7 +1205,11 @@ if (stakeConfirm) {
         return;
       }
 
-      alert(data.error || "Stake failed");
+     showStatusModal(
+  "Stake failed",
+  data.error || "Unable to place stake right now.",
+  "error"
+);
       return;
     }
 
@@ -1326,7 +1363,11 @@ async function buyNXN(itemId) {
       })
     });
   } catch (e) {
-    alert("Network error");
+    showStatusModal(
+  "Network error",
+  "Please try again in a moment.",
+  "error"
+);
     return;
   }
 
@@ -1334,7 +1375,11 @@ async function buyNXN(itemId) {
   try {
     data = await res.json();
   } catch {
-    alert("Server error");
+    showStatusModal(
+  "Server error",
+  "Unexpected server response.",
+  "error"
+);
     return;
   }
 
@@ -1373,7 +1418,11 @@ async function buyNXN(itemId) {
 
 async function payTON(amountTon, itemId) {
   if (!tonConnectUI) {
-    alert("TON not ready");
+    showStatusModal(
+  "TON not ready",
+  "Wallet connection is not ready yet.",
+  "warning"
+);
     return;
   }
 
@@ -1419,7 +1468,11 @@ async function payTON(amountTon, itemId) {
 
   } catch (e) {
     console.error("TON ERROR", e);
-    alert("Payment cancelled or failed");
+    showStatusModal(
+  "Payment failed",
+  "Payment was cancelled or failed.",
+  "error"
+);
   }
 }
 
@@ -1605,10 +1658,14 @@ if (claimBtn) {
     const wallet =
       document.getElementById("claim-wallet").value.trim();
 
-    if (!wallet) {
-      alert("Enter TON wallet");
-      return;
-    }
+   if (!wallet) {
+  showStatusModal(
+    "Wallet required",
+    "Enter your TON wallet to claim the reward.",
+    "warning"
+  );
+  return;
+}
 
     const res = await fetch("/api/reward/claim", {
       method: "POST",
@@ -1619,10 +1676,13 @@ if (claimBtn) {
     const data = await res.json();
 
     if (!data.ok) {
-      alert(data.error || "Claim failed");
-      return;
-    }
-
+  showStatusModal(
+    "Claim failed",
+    data.error || "Unable to claim reward.",
+    "error"
+  );
+  return;
+}
     // ✅ UI после клейма
     document.getElementById("claim-amount").innerText =
       "Claimed ✓";
@@ -2525,3 +2585,4 @@ if (statusModal) {
     if (e.target === statusModal) closeStatusModal();
   });
 }
+
