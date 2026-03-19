@@ -8055,3 +8055,166 @@ body {
     max-width: 235px !important;
   }
 }
+/* ===== UNIVERSAL PREMIUM STATUS MODAL ===== */
+
+.status-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+
+  background: rgba(0, 0, 0, 0.62);
+  backdrop-filter: blur(10px);
+}
+
+.status-modal.hidden {
+  display: none !important;
+}
+
+.status-card {
+  width: min(90vw, 360px);
+  padding: 24px 18px 18px;
+  border-radius: 24px;
+  text-align: center;
+
+  background:
+    radial-gradient(circle at top, rgba(0,255,170,0.12), transparent 34%),
+    linear-gradient(180deg, rgba(10,24,18,0.97), rgba(5,14,10,0.99));
+
+  border: 1px solid rgba(0,255,170,0.18);
+  box-shadow:
+    0 0 34px rgba(0,255,170,0.12),
+    inset 0 0 20px rgba(0,255,170,0.05);
+
+  animation: statusPopIn 0.22s ease;
+}
+
+@keyframes statusPopIn {
+  from {
+    transform: scale(0.92);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.status-icon {
+  width: 54px;
+  height: 54px;
+  margin: 0 auto 14px;
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 24px;
+  font-weight: 900;
+
+  background: linear-gradient(180deg, #2cff9c, #00c070);
+  color: #02140c;
+
+  box-shadow:
+    0 0 18px rgba(0,255,150,0.28),
+    inset 0 1px 0 rgba(255,255,255,0.25);
+}
+
+.status-title {
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #f4fff9;
+  margin-bottom: 10px;
+}
+
+.status-text {
+  font-size: 14px;
+  line-height: 1.45;
+  color: rgba(235,255,245,0.84);
+  margin-bottom: 18px;
+}
+
+.status-close-btn {
+  width: 100%;
+  min-height: 48px;
+  border: none;
+  border-radius: 999px;
+
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  cursor: pointer;
+
+  background: linear-gradient(180deg, #2cff9c, #00c070);
+  color: #02140c;
+
+  box-shadow:
+    0 6px 0 #009a5a,
+    0 12px 20px rgba(0,255,150,0.24);
+}
+
+.status-close-btn:active {
+  transform: translateY(4px);
+  box-shadow:
+    0 2px 0 #009a5a,
+    0 6px 12px rgba(0,255,150,0.18);
+}
+
+/* TYPES */
+
+.status-card.warning {
+  border-color: rgba(255, 196, 70, 0.26);
+  box-shadow:
+    0 0 34px rgba(255,196,70,0.12),
+    inset 0 0 20px rgba(255,196,70,0.05);
+}
+
+.status-card.warning .status-icon {
+  background: linear-gradient(180deg, #ffd86b, #ffb300);
+  color: #2b1b00;
+  box-shadow:
+    0 0 18px rgba(255,196,70,0.25),
+    inset 0 1px 0 rgba(255,255,255,0.24);
+}
+
+.status-card.warning .status-title {
+  color: #ffe08a;
+}
+
+.status-card.error {
+  border-color: rgba(255, 90, 90, 0.26);
+  box-shadow:
+    0 0 34px rgba(255,90,90,0.12),
+    inset 0 0 20px rgba(255,90,90,0.05);
+}
+
+.status-card.error .status-icon {
+  background: linear-gradient(180deg, #ff8a8a, #ff4d4d);
+  color: #2b0707;
+  box-shadow:
+    0 0 18px rgba(255,90,90,0.24),
+    inset 0 1px 0 rgba(255,255,255,0.20);
+}
+
+.status-card.error .status-title {
+  color: #ffb1b1;
+}
+
+.status-card.success {
+  border-color: rgba(34,197,94,0.26);
+}
+
+.status-card.success .status-icon {
+  background: linear-gradient(180deg, #3dff8e, #00c853);
+  color: #032113;
+}
+
+.status-card.success .status-title {
+  color: #7affc6;
+}

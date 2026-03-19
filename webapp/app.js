@@ -1843,7 +1843,11 @@ function handlePvpMessage(event) {
 
       btn.onclick = () => {
         if (!pvpStake) {
-          alert("Choose stake first");
+          showStatusModal(
+  "Select stake",
+  "Choose a PvP stake amount before entering the arena.",
+  "warning"
+);
           return;
         }
         sendInvite(p.id, btn);
@@ -2484,4 +2488,40 @@ if (taskTwitterCheck) {
     updateUI();
     await loadTasksState();
   };
+}
+const statusModal = document.getElementById("status-modal");
+const statusCard = document.getElementById("status-card");
+const statusIcon = document.getElementById("status-icon");
+const statusTitle = document.getElementById("status-title");
+const statusText = document.getElementById("status-text");
+const statusClose = document.getElementById("status-close");
+
+function showStatusModal(title, text, type = "warning") {
+  if (!statusModal || !statusCard) return;
+
+  statusTitle.textContent = title;
+  statusText.textContent = text;
+
+  statusCard.classList.remove("warning", "error", "success");
+  statusCard.classList.add(type);
+
+  if (type === "success") statusIcon.textContent = "✓";
+  else if (type === "error") statusIcon.textContent = "✕";
+  else statusIcon.textContent = "!";
+
+  statusModal.classList.remove("hidden");
+}
+
+function closeStatusModal() {
+  statusModal.classList.add("hidden");
+}
+
+if (statusClose) {
+  statusClose.addEventListener("click", closeStatusModal);
+}
+
+if (statusModal) {
+  statusModal.addEventListener("click", (e) => {
+    if (e.target === statusModal) closeStatusModal();
+  });
 }
