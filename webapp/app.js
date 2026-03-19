@@ -170,42 +170,50 @@ document.addEventListener("DOMContentLoaded", async () => {
 };
   }
 
-
- const claimDailyBtn = document.getElementById("claim-daily-btn");
+const claimDailyBtn = document.getElementById("claim-daily-btn");
 
 if (claimDailyBtn) {
   claimDailyBtn.onclick = async () => {
-    const res = await fetch("/api/daily/claim", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId })
-    });
+    try {
+      claimDailyBtn.disabled = true;
 
-    const data = await res.json();
+      const res = await fetch("/api/daily/claim", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: userId })
+      });
 
-    if (!data.ok) {
-      alert(data.error || "Daily claim failed");
-      return;
+      const data = await res.json();
+
+      if (!data.ok) {
+        claimDailyBtn.disabled = false;
+        alert(data.error || "Daily claim failed");
+        return;
+      }
+
+      const activeCard = document.querySelector(`.daily-card[data-day="${data.day}"]`);
+      if (activeCard) {
+        activeCard.classList.add("claimed");
+      }
+
+      claimDailyBtn.disabled = true;
+      claimDailyBtn.innerText = "CLAIMED";
+      claimDailyBtn.classList.add("claimed");
+
+      const toast = document.createElement("div");
+      toast.className = "transfer-toast success";
+      toast.innerText = data.rewardLabel || "Reward claimed";
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 1800);
+
+      await refreshMe();
+      updateUI();
+      await renderDailyScreen();
+    } catch (err) {
+      console.error("Daily claim error:", err);
+      claimDailyBtn.disabled = false;
+      alert("Daily claim request failed");
     }
-
-    const activeCard = document.querySelector(`.daily-card[data-day="${data.day}"]`);
-    if (activeCard) {
-      activeCard.classList.add("claimed");
-    }
-
-    claimDailyBtn.disabled = true;
-    claimDailyBtn.innerText = "CLAIMED";
-    claimDailyBtn.classList.add("claimed");
-
-    const toast = document.createElement("div");
-    toast.className = "transfer-toast success";
-    toast.innerText = data.rewardLabel || "Reward claimed";
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 1800);
-
-    await refreshMe();
-    updateUI();
-    await renderDailyScreen();
   };
 }
 
@@ -2122,19 +2130,25 @@ function startDailyTimer() {
   }, 1000);
 }
 
+
 async function renderDailyScreen() {
   const timer = document.getElementById("daily-timer");
   const info = document.getElementById("daily-current-info");
   const btn = document.getElementById("claim-daily-btn");
   const cards = document.querySelectorAll(".daily-card");
 
-  if (!timer || !info || !btn || !cards.length) return;
+  if (!timer || !info || !btn || !cards.length) {
+    console.error("Daily UI elements not found");
+    return;
+  }
 
   try {
     const res = await fetch(`/api/daily/state/${userId}`);
     const data = await res.json();
 
-    if (data.ok === false) {
+    console.log("Daily state:", data);
+
+    if (!data || data.ok === false) {
       timer.innerText = "Daily unavailable";
       info.innerHTML = "Failed to load daily reward";
       btn.disabled = true;
@@ -2159,7 +2173,6 @@ async function renderDailyScreen() {
 
     if (data.canClaim) {
       timer.innerText = "Available now";
-
       btn.disabled = false;
       btn.innerText = "CLAIM REWARD";
       btn.classList.remove("claimed");
@@ -2170,12 +2183,10 @@ async function renderDailyScreen() {
       }
     } else {
       const ms = Number(data.nextClaimInMs) || 86400000;
-
       dailyNextClaimAt = Date.now() + ms;
 
       btn.disabled = true;
       btn.innerText = "WAIT";
-
       timer.innerText = `Next reward in ${formatDailyTime(ms)}`;
       startDailyTimer();
     }
@@ -2187,6 +2198,7 @@ async function renderDailyScreen() {
     btn.innerText = "WAIT";
   }
 }
+
 
 
 const avatarBtn = document.getElementById("avatar-menu-btn");
