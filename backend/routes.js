@@ -1235,6 +1235,169 @@ router.post("/subscribe/confirm", async (req, res) => {
   }
 });
 
+// ================= DAILY REWARD =================
+
+// rewards by day
+function getDailyReward(day) {
+  const rewards = {
+    1: { label: "500 NXN", type: "NXN", amount: 500 },
+    2: { label: "1,000 NXN", type: "NXN", amount: 1000 },
+    3: { label: "1,000 NXN", type: "NXN", amount: 1000 },
+    4: { label: "1,000 NXN", type: "NXN", amount: 1000 },
+    5: { label: "1,000 NXN", type: "NXN", amount: 1000 },
+    6: { label: "TAP +2", type: "BOOST", boostDays: 1 }
+  };
+
+  return rewards[day] || rewards[1];
+}
+
+// GET daily state
+router.get("/daily/state/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const userRes = await query(
+      `
+      SELECT
+        telegram_id,
+        daily_day,
+        daily_last_claim_at
+      FROM users
+      WHERE telegram_id = $1::text
+      `,
+      [userId]
+    );
+
+    if (userRes.rowCount === 0) {
+      return res.json({ ok: false, error: "User not found" });
+    }
+
+    const user = userRes.rows[0];
+    const now = new Date();
+
+    let day = Number(user.daily_day) || 1;
+    let canClaim = true;
+    let nextClaimInMs = 0;
+
+    if (user.daily_last_claim_at) {
+      const lastClaim = new Date(user.daily_last_claim_at);
+      const diff = now.getTime() - lastClaim.getTime();
+      const cooldown = 24 * 60 * 60 * 1000;
+
+      if (diff < cooldown) {
+        canClaim = false;
+        nextClaimInMs = cooldown - diff;
+      }
+    }
+
+    const reward = getDailyReward(day);
+
+    return res.json({
+      ok: true,
+      day,
+      canClaim,
+      nextClaimInMs,
+      rewardLabel: reward.label
+    });
+  } catch (err) {
+    console.error("DAILY STATE ERROR:", err);
+    return res.json({ ok: false, error: "Daily state failed" });
+  }
+});
+
+// POST claim daily
+router.post("/daily/claim", async (req, res) => {
+  try {
+    const { userId } = req.body;
+
+    if (!userId) {
+      return res.json({ ok: false, error: "Missing userId" });
+    }
+
+    const userRes = await query(
+      `
+      SELECT
+        telegram_id,
+        balance,
+        tap_power,
+        daily_day,
+        daily_last_claim_at,
+        tap_boost_until
+      FROM users
+      WHERE telegram_id = $1::text
+      `,
+      [userId]
+    );
+
+    if (userRes.rowCount === 0) {
+      return res.json({ ok: false, error: "User not found" });
+    }
+
+    const user = userRes.rows[0];
+    const now = new Date();
+
+    const currentDay = Number(user.daily_day) || 1;
+
+    if (user.daily_last_claim_at) {
+      const lastClaim = new Date(user.daily_last_claim_at);
+      const diff = now.getTime() - lastClaim.getTime();
+      const cooldown = 24 * 60 * 60 * 1000;
+
+      if (diff < cooldown) {
+        return res.json({ ok: false, error: "Daily reward is not ready yet" });
+      }
+    }
+
+    const reward = getDailyReward(currentDay);
+
+    await query("BEGIN");
+
+    if (reward.type === "NXN") {
+      await query(
+        `
+        UPDATE users
+        SET
+          balance = balance + $1,
+          daily_last_claim_at = NOW(),
+          daily_day = CASE
+            WHEN daily_day >= 6 THEN 1
+            ELSE daily_day + 1
+          END
+        WHERE telegram_id = $2::text
+        `,
+        [reward.amount, userId]
+      );
+    } else if (reward.type === "BOOST") {
+      await query(
+        `
+        UPDATE users
+        SET
+          tap_boost_until = GREATEST(COALESCE(tap_boost_until, NOW()), NOW()) + INTERVAL '1 day',
+          daily_last_claim_at = NOW(),
+          daily_day = CASE
+            WHEN daily_day >= 6 THEN 1
+            ELSE daily_day + 1
+          END
+        WHERE telegram_id = $1::text
+        `,
+        [userId]
+      );
+    }
+
+    await query("COMMIT");
+
+    return res.json({
+      ok: true,
+      day: currentDay,
+      rewardLabel: reward.label
+    });
+  } catch (err) {
+    await query("ROLLBACK").catch(() => {});
+    console.error("DAILY CLAIM ERROR:", err);
+    return res.json({ ok: false, error: "Daily claim failed" });
+  }
+});
+
 
 
 
