@@ -1933,17 +1933,6 @@ function handlePvpMessage(event) {
         }, 1000);
       }
 
-      btn.onclick = () => {
-        if (!pvpStake) {
-          showStatusModal(
-            "Select stake",
-            "Choose a PvP stake amount before entering the arena.",
-            "warning"
-          );
-          return;
-        }
-        sendInvite(p.id, btn);
-      };
 
       list.appendChild(row);
     });
@@ -2171,9 +2160,15 @@ if (pvpAgainBtn) {
 
 
 function sendInvite(targetId, btn) {
-
-  if (!pvpSocket || pvpSocket.readyState !== 1) return;
-
+  if (!pvpSocket || pvpSocket.readyState !== 1) {
+    showStatusModal(
+      "Connection error",
+      "PvP connection is not ready yet. Please try again.",
+      "error"
+    );
+    return;
+  }
+  
   const now = Date.now();
 
   if (inviteCooldowns[targetId] &&
@@ -2639,3 +2634,36 @@ document.getElementById("online-list")?.addEventListener("click", (e) => {
 
   sendInvite(targetId, btn);
 });
+
+// ===== PVP INVITE SAFE CLICK FINAL =====
+const onlineListEl = document.getElementById("online-list");
+
+if (onlineListEl) {
+  const handleInvitePress = (e) => {
+    const btn = e.target.closest(".invite-btn");
+    if (!btn) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (btn.disabled) return;
+    if (btn.classList.contains("disabled")) return;
+
+    const targetId = btn.dataset.id;
+    if (!targetId) return;
+
+    if (!pvpStake) {
+      showStatusModal(
+        "Select stake",
+        "Choose a PvP stake amount before entering the arena.",
+        "warning"
+      );
+      return;
+    }
+
+    sendInvite(targetId, btn);
+  };
+
+  onlineListEl.addEventListener("pointerup", handleInvitePress);
+  onlineListEl.addEventListener("touchend", handleInvitePress, { passive: false });
+}

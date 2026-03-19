@@ -9096,3 +9096,23 @@ body {
 .online-row .invite-btn.disabled {
   pointer-events: none !important;
 }
+
+
+/* ===== PVP INVITE CLICK FIX ===== */
+#online-list,
+.online-list,
+.online-row,
+.invite-btn {
+  pointer-events: auto !important;
+}
+
+.online-row {
+  position: relative;
+  z-index: 2;
+}
+
+.invite-btn {
+  position: relative;
+  z-index: 5;
+  touch-action: manipulation;
+}
