@@ -7508,3 +7508,413 @@ body {
   box-shadow: none !important;
   background: transparent !important;
 }
+/* =========================
+   PVP LOBBY REDESIGN
+========================= */
+
+#pvp {
+  padding-top: 26px;
+}
+
+.pvp-lobby-head {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.pvp-lobby-title {
+  font-size: 30px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  background: linear-gradient(180deg, #f7fff9 0%, #9affd3 38%, #39fca8 68%, #11c973 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow:
+    0 0 18px rgba(0,255,170,0.10),
+    0 0 36px rgba(0,255,170,0.08);
+}
+
+.pvp-lobby-sub {
+  margin-top: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: rgba(220,255,240,0.72);
+}
+
+.pvp-header {
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.online-indicator {
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(0,255,170,0.08);
+  border: 1px solid rgba(0,255,170,0.16);
+  box-shadow: 0 0 12px rgba(0,255,170,0.06);
+}
+
+.pvp-box {
+  max-width: 420px;
+  margin: 0 auto 16px;
+  padding: 18px 16px;
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at top, rgba(0,255,180,0.10), transparent 45%),
+    linear-gradient(180deg, rgba(9,22,18,0.96), rgba(5,12,10,0.98));
+  border: 1px solid rgba(0,255,170,0.16);
+  box-shadow:
+    0 0 30px rgba(0,255,170,0.08),
+    inset 0 0 18px rgba(0,255,170,0.04);
+}
+
+.pvp-status {
+  min-height: 34px;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #eafff3;
+}
+
+.pvp-status.fight {
+  color: #7affc6;
+  text-shadow: 0 0 20px rgba(0,255,170,0.35);
+}
+
+.pvp-search {
+  padding: 12px 0 6px;
+}
+
+#pvp-search-text {
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(230,255,245,0.82);
+}
+
+.search-spinner {
+  width: 42px;
+  height: 42px;
+  border: 4px solid rgba(255,255,255,0.10);
+  border-top: 4px solid #2cff9c;
+  box-shadow: 0 0 14px rgba(0,255,150,0.20);
+}
+
+.pvp-stakes {
+  max-width: 420px;
+  margin: 0 auto 16px;
+  gap: 10px;
+}
+
+.pvp-stakes button {
+  height: 48px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 900;
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+  border: 1px solid rgba(0,255,170,0.12);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+}
+
+.pvp-stakes button.active {
+  background: linear-gradient(180deg, #2cff9c, #00c070);
+  color: #02140c;
+  border-color: rgba(0,255,170,0.38);
+  box-shadow:
+    0 0 18px rgba(0,255,150,0.28),
+    0 6px 16px rgba(0,255,150,0.14);
+}
+
+#pvp-play {
+  max-width: 420px;
+  margin: 0 auto 18px;
+  display: block;
+  height: 56px;
+  border-radius: 18px;
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 1.4px;
+  background: linear-gradient(180deg, #2cff9c, #00c070);
+  color: #02140c;
+  box-shadow:
+    0 6px 0 #009a5a,
+    0 14px 22px rgba(0,255,150,0.22);
+}
+
+.pvp-online-table {
+  max-width: 420px;
+  margin: 0 auto;
+  border-radius: 22px;
+  padding: 14px;
+  background:
+    linear-gradient(180deg, rgba(10,20,18,0.96), rgba(6,12,10,0.98));
+  border: 1px solid rgba(0,255,170,0.10);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.03),
+    0 0 24px rgba(0,255,170,0.05);
+}
+
+.online-title {
+  text-align: center;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #7affc6;
+  margin-bottom: 12px;
+}
+
+.online-list {
+  gap: 10px;
+}
+
+.online-row {
+  border-radius: 16px;
+  padding: 12px 14px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.online-row:hover {
+  transform: translateY(-1px);
+}
+
+.online-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  border: 1px solid rgba(0,255,170,0.18);
+  box-shadow: 0 0 12px rgba(0,255,170,0.08);
+}
+
+.online-name {
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.invite-btn {
+  min-width: 86px;
+  height: 36px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.8px;
+}
+
+/* =========================
+   PVP ARENA REDESIGN
+========================= */
+
+#pvp-arena {
+  padding-top: 26px;
+  background:
+    radial-gradient(circle at 50% 28%, rgba(0,255,170,0.08), transparent 35%),
+    linear-gradient(180deg, #050b09 0%, #030605 100%);
+}
+
+#pvp-arena .pvp-hud {
+  width: 100%;
+  max-width: 430px;
+  margin: 0 auto 18px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 16px;
+}
+
+#pvp-arena .pvp-side {
+  padding: 16px 10px;
+  border-radius: 22px;
+  text-align: center;
+  background:
+    linear-gradient(180deg, rgba(12,28,22,0.96), rgba(7,16,13,0.98));
+  border: 1px solid rgba(0,255,170,0.12);
+  box-shadow:
+    0 0 20px rgba(0,255,170,0.06),
+    inset 0 1px 0 rgba(255,255,255,0.03);
+}
+
+#pvp-arena .pvp-name {
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  color: #dffff0;
+  background: none;
+  -webkit-text-fill-color: initial;
+  text-shadow: none;
+}
+
+#pvp-you,
+#pvp-opp {
+  font-size: 34px;
+  font-weight: 900;
+  line-height: 1;
+  color: #7affc6;
+  text-shadow:
+    0 0 18px rgba(0,255,170,0.24),
+    0 0 30px rgba(0,255,170,0.12);
+}
+
+#pvp-arena .pvp-vs {
+  font-size: 32px;
+  font-weight: 900;
+  color: #7affc6;
+  text-shadow:
+    0 0 16px rgba(0,255,170,0.32),
+    0 0 30px rgba(0,255,170,0.14);
+}
+
+#pvp-timer {
+  margin: 4px auto 18px;
+  width: fit-content;
+  min-width: 90px;
+  text-align: center;
+  font-size: 42px;
+  font-weight: 900;
+  color: #f4fff8;
+  text-shadow:
+    0 0 16px rgba(0,255,170,0.18),
+    0 0 28px rgba(0,255,170,0.08);
+}
+
+.pvp-coin-stage {
+  position: relative;
+  width: 100%;
+  max-width: 430px;
+  margin: 0 auto;
+  min-height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pvp-coin-ring {
+  position: absolute;
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,255,170,0.16);
+  box-shadow:
+    0 0 30px rgba(0,255,170,0.12),
+    inset 0 0 20px rgba(0,255,170,0.05);
+  animation: pvpRingPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes pvpRingPulse {
+  0%,100% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.06);
+    opacity: 1;
+  }
+}
+
+.pvp-coin-box {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#pvp-tap-coin {
+  width: 190px;
+  max-width: 190px;
+  filter:
+    drop-shadow(0 0 16px rgba(0,255,170,0.22))
+    drop-shadow(0 0 34px rgba(0,255,170,0.10));
+}
+
+#pvp-tap-coin.hit {
+  transform: scale(0.92);
+  filter:
+    drop-shadow(0 0 20px rgba(0,255,170,0.34))
+    drop-shadow(0 0 40px rgba(0,255,170,0.16));
+}
+
+/* countdown */
+.pvp-countdown {
+  background: radial-gradient(circle at center, rgba(0,255,170,0.10), rgba(0,0,0,0.88));
+  backdrop-filter: blur(6px);
+}
+
+#pvp-countdown-number {
+  font-size: 96px;
+  font-weight: 900;
+  color: #7affc6;
+  text-shadow:
+    0 0 24px rgba(0,255,170,0.40),
+    0 0 50px rgba(0,255,170,0.18);
+}
+
+/* result screen */
+.pvp-result-screen {
+  backdrop-filter: blur(8px);
+}
+
+.pvp-result-box {
+  width: min(90vw, 360px);
+  padding: 26px 20px;
+  border-radius: 26px;
+  background:
+    linear-gradient(180deg, rgba(10,22,18,0.96), rgba(5,12,10,0.98));
+  border: 1px solid rgba(0,255,170,0.12);
+  box-shadow:
+    0 0 30px rgba(0,255,170,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.03);
+}
+
+.pvp-result-text {
+  font-size: 42px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.pvp-final-score {
+  font-size: 24px;
+  font-weight: 800;
+  color: rgba(240,255,248,0.86);
+}
+
+.pvp-again-btn {
+  width: 100%;
+  height: 50px;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  background: linear-gradient(180deg, #2cff9c, #00c070);
+  color: #02140c;
+  box-shadow:
+    0 6px 0 #009a5a,
+    0 14px 22px rgba(0,255,150,0.20);
+}
+
+/* mobile */
+@media (max-width: 430px) {
+  #pvp-arena .pvp-side {
+    padding: 14px 8px;
+    border-radius: 18px;
+  }
+
+  #pvp-you,
+  #pvp-opp {
+    font-size: 28px;
+  }
+
+  #pvp-timer {
+    font-size: 36px;
+  }
+
+  .pvp-coin-ring {
+    width: 210px;
+    height: 210px;
+  }
+
+  #pvp-tap-coin {
+    width: 170px;
+  }
+}
