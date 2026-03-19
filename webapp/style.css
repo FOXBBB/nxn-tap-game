@@ -6616,3 +6616,173 @@ body {
     margin-top: 8px;
   }
 }
+
+/* ===== DAILY NEON GRID FINAL ===== */
+.daily-panel {
+  max-width: 430px;
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(0,255,170,0.12), transparent 35%),
+    linear-gradient(180deg, rgba(8,22,16,0.96), rgba(4,12,9,0.98));
+  border: 1px solid rgba(0,255,170,0.14);
+  box-shadow:
+    0 0 30px rgba(0,255,170,0.10),
+    inset 0 0 24px rgba(0,255,170,0.04);
+}
+
+.daily-calendar {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  margin-top: 16px;
+  max-height: 52vh;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.daily-calendar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.daily-calendar::-webkit-scrollbar-thumb {
+  background: rgba(0,255,170,0.35);
+  border-radius: 999px;
+}
+
+.daily-card {
+  position: relative;
+  min-height: 118px;
+  padding: 16px 14px;
+  border-radius: 22px;
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgba(18,44,34,0.95), rgba(9,24,18,0.98));
+  border: 1px solid rgba(90,255,220,0.12);
+  box-shadow:
+    0 0 18px rgba(0,255,170,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.04);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.daily-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at top center, rgba(0,255,170,0.12), transparent 42%);
+  pointer-events: none;
+}
+
+.daily-card-top {
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 1.4px;
+  color: rgba(220,255,245,0.82);
+  margin-bottom: 14px;
+}
+
+.daily-card-reward {
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1;
+  color: #f4fff9;
+  text-shadow: 0 0 14px rgba(0,255,170,0.10);
+}
+
+.daily-card-sub {
+  margin-top: 10px;
+  font-size: 12px;
+  color: rgba(220,240,232,0.72);
+}
+
+.daily-card.active {
+  border-color: rgba(0,255,200,0.75);
+  box-shadow:
+    0 0 22px rgba(0,255,200,0.22),
+    inset 0 0 18px rgba(0,255,200,0.08);
+  transform: translateY(-2px);
+}
+
+.daily-card.active .daily-card-reward {
+  color: #ffffff;
+  text-shadow:
+    0 0 12px rgba(0,255,200,0.28),
+    0 0 24px rgba(0,255,200,0.16);
+}
+
+.daily-card.claimed {
+  border-color: rgba(34,197,94,0.72);
+  background:
+    linear-gradient(180deg, rgba(10,45,28,0.96), rgba(6,24,15,0.98));
+  box-shadow:
+    0 0 20px rgba(34,197,94,0.18),
+    inset 0 0 16px rgba(34,197,94,0.08);
+}
+
+.daily-card.claimed::after {
+  content: "✓";
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 15px;
+  font-weight: 900;
+  color: #031c12;
+  background: linear-gradient(180deg, #3dff8e, #00c853);
+  box-shadow: 0 0 14px rgba(34,197,94,0.35);
+}
+
+.daily-card.locked {
+  opacity: 0.38;
+  filter: grayscale(0.25);
+}
+
+.daily-card.premium {
+  border-color: rgba(255,210,90,0.32);
+  background:
+    linear-gradient(180deg, rgba(54,46,14,0.96), rgba(28,23,8,0.98));
+  box-shadow:
+    0 0 18px rgba(255,196,70,0.12),
+    inset 0 0 14px rgba(255,196,70,0.05);
+}
+
+.daily-card.premium .daily-card-reward {
+  color: #fff4be;
+  text-shadow: 0 0 14px rgba(255,210,90,0.20);
+}
+
+/* ===== CLAIM BOX CENTER FIX ===== */
+.claim-box {
+  width: 100%;
+  max-width: 100%;
+  margin: 18px auto 0;
+  text-align: center;
+}
+
+.claim-info {
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.claim-title {
+  text-align: center;
+}
+
+.claim-input {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto 12px;
+}
+
+#claim-btn {
+  display: block;
+  width: 100%;
+  margin: 0 auto;
+}

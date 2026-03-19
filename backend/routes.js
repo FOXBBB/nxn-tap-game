@@ -1235,64 +1235,56 @@ router.post("/subscribe/confirm", async (req, res) => {
   }
 });
 
-// ================= DAILY REWARD =================
-
-// rewards by day
-function getDailyReward(day) {
-  const rewards = {
-    1: { label: "500 NXN", type: "NXN", amount: 500 },
-    2: { label: "1,000 NXN", type: "NXN", amount: 1000 },
-    3: { label: "1,000 NXN", type: "NXN", amount: 1000 },
-    4: { label: "1,000 NXN", type: "NXN", amount: 1000 },
-    5: { label: "1,000 NXN", type: "NXN", amount: 1000 },
-    6: { label: "TAP +2", type: "BOOST", boostDays: 1 }
-  };
-
-  return rewards[day] || rewards[1];
-}
 
 // GET daily state
 router.get("/daily/state/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
 
-    const userRes = await query(
-      `
-      SELECT
-        telegram_id,
-        daily_day,
-        daily_last_claim_at
+    const userRes = await query(`
+      SELECT daily_day, daily_last_claim_at
       FROM users
       WHERE telegram_id = $1::text
-      `,
-      [userId]
-    );
+    `, [userId]);
 
     if (userRes.rowCount === 0) {
       return res.json({ ok: false, error: "User not found" });
     }
 
-    const user = userRes.rows[0];
+    let day = Number(userRes.rows[0].daily_day || 1);
+    const lastClaimAt = userRes.rows[0].daily_last_claim_at
+      ? new Date(userRes.rows[0].daily_last_claim_at)
+      : null;
+
     const now = new Date();
+    const oneDay = 24 * 60 * 60 * 1000;
 
-    let day = Number(user.daily_day) || 1;
-    let canClaim = true;
-    let nextClaimInMs = 0;
+    if (lastClaimAt) {
+      const diff = now.getTime() - lastClaimAt.getTime();
 
-    if (user.daily_last_claim_at) {
-      const lastClaim = new Date(user.daily_last_claim_at);
-      const diff = now.getTime() - lastClaim.getTime();
-      const cooldown = 24 * 60 * 60 * 1000;
-
-      if (diff < cooldown) {
-        canClaim = false;
-        nextClaimInMs = cooldown - diff;
+      if (diff >= oneDay * 2) {
+        day = 1;
       }
     }
 
     const reward = getDailyReward(day);
 
-    return res.json({
+    let canClaim = false;
+    let nextClaimInMs = 0;
+
+    if (!lastClaimAt) {
+      canClaim = true;
+    } else {
+      const diff = now.getTime() - lastClaimAt.getTime();
+
+      if (diff >= oneDay) {
+        canClaim = true;
+      } else {
+        nextClaimInMs = oneDay - diff;
+      }
+    }
+
+    res.json({
       ok: true,
       day,
       canClaim,
@@ -1300,104 +1292,156 @@ router.get("/daily/state/:userId", async (req, res) => {
       rewardLabel: reward.label
     });
   } catch (err) {
-    console.error("DAILY STATE ERROR:", err);
-    return res.json({ ok: false, error: "Daily state failed" });
+    console.error("daily state error", err);
+    res.json({ ok: false, error: "Daily unavailable" });
   }
 });
 
-// POST claim daily
+
 router.post("/daily/claim", async (req, res) => {
   try {
-    const { userId } = req.body;
+    const userId = String(req.body.userId || req.body.id || "");
 
     if (!userId) {
       return res.json({ ok: false, error: "Missing userId" });
     }
 
-    const userRes = await query(
-      `
+    const userRes = await query(`
       SELECT
-        telegram_id,
-        balance,
-        tap_power,
         daily_day,
         daily_last_claim_at,
-        tap_boost_until
+        balance,
+        tap_boost_until,
+        energy_boost_until,
+        autoclicker_until
       FROM users
       WHERE telegram_id = $1::text
-      `,
-      [userId]
-    );
+    `, [userId]);
 
     if (userRes.rowCount === 0) {
       return res.json({ ok: false, error: "User not found" });
     }
 
-    const user = userRes.rows[0];
+    let dailyDay = Number(userRes.rows[0].daily_day || 1);
+    const lastClaimAt = userRes.rows[0].daily_last_claim_at
+      ? new Date(userRes.rows[0].daily_last_claim_at)
+      : null;
+
     const now = new Date();
+    const oneDay = 24 * 60 * 60 * 1000;
 
-    const currentDay = Number(user.daily_day) || 1;
+    if (lastClaimAt) {
+      const diff = now.getTime() - lastClaimAt.getTime();
 
-    if (user.daily_last_claim_at) {
-      const lastClaim = new Date(user.daily_last_claim_at);
-      const diff = now.getTime() - lastClaim.getTime();
-      const cooldown = 24 * 60 * 60 * 1000;
+      if (diff < oneDay) {
+        return res.json({ ok: false, error: "Daily reward not ready yet" });
+      }
 
-      if (diff < cooldown) {
-        return res.json({ ok: false, error: "Daily reward is not ready yet" });
+      if (diff >= oneDay * 2) {
+        dailyDay = 1;
       }
     }
 
-    const reward = getDailyReward(currentDay);
+    const reward = getDailyReward(dailyDay);
 
-    await query("BEGIN");
+    let nextDay = dailyDay + 1;
+    if (nextDay > 29) nextDay = 1;
 
-    if (reward.type === "NXN") {
-      await query(
-        `
+    if (reward.type === "nix") {
+      await query(`
         UPDATE users
         SET
           balance = balance + $1,
-          daily_last_claim_at = NOW(),
-          daily_day = CASE
-            WHEN daily_day >= 6 THEN 1
-            ELSE daily_day + 1
-          END
-        WHERE telegram_id = $2::text
-        `,
-        [reward.amount, userId]
-      );
-    } else if (reward.type === "BOOST") {
-      await query(
-        `
-        UPDATE users
-        SET
-          tap_boost_until = GREATEST(COALESCE(tap_boost_until, NOW()), NOW()) + INTERVAL '1 day',
-          daily_last_claim_at = NOW(),
-          daily_day = CASE
-            WHEN daily_day >= 6 THEN 1
-            ELSE daily_day + 1
-          END
-        WHERE telegram_id = $1::text
-        `,
-        [userId]
-      );
+          daily_day = $2,
+          daily_last_claim_at = NOW()
+        WHERE telegram_id = $3::text
+      `, [reward.value, nextDay, userId]);
     }
 
-    await query("COMMIT");
+    else if (reward.type === "tap") {
+      await query(`
+        UPDATE users
+        SET
+          tap_boost_until = GREATEST(COALESCE(tap_boost_until, NOW()), NOW()) + INTERVAL '24 hours',
+          daily_day = $1,
+          daily_last_claim_at = NOW()
+        WHERE telegram_id = $2::text
+      `, [nextDay, userId]);
+    }
+
+    else if (reward.type === "energy") {
+      await query(`
+        UPDATE users
+        SET
+          energy_boost_until = GREATEST(COALESCE(energy_boost_until, NOW()), NOW()) + INTERVAL '24 hours',
+          daily_day = $1,
+          daily_last_claim_at = NOW()
+        WHERE telegram_id = $2::text
+      `, [nextDay, userId]);
+    }
+
+    else if (reward.type === "autoclicker") {
+      await query(`
+        UPDATE users
+        SET
+          autoclicker_until = GREATEST(COALESCE(autoclicker_until, NOW()), NOW()) + INTERVAL '10 hours',
+          daily_day = $1,
+          daily_last_claim_at = NOW()
+        WHERE telegram_id = $2::text
+      `, [nextDay, userId]);
+    }
 
     return res.json({
       ok: true,
-      day: currentDay,
+      day: dailyDay,
       rewardLabel: reward.label
     });
   } catch (err) {
-    await query("ROLLBACK").catch(() => {});
-    console.error("DAILY CLAIM ERROR:", err);
+    console.error("daily claim error", err);
     return res.json({ ok: false, error: "Daily claim failed" });
   }
 });
 
+
+
+const DAILY_REWARDS = {
+  1:  { type: "nix", value: 500,  label: "500 NXN" },
+  2:  { type: "nix", value: 750,  label: "750 NXN" },
+  3:  { type: "nix", value: 1000, label: "1,000 NXN" },
+  4:  { type: "nix", value: 1250, label: "1,250 NXN" },
+  5:  { type: "nix", value: 1500, label: "1,500 NXN" },
+  6:  { type: "tap", value: 2, hours: 24, label: "TAP +2 · 24h" },
+
+  7:  { type: "nix", value: 500,  label: "500 NXN" },
+  8:  { type: "nix", value: 750,  label: "750 NXN" },
+  9:  { type: "nix", value: 1000, label: "1,000 NXN" },
+  10: { type: "nix", value: 1250, label: "1,250 NXN" },
+  11: { type: "nix", value: 1500, label: "1,500 NXN" },
+  12: { type: "energy", value: 200, hours: 24, label: "ENERGY +200 · 24h" },
+
+  13: { type: "nix", value: 1000, label: "1,000 NXN" },
+  14: { type: "nix", value: 1250, label: "1,250 NXN" },
+  15: { type: "nix", value: 1500, label: "1,500 NXN" },
+  16: { type: "nix", value: 2000, label: "2,000 NXN" },
+  17: { type: "nix", value: 1000, label: "1,000 NXN" },
+  18: { type: "nix", value: 1250, label: "1,250 NXN" },
+  19: { type: "nix", value: 1500, label: "1,500 NXN" },
+  20: { type: "nix", value: 2000, label: "2,000 NXN" },
+  21: { type: "nix", value: 1000, label: "1,000 NXN" },
+  22: { type: "nix", value: 1250, label: "1,250 NXN" },
+  23: { type: "nix", value: 1500, label: "1,500 NXN" },
+  24: { type: "nix", value: 2000, label: "2,000 NXN" },
+  25: { type: "nix", value: 1000, label: "1,000 NXN" },
+  26: { type: "nix", value: 1250, label: "1,250 NXN" },
+  27: { type: "nix", value: 1500, label: "1,500 NXN" },
+  28: { type: "nix", value: 2000, label: "2,000 NXN" },
+
+  29: { type: "autoclicker", hours: 10, label: "AUTOCLICKER · 10h" }
+};
+
+function getDailyReward(day) {
+  return DAILY_REWARDS[day] || DAILY_REWARDS[1];
+}
 
 
 

@@ -145,6 +145,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   await loadRewardState();
   updateUI();
   initMenu();
+  buildDailyCalendar();
 
 
     const mainTransferBtn = document.getElementById("main-transfer-btn");
@@ -169,53 +170,44 @@ document.addEventListener("DOMContentLoaded", async () => {
   await renderDailyScreen();
 };
   }
-
 const claimDailyBtn = document.getElementById("claim-daily-btn");
 
 if (claimDailyBtn) {
   claimDailyBtn.onclick = async () => {
-    try {
-      claimDailyBtn.disabled = true;
+    const res = await fetch("/api/daily/claim", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: String(userId) })
+    });
 
-      const res = await fetch("/api/daily/claim", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: userId })
-      });
+    const data = await res.json();
 
-      const data = await res.json();
-
-      if (!data.ok) {
-        claimDailyBtn.disabled = false;
-        alert(data.error || "Daily claim failed");
-        return;
-      }
-
-      const activeCard = document.querySelector(`.daily-card[data-day="${data.day}"]`);
-      if (activeCard) {
-        activeCard.classList.add("claimed");
-      }
-
-      claimDailyBtn.disabled = true;
-      claimDailyBtn.innerText = "CLAIMED";
-      claimDailyBtn.classList.add("claimed");
-
-      const toast = document.createElement("div");
-      toast.className = "transfer-toast success";
-      toast.innerText = data.rewardLabel || "Reward claimed";
-      document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 1800);
-
-      await refreshMe();
-      updateUI();
-      await renderDailyScreen();
-    } catch (err) {
-      console.error("Daily claim error:", err);
-      claimDailyBtn.disabled = false;
-      alert("Daily claim request failed");
+    if (!data.ok) {
+      alert(data.error || "Daily claim failed");
+      return;
     }
+
+    const activeCard = document.querySelector(`.daily-card[data-day="${data.day}"]`);
+    if (activeCard) {
+      activeCard.classList.add("claimed");
+    }
+
+    claimDailyBtn.disabled = true;
+    claimDailyBtn.innerText = "CLAIMED";
+    claimDailyBtn.classList.add("claimed");
+
+    const toast = document.createElement("div");
+    toast.className = "transfer-toast success";
+    toast.innerText = data.rewardLabel || "Reward claimed";
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 1800);
+
+    await refreshMe();
+    updateUI();
+    await renderDailyScreen();
   };
 }
+
 
 
   const openTasksBtn = document.getElementById("open-tasks-btn");
@@ -255,7 +247,9 @@ if (backFromRef) {
 
 
   // ===== OPEN REFERRAL =====
-  document.getElementById("open-referral").onclick = async () => {
+  const openReferralBtn = document.getElementById("open-referral");
+if (openReferralBtn) {
+  openReferralBtn.onclick = async () => {
     const res = await fetch(`/api/referral/me/${userId}`);
     const data = await res.json();
 
@@ -277,6 +271,7 @@ if (backFromRef) {
       document.getElementById("bind-ref").disabled = true;
     }
   };
+}
 
 
   document.getElementById("copy-ref").onclick = () => {
@@ -1081,19 +1076,6 @@ if (stakeConfirm) {
     const data = await res.json();
 
     if (!data.ok) {
-
-      const fly = document.createElement("div");
-      fly.className = "stake-fly";
-      fly.innerText = `-${formatNumber(selectedStakeAmount)} NXN`;
-      document.body.appendChild(fly);
-      setTimeout(() => fly.remove(), 900);
-
-      const toast = document.createElement("div");
-      toast.className = "transfer-toast success";
-      toast.innerText = "Stake successful ✓";
-      document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 1600);
-
 
 
       if (data.error === "Cooldown active") {
@@ -2128,6 +2110,63 @@ function startDailyTimer() {
 
     timer.innerText = `Next reward in ${formatDailyTime(left)}`;
   }, 1000);
+}
+
+const DAILY_REWARD_LIST = {
+  1:  { reward: "500 NXN", sub: "Start reward" },
+  2:  { reward: "750 NXN", sub: "Daily reward" },
+  3:  { reward: "1,000 NXN", sub: "Daily reward" },
+  4:  { reward: "1,250 NXN", sub: "Daily reward" },
+  5:  { reward: "1,500 NXN", sub: "Daily reward" },
+  6:  { reward: "TAP +2", sub: "24 hours boost", premium: true },
+
+  7:  { reward: "500 NXN", sub: "Cycle continues" },
+  8:  { reward: "750 NXN", sub: "Daily reward" },
+  9:  { reward: "1,000 NXN", sub: "Daily reward" },
+  10: { reward: "1,250 NXN", sub: "Daily reward" },
+  11: { reward: "1,500 NXN", sub: "Daily reward" },
+  12: { reward: "ENERGY +200", sub: "24 hours boost", premium: true },
+
+  13: { reward: "1,000 NXN", sub: "Daily reward" },
+  14: { reward: "1,250 NXN", sub: "Daily reward" },
+  15: { reward: "1,500 NXN", sub: "Daily reward" },
+  16: { reward: "2,000 NXN", sub: "Big reward" },
+  17: { reward: "1,000 NXN", sub: "Daily reward" },
+  18: { reward: "1,250 NXN", sub: "Daily reward" },
+  19: { reward: "1,500 NXN", sub: "Daily reward" },
+  20: { reward: "2,000 NXN", sub: "Big reward" },
+  21: { reward: "1,000 NXN", sub: "Daily reward" },
+  22: { reward: "1,250 NXN", sub: "Daily reward" },
+  23: { reward: "1,500 NXN", sub: "Daily reward" },
+  24: { reward: "2,000 NXN", sub: "Big reward" },
+  25: { reward: "1,000 NXN", sub: "Daily reward" },
+  26: { reward: "1,250 NXN", sub: "Daily reward" },
+  27: { reward: "1,500 NXN", sub: "Daily reward" },
+  28: { reward: "2,000 NXN", sub: "Big reward" },
+  29: { reward: "AUTOCLICKER", sub: "10 hours boost", premium: true }
+};
+
+function buildDailyCalendar() {
+  const wrap = document.getElementById("daily-calendar");
+  if (!wrap) return;
+
+  wrap.innerHTML = "";
+
+  for (let day = 1; day <= 29; day++) {
+    const item = DAILY_REWARD_LIST[day];
+
+    const card = document.createElement("div");
+    card.className = `daily-card${item.premium ? " premium" : ""}`;
+    card.dataset.day = String(day);
+
+    card.innerHTML = `
+      <div class="daily-card-top">DAY ${day}</div>
+      <div class="daily-card-reward">${item.reward}</div>
+      <div class="daily-card-sub">${item.sub}</div>
+    `;
+
+    wrap.appendChild(card);
+  }
 }
 
 
