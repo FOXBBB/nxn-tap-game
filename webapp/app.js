@@ -80,42 +80,41 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  document
-    .querySelectorAll("#referral-stake-modal .stake-amounts button")
-    .forEach(btn => {
-      btn.onclick = () => {
-        const val = btn.dataset.refAmount;
+ document
+  .querySelectorAll("#referral-stake-modal .stake-amounts button")
+  .forEach(btn => {
+    btn.onclick = () => {
+      const val = btn.dataset.refAmount;
 
-        const balance = parseFormattedNumber(
-          document.getElementById("referral-stake-balance").innerText
-        );
+      const balance = parseFormattedNumber(
+        document.getElementById("referral-stake-balance").innerText
+      );
 
+      let amount;
+      if (val === "max") {
+        amount = balance;
+      } else {
+        amount = Number(val);
+      }
 
-        let amount;
-        if (val === "max") {
-          amount = balance;
-        } else {
-          amount = Number(val);
-        }
+      if (amount < 10000) {
+        showMinStackModal("Minimum referral stake is 10,000 NXN");
+        return;
+      }
 
-        if (amount < 10000) {
-          showMinStackModal("Minimum referral stake is 10,000 NXN");
-          return;
-        }
+      if (amount > balance) {
+        showMinStackModal("Not enough referral NXN");
+        return;
+      }
 
-        if (amount > balance) {
-          showMinStackModal("Not enough referral NXN");
-          return;
-        }
+      document.getElementById("referral-stake-amount").value = amount;
+    };
+  });
 
-        document.getElementById("referral-stake-amount").value = amount;
-      };
-
-        setTimeout(() => {
-    setSplashProgress(100);
-    hideSplashScreen();
-  }, 1200);
-    });
+setTimeout(() => {
+  setSplashProgress(100);
+  hideSplashScreen();
+}, 1200);
 
 
 
@@ -1951,10 +1950,12 @@ btn.onclick = (e) => {
   if (btn.disabled) return;
   if (btn.classList.contains("disabled")) return;
 
-  if (!pvpStake || Number(pvpStake) <= 0) {
+  const selectedStake = Number(pvpStake || 0);
+
+  if (selectedStake <= 0) {
     showStatusModal(
-      "Stake required",
-      "Choose a PvP stake first, then send invite.",
+      "Select stake",
+      "Choose a PvP stake amount before sending an invite.",
       "warning"
     );
     return;
@@ -2634,3 +2635,36 @@ if (statusModal) {
   });
 }
 
+const onlineListEl = document.getElementById("online-list");
+
+if (onlineListEl) {
+  const handleInvitePress = (e) => {
+    const btn = e.target.closest(".invite-btn");
+    if (!btn) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (btn.disabled) return;
+    if (btn.classList.contains("disabled")) return;
+
+    const targetId = btn.dataset.id;
+    if (!targetId) return;
+
+    const selectedStake = Number(pvpStake || 0);
+
+    if (selectedStake <= 0) {
+      showStatusModal(
+        "Select stake",
+        "Choose a PvP stake amount before sending an invite.",
+        "warning"
+      );
+      return;
+    }
+
+    sendInvite(targetId, btn);
+  };
+
+  onlineListEl.addEventListener("pointerup", handleInvitePress);
+  onlineListEl.addEventListener("touchend", handleInvitePress, { passive: false });
+}
