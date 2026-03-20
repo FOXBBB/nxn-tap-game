@@ -545,11 +545,16 @@ setTimeout(() => {
 
     showScreen("pvp");
 
-    pvpStake = 0;
+  // ✅ авто выбор минимальной ставки
+pvpStake = 1000;
 
-document.querySelectorAll("[data-pvp]")
-  .forEach(b => b.classList.remove("active"));
+const firstBtn = document.querySelector('[data-pvp="1000"]');
+if (firstBtn) {
+  document.querySelectorAll("[data-pvp]")
+    .forEach(b => b.classList.remove("active"));
 
+  firstBtn.classList.add("active");
+}
 
     const resultScreen = document.getElementById("pvp-result-screen");
     const resultText = document.getElementById("pvp-result-text");
@@ -568,7 +573,7 @@ document.querySelectorAll("[data-pvp]")
     document.getElementById("pvp-opp").innerText = 0;
 
     const status = document.getElementById("pvp-status");
-    status.innerText = "Choose your stake";
+   status.innerText = "Stake: 1K NXN selected";
     status.classList.remove("fight");
 
 
