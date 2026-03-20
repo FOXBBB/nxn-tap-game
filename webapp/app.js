@@ -545,6 +545,12 @@ setTimeout(() => {
 
     showScreen("pvp");
 
+    pvpStake = 0;
+
+document.querySelectorAll("[data-pvp]")
+  .forEach(b => b.classList.remove("active"));
+
+
     const resultScreen = document.getElementById("pvp-result-screen");
     const resultText = document.getElementById("pvp-result-text");
     const finalScore = document.getElementById("pvp-final-score");
@@ -1950,9 +1956,7 @@ btn.onclick = (e) => {
   if (btn.disabled) return;
   if (btn.classList.contains("disabled")) return;
 
-  const selectedStake = Number(pvpStake || 0);
-
-  if (selectedStake <= 0) {
+  if (!pvpStake || Number(pvpStake) <= 0) {
     showStatusModal(
       "Select stake",
       "Choose a PvP stake amount before sending an invite.",
@@ -2635,36 +2639,3 @@ if (statusModal) {
   });
 }
 
-const onlineListEl = document.getElementById("online-list");
-
-if (onlineListEl) {
-  const handleInvitePress = (e) => {
-    const btn = e.target.closest(".invite-btn");
-    if (!btn) return;
-
-    e.preventDefault();
-    e.stopPropagation();
-
-    if (btn.disabled) return;
-    if (btn.classList.contains("disabled")) return;
-
-    const targetId = btn.dataset.id;
-    if (!targetId) return;
-
-    const selectedStake = Number(pvpStake || 0);
-
-    if (selectedStake <= 0) {
-      showStatusModal(
-        "Select stake",
-        "Choose a PvP stake amount before sending an invite.",
-        "warning"
-      );
-      return;
-    }
-
-    sendInvite(targetId, btn);
-  };
-
-  onlineListEl.addEventListener("pointerup", handleInvitePress);
-  onlineListEl.addEventListener("touchend", handleInvitePress, { passive: false });
-}
