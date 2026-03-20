@@ -110,8 +110,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         document.getElementById("referral-stake-amount").value = amount;
       };
-  setSplashProgress(100);
-  hideSplashScreen();
+
+        setTimeout(() => {
+    setSplashProgress(100);
+    hideSplashScreen();
+  }, 1200);
     });
 
 
@@ -1945,9 +1948,12 @@ btn.onclick = (e) => {
   e.preventDefault();
   e.stopPropagation();
 
+  console.log("INVITE BUTTON CLICK", p.id, "stake:", pvpStake, "socket:", pvpSocket?.readyState);
+
   if (btn.disabled) return;
   if (btn.classList.contains("disabled")) return;
 
+  
   if (!pvpStake) {
     showStatusModal(
       "Select stake",
@@ -2631,57 +2637,3 @@ if (statusModal) {
   });
 }
 
-// ===== PVP INVITE SAFE CLICK =====
-document.getElementById("online-list")?.addEventListener("click", (e) => {
-  const btn = e.target.closest(".invite-btn");
-  if (!btn) return;
-
-  if (btn.classList.contains("disabled")) return;
-
-  const targetId = btn.dataset.id;
-  if (!targetId) return;
-
-  if (!pvpStake) {
-    showStatusModal(
-      "Select stake",
-      "Choose a PvP stake amount before entering the arena.",
-      "warning"
-    );
-    return;
-  }
-
-  sendInvite(targetId, btn);
-});
-
-// ===== PVP INVITE SAFE CLICK FINAL =====
-const onlineListEl = document.getElementById("online-list");
-
-if (onlineListEl) {
-  const handleInvitePress = (e) => {
-    const btn = e.target.closest(".invite-btn");
-    if (!btn) return;
-
-    e.preventDefault();
-    e.stopPropagation();
-
-    if (btn.disabled) return;
-    if (btn.classList.contains("disabled")) return;
-
-    const targetId = btn.dataset.id;
-    if (!targetId) return;
-
-    if (!pvpStake) {
-      showStatusModal(
-        "Select stake",
-        "Choose a PvP stake amount before entering the arena.",
-        "warning"
-      );
-      return;
-    }
-
-    sendInvite(targetId, btn);
-  };
-
-  onlineListEl.addEventListener("pointerup", handleInvitePress);
-  onlineListEl.addEventListener("touchend", handleInvitePress, { passive: false });
-}
