@@ -1948,16 +1948,13 @@ btn.onclick = (e) => {
   e.preventDefault();
   e.stopPropagation();
 
-  console.log("INVITE BUTTON CLICK", p.id, "stake:", pvpStake, "socket:", pvpSocket?.readyState);
-
   if (btn.disabled) return;
   if (btn.classList.contains("disabled")) return;
 
-  
-  if (!pvpStake) {
+  if (!pvpStake || Number(pvpStake) <= 0) {
     showStatusModal(
-      "Select stake",
-      "Choose a PvP stake amount before entering the arena.",
+      "Stake required",
+      "Choose a PvP stake first, then send invite.",
       "warning"
     );
     return;
