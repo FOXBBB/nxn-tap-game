@@ -32,8 +32,45 @@ let dailyNextClaimAt = 0;
 let dailyTimerInterval = null;
 
 
+
+// ================= SPLASH SCREEN =================
+let splashProgress = 0;
+
+function setSplashProgress(value) {
+  splashProgress = Math.max(splashProgress, Math.min(100, value));
+
+  const bar = document.getElementById("splash-progress-bar");
+  const text = document.getElementById("splash-progress-text");
+
+  if (bar) {
+    bar.style.width = splashProgress + "%";
+  }
+
+  if (text) {
+    text.innerText = `Loading ${splashProgress}%`;
+  }
+}
+
+function hideSplashScreen() {
+  const splash = document.getElementById("splash-screen");
+  if (!splash) return;
+
+  setSplashProgress(100);
+
+  setTimeout(() => {
+    splash.classList.add("hide");
+    document.body.classList.remove("splash-lock");
+  }, 250);
+}
+
+
+
+
 // ================= INIT =================
 document.addEventListener("DOMContentLoaded", async () => {
+    document.body.classList.add("splash-lock");
+  setSplashProgress(5);
+
   if (!window.Telegram || !Telegram.WebApp) {
     showStatusModal(
       "Telegram only",
@@ -73,7 +110,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         document.getElementById("referral-stake-amount").value = amount;
       };
-
+  setSplashProgress(100);
+  hideSplashScreen();
     });
 
 
@@ -81,7 +119,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   Telegram.WebApp.ready();
   Telegram.WebApp.expand();
-
+  setSplashProgress(15);
 
 
   const taskTelegramOpen = document.getElementById("task-telegram-open");
@@ -204,14 +242,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   // получаем пользователя СРАЗУ
   tgUser = Telegram.WebApp.initDataUnsafe.user;
   userId = String(tgUser.id);
-
+  setSplashProgress(25);
 
 
 
   tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
     manifestUrl: "https://nxn-tap-game.onrender.com/tonconnect-manifest.json"
   });
-
+  setSplashProgress(35);
 
 
 
@@ -224,12 +262,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   await syncUser();
+    setSplashProgress(55);
   await refreshMe();
+    setSplashProgress(70);
   await loadRewardState();
+    setSplashProgress(82);
   updateStakeSelectedView(selectedStakeAmount);
   updateUI();
   initMenu();
   buildDailyCalendar();
+    setSplashProgress(92);
 
 
   const mainTransferBtn = document.getElementById("main-transfer-btn");
@@ -1879,29 +1921,51 @@ function handlePvpMessage(event) {
 
       if (String(p.id) === String(userId)) return;
 
-      const row = document.createElement("div");
-      row.className = "online-row";
-      row.dataset.userid = p.id;
+     const row = document.createElement("div");
+row.className = "online-row";
+row.dataset.userid = p.id;
 
-      row.innerHTML = `
-      <div class="online-left">
-        <div class="online-status-dot"></div>
+const left = document.createElement("div");
+left.className = "online-left";
+left.innerHTML = `
+  <div class="online-status-dot"></div>
+  <div class="online-avatar">
+    <img src="${p.avatar || 'avatar.png'}">
+  </div>
+  <div class="online-name">${p.name}</div>
+`;
 
-        <div class="online-avatar">
-          <img src="${p.avatar || 'avatar.png'}">
-        </div>
+const btn = document.createElement("button");
+btn.className = "invite-btn";
+btn.dataset.id = p.id;
+btn.type = "button";
+btn.innerText = "Invite";
 
-        <div class="online-name">
-          ${p.name}
-        </div>
-      </div>
+btn.onclick = (e) => {
+  e.preventDefault();
+  e.stopPropagation();
 
-      <button class="invite-btn" data-id="${p.id}">
-        Invite
-      </button>
-    `;
+  if (btn.disabled) return;
+  if (btn.classList.contains("disabled")) return;
 
-      const btn = row.querySelector("button");
+  if (!pvpStake) {
+    showStatusModal(
+      "Select stake",
+      "Choose a PvP stake amount before entering the arena.",
+      "warning"
+    );
+    return;
+  }
+
+  sendInvite(p.id, btn);
+};
+
+row.appendChild(left);
+row.appendChild(btn);
+
+
+
+
 
       const now = Date.now();
 
@@ -2160,6 +2224,7 @@ if (pvpAgainBtn) {
 
 
 function sendInvite(targetId, btn) {
+  console.log("SEND INVITE", targetId, "stake:", pvpStake);
   if (!pvpSocket || pvpSocket.readyState !== 1) {
     showStatusModal(
       "Connection error",
@@ -2526,56 +2591,9 @@ function closeTaskStatus() {
   document.getElementById("task-status-modal")?.classList.add("hidden");
 }
 
-let twitterOpened = false;
 
-if (taskTwitterOpen) {
-  taskTwitterOpen.onclick = () => {
-    twitterOpened = true;
 
-    Telegram.WebApp.openLink("https://x.com/your_account_here");
-  };
-}
 
-if (taskTwitterCheck) {
-  taskTwitterCheck.onclick = async () => {
-
-    if (!twitterOpened) {
-      showTaskStatus(
-        "Follow Required",
-        "Please open the X page first.",
-        "warning"
-      );
-      return;
-    }
-
-    const res = await fetch("/api/tasks/twitter/claim", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId })
-    });
-
-    const data = await res.json();
-
-    if (!data.ok) {
-      showTaskStatus(
-        "Error",
-        data.error || "Task failed",
-        "error"
-      );
-      return;
-    }
-
-    const toast = document.createElement("div");
-    toast.className = "transfer-toast success";
-    toast.innerText = `+${data.reward} NXN`;
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 1800);
-
-    await refreshMe();
-    updateUI();
-    await loadTasksState();
-  };
-}
 const statusModal = document.getElementById("status-modal");
 const statusCard = document.getElementById("status-card");
 const statusIcon = document.getElementById("status-icon");
