@@ -168,7 +168,7 @@ setTimeout(() => {
 
   if (taskTwitterOpen) {
     taskTwitterOpen.onclick = () => {
-      Telegram.WebApp.openLink("https://x.com/NeXoN_NXN");
+      Telegram.WebApp.openLink("https://x.com/NeXoN_NxN_");
     };
   }
 
