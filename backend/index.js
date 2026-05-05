@@ -7,6 +7,7 @@ import { checkRewardCycle, runAutoclickers } from "./routes.js";
 import { initPvp, onlineUsers } from "./pvp.js";
 import http from "http";
 import { runAutoSendNXN } from "./runAutoSend.js";
+import { initBotEngine } from "./botEngine.js";
 
 
 
@@ -40,6 +41,10 @@ const PORT = process.env.PORT || 3000;
 const server = http.createServer(app);
 
 initPvp(server); // 🔥 подключаем PvP модуль
+
+initBotEngine().catch(err =>
+  console.error("Bot engine init error:", err)
+);
 
 // ===== DEBUG WS =====
 server.on("upgrade", (req) => {
