@@ -89,19 +89,19 @@ async function ensureBotPlayers() {
         last_energy_update
       )
       VALUES (
-        $1::text,
-        $2,
-        $3,
-        $4,
-        100,
-        100,
-        1,
-        true,
-        $5,
-        NOW() + ($6 || ' minutes')::interval,
-        NOW(),
-        NOW()
-      )
+  $1::text,
+  $2,
+  $3,
+  0,                -- ✅ баланс = 0
+  100,
+  100,
+  1,
+  true,
+  $4,
+  NOW() + ($5 || ' minutes')::interval,
+  NOW(),
+  NOW()
+)
       ON CONFLICT (telegram_id)
       DO UPDATE SET
         name = EXCLUDED.name,
@@ -121,10 +121,11 @@ async function ensureBotPlayers() {
 
   console.log("🤖 Bot players ensured:", BOT_PLAYERS.length);
 }
-
 async function botTapToZero(bot) {
-  const energy = Number(bot.energy || 0);
-  if (energy <= 0) return;
+  const maxEnergy = Number(bot.energy || 0);
+  if (maxEnergy <= 0) return;
+
+  const taps = randomInt(5, Math.min(40, maxEnergy)); // ✅ не всё тратит
 
   let tapPower = Number(bot.tap_power || 1);
   const now = new Date();
@@ -133,22 +134,21 @@ async function botTapToZero(bot) {
     tapPower += 3;
   }
 
-  const earned = energy * tapPower;
+  const earned = taps * tapPower;
 
   await query(
     `
     UPDATE users
     SET
       balance = balance + $1,
-      energy = 0,
-      last_seen = NOW(),
-      last_energy_update = NOW()
-    WHERE telegram_id = $2::text
+      energy = energy - $2,  -- ✅ уменьшаем, а не 0
+      last_seen = NOW()
+    WHERE telegram_id = $3::text
     `,
-    [earned, bot.telegram_id]
+    [earned, taps, bot.telegram_id]
   );
 
-  console.log(`🤖 ${bot.name} clicked ${energy}, earned ${earned} NXN`);
+  console.log(`🤖 ${bot.name} tapped ${taps}, earned ${earned}`);
 }
 
 async function botStakeIfOpen(bot) {
