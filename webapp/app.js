@@ -1092,22 +1092,48 @@ if (toggle && historyBox) {
 }
 
 
+function generateAvatar(name) {
+  const colors = ["#22c55e", "#3b82f6", "#f59e0b", "#ef4444", "#8b5cf6", "#06b6d4"];
+  const safeName = name || "?";
+  const letter = safeName[0].toUpperCase();
 
-// ================= LEADERBOARD =================
+  let hash = 0;
+  for (let i = 0; i < safeName.length; i++) {
+    hash = safeName.charCodeAt(i) + ((hash << 5) - hash);
+  }
+
+  const color = colors[Math.abs(hash) % colors.length];
+
+  return `
+    <div class="tg-fallback-avatar" style="background:${color}">
+      ${letter}
+    </div>
+  `;
+}
+
+
 async function loadLeaderboard() {
   const res = await fetch("/api/leaderboard");
   const data = await res.json();
   if (!Array.isArray(data)) return;
 
-  const placeholder = "avatar.png";
+  function setAvatar(container, user) {
+    const oldAvatar = container.querySelector(".avatar, .tg-fallback-avatar");
+    if (!oldAvatar) return;
+
+    if (user.avatar) {
+      oldAvatar.outerHTML = `<img class="avatar" src="${user.avatar}">`;
+    } else {
+      oldAvatar.outerHTML = generateAvatar(user.name);
+    }
+  }
 
   // TOP 1
   if (data[0]) {
-    document.querySelector(".lb-top1 .name").innerText = data[0].name;
-    document.querySelector(".lb-top1 .score").innerText =
-      formatNumber(data[0].balance);
-    document.querySelector(".lb-top1 .avatar").src =
-      data[0].avatar || placeholder;
+    const top1 = document.querySelector(".lb-top1");
+    top1.querySelector(".name").innerText = data[0].name;
+    top1.querySelector(".score").innerText = formatNumber(data[0].balance);
+    setAvatar(top1, data[0]);
   }
 
   // TOP 2 / 3
@@ -1115,20 +1141,15 @@ async function loadLeaderboard() {
 
   if (data[1] && cards[0]) {
     cards[0].querySelector(".name").innerText = data[1].name;
-    cards[0].querySelector(".score").innerText =
-      formatNumber(data[1].balance);
-    cards[0].querySelector(".avatar").src =
-      data[1].avatar || placeholder;
+    cards[0].querySelector(".score").innerText = formatNumber(data[1].balance);
+    setAvatar(cards[0], data[1]);
   }
 
   if (data[2] && cards[1]) {
     cards[1].querySelector(".name").innerText = data[2].name;
-    cards[1].querySelector(".score").innerText =
-      formatNumber(data[2].balance);
-    cards[1].querySelector(".avatar").src =
-      data[2].avatar || placeholder;
+    cards[1].querySelector(".score").innerText = formatNumber(data[2].balance);
+    setAvatar(cards[1], data[2]);
   }
-
 
   // TOP 4–100
   const list = document.querySelector(".lb-list");
@@ -1140,17 +1161,20 @@ async function loadLeaderboard() {
     const row = document.createElement("div");
     row.className = "row";
 
-    // 🔥 ВОТ ОНО — ПОДСВЕТКА ТОЛЬКО СЕБЯ
     if (String(u.telegram_id) === String(userId)) {
       row.classList.add("me");
     }
 
     row.innerHTML = `
-    <span>#${rank}</span>
-    <img src="${u.avatar || placeholder}">
-    <b>${u.name}</b>
-    <i>${formatNumber(u.balance)}</i>
-  `;
+      <span>#${rank}</span>
+      ${
+        u.avatar
+          ? `<img src="${u.avatar}">`
+          : generateAvatar(u.name)
+      }
+      <b>${u.name}</b>
+      <i>${formatNumber(u.balance)}</i>
+    `;
 
     list.appendChild(row);
   });
@@ -1711,7 +1735,10 @@ async function loadStakeLeaderboard() {
 
     row.innerHTML = `
       <span class="rank">#${u.rank}</span>
-      <img class="avatar" src="${u.avatar || 'avatar.png'}">
+      ${u.avatar
+  ? `<img class="avatar" src="${u.avatar}">`
+  : generateAvatar(u.name)
+}
       <span class="name">${u.name}</span>
       <div class="bar">
         <div class="fill" style="width:${u.progress}%"></div>
@@ -2644,3 +2671,35 @@ if (statusModal) {
   });
 }
 
+function generateAvatar(name) {
+  const colors = [
+    "#22c55e", "#3b82f6", "#f59e0b",
+    "#ef4444", "#8b5cf6", "#06b6d4"
+  ];
+
+  const letter = (name || "?")[0].toUpperCase();
+
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
+
+  const color = colors[Math.abs(hash) % colors.length];
+
+  return `
+    <div style="
+      width:40px;
+      height:40px;
+      border-radius:50%;
+      background:${color};
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:white;
+      font-weight:bold;
+      font-size:16px;
+    ">
+      ${letter}
+    </div>
+  `;
+}
