@@ -1,28 +1,28 @@
 import { query } from "./db.js";
 
 const BOT_PLAYERS = [
-  ["900000001", "NovaX", "aggressive", "https://i.pravatar.cc/150?img=11"],
-  ["900000002", "Blaze", "aggressive", "https://i.pravatar.cc/150?img=12"],
-  ["900000003", "Razor", "aggressive", "https://i.pravatar.cc/150?img=13"],
-  ["900000004", "Storm", "aggressive", "https://i.pravatar.cc/150?img=14"],
-  ["900000005", "Vortex", "aggressive", "https://i.pravatar.cc/150?img=15"],
-  ["900000006", "Phantom", "aggressive", "https://i.pravatar.cc/150?img=16"],
+  ["900000001", "Alex", "aggressive", ""],
+  ["900000002", "Maks", "aggressive", "https://i.pravatar.cc/150?img=12"],
+  ["900000003", "Den", "aggressive", ""],
+  ["900000004", "Leo", "aggressive", "https://i.pravatar.cc/150?img=14"],
+  ["900000005", "Tim", "aggressive", ""],
+  ["900000006", "Nick", "aggressive", "https://i.pravatar.cc/150?img=16"],
 
-  ["900000007", "Axel", "medium", "https://i.pravatar.cc/150?img=21"],
-  ["900000008", "Maverick", "medium", "https://i.pravatar.cc/150?img=22"],
-  ["900000009", "Orion", "medium", "https://i.pravatar.cc/150?img=23"],
-  ["900000010", "Titan", "medium", "https://i.pravatar.cc/150?img=24"],
-  ["900000011", "Zero", "medium", null],
-  ["900000012", "Vector", "medium", null],
-  ["900000013", "Shadow", "medium", null],
+  ["900000007", "Ryan", "medium", ""],
+  ["900000008", "Adam", "medium", "https://i.pravatar.cc/150?img=22"],
+  ["900000009", "Mark", "medium", ""],
+  ["900000010", "Chris", "medium", "https://i.pravatar.cc/150?img=24"],
+  ["900000011", "Sam", "medium", ""],
+  ["900000012", "Daniel", "medium", "https://i.pravatar.cc/150?img=32"],
+  ["900000013", "Oliver", "medium", "https://i.pravatar.cc/150?img=33"],
 
-  ["900000014", "Echo", "neutral", "https://i.pravatar.cc/150?img=31"],
-  ["900000015", "Drift", "neutral", "https://i.pravatar.cc/150?img=32"],
-  ["900000016", "Pulse", "neutral", "https://i.pravatar.cc/150?img=33"],
-  ["900000017", "Neo", "neutral", null],
-  ["900000018", "Ares", "neutral", null],
-  ["900000019", "Onyx", "neutral", null],
-  ["900000020", "Kai", "neutral", null],
+  ["900000014", "Mike", "neutral", ""],
+  ["900000015", "Tony", "neutral", "https://i.pravatar.cc/150?img=41"],
+  ["900000016", "Kevin", "neutral", ""],
+  ["900000017", "Jack", "neutral", "https://i.pravatar.cc/150?img=42"],
+  ["900000018", "Evan", "neutral", ""],
+  ["900000019", "Noah", "neutral", "https://i.pravatar.cc/150?img=43"],
+  ["900000020", "Liam", "neutral", "https://i.pravatar.cc/150?img=44"],
 ];
 
 function randomInt(min, max) {
@@ -113,9 +113,8 @@ async function ensureBotPlayers() {
         telegramId,
         name,
         avatar || "",
-        randomInt(30000, 120000),
         type,
-        randomInt(5, 60)
+        randomInt(1, 3)
       ]
     );
   }
