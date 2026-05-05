@@ -9255,3 +9255,16 @@ body.splash-lock {
   border-radius: 50%;
   display: block;
 }
+.lb-top1 img {
+  width: 86px;
+  height: 86px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.lb-top23 img {
+  width: 82px;
+  height: 82px;
+  object-fit: cover;
+  border-radius: 50%;
+}
