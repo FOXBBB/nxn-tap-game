@@ -2,22 +2,22 @@ import { query } from "./db.js";
 
 const BOT_PLAYERS = [
   ["900000001", "alex_77", "aggressive", "https://i.pinimg.com/736x/4d/9b/d0/4d9bd02d718c4909b69b2618e707f0e0.jpg"],
-  ["900000002", "maksim", "aggressive", "https://yandex.kz/images/search?text=%D0%B0%D0%B2%D1%8B%20%D0%B4%D0%BB%D1%8F%20telegram"],
+  ["900000002", "maksim", "aggressive", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrUsmO133AFxw2fDUbWzemC27xBUKL1MFpaA&s"],
   ["900000003", "denis_01", "aggressive", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJiHE_tGKEs93mskoCU0gZ_I34wAQw1VWUpw&s"],
   ["900000004", "leo", "aggressive", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtBE6KTerqkBeMU1uRVioAa8_2A5am9n4e4w&s"],
   ["900000005", "timur", "aggressive", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyAbvTZ-eu2ZuETNaDwD-Fl-_hCAhIzBb5-g&s"],
-  ["900000006", "nick99", "aggressive", "https://i.pravatar.cc/150?img=16"],
+  ["900000006", "nick99", "aggressive", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkUMjTBWiv5XkRfbalr8a7QfSiw2SilItNPA&s"],
 
   ["900000007", "ryan", "medium", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvVTEgPpEXGiGCePHk81PAVSMHILxnp34rCg&s"],
   ["900000008", "adam_x", "medium", "https://i.pravatar.cc/150?img=22"],
   ["900000009", "marko", "medium", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR5KAzOehBCHcqXIKklMa8ZGiqAa_1GV94oeiidlUYyThZJsRklE5jyc5w&s"],
   ["900000010", "chris_88", "medium", "https://i.pravatar.cc/150?img=24"],
   ["900000011", "sam", "medium", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJ-j0SlWpRYz1lgkq7zLvEkEhc-9XzZrcLPg&s"],
-  ["900000012", "daniel", "medium", "https://i.pravatar.cc/150?img=32"],
+  ["900000012", "daniel", "medium", "https://avatars.mds.yandex.net/get-shedevrum/11451254/img_d30bb68e058211efa5849a79ffaf5bd2/orig"],
   ["900000013", "oliver_7", "medium", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQMAAADCCAMAAAB6zFdcAAAAkFBMVEX+AAD8AwD6BADBBQfXBQj9AQX5BAP6BQb1BQ3zBQb0BgPtBAfpBwvqCgfOBQyqBQvTBQu8CgmfCQriCAi0BgnNBg/MBgfJLxudcTegbzKdcjOsXCoABQuPAwg1BQqcBg5wBxB7BxNbBgt1BgmUcDk262pA5GmCuVahAACYCAvSCQarBgi6RSV8lkqAkkiXdjuaz4EoAAABLElEQVR4nO3Uy3LTQBAF0BlJI1mRJcvWAwIEh5chmIT//zuUClSqXGzl1Tmb6d2dru6ZEMuYYgxlFhchxSzEsoxZDDGsLVuyqyo9H1dIuwz/Vyxdx2qTNvVNk7ah7Xb9vjm0YWjGfE6rX+PmvC3GqWgOUz5vV0+7EN+8vb199z6rt8vk8w93H6duHot2PO7b+/qcUlfNeb/+ZIr7bn+cjs2nu89fitXTLn39djqdvv8YH5Y9qPt2GOqiLkL+Mx92/bxcbir6bv09aB6m6bDbN1O2Ow+rp1369fj09Pi7Hjbl83MIf59jemk7vpbrSuElJVUhXCPvf7LXjwEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAK7uD/XQCpdnDtIoAAAAAElFTkSuQmCC"],
 
   ["900000014", "mike_crypto", "neutral", "https://cs9.pikabu.ru/post_img/2016/11/05/8/1478348889113012245.jpg"],
-  ["900000015", "tony", "neutral", "https://i.pravatar.cc/150?img=41"],
+  ["900000015", "tony", "https://wallpaper.forfun.com/fetch/49/4903ea88841e11ebe216139e70aa0c98.jpeg"],
   ["900000016", "kevindeb", "neutral", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3cBxFhdLKzPJTd7rABBDj-kO_4WqUah6xwQ&s"],
   ["900000017", "jacklore", "neutral", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJQAAACUCAMAAABC4vDmAAAAA1BMVEVGm94gs2CqAAAALElEQVR4nO3BMQEAAADCoPVPbQwfoAAAAAAAAAAAAAAAAAAAAAAAAAAAAHgZViQAAd2fpbUAAAAASUVORK5CYII="],
   ["900000018", "evan", "neutral", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQF0QMj_YHqItYwHB2kdbNKP6JsqeE88r28Rw&s"],
