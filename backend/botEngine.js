@@ -17,12 +17,63 @@ const BOT_PLAYERS = [
   ["900000013", "oliver_7", "medium", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQMAAADCCAMAAAB6zFdcAAAAkFBMVEX+AAD8AwD6BADBBQfXBQj9AQX5BAP6BQb1BQ3zBQb0BgPtBAfpBwvqCgfOBQyqBQvTBQu8CgmfCQriCAi0BgnNBg/MBgfJLxudcTegbzKdcjOsXCoABQuPAwg1BQqcBg5wBxB7BxNbBgt1BgmUcDk262pA5GmCuVahAACYCAvSCQarBgi6RSV8lkqAkkiXdjuaz4EoAAABLElEQVR4nO3Uy3LTQBAF0BlJI1mRJcvWAwIEh5chmIT//zuUClSqXGzl1Tmb6d2dru6ZEMuYYgxlFhchxSzEsoxZDDGsLVuyqyo9H1dIuwz/Vyxdx2qTNvVNk7ah7Xb9vjm0YWjGfE6rX+PmvC3GqWgOUz5vV0+7EN+8vb199z6rt8vk8w93H6duHot2PO7b+/qcUlfNeb/+ZIr7bn+cjs2nu89fitXTLn39djqdvv8YH5Y9qPt2GOqiLkL+Mx92/bxcbir6bv09aB6m6bDbN1O2Ow+rp1369fj09Pi7Hjbl83MIf59jemk7vpbrSuElJVUhXCPvf7LXjwEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAK7uD/XQCpdnDtIoAAAAAElFTkSuQmCC"],
 
   ["900000014", "mike_crypto", "neutral", "https://cs9.pikabu.ru/post_img/2016/11/05/8/1478348889113012245.jpg"],
-  ["900000015", "tony", "https://wallpaper.forfun.com/fetch/49/4903ea88841e11ebe216139e70aa0c98.jpeg"],
+  ["900000015", "tony", "neutral", "https://wallpaper.forfun.com/fetch/49/4903ea88841e11ebe216139e70aa0c98.jpeg"],
   ["900000016", "kevindeb", "neutral", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3cBxFhdLKzPJTd7rABBDj-kO_4WqUah6xwQ&s"],
   ["900000017", "jacklore", "neutral", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJQAAACUCAMAAABC4vDmAAAAA1BMVEVGm94gs2CqAAAALElEQVR4nO3BMQEAAADCoPVPbQwfoAAAAAAAAAAAAAAAAAAAAAAAAAAAAHgZViQAAd2fpbUAAAAASUVORK5CYII="],
   ["900000018", "evan", "neutral", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQF0QMj_YHqItYwHB2kdbNKP6JsqeE88r28Rw&s"],
   ["900000019", "noah", "neutral", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAA1BMVEWZ/5lPT2g3AAAASElEQVR4nO3BgQAAAADDoPlTX+AIVQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwDcaiAAFXD1ujAAAAAElFTkSuQmCC"],
   ["900000020", "liamak", "neutral", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtS1C8WvMvlNVofTBFMBZ6S4EpMs9AJv3cWA&s"],
+
+  ["900000021", "amir_07", "aggressive", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQfyVwr7ST_DCT4fmH4tt1u69WQ-prN48iqWw&s"],
+  ["900000022", "roma_x", "aggressive", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTf_TUedg_Cuz6ZztJ2IZGbAimNxdM7iZhY-Q&s"],
+  ["900000023", "daniil_91", "aggressive", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREtHsdvQI5Z_I0jRnZISuO2jUQ-91Xf6i9zA&s"],
+  ["900000024", "sergo", "aggressive", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6FdU7EPS8udoir1DPmKvXye9oxH076V2zrA&s"],
+  ["900000025", "matvey_13", "aggressive", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKaCID2Yhnb8G4aOnu8B0XtgEVOwr9mCvzcg&s"],
+  ["900000026", "arslan", "aggressive", "https://99px.ru/sstorage/1/2026/05/image_10105260706486415303.jpg"],
+  ["900000027", "vladik", "aggressive", "https://99px.ru/sstorage/1/2026/03/10303261230558566.jpg"],
+  ["900000028", "egor_88", "aggressive", "https://99px.ru/sstorage/1/2026/02/image_10202260203251267242.jpg"],
+  ["900000029", "ruslanov", "aggressive", "https://99px.ru/sstorage/1/2025/12/image_11412251103547183635.jpg"],
+  ["900000030", "kiril_22", "aggressive", "https://99px.ru/sstorage/1/2025/09/image_13009251739234057141.jpg"],
+
+  ["900000031", "artemka", "medium", "https://i.imgur.com/8Q2QwXG.png"],
+  ["900000032", "dan_xx", "medium", "https://i.imgur.com/3GvwNBf.png"],
+  ["900000033", "slava_05", "medium", "https://i.imgur.com/ZcLLrkY.png"],
+  ["900000034", "ivan4ik", "medium", "https://i.imgur.com/2RMzYkP.png"],
+  ["900000035", "maks_777", "medium", "https://i.imgur.com/0y0y0y0.png"],
+
+  ["900000036", "temka", "medium", "https://i.imgur.com/6VBx3io.png"],
+  ["900000037", "azizbek", "medium", "https://i.imgur.com/9WqhG6K.png"],
+  ["900000038", "murad_11", "medium", "https://i.imgur.com/5cX1QdF.png"],
+  ["900000039", "emirhan", "medium", "https://i.imgur.com/JYUB0m3.png"],
+  ["900000040", "volkan_34", "medium", "https://i.imgur.com/T3a1K6G.png"],
+
+  ["900000041", "mert_09", "medium", "https://i.imgur.com/7YVb7QO.png"],
+  ["900000042", "kaantr", "medium", "https://i.imgur.com/4Xn6p3N.png"],
+  ["900000043", "ilya_17", "medium", "https://i.imgur.com/LpQfQzD.png"],
+  ["900000044", "nikitos", "medium", "https://i.imgur.com/Ah3kKpM.png"],
+  ["900000045", "sasha_q", "medium", "https://i.imgur.com/VxXh0gK.png"],
+
+  ["900000046", "andrey", "neutral", "https://99px.ru/sstorage/1/2024/12/image_10112240928587939284.jpg"],
+  ["900000047", "pasha_01", "neutral", "https://99px.ru/sstorage/1/2024/02/image_11502241202505160441.gif"],
+  ["900000048", "stason", "neutral", "https://99px.ru/sstorage/1/2024/10/image_12910241918402121245.jpg"],
+  ["900000049", "leha_90", "neutral", "https://avatarko.ru/img/kartinka/33/maska_film_galstuk_33913.jpg"],
+  ["900000050", "miron", "neutral", "https://falcon-eyes.ru/upload/iblock/74e/yx2louwjrh7v8uk5z5ajtw9hv5tlcut0.jpg"],
+  ["900000051", "ramil", "neutral", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDzCJTLYIeG4qtmkDln7uaBop7MXX1DgulOg&s"],
+  ["900000052", "arsen_4", "neutral", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSEyNm7G0rZ7BN7i3kJTwuupvXjuSZeDr_Jw&s"],
+  ["900000053", "yusuf", "neutral", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpl90RC7MdWdTdiCZY5320ooR-ZkrcZgL0XA&s"],
+  ["900000054", "enes", "neutral", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBXmp4G8FsAP6A1FxmhbxrjTH_G3mTETPZGA&s"],
+  ["900000055", "burak_61", "neutral", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ1ks8ZeR0QTuTn4KA3dIGRztfmgvEvX7fY2A&s"],
+  ["900000056", "kerem", "neutral", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSka0Zt8-D4z2-D2ia4XnuDniUn6T9GwNBSSA&s"],
+  ["900000057", "selim", "neutral", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbF6xC9ekW19yE-nD68sMccayNHTc2PKprJQ&s"],
+  ["900000058", "taha_19", "neutral", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtNS-E_sO8cuYYi3Bkg4L6YUNMLqTkLQCk-A&s"],
+  ["900000059", "oleg_ua", "neutral", "blob:https://web.telegram.org/85ce97a9-5884-4e2f-a756-13f35de8b133"],
+  ["900000060", "misha", "neutral", "blob:https://web.telegram.org/e4999519-d9c5-4533-8ab2-60c3a85df304"],
+  ["900000061", "dimon_33", "neutral", "blob:https://web.telegram.org/9afd568d-bd53-40ee-ae5f-3457471e7665"],
+  ["900000062", "vadimka", "neutral", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSWzF5YZbGDQTup8jIlF8jp00_WpT2nf_gu0A&s"],
+  ["900000063", "goga", "neutral", "blob:https://web.telegram.org/e4ea41e8-d277-43c0-aa4c-db2e112c7710"],
+  ["900000064", "marat", "neutral", "blob:https://web.telegram.org/8e7496a1-c406-4bc8-a614-d40e63439676"],
+  ["900000065", "renat_21", "neutral", "blob:https://web.telegram.org/3dbd6068-9d38-4573-87dc-a19c0de3056c"],
+  ["900000066", "tigran", "neutral", "blob:https://web.telegram.org/92567e51-9849-4d17-8685-a7c06f9af174"],
 ];
 
 function randomInt(min, max) {
@@ -93,8 +144,8 @@ async function ensureBotPlayers() {
   $2,
   $3,
   0,                -- ✅ баланс = 0
-  120,
-  120,
+  300,
+  300,
   1,
   true,
   $4,
@@ -125,10 +176,17 @@ async function botTapToZero(bot) {
   const currentEnergy = Number(bot.energy || 0);
   if (currentEnergy <= 0) return;
 
-  const taps = Math.min(
-    currentEnergy,
-    randomInt(80, 120)
-  );
+  let taps;
+
+  if (bot.bot_type === "aggressive") {
+    taps = randomInt(170, 300);
+  } else if (bot.bot_type === "medium") {
+    taps = randomInt(90, 120);
+  } else {
+    taps = randomInt(60, 100);
+  }
+
+  taps = Math.min(currentEnergy, taps);
 
   let tapPower = Number(bot.tap_power || 1);
   const now = new Date();
@@ -227,7 +285,7 @@ async function runBotTick() {
       WHERE is_bot = true
         AND bot_next_action_at <= NOW()
       ORDER BY bot_next_action_at ASC
-      LIMIT 20
+      LIMIT 80
     `);
 
     for (const bot of bots.rows) {
