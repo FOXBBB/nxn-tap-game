@@ -74,6 +74,31 @@ const BOT_PLAYERS = [
   ["900000064", "marat", "neutral", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQpV1ov2YmU5sRHCXq8QHQxtFTo24V0BS3pRA&s"],
   ["900000065", "renat_21", "neutral", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR20IRWbANpQ9o4PvWmNtHToypU4-xmSdHvMw&s"],
   ["900000066", "tigran", "neutral", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTXHSoCvAx1HQvNBsR8TwmGYhPUsqDmT9q48Hhl0NjfBw&s"],
+
+  ["900000067", "nightzz", "aggressive", "https://i.pinimg.com/564x/9b/53/1f/9b531fd2c6b3d6e7d6f4f9a2a0b5f6a7.jpg"],
+["900000068", "venom_x", "aggressive", "https://i.pinimg.com/564x/82/66/3c/82663c1f48dbe8d4b1a6c7e5f4c2d8f1.jpg"],
+["900000069", "toxicboy", "aggressive", "https://i.pinimg.com/564x/73/92/e1/7392e1e3f8a7d2b4c1f6e9d5a2c7b8f0.jpg"],
+["900000070", "ghostik", "aggressive", "https://i.pinimg.com/564x/65/44/a7/6544a7f9d1b3e6c8f2a5d7e1c9b4f6a2.jpg"],
+["900000071", "darkwave", "aggressive", "https://i.pinimg.com/564x/51/90/b2/5190b2d8e6f3c1a7d4b9e2f5c8a6d1b3.jpg"],
+
+["900000072", "akira_x", "medium", "https://i.pinimg.com/564x/8f/31/42/8f3142f7d9a6b5e1c3d8f4a2b7c1e5d9.jpg"],
+["900000073", "midnight", "medium", "https://i.pinimg.com/564x/47/62/91/476291e8c4f1d7a5b3e9c2f6a8d1b4e7.jpg"],
+["900000074", "voidzero", "medium", "https://i.pinimg.com/564x/71/28/f5/7128f5d9b4c1e7a3f6d2b8c5a1e9f4d7.jpg"],
+["900000075", "animekid", "medium", "https://i.pinimg.com/564x/63/95/1d/63951de7a4b8c2f5d1e9a6b3c7f4d2e8.jpg"],
+["900000076", "rider_77", "medium", "https://i.pinimg.com/564x/2a/84/67/2a8467d1f9b5c3e7a4d8f2b6c1e5d9a3.jpg"],
+
+["900000077", "neonix", "medium", "https://i.pinimg.com/564x/95/47/2c/95472cf8a1d6b4e9c3f7a2d5b8e1c6f4.jpg"],
+["900000078", "zenqq", "medium", "https://i.pinimg.com/564x/58/13/9e/58139ef4c7a2d8b5e1f6c3a9d4b7e2f1.jpg"],
+
+["900000079", "crazycat", "neutral", "https://i.pinimg.com/564x/34/76/b1/3476b1d9e5c2f8a4b7d1e6c3f9a2d5b8.jpg"],
+["900000080", "sleepyy", "neutral", "https://i.pinimg.com/564x/81/25/4f/81254fd7b3e9c1a6d4f8b2e5c7a1d9f3.jpg"],
+["900000081", "frosty", "neutral", "https://i.pinimg.com/564x/66/91/2a/66912ae5d8b4c1f7a3e9d2b6c5f1a8d4.jpg"],
+["900000082", "moonlight", "neutral", "https://i.pinimg.com/564x/49/37/c8/4937c8e1a5d9b2f6c4e8a1d7b3f5c9a2.jpg"],
+["900000083", "shadowww", "neutral", "https://i.pinimg.com/564x/74/18/e3/7418e3d9b5c2f7a1e6d4b8c3f9a2d5e7.jpg"],
+["900000084", "kot_blin", "neutral", "https://i.pinimg.com/564x/29/64/f1/2964f1d8c5a2e7b3d9f4a1c6e8b2d5f7.jpg"],
+["900000085", "mrx_void", "neutral", "https://i.pinimg.com/564x/53/87/1b/53871be4d9a2c6f1e7b5d3a8c4f2e9d6.jpg"],
+["900000086", "lunar_qq", "neutral", "https://i.pinimg.com/564x/77/42/d5/7742d5e1b8c4f9a2d6e3b7c1f5a8d2e4.jpg"],
+
 ];
 
 function randomInt(min, max) {
