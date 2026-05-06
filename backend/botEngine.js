@@ -292,8 +292,30 @@ $6,
   console.log("🤖 Bot players ensured:", BOT_PLAYERS.length);
 }
 async function botTapToZero(bot) {
-  const currentEnergy = Number(bot.energy || 0);
-  if (currentEnergy <= 0) return;
+ const maxEnergy = Number(bot.max_energy || 100);
+const oldEnergy = Number(bot.energy || 0);
+
+const lastUpdate = new Date(bot.last_energy_update || Date.now());
+const nowDate = new Date();
+
+const diffSec = Math.floor((nowDate - lastUpdate) / 1000);
+const regen = Math.floor(diffSec / 3);
+
+let currentEnergy = Math.min(maxEnergy, oldEnergy + regen);
+
+if (regen > 0) {
+  await query(
+    `
+    UPDATE users
+    SET energy = $1,
+        last_energy_update = NOW()
+    WHERE telegram_id = $2::text
+    `,
+    [currentEnergy, bot.telegram_id]
+  );
+}
+
+if (currentEnergy <= 0) return;
 
   let taps;
 
