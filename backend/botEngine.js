@@ -9,7 +9,7 @@ const BOT_PLAYERS = [
   ["900000006", "nick99", "aggressive", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkUMjTBWiv5XkRfbalr8a7QfSiw2SilItNPA&s"],
 
   ["900000007", "ryan", "medium", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvVTEgPpEXGiGCePHk81PAVSMHILxnp34rCg&s"],
-  ["900000008", "adam_x", "medium", "https://i.pravatar.cc/150?img=22"],
+  ["900000008", "adam_x", "medium", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrb3eL3Lr-xsEmfHyW-l3GlsBB0HPGG2iQvw&s"],
   ["900000009", "marko", "medium", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR5KAzOehBCHcqXIKklMa8ZGiqAa_1GV94oeiidlUYyThZJsRklE5jyc5w&s"],
   ["900000010", "chris_88", "medium", "https://i.pravatar.cc/150?img=24"],
   ["900000011", "sam", "medium", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJ-j0SlWpRYz1lgkq7zLvEkEhc-9XzZrcLPg&s"],

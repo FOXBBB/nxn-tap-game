@@ -9256,17 +9256,17 @@ body.splash-lock {
   display: block;
 }
 .lb-top1 .avatar {
-  width: 86px;
-  height: 86px;
-  min-width: 86px;
+  width: 72px;
+  height: 72px;
+  min-width: 72px;
   object-fit: cover;
   border-radius: 50%;
 }
 
 .lb-top23 .avatar {
-  width: 82px;
-  height: 82px;
-  min-width: 82px;
+  width: 76px;
+  height: 76px;
+  min-width: 76px;
   object-fit: cover;
   border-radius: 50%;
 }
