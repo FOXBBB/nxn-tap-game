@@ -9255,12 +9255,15 @@ body.splash-lock {
   border-radius: 50%;
   display: block;
 }
-.lb-top1 .avatar {
-  width: 72px;
-  height: 72px;
-  min-width: 72px;
-  object-fit: cover;
-  border-radius: 50%;
+.lb-top1 .avatar,
+.lb-top1 img {
+  width: 72px !important;
+  height: 72px !important;
+  min-width: 72px !important;
+  aspect-ratio: 1 / 1;        /* 🔥 ключ */
+  object-fit: cover !important;
+  border-radius: 50% !important;
+  display: block;
 }
 
 .lb-top23 .avatar {
