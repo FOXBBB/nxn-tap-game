@@ -9255,16 +9255,6 @@ body.splash-lock {
   border-radius: 50%;
   display: block;
 }
-.lb-top1 .avatar,
-.lb-top1 img {
-  width: 72px !important;
-  height: 72px !important;
-  min-width: 72px !important;
-  aspect-ratio: 1 / 1;        /* 🔥 ключ */
-  object-fit: cover !important;
-  border-radius: 50% !important;
-  display: block;
-}
 
 .lb-top23 .avatar {
   width: 76px;
@@ -9272,4 +9262,25 @@ body.splash-lock {
   min-width: 76px;
   object-fit: cover;
   border-radius: 50%;
+}
+
+.lb-top1 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.lb-top1 .avatar,
+.lb-top1 img {
+  width: 72px !important;
+  height: 72px !important;
+  min-width: 72px !important;
+  min-height: 72px !important;
+
+  flex: 0 0 72px !important;   /* 🔥 убирает растяжение */
+
+  object-fit: cover !important;
+  border-radius: 50% !important;
+
+  overflow: hidden !important; /* 🔥 важно */
 }
