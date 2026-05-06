@@ -75,6 +75,34 @@ const BOT_PLAYERS = [
   ["900000065", "renat_21", "neutral", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR20IRWbANpQ9o4PvWmNtHToypU4-xmSdHvMw&s"],
   ["900000066", "tigran", "neutral", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTXHSoCvAx1HQvNBsR8TwmGYhPUsqDmT9q48Hhl0NjfBw&s"],
 
+  ["900000067", "nightzz", "aggressive", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8XrKn1YlzKZDQMxL0WzEAdQFrrGIUmVDYCyxntbXWSA&s"],
+  ["900000068", "venom_x", "aggressive", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTlHnH_2cyOcEGNsxAIT3p3wEVnO-4Us8Jt2A&s"],
+  ["900000069", "toxicboy", "aggressive", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjzgnt_bl1Ng8VXHIasiMf9Qsk3sqdinN69A&s"],
+  ["900000070", "ghostik", "aggressive", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtk0aY0px1G_ybG4wAfBsmbqKMpHxluKs3vVLB0LjWKQ&s"],
+  ["900000071", "darkwave", "aggressive", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRC-2-Ofu5vhBdDNB76_pGwbC0D1UpEouJwbCa04CPjWw&s"],
+
+  ["900000072", "akira_x", "aggressive", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJ-uNzBa3XIVkcPkNYHq9AlEiETE6ttqq3Mw&s"],
+  ["900000073", "midnight", "aggressive", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRArNM-2bSaRVb7FyZJcAzh-Xmc838Hm5JeA&s"],
+  ["900000074", "voidzero", "aggressive", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjdl7alpeH9ApQecnVzsFgmnDP7BCsLByG-A&s"],
+
+  ["900000075", "animekid", "medium", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZmckou1lEb990WjuQppUuiBw9RYEAlwb1ng&s"],
+  ["900000076", "rider_77", "medium", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVjzR82q2jiVjcz4TL6iIGJDsV1f_w21I1ew&s"],
+  ["900000077", "neonix", "medium", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3q8YrZBG31SRMoObJJjfCkTPy2PMPdEDqzA&s"],
+  ["900000078", "zenqq", "medium", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSy27fhDdNl2VJqDOOn_qKgrXHJaasbxMdUGA&s"],
+  ["900000079", "crazycat", "medium", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-bBT9ez3ajmrpVo2T1qcGrReQ42Ehwvy93w&s"],
+  ["900000080", "sleepyy", "medium", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOBO-3iWTwmCG_OINW8pkGXocGWUdDPa2Ndg&s"],
+  ["900000081", "frosty", "medium", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNsJbLQJViT0hH7Ijd3f-HHrCjyVGhNVl2Ng&s"],
+  ["900000082", "moonlight", "medium", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqSDAJeuT6qOWVNDr0H3aUUefosjj4klYC5g&s"],
+  ["900000083", "shadowww", "medium", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTklhJvKjAL4HDrztbqsEV6S0_BcHv5gor-PSFNalMd_w&s"],
+
+  ["900000084", "kot_blin", "neutral", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKE_8_7IfEFzjOQbsAEyvtgOF4PIJCRihFEA&s"],
+  ["900000085", "mrx_void", "neutral", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReYL0g-qefXHRO9QJcU6CU5vOi8B2s-ZQvHQ&s"],
+  ["900000086", "lunar_qq", "neutral", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSITd8tGFaEuIMcoVsMOYd_IemNGHO7NodW7Q&s"],
+  ["900000087", "s1lent", "neutral", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1hkqG7S81tLAIqHDVYrk25ugnOT9hmaX-VQ&s"],
+  ["900000088", "krypton", "neutral", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTi4mjxaqxX1Qa_86JopjkGQsyIrSZX0yvmdA&s"],
+  ["900000089", "reaperx", "neutral", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyYEXLxpve6Ttcl7cHpS7DG8Njlu_GIwDFeQ&s"],
+  ["900000090", "wavezz", "neutral", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEmMoEu_Z3KRvzHNFJJQu01fmsLfnxZ2pk9w&s"],
+  ["900000091", "voidik", "neutral", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTlxwUmjD08HqLW7tNZ-hMmIrgA5WZVXho7wtBmMZs1kw&s"],
 ];
 
 function randomInt(min, max) {
@@ -173,7 +201,7 @@ $6,
         avatar || "",
         type,
         firstDelay,
-startEnergy
+        startEnergy
       ]
     );
   }
@@ -187,12 +215,12 @@ async function botTapToZero(bot) {
   let taps;
 
   if (bot.bot_type === "aggressive") {
-  taps = randomInt(120, 420);
-} else if (bot.bot_type === "medium") {
-  taps = randomInt(60, 180);
-} else {
-  taps = randomInt(20, 90);
-}
+    taps = randomInt(120, 420);
+  } else if (bot.bot_type === "medium") {
+    taps = randomInt(60, 180);
+  } else {
+    taps = randomInt(20, 90);
+  }
 
   taps = Math.min(currentEnergy, taps);
 
