@@ -35,7 +35,7 @@ const BOT_PLAYERS = [
   ["900000029", "ruslanov", "aggressive", "https://99px.ru/sstorage/1/2025/12/image_11412251103547183635.jpg"],
   ["900000030", "kiril_22", "aggressive", "https://99px.ru/sstorage/1/2025/09/image_13009251739234057141.jpg"],
 
-    ["900000031", "artemka", "medium", "https://commons.wikimedia.org/wiki/Special:FilePath/Doge_meme.png"],
+  ["900000031", "artemka", "medium", "https://commons.wikimedia.org/wiki/Special:FilePath/Doge_meme.png"],
   ["900000032", "dan_xx", "medium", "https://forummaxi.ru/uploads/profile/photo-25379.gif"],
   ["900000033", "slava_05", "medium", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCZteVArtjY14cVav_Yb976-9RWCEAOsI605avNQMgEw&s"],
   ["900000034", "ivan4ik", "medium", "https://commons.wikimedia.org/wiki/Special:FilePath/Sample_User_Icon.png"],
@@ -52,7 +52,7 @@ const BOT_PLAYERS = [
   ["900000043", "ilya_17", "medium", "https://commons.wikimedia.org/wiki/Special:FilePath/CityBattle%20Virtual%20Earth%20avatar.jpg"],
   ["900000044", "nikitos", "medium", "https://commons.wikimedia.org/wiki/Special:FilePath/Bluesign-avatar.png"],
   ["900000045", "sasha_q", "medium", "https://commons.wikimedia.org/wiki/Special:FilePath/Barrow%20Avatar.jpg"],
-  
+
   ["900000046", "andrey", "neutral", "https://99px.ru/sstorage/1/2024/12/image_10112240928587939284.jpg"],
   ["900000047", "pasha_01", "neutral", "https://99px.ru/sstorage/1/2024/02/image_11502241202505160441.gif"],
   ["900000048", "stason", "neutral", "https://99px.ru/sstorage/1/2024/10/image_12910241918402121245.jpg"],
@@ -81,9 +81,9 @@ function randomInt(min, max) {
 }
 
 function nextDelayMinutes(type) {
-  if (type === "aggressive") return randomInt(25, 40); // 🔥 быстрее
-  if (type === "medium") return randomInt(120, 180);
-  return randomInt(290, 330);
+  if (type === "aggressive") return randomInt(18, 55);
+  if (type === "medium") return randomInt(70, 190);
+  return randomInt(180, 420);
 }
 
 async function getCurrentRewardCycle() {
@@ -123,6 +123,12 @@ async function ensureBotPlayers() {
   await ensureBotColumns();
 
   for (const [telegramId, name, type, avatar] of BOT_PLAYERS) {
+    const startEnergy =
+      type === "aggressive" ? randomInt(350, 700) :
+        type === "medium" ? randomInt(180, 360) :
+          randomInt(90, 180);
+
+    const firstDelay = randomInt(1, 180);
     await query(
       `
       INSERT INTO users (
@@ -144,8 +150,8 @@ async function ensureBotPlayers() {
   $2,
   $3,
   0,                -- ✅ баланс = 0
-  300,
-  300,
+  $6,
+$6,
   1,
   true,
   $4,
@@ -165,7 +171,8 @@ async function ensureBotPlayers() {
         name,
         avatar || "",
         type,
-        randomInt(1, 3)
+        firstDelay,
+startEnergy
       ]
     );
   }
@@ -179,12 +186,12 @@ async function botTapToZero(bot) {
   let taps;
 
   if (bot.bot_type === "aggressive") {
-    taps = randomInt(170, 300);
-  } else if (bot.bot_type === "medium") {
-    taps = randomInt(90, 120);
-  } else {
-    taps = randomInt(60, 100);
-  }
+  taps = randomInt(120, 420);
+} else if (bot.bot_type === "medium") {
+  taps = randomInt(60, 180);
+} else {
+  taps = randomInt(20, 90);
+}
 
   taps = Math.min(currentEnergy, taps);
 
