@@ -117,8 +117,8 @@ const BOT_PLAYERS = [
 ["900000102", "xander", "aggressive", "https://cdn.phototourl.com/member/2026-05-06-3d3dd039-4e99-4b46-b937-5fcb177f12d1.jpg"],
 ["900000103", "morgan_88", "aggressive", "https://cdn.phototourl.com/member/2026-05-06-63cb4c77-d8d2-421a-9403-746475f40eff.jpg"],
 ["900000104", "demonix", "aggressive", "https://cdn.phototourl.com/member/2026-05-06-e1fb1e1b-632c-4d63-8237-dc8e7527683f.jpg"],
-["900000105", "blackfox", "aggressive", "https://ibb.co/Z71dFX1"],
-["900000106", "krot_77", "aggressive", "https://ibb.co/5W3dQ3R5"],
+["900000105", "blackfox", "aggressive", ""],
+["900000106", "krot_77", "aggressive", ""],
 
 ["900000122", "maxon", "medium", "https://cdn.phototourl.com/member/2026-05-06-def53f25-0493-4c57-a2c1-8a2ddb3219a9.jpg"],
 ["900000123", "ilyuxa", "medium", "https://i.ibb.co/jPwq4Z0P/15.jpg"],
