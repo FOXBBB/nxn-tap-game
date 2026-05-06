@@ -9263,3 +9263,95 @@ body.splash-lock {
   object-fit: cover;
   border-radius: 50%;
 }
+
+/* === FINAL TOP 1 FIX === */
+
+.lb-top1 {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+
+  padding: 18px 14px !important;
+  min-height: auto !important;
+  overflow: visible !important;
+  text-align: center !important;
+}
+
+.lb-top1 .avatar-wrap {
+  position: relative !important;
+
+  width: 64px !important;
+  height: 64px !important;
+  min-width: 64px !important;
+  min-height: 64px !important;
+  max-width: 64px !important;
+  max-height: 64px !important;
+
+  display: block !important;
+  flex: 0 0 64px !important;
+  overflow: visible !important;
+  margin: 0 auto !important;
+}
+
+.lb-top1 .avatar,
+.lb-top1 .avatar-wrap img {
+  width: 64px !important;
+  height: 64px !important;
+  min-width: 64px !important;
+  min-height: 64px !important;
+  max-width: 64px !important;
+  max-height: 64px !important;
+
+  display: block !important;
+  object-fit: cover !important;
+  border-radius: 50% !important;
+  aspect-ratio: 1 / 1 !important;
+}
+
+.lb-top1 .tg-fallback-avatar {
+  width: 64px !important;
+  height: 64px !important;
+  min-width: 64px !important;
+  min-height: 64px !important;
+  max-width: 64px !important;
+  max-height: 64px !important;
+
+  flex: 0 0 64px !important;
+  border-radius: 50% !important;
+  aspect-ratio: 1 / 1 !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  font-size: 26px !important;
+  line-height: 1 !important;
+  margin: 0 auto !important;
+}
+
+.lb-top1 .avatar-wrap::after {
+  top: -18px !important;
+  left: 70% !important;
+  width: 42px !important;
+  height: 28px !important;
+}
+
+.lb-top1 .rank {
+  font-size: 28px !important;
+  line-height: 1 !important;
+}
+
+.lb-top1 .name {
+  font-size: 22px !important;
+  line-height: 1.15 !important;
+  max-width: 100% !important;
+  text-align: center !important;
+}
+
+.lb-top1 .score {
+  font-size: 18px !important;
+  min-width: auto !important;
+  text-align: center !important;
+}

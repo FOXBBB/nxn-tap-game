@@ -93,8 +93,8 @@ async function ensureBotPlayers() {
   $2,
   $3,
   0,                -- ✅ баланс = 0
-  100,
-  100,
+  120,
+  120,
   1,
   true,
   $4,
@@ -122,10 +122,13 @@ async function ensureBotPlayers() {
   console.log("🤖 Bot players ensured:", BOT_PLAYERS.length);
 }
 async function botTapToZero(bot) {
-  const maxEnergy = Number(bot.energy || 0);
-  if (maxEnergy <= 0) return;
+  const currentEnergy = Number(bot.energy || 0);
+  if (currentEnergy <= 0) return;
 
-  const taps = randomInt(5, Math.min(40, maxEnergy)); // ✅ не всё тратит
+  const taps = Math.min(
+    currentEnergy,
+    randomInt(80, 120)
+  );
 
   let tapPower = Number(bot.tap_power || 1);
   const now = new Date();
@@ -141,7 +144,7 @@ async function botTapToZero(bot) {
     UPDATE users
     SET
       balance = balance + $1,
-      energy = energy - $2,  -- ✅ уменьшаем, а не 0
+      energy = GREATEST(energy - $2, 0),
       last_seen = NOW()
     WHERE telegram_id = $3::text
     `,
