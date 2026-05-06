@@ -19,6 +19,35 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.get("/avatar-proxy", async (req, res) => {
+  try {
+    const url = req.query.url;
+
+    if (!url || !url.startsWith("https://")) {
+      return res.status(400).send("Bad url");
+    }
+
+    const r = await fetch(url, {
+      headers: {
+        "User-Agent": "Mozilla/5.0"
+      }
+    });
+
+    if (!r.ok) return res.status(404).send("Image not found");
+
+    const type = r.headers.get("content-type") || "image/jpeg";
+
+    res.setHeader("Content-Type", type);
+    res.setHeader("Cache-Control", "public, max-age=86400");
+
+    const buffer = Buffer.from(await r.arrayBuffer());
+    res.send(buffer);
+  } catch (err) {
+    console.error("Avatar proxy error:", err);
+    res.status(500).send("Avatar proxy error");
+  }
+});
+
 // 🔥 API ТОЛЬКО С ПРЕФИКСОМ
 app.use("/api", routes);
 
