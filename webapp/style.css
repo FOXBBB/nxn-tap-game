@@ -9284,3 +9284,26 @@ body.splash-lock {
 
   overflow: hidden !important; /* 🔥 важно */
 }
+.lb-top1 .tg-fallback-avatar {
+  width: 72px !important;
+  height: 72px !important;
+
+  min-width: 72px !important;
+  min-height: 72px !important;
+
+  flex: 0 0 72px !important;   /* 🔥 ГЛАВНОЕ */
+  
+  border-radius: 50% !important;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  aspect-ratio: 1 / 1 !important;
+}
+.lb-top1 .avatar-wrap,
+.lb-top1 .avatar-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
